@@ -18,7 +18,7 @@ This repository contains the source code for the BFST 21 project by group 2. The
 If you run into a the following permission error on a unix system (macOS or Linux):
 ```gradlew: permission denied```
 
-You need to make the file executable by running`
+You need to make the file executable by running
 ```bash
 $ chmod +x gradlew
 ```
