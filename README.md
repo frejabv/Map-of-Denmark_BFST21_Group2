@@ -9,6 +9,9 @@ This repository contains the source code for the BFST 21 project by group 2. The
 | ibsc | Ib Løwe Skovfoged Scherer |
 
 
+## Contributing guidelines
+All code must be formatted using the default java formatter.
+
 ### Running the code
 1. Clone the repository
 2. Open a terminal and cd into the folder
