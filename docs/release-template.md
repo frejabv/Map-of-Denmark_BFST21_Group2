@@ -1,7 +1,7 @@
 # Release Template
 Updated March 2nd 2021
 # Release v.#.#
-<i>Released on Friday March 5th, 2021</i>
+*Released on Friday March 5th, 2021*
 
 Short description of the overall release, its included features and its impact on the final product.
 
