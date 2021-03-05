@@ -1,4 +1,4 @@
-package BFST21;
+package bfst21;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -11,6 +11,7 @@ public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         var model = new Model();
-        new View(model, primaryStage);
+        var view = new View(model, primaryStage);
+        new Controller(model, view);
     }
 }

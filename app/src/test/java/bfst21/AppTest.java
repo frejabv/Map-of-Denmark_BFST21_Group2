@@ -1,6 +1,8 @@
-package BFST21;
+package bfst21;
 
 import org.junit.jupiter.api.Test;
+
+import bfst21.Launcher;
 
 class AppTest {
     @Test
