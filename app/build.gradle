@@ -36,7 +36,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'BFST21.Launcher'
+    mainClass = 'bfst21.Launcher'
 }
 
 tasks.named('test') {
