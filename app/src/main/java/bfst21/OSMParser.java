@@ -11,30 +11,30 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 public class OSMParser {
-    public void readMapElemetnsFromFile(String filepath, Model model) throws FileNotFoundException {
+    public static void readMapElemetnsFromFile(String filepath, Model model)
+            throws FileNotFoundException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
-            loadOSM(new FileInputStream(filepath));
+            loadOSM(new FileInputStream(filepath), model);
         } else if (filepath.endsWith(".zip")) {
 
         } else if (filepath.endsWith(".obj")) {
 
         } else {
-            // throw a unsupported file exception
+            throw new RuntimeException("Unsupported file");
         }
     }
 
-    private void loadOSM(InputStream inputStream) throws XMLStreamException, FactoryConfigurationError {
+    private static void loadOSM(InputStream inputStream, Model model)
+            throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
 
         while (xmlReader.hasNext()) {
-            switch (xmlReader.next()) {
-
-            }
+            generateMapObjects(xmlReader, xmlReader.next(), model);
         }
     }
 
-    private void generateMapObjects(XMLStreamReader xmlReader, int xmlTagType) {
+    private static void generateMapObjects(XMLStreamReader xmlReader, int xmlTagType, Model model) {
         switch (xmlTagType) {
         case XMLStreamReader.START_ELEMENT:
             switch (xmlReader.getLocalName()) {
@@ -42,7 +42,7 @@ public class OSMParser {
                 var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                 var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                 var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                idToNode.put(new Node(id, lat, lon));
+                model.addToNodeIndex(new Node(lat, lon, id));
                 break;
             }
             break;

@@ -10,8 +10,7 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        var model = new Model();
-        var view = new View(model, primaryStage);
-        new Controller(model, view);
+        var model = new Model("data/test.osm");
+        new View(model, primaryStage);
     }
 }

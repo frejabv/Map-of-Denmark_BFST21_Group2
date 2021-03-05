@@ -41,4 +41,8 @@ public class NodeIndex {
             return null;
         }
     }
+
+    public int size() {
+        return nodes.size();
+    }
 }
