@@ -1,4 +1,4 @@
-package BFST21;
+package bfst21;
 
 import javafx.stage.Stage;
 

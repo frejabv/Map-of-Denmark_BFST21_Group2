@@ -5,8 +5,12 @@
 build
 bin
 
-# Ignore vs-code config
+# We don't want to include large datasets in version control
+app/data
+
+# Ignore vs-code and intellij config
 .vscode
+.idea
 
 # Created by https://www.toptal.com/developers/gitignore/api/vscode,vim,macos,windows,intellij,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode,vim,macos,windows,intellij,gradle
