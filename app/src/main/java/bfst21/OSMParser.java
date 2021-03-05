@@ -19,7 +19,8 @@ public class OSMParser {
         } else if (filepath.endsWith(".obj")) {
 
         } else {
-            throw new RuntimeException("Unsupported file");
+            String[] splitFileName = filepath.split(".");
+            throw new CantReadFileException("." + splitFileName[1]);
         }
     }
 
