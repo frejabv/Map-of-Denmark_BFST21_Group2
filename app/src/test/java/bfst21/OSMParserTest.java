@@ -6,9 +6,14 @@ import org.junit.jupiter.api.Test;
 
 public class OSMParserTest {
     @Test
-    public void test() {
+    public void testOSMInputFile() {
         var model = new Model("data/test.osm");
         assertEquals(115, model.getNodeIndex().size());
     }
+   @Test
+   public void testZIPInputFile(){
+        var model = new Model("data/test.osm.zip");
+        assertEquals(115,model.getNodeIndex().size());
+   }
 
 }

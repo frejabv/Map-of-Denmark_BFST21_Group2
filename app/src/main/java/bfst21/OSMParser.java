@@ -1,9 +1,8 @@
 package bfst21;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -11,11 +10,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 public class OSMParser {
-    public static void readMapElements(String filepath, Model model) throws FileNotFoundException, XMLStreamException {
+    public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
             loadOSM(new FileInputStream(filepath), model);
         } else if (filepath.endsWith(".zip")) {
-
+            loadZIP(new FileInputStream(filepath), model);
         } else if (filepath.endsWith(".obj")) {
 
         } else {
@@ -32,6 +31,12 @@ public class OSMParser {
         while (xmlReader.hasNext()) {
             generateMapObjects(xmlReader, xmlReader.next(), model);
         }
+    }
+
+    public static void loadZIP(InputStream inputStream, Model model) throws IOException, XMLStreamException {
+        var zip = new ZipInputStream(inputStream);
+        zip.getNextEntry();
+        loadOSM(zip,model);
     }
 
     private static void generateMapObjects(XMLStreamReader xmlReader, int xmlTagType, Model model) {
