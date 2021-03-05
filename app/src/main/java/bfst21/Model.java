@@ -6,7 +6,7 @@ public class Model {
     public Model(String filepath) {
         nodeIndex = new NodeIndex();
         try {
-            OSMParser.readMapElemetnsFromFile(filepath, this);
+            OSMParser.readMapElements(filepath, this);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
@@ -16,6 +16,10 @@ public class Model {
 
     public void addToNodeIndex(Node node) {
         nodeIndex.addNode(node);
+    }
+
+    public NodeIndex getNodeIndex() {
+        return nodeIndex;
     }
 
 }

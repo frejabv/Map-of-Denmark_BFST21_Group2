@@ -11,8 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 public class OSMParser {
-    public static void readMapElemetnsFromFile(String filepath, Model model)
-            throws FileNotFoundException, XMLStreamException {
+    public static void readMapElements(String filepath, Model model) throws FileNotFoundException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
             loadOSM(new FileInputStream(filepath), model);
         } else if (filepath.endsWith(".zip")) {
