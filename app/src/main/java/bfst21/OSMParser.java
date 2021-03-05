@@ -20,7 +20,7 @@ public class OSMParser {
 
         } else {
             String[] splitFileName = filepath.split(".");
-            throw new CantReadFileException("." + splitFileName[1]);
+            throw new UnsupportedFileTypeException("." + splitFileName[1]);
         }
     }
 
