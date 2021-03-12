@@ -14,6 +14,10 @@ public class Way implements Drawable {
         this.id = id;
     }
 
+    public Way() {
+        this.nodes = new ArrayList<>();
+    }
+
     public Node first(){
         return nodes.get(0);
     }

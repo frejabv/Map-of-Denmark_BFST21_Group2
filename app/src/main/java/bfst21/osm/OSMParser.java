@@ -47,6 +47,7 @@ public class OSMParser {
 
         Tag tag = Tag.EMPTY;
         boolean isWay = false;
+        boolean isRelation = false;
         Way way = null;
 
         ArrayList<Drawable> waysForRelation = null;
