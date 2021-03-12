@@ -5,16 +5,16 @@ import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 
-public class Way implements Drawable {
+public class Way extends Member implements Drawable {
     private List<Node> nodes;
-    private long id;
 
     public Way(long id) {
+        super(id);
         this.nodes = new ArrayList<>();
-        this.id = id;
     }
 
     public Way() {
+        super(0);
         this.nodes = new ArrayList<>();
     }
 
@@ -27,10 +27,6 @@ public class Way implements Drawable {
 
     public void addNode(Node node) {
         nodes.add(node);
-    }
-
-    public long getId() {
-        return id;
     }
 
     public static Way merge(Way first, Way second) {
