@@ -1,14 +1,13 @@
-package bfst21;
+/*package bfst21;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OSMObjectsTest {
-    package bfst21;
+public class OSMObjectsTest {*/
+package bfst21;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import bfst21.osm.Node;
 import bfst21.osm.NodeIndex;
 import bfst21.osm.Way;
@@ -102,4 +101,3 @@ import org.junit.jupiter.api.Test;
 
     }
 
-}
