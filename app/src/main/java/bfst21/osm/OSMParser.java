@@ -47,8 +47,12 @@ public class OSMParser {
 
         Tag tag = Tag.EMPTY;
         boolean isWay = false;
-
         Way way = null;
+
+        ArrayList<Drawable> waysForRelation = null;
+        //only relevant when we change from one tag to list of tags
+        //ArrayList<Tag> tagsForRelation = null;
+
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
             case XMLStreamReader.START_ELEMENT:
@@ -68,12 +72,25 @@ public class OSMParser {
                 case "way":
                     isWay = true;
                     way = new Way();
+                    //var wayID = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                    //model.addToWayIndex(way, id); ?? or new Way(id), or way.setID(id);
                     break;
                 case "nd":
                     if (isWay && way != null) {
                         var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
                         way.addNode(model.getNodeIndex().getNode(ref));
                     }
+                    break;
+                case "relation":
+                    //isWay = true;
+                    waysForRelation = new ArrayList<>();
+                    //tagsForRelation = new ArrayList<>();
+                    break;
+                case "member":
+                    /*if (xmlReader.getAttributeValue(null, "type").equals("way")) { //isWay && way != null
+                        var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                        waysForRelation.addWay(model.getWayIndex().getWay(ref));
+                    }*/
                     break;
                 case "tag":
                     var k = xmlReader.getAttributeValue(null, "k");
@@ -241,6 +258,11 @@ public class OSMParser {
                     }
                     way = null;
                     tag = Tag.EMPTY;
+                    break;
+                case "relation":
+                    for(Drawable w : waysForRelation) {
+                        //run the method with adding the way to the correct ArrayList with the help of tags.
+                    }
                     break;
                 }
                 break;
