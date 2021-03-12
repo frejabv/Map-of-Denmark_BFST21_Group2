@@ -9,8 +9,9 @@ public class Way implements Drawable {
     private List<Node> nodes;
     private long id;
 
-    public Way() {
+    public Way(long id) {
         this.nodes = new ArrayList<>();
+        this.id = id;
     }
 
     public Node first(){
@@ -22,10 +23,6 @@ public class Way implements Drawable {
 
     public void addNode(Node node) {
         nodes.add(node);
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public long getId() {

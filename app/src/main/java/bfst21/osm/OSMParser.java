@@ -64,16 +64,16 @@ public class OSMParser {
                     model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
                     break;
                 case "node":
-                    var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                    var nodeId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                     var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                    model.addToNodeIndex(new Node(lon, lat, id));
+                    model.addToNodeIndex(new Node(lon, lat, nodeId));
                     break;
                 case "way":
                     isWay = true;
-                    way = new Way();
-                    //var wayID = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
-                    //model.addToWayIndex(way, id); ?? or new Way(id), or way.setID(id);
+                    var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                    way = new Way(wayId);
+                    model.addToWayIndex(way);
                     break;
                 case "nd":
                     if (isWay && way != null) {

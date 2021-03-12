@@ -7,6 +7,7 @@ import bfst21.osm.*;
 
 public class Model {
     private NodeIndex nodeIndex;
+    private WayIndex wayIndex;
     //drawables are all ways that not in any other list
     private List<Drawable> drawables;
     private ArrayList<Way> coastlines;
@@ -17,9 +18,11 @@ public class Model {
     private float minX, minY, maxX, maxY;
 
     public Model(String filepath) {
+        nodeIndex = new NodeIndex();
+        wayIndex = new WayIndex();
+
         drawables = new ArrayList<>();
         coastlines = new ArrayList<>();
-        nodeIndex = new NodeIndex();
         buildings = new ArrayList<>();
         cycleways = new ArrayList<>();
         footways = new ArrayList<>();
@@ -112,6 +115,9 @@ public class Model {
     public void addToNodeIndex(Node node) {
         nodeIndex.addNode(node);
     }
+
+    public WayIndex getWayIndex() { return wayIndex;}
+    public void addToWayIndex(Way way) { wayIndex.addWay((way)); }
 
     public List<Drawable> getDrawables() {
         return drawables;
