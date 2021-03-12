@@ -1,4 +1,4 @@
-package bfst21;
+package bfst21.osm;
 
 public class Node {
     private float x;

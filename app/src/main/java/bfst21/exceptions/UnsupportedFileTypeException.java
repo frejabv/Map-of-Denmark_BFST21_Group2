@@ -1,4 +1,4 @@
-package bfst21;
+package bfst21.exceptions;
 
 public class UnsupportedFileTypeException extends RuntimeException {
     public UnsupportedFileTypeException(String filetype) {
