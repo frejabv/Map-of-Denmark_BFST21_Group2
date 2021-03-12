@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
         }
         @Test
         public void testAddingNodeToWay(){
-            Way testWay1 = new Way();
+            Way testWay1 = new Way(1);
             Node testNode1 = new Node(100,200,300);
             Node testNode2 = new Node(200,300,400);
             testWay1.addNode(testNode1);
@@ -33,12 +33,12 @@ import org.junit.jupiter.api.Test;
         }
         @Test
         public void testMerging2Ways(){
-            Way testWay1 = new Way();
+            Way testWay1 = new Way(1);
             Node testNode1 = new Node(100,200,300);
             Node testNode2 = new Node(200,300,400);
             testWay1.addNode(testNode1);
             testWay1.addNode(testNode2);
-            Way testWay2 = new Way();
+            Way testWay2 = new Way(1);
             Node testNode3 = new Node(300,400,500);
             Node testNode4 = new Node(400,500,600);
             testWay2.addNode(testNode3);
@@ -50,19 +50,19 @@ import org.junit.jupiter.api.Test;
 
         @Test
         public void testMerging3Ways(){
-            Way testWay1 = new Way();
+            Way testWay1 = new Way(1);
             Node testNode1 = new Node(100,200,300);
             Node testNode2 = new Node(200,300,400);
             testWay1.addNode(testNode1);
             testWay1.addNode(testNode2);
 
-            Way testWay2 = new Way();
+            Way testWay2 = new Way(1);
             Node testNode3 = new Node(300,400,500);
             Node testNode4 = new Node(400,500,600);
             testWay2.addNode(testNode3);
             testWay2.addNode(testNode4);
 
-            Way testWay3 = new Way();
+            Way testWay3 = new Way(1);
             Node testNode5 = new Node(500,600,700);
             Node testNode6 = new Node(600,700,800);
             testWay3.addNode(testNode5);
