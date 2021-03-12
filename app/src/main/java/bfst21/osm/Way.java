@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class Way implements Drawable {
     private List<Node> nodes;
+    private long id;
 
     public Way() {
         this.nodes = new ArrayList<>();
@@ -21,6 +22,14 @@ public class Way implements Drawable {
 
     public void addNode(Node node) {
         nodes.add(node);
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public static Way merge(Way first, Way second) {
