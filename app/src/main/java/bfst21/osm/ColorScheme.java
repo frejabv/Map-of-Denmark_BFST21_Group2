@@ -1,4 +1,4 @@
-package bfst21;
+package bfst21.osm;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
 public class ColorScheme{

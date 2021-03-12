@@ -8,6 +8,7 @@ import bfst21.osm.*;
 public class Model {
     private NodeIndex nodeIndex;
     private WayIndex wayIndex;
+    private RelationIndex relationIndex;
     //drawables are all ways that not in any other list
     private List<Drawable> drawables;
     private ArrayList<Way> coastlines;
@@ -20,6 +21,7 @@ public class Model {
     public Model(String filepath) {
         nodeIndex = new NodeIndex();
         wayIndex = new WayIndex();
+        relationIndex = new RelationIndex();
 
         drawables = new ArrayList<>();
         coastlines = new ArrayList<>();
@@ -46,7 +48,7 @@ public class Model {
         try {
             OSMParser.readMapElements(filepath, this);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("error: "+e.getMessage());
         }
     }
 
@@ -117,7 +119,10 @@ public class Model {
     }
 
     public WayIndex getWayIndex() { return wayIndex;}
-    public void addToWayIndex(Way way) { wayIndex.addWay((way)); }
+    public void addToWayIndex(Way way) { wayIndex.addWay(way); }
+
+    public RelationIndex getRelationIndex() { return relationIndex; }
+    public void addToRelationIndex(Relation relation) { relationIndex.addRelation(relation); }
 
     public List<Drawable> getDrawables() {
         return drawables;

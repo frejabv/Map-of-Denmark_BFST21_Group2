@@ -13,7 +13,7 @@ public class Member {
 
     public long getId(){ return id; }
 
-    public void addTag(Tag tag){
-        tags.add(tag);
+    public void setTags(ArrayList<Tag> tags){
+        this.tags = tags;
     }
 }
