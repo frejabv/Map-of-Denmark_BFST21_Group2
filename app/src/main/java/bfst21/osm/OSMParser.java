@@ -1,7 +1,6 @@
 package bfst21.osm;
 
 import java.io.*;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -10,16 +9,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
-import bfst21.osm.Node;
-import bfst21.osm.Way;
 import bfst21.exceptions.UnsupportedFileTypeException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-
-import bfst21.osm.Drawable;
 
 
 public class OSMParser {
@@ -82,15 +77,41 @@ public class OSMParser {
                             }
                             break;
                         case "relation":
+                            isRelation = true;
+                            var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                            relation = new Relation(relationId);
+                            model.addToRelationIndex(relation);
+                            tags.clear();
                             break;
+
                         case "member":
+                            var type = xmlReader.getAttributeValue(null, "type");
+                            var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                            var role = xmlReader.getAttributeValue(null, "role");
+
+                            Member memberRef = null;
+                            switch (type) {
+                                case "node":
+                                    memberRef = model.getNodeIndex().getNode(ref);
+                                    break;
+                                case "way":
+                                    memberRef = model.getWayIndex().getWay(ref);
+                                    break;
+                                case "relation":
+                                    memberRef = model.getRelationIndex().getRelation(ref);
+                                    break;
+                            }
+                            if (memberRef != null) {
+                                relation.addMember(memberRef);
+                                memberRef.addRole(relation.getId(), role);
+                            }
                             break;
                         case "tag":
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
-                            switch(k) {
+                            switch (k) {
                                 case "natural":
-                                    switch(v) {
+                                    switch (v) {
                                         case "coastline":
                                             tags.add(Tag.COASTLINE);
                                             break;
@@ -165,7 +186,7 @@ public class OSMParser {
 
                                     }
                                 case "border_type":
-                                    switch(v){
+                                    switch (v) {
                                         case "territorial":
                                             tags.add(Tag.TERRITORIALBORDER);
                                             break;
@@ -179,10 +200,10 @@ public class OSMParser {
                     switch (xmlReader.getLocalName()) {
                         case "way":
                             System.out.println(tags);
-                            if (tags.isEmpty()){
+                            if (tags.isEmpty()) {
                                 model.addWay(way);
                             }
-                            for (Tag tag: tags) {
+                            for (Tag tag : tags) {
                                 switch (tag) {
                                     case BUILDING:
                                         model.addBuilding(way);
@@ -249,15 +270,15 @@ public class OSMParser {
                                     case WATER:
                                         model.addWater(way);
                                         break;
-                                    case EMPTY:
-                                        System.out.println("added way");
-                                        model.addWay(way);
                                 }
                             }
+                            isWay = false;
                             way = null;
 
                             break;
                         case "relation":
+                            isRelation = false;
+                            relation = null;
                             break;
                     }
                     break;
