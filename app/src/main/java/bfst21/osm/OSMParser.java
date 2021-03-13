@@ -82,29 +82,15 @@ public class OSMParser {
                             }
                             break;
                         case "relation":
-                            isRelation = true;
-                            var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
-                            relation = new Relation(relationId);
-                            tags.clear();
                             break;
                         case "member":
-                            if (isRelation && relation != null) {
-                                var type = xmlReader.getAttributeValue(null, "type");
-                                var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
-                                if (type.equals("node"))
-                                    relation.addMember(model.getNodeIndex().getNode(ref));
-                                else if (type.equals("way"))
-                                    relation.addMember(model.getWayIndex().getWay(ref));
-                                else if (type.equals("relation"))
-                                    relation.addMember(model.getRelationIndex().getRelation(ref));
-                            }
                             break;
                         case "tag":
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
-                            switch (k) {
+                            switch(k) {
                                 case "natural":
-                                    switch (v) {
+                                    switch(v) {
                                         case "coastline":
                                             tags.add(Tag.COASTLINE);
                                             break;
@@ -127,7 +113,6 @@ public class OSMParser {
                                             break;
                                         case "footway":
                                             tags.add(Tag.FOOTWAY);
-
                                             break;
                                         case "junction":
                                             tags.add(Tag.JUNCTION);
@@ -180,7 +165,7 @@ public class OSMParser {
 
                                     }
                                 case "border_type":
-                                    switch (v) {
+                                    switch(v){
                                         case "territorial":
                                             tags.add(Tag.TERRITORIALBORDER);
                                             break;
@@ -193,11 +178,11 @@ public class OSMParser {
                 case XMLStreamReader.END_ELEMENT:
                     switch (xmlReader.getLocalName()) {
                         case "way":
-                            if (tags.isEmpty()) {
+                            System.out.println(tags);
+                            if (tags.isEmpty()){
                                 model.addWay(way);
-                                break;
                             }
-                            for (Tag tag : tags) {
+                            for (Tag tag: tags) {
                                 switch (tag) {
                                     case BUILDING:
                                         model.addBuilding(way);
@@ -264,13 +249,16 @@ public class OSMParser {
                                     case WATER:
                                         model.addWater(way);
                                         break;
+                                    case EMPTY:
+                                        System.out.println("added way");
+                                        model.addWay(way);
                                 }
                             }
                             way = null;
+
                             break;
-                        //case "relation":
-                            //run the method with adding the way to the correct ArrayList with the help of tags.
-                            //break;
+                        case "relation":
+                            break;
                     }
                     break;
             }
