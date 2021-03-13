@@ -277,6 +277,7 @@ public class OSMParser {
 
                             break;
                         case "relation":
+
                             isRelation = false;
                             relation = null;
                             break;

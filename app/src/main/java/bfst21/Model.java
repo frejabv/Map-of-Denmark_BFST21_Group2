@@ -10,7 +10,7 @@ public class Model {
     private WayIndex wayIndex;
     private RelationIndex relationIndex;
     //drawables are all ways that not in any other list
-    private List<Drawable> drawables;
+    private List<Drawable> undefinedDrawables;
     private ArrayList<Way> coastlines;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> buildings, cycleways, footways, highways, junctions, living_streets, motorways, parks, paths, pedestrianWays, primaryWays, residentialWays, roads, secondaryWays, serviceWays, tertiaryWays, trackWays, trunkWays, unclassifiedWays, water;
@@ -23,7 +23,7 @@ public class Model {
         wayIndex = new WayIndex();
         relationIndex = new RelationIndex();
 
-        drawables = new ArrayList<>();
+        undefinedDrawables = new ArrayList<>();
         coastlines = new ArrayList<>();
         buildings = new ArrayList<>();
         cycleways = new ArrayList<>();
@@ -124,12 +124,10 @@ public class Model {
     public RelationIndex getRelationIndex() { return relationIndex; }
     public void addToRelationIndex(Relation relation) { relationIndex.addRelation(relation); }
 
-    public List<Drawable> getDrawables() {
-        return drawables;
+    public List<Drawable> getUndefinedDrawables() {
+        return undefinedDrawables;
     }
-    public void addWay(Way way) {
-        drawables.add(way);
-    }
+    public void addWay(Way way) { undefinedDrawables.add(way);}
 
     public ArrayList<Way> getCoastlines() {
         return coastlines;
