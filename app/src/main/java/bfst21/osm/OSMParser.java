@@ -19,10 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import bfst21.osm.Drawable;
 
-
 public class OSMParser {
-
-
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
@@ -30,11 +27,11 @@ public class OSMParser {
         } else if (filepath.endsWith(".zip")) {
             loadZIP(new FileInputStream(filepath), model);
         } else if (filepath.endsWith(".obj")) {
-            //TODO
+            // TODO
             System.out.println("missing object loader");
         } else {
             String[] splitFileName = filepath.split("\\.");
-            if(splitFileName.length > 0){
+            if (splitFileName.length > 0) {
                 throw new UnsupportedFileTypeException("." + splitFileName[splitFileName.length - 1]);
             }
         }
@@ -78,89 +75,21 @@ public class OSMParser {
                 case "tag":
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
-                    switch(k) {
-                        case "natural":
-                            switch(v) {
-                                case "coastline":
-                                    tag = Tag.COASTLINE;
-                                    break;
-                                case "water":
-                                    tag = Tag.WATER;
-                                    break;
-                            }
-                            break;
-                        case "leisure":
-                            switch(v) {
-                                case "park":
-                                    tag = Tag.PARK;
-                                    break;
-                            }
-                            break;
-                        case "highway":
-                            switch (v) {
-                                case "cycleway":
-                                    tag = Tag.CYCLEWAY;
-                                    break;
-                                case "footway":
-                                    tag = Tag.FOOTWAY;
-                                    break;
-                                case "junction":
-                                    tag = Tag.JUNCTION;
-                                    break;
-                                case "living_street":
-                                    tag = Tag.LIVING_STREET;
-                                    break;
-                                case "motorway":
-                                    tag = Tag.MOTORWAY;
-                                    break;
-                                case "path":
-                                    tag = Tag.PATH;
-                                    break;
-                                case "primary":
-                                    tag = Tag.PRIMARY;
-                                    break;
-                                case "pedestrian":
-                                    tag = Tag.PEDESTRIAN;
-                                    break;
-                                case "residential":
-                                    tag = Tag.RESIDENTIAL;
-                                    break;
-                                case "road":
-                                    tag = Tag.ROAD;
-                                    break;
-                                case "secondary":
-                                    tag = Tag.SECONDARY;
-                                    break;
-                                case "service":
-                                    tag = Tag.SERVICE;
-                                    break;
-                                case "tertiary":
-                                    tag = Tag.TERTIARY;
-                                    break;
-                                case "track":
-                                    tag = Tag.TRACK;
-                                    break;
-                                case "trunk":
-                                    tag = Tag.TRUNK;
-                                    break;
-                                case "unclassified":
-                                    tag = Tag.UNCLASSIFIED;
-                                    break;
-                            }
-                            break;
-                        case "building":
-                            switch (v) {
-                                default:
-                                    tag = Tag.BUILDING;
 
-                            }
-                        case "border_type":
-                            switch(v){
-                                case "territorial":
-                                    tag = Tag.TERRITORIALBORDER;
-                                    break;
-                            }
-                            break;
+                    // This is a temporary fix, we need to be able to handle multiple tags
+                    if (tag == Tag.COASTLINE)
+                        break;
+
+                    try {
+                        tag = Tag.valueOf(v.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        // We don't care about tags not in our Tag enum
+                    }
+
+                    try {
+                        tag = Tag.valueOf(k.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        // We don't care about tags not in our Tag enum
                     }
                     break;
                 }
@@ -168,76 +97,13 @@ public class OSMParser {
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                 case "way":
-                    System.out.println(tag);
-                    switch (tag) {
-                        case BUILDING:
-                            model.addBuilding(way);
-                            break;
-                        case COASTLINE:
-                            model.addCoastline(way);
-                            break;
-                        case CYCLEWAY:
-                            model.addCycleway(way);
-                            break;
-                        case FOOTWAY:
-                            model.addFootway(way);
-                            break;
-                        case HIGHWAY:
-                            model.addHighway(way);
-                            break;
-                        case JUNCTION:
-                            model.addJunction(way);
-                            break;
-                        case LIVING_STREET:
-                            model.addLiving_street(way);
-                            break;
-                        case MOTORWAY:
-                            model.addMotorway(way);
-                            break;
-                        case PARK:
-                            model.addPark(way);
-                            break;
-                        case PATH:
-                            model.addPath(way);
-                            break;
-                        case PEDESTRIAN:
-                            model.addPedestrianWay(way);
-                            break;
-                        case PRIMARY:
-                            model.addPrimaryWay(way);
-                            break;
-                        case RESIDENTIAL:
-                            model.addResidentialWay(way);
-                            break;
-                        case ROAD:
-                            model.addRoad(way);
-                            break;
-                        case SECONDARY:
-                            model.addSecondaryWay(way);
-                            break;
-                        case SERVICE:
-                            model.addServiceWay(way);
-                            break;
-                        case TERTIARY:
-                            model.addTertiaryWay(way);
-                            break;
-                        case TRUNK:
-                            model.addTrunkWay(way);
-                            break;
-                        case TRACK:
-                            model.addTrackWay(way);
-                            break;
-                        case TERRITORIALBORDER:
-                            break;
-                        case UNCLASSIFIED:
-                            model.addUnclassifiedWay(way);
-                            break;
-                        case WATER:
-                            model.addWater(way);
-                            break;
-                        case EMPTY:
-                            System.out.println("added way");
-                            model.addWay(way);
+                    if (tag == Tag.COASTLINE) {
+                        model.addCoastline(way);
+                    } else {
+                        var drawableMap = model.getDrawableMap();
+
+                        drawableMap.putIfAbsent(tag, new ArrayList<>());
+                        drawableMap.get(tag).add(way);
                     }
                     way = null;
                     tag = Tag.EMPTY;
@@ -246,22 +112,23 @@ public class OSMParser {
                 break;
             }
         }
-        //TODO: Please fix (kinda fixed)
+        // TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
     }
 
-    public static List<Drawable> mergeCoastlines(ArrayList<Way> coastlines){
-        Map<Node,Way> pieces = new HashMap<>();
-        for(var coast : coastlines){
+    public static List<Drawable> mergeCoastlines(ArrayList<Way> coastlines) {
+        Map<Node, Way> pieces = new HashMap<>();
+        for (var coast : coastlines) {
             var before = pieces.remove(coast.first());
             var after = pieces.remove(coast.last());
-            if(before == after) after = null;
-            var merged = Way.merge(before,coast,after);
-            pieces.put(merged.first(),merged);
-            pieces.put(merged.last(),merged);
+            if (before == after)
+                after = null;
+            var merged = Way.merge(before, coast, after);
+            pieces.put(merged.first(), merged);
+            pieces.put(merged.last(), merged);
         }
         List<Drawable> merged = new ArrayList<>();
-        pieces.forEach((node,way) -> {
+        pieces.forEach((node, way) -> {
             if (way.last() == node) {
                 merged.add(way);
             }

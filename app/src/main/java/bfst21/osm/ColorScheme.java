@@ -1,8 +1,18 @@
-package bfst21;
+package bfst21.osm;
+
 import javafx.scene.paint.Color;
-import java.util.ArrayList;
-public class ColorScheme{
-    
+import java.util.HashMap;
+import java.util.Map;
+
+enum Theme {
+    DEFAULT, DARK,
+}
+
+public class ColorScheme {
+    private Map<Tag, Color> defaultColorMap;
+    private Map<Tag, DrawStyle> styleMap;
+    private Theme theme;
+
     public Color sea;
     public Color island;
     public Color park;
@@ -23,37 +33,63 @@ public class ColorScheme{
     public Color primaryWay;
     public Color trunkWay;
 
-    public ColorScheme(){
+    public ColorScheme() {
+        defaultColorMap = new HashMap<>();
+        styleMap = new HashMap<>();
+        theme = theme.DEFAULT;
+
+        styleMap.put(Tag.BUILDING, DrawStyle.FILL);
+        styleMap.put(Tag.WATER, DrawStyle.FILL);
+
         defaultMode();
     }
 
-    public void defaultMode(){
+    public void defaultMode() {
+        // These are special cases that are not related to osm tags
         sea = Color.rgb(170, 218, 255);
         island = Color.rgb(255, 241, 178);
-        park = Color.rgb(195, 236, 178);
-        inlandWater = Color.LIGHTBLUE;
-        buildings = Color.rgb(232, 232, 232);
-        footways = Color.GREEN;
-        paths = Color.GREEN;
-        pedestrianWay = Color.WHITE;
-        cycleway = Color.TURQUOISE;
-        unclassifiedWay = Color.WHITE;
-        roads = Color.WHITE;
-        livingStreets = Color.WHITE;
-        residentialWay = Color.WHITE;
-        serviceWay = Color.WHITE;
-        junction = Color.WHITE;
-        tertiaryWay = Color.WHITE;
-        secondaryWay = Color.YELLOW;
-        primaryWay = Color.ORANGE;
-        trunkWay = Color.RED;
+
+        defaultColorMap.put(Tag.BUILDING, Color.rgb(232, 232, 232));
+        defaultColorMap.put(Tag.PARK,Color.rgb(195, 236, 178) );
+        defaultColorMap.put(Tag.WATER,  Color.LIGHTBLUE);
+        defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);
+        defaultColorMap.put(Tag.PATH, Color.GREEN);
+
+        defaultColorMap.put(Tag.CYCLEWAY, Color.TURQUOISE);
+
+        defaultColorMap.put(Tag.PEDESTRIAN, Color.WHITE);
+        defaultColorMap.put(Tag.UNCLASSIFIED, Color.WHITE);
+        defaultColorMap.put(Tag.ROAD, Color.WHITE);
+        defaultColorMap.put(Tag.LIVING_STREET, Color.WHITE);
+        defaultColorMap.put(Tag.RESIDENTIAL, Color.WHITE);
+        defaultColorMap.put(Tag.SERVICE, Color.WHITE);
+        defaultColorMap.put(Tag.JUNCTION, Color.WHITE);
+        defaultColorMap.put(Tag.TERTIARY, Color.WHITE);
+        defaultColorMap.put(Tag.SECONDARY, Color.WHITE);
+        defaultColorMap.put(Tag.PRIMARY, Color.WHITE);
+        defaultColorMap.put(Tag.TRUNK, Color.WHITE);
     }
 
-    public void darkMode(){
+    public void darkMode() {
 
     }
 
-    public void redGreenColorBlindMode(){
-        
+    public void redGreenColorBlindMode() {
+
+    }
+
+    public Color getColorByTag(Tag tag) {
+        switch (theme) {
+        case DEFAULT:
+        default:
+            var color = defaultColorMap.get(tag);
+            return color == null ? Color.GRAY : color;
+        }
+    }
+
+    public DrawStyle getDrawStyleByTag(Tag tag) {
+        var style = styleMap.get(tag);
+
+        return style == null ? DrawStyle.STROKE : style;
     }
 }

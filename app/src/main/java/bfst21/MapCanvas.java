@@ -28,128 +28,25 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
-        gc.setFill(colorScheme.island);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        gc.setStroke(colorScheme.island);
+
+        gc.setFill(Color.LIGHTYELLOW);
         for (var island : model.getIslands()) {
             island.draw(gc);
             gc.fill();
         }
 
-        gc.setStroke(Color.BLACK);
-        for (var line : model.getDrawables()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.park); //Park
-        gc.setFill(colorScheme.park); //Park
-        for (var park : model.getParks()) {
-            park.draw(gc);
-            gc.fill();
-        }
-
-        gc.setStroke(colorScheme.inlandWater); //Inland water
-        gc.setFill(colorScheme.inlandWater); //Inland water
-        for (var line : model.getWater()) {
-            line.draw(gc);
-            gc.fill();
-        }
-
-        gc.setStroke(colorScheme.buildings);
-        gc.setFill(colorScheme.buildings);
-        for (var building : model.getBuildings()){
-            building.draw(gc);
-            gc.fill();
-        }
-
-        //roads added from smallest to largest
-        gc.setStroke(colorScheme.footways);
-        gc.setFill(colorScheme.footways);
-        for (var line : model.getFootways()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.paths);
-        gc.setFill(colorScheme.paths);
-        for (var line : model.getPaths()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.pedestrianWay);
-        gc.setFill(colorScheme.pedestrianWay);
-        for (var line : model.getPedestrianWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.cycleway);
-        gc.setFill(colorScheme.cycleway);
-        for (var line : model.getCycleways()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.unclassifiedWay);
-        gc.setFill(colorScheme.unclassifiedWay);
-        for (var line : model.getUnclassifiedWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.roads);
-        gc.setFill(colorScheme.roads);
-        for (var line : model.getRoads()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.livingStreets);
-        gc.setFill(colorScheme.livingStreets);
-        for (var line : model.getLiving_streets()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.residentialWay);
-        gc.setFill(colorScheme.residentialWay);
-        for (var line : model.getResidentialWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.serviceWay);
-        gc.setFill(colorScheme.serviceWay);
-        for (var line : model.getServiceWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.junction);
-        gc.setFill(colorScheme.junction);
-        for (var line : model.getJunctions()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.tertiaryWay);
-        gc.setFill(colorScheme.tertiaryWay);
-        for (var line : model.getTertiaryWays()) {
-            var oldLineWidth = gc.getLineWidth();
-            gc.setLineWidth(1/Math.sqrt(trans.determinant())*2);
-            line.draw(gc);
-            gc.setLineWidth(oldLineWidth);
-        }
-
-        gc.setStroke(colorScheme.secondaryWay);
-        gc.setFill(colorScheme.secondaryWay);
-        for (var line : model.getSecondaryWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.primaryWay);
-        gc.setFill(colorScheme.primaryWay);
-        for (var line : model.getPrimaryWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.trunkWay);
-        gc.setFill(colorScheme.trunkWay);
-        for (var line : model.getTrunkWays()) {
-            line.draw(gc);
-        }
-
+        model.getDrawableMap().forEach((tag, drawables) -> {
+            gc.setStroke(colorScheme.getColorByTag(tag));
+            var style = colorScheme.getDrawStyleByTag(tag);
+            drawables.forEach(drawable -> {
+                drawable.draw(gc);
+                if (style == DrawStyle.FILL) {
+                    gc.setFill(colorScheme.getColorByTag(tag));
+                    gc.fill();
+                }
+            });
+        });
 
         gc.restore();
     }
