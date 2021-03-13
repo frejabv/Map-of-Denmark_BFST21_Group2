@@ -1,7 +1,6 @@
 package bfst21.osm;
 
 import java.io.*;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -10,20 +9,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
-import bfst21.osm.Node;
-import bfst21.osm.Way;
 import bfst21.exceptions.UnsupportedFileTypeException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import bfst21.osm.Drawable;
 
 
 public class OSMParser {
-
-
-
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
             loadOSM(new FileInputStream(filepath), model);
@@ -34,7 +28,7 @@ public class OSMParser {
             System.out.println("missing object loader");
         } else {
             String[] splitFileName = filepath.split("\\.");
-            if(splitFileName.length > 0){
+            if (splitFileName.length > 0) {
                 throw new UnsupportedFileTypeException("." + splitFileName[splitFileName.length - 1]);
             }
         }
@@ -45,223 +39,273 @@ public class OSMParser {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
 
-        Tag tag = Tag.EMPTY;
-        boolean isWay = false;
 
+        ArrayList<Tag> tags = new ArrayList<>();
         Way way = null;
+        Relation relation = null;
+
+        boolean isWay = false;
+        boolean isRelation = false;
+
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
-            case XMLStreamReader.START_ELEMENT:
-                switch (xmlReader.getLocalName()) {
-                case "bounds":
-                    model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
-                    model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                    model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
-                    model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
-                    break;
-                case "node":
-                    var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
-                    var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
-                    var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                    model.addToNodeIndex(new Node(lon, lat, id));
-                    break;
-                case "way":
-                    isWay = true;
-                    way = new Way();
-                    break;
-                case "nd":
-                    if (isWay && way != null) {
-                        var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
-                        way.addNode(model.getNodeIndex().getNode(ref));
-                    }
-                    break;
-                case "tag":
-                    var k = xmlReader.getAttributeValue(null, "k");
-                    var v = xmlReader.getAttributeValue(null, "v");
-                    switch(k) {
-                        case "natural":
-                            switch(v) {
-                                case "coastline":
-                                    tag = Tag.COASTLINE;
-                                    break;
-                                case "water":
-                                    tag = Tag.WATER;
-                                    break;
+                case XMLStreamReader.START_ELEMENT:
+                    switch (xmlReader.getLocalName()) {
+                        case "bounds":
+                            model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
+                            model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
+                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
+                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
+                            break;
+                        case "node":
+                            var nodeId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                            var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
+                            var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
+                            model.addToNodeIndex(new Node(lon, lat, nodeId));
+                            break;
+                        case "way":
+                            isWay = true;
+                            var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                            way = new Way(wayId);
+                            model.addToWayIndex(way);
+                            tags.clear();
+                            break;
+                        case "nd":
+                            if (isWay && way != null) {
+                                var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                                way.addNode(model.getNodeIndex().getNode(ref));
                             }
                             break;
-                        case "leisure":
-                            switch(v) {
-                                case "park":
-                                    tag = Tag.PARK;
-                                    break;
-                            }
+                        case "relation":
+                            isRelation = true;
+                            var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                            relation = new Relation(relationId);
+                            model.addToRelationIndex(relation);
+                            tags.clear();
                             break;
-                        case "highway":
-                            switch (v) {
-                                case "cycleway":
-                                    tag = Tag.CYCLEWAY;
-                                    break;
-                                case "footway":
-                                    tag = Tag.FOOTWAY;
-                                    break;
-                                case "junction":
-                                    tag = Tag.JUNCTION;
-                                    break;
-                                case "living_street":
-                                    tag = Tag.LIVING_STREET;
-                                    break;
-                                case "motorway":
-                                    tag = Tag.MOTORWAY;
-                                    break;
-                                case "path":
-                                    tag = Tag.PATH;
-                                    break;
-                                case "primary":
-                                    tag = Tag.PRIMARY;
-                                    break;
-                                case "pedestrian":
-                                    tag = Tag.PEDESTRIAN;
-                                    break;
-                                case "residential":
-                                    tag = Tag.RESIDENTIAL;
-                                    break;
-                                case "road":
-                                    tag = Tag.ROAD;
-                                    break;
-                                case "secondary":
-                                    tag = Tag.SECONDARY;
-                                    break;
-                                case "service":
-                                    tag = Tag.SERVICE;
-                                    break;
-                                case "tertiary":
-                                    tag = Tag.TERTIARY;
-                                    break;
-                                case "track":
-                                    tag = Tag.TRACK;
-                                    break;
-                                case "trunk":
-                                    tag = Tag.TRUNK;
-                                    break;
-                                case "unclassified":
-                                    tag = Tag.UNCLASSIFIED;
-                                    break;
-                            }
-                            break;
-                        case "building":
-                            switch (v) {
-                                default:
-                                    tag = Tag.BUILDING;
 
+                        case "member":
+                            var type = xmlReader.getAttributeValue(null, "type");
+                            var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                            var role = xmlReader.getAttributeValue(null, "role");
+
+                            Member memberRef = null;
+                            switch (type) {
+                                case "node":
+                                    memberRef = model.getNodeIndex().getNode(ref);
+                                    break;
+                                case "way":
+                                    memberRef = model.getWayIndex().getWay(ref);
+                                    break;
+                                case "relation":
+                                    memberRef = model.getRelationIndex().getRelation(ref);
+                                    break;
                             }
-                        case "border_type":
-                            switch(v){
-                                case "territorial":
-                                    tag = Tag.TERRITORIALBORDER;
+                            if (memberRef != null) {
+                                relation.addMember(memberRef);
+                                memberRef.addRole(relation.getId(), role);
+                            }
+                            break;
+                        case "tag":
+                            var k = xmlReader.getAttributeValue(null, "k");
+                            var v = xmlReader.getAttributeValue(null, "v");
+                            switch (k) {
+                                case "natural":
+                                    switch (v) {
+                                        case "coastline":
+                                            tags.add(Tag.COASTLINE);
+                                            break;
+                                        case "water":
+                                            tags.add(Tag.WATER);
+                                            break;
+                                    }
+                                    break;
+                                case "leisure":
+                                    switch (v) {
+                                        case "park":
+                                            tags.add(Tag.PARK);
+                                            break;
+                                    }
+                                    break;
+                                case "highway":
+                                    switch (v) {
+                                        case "cycleway":
+                                            tags.add(Tag.CYCLEWAY);
+                                            break;
+                                        case "footway":
+                                            tags.add(Tag.FOOTWAY);
+                                            break;
+                                        case "junction":
+                                            tags.add(Tag.JUNCTION);
+                                            break;
+                                        case "living_street":
+                                            tags.add(Tag.LIVING_STREET);
+                                            break;
+                                        case "motorway":
+                                            tags.add(Tag.MOTORWAY);
+                                            break;
+                                        case "path":
+                                            tags.add(Tag.PATH);
+                                            break;
+                                        case "primary":
+                                            tags.add(Tag.PRIMARY);
+                                            break;
+                                        case "pedestrian":
+                                            tags.add(Tag.PEDESTRIAN);
+                                            break;
+                                        case "residential":
+                                            tags.add(Tag.RESIDENTIAL);
+                                            break;
+                                        case "road":
+                                            tags.add(Tag.ROAD);
+                                            break;
+                                        case "secondary":
+                                            tags.add(Tag.SECONDARY);
+                                            break;
+                                        case "service":
+                                            tags.add(Tag.SERVICE);
+                                            break;
+                                        case "tertiary":
+                                            tags.add(Tag.TERTIARY);
+                                            break;
+                                        case "track":
+                                            tags.add(Tag.TRACK);
+                                            break;
+                                        case "trunk":
+                                            tags.add(Tag.TRUNK);
+                                            break;
+                                        case "unclassified":
+                                            tags.add(Tag.UNCLASSIFIED);
+                                            break;
+                                    }
+                                    break;
+                                case "building":
+                                    switch (v) {
+                                        default:
+                                            tags.add(Tag.BUILDING);
+
+                                    }
+                                case "border_type":
+                                    switch (v) {
+                                        case "territorial":
+                                            tags.add(Tag.TERRITORIALBORDER);
+                                            break;
+                                    }
                                     break;
                             }
                             break;
                     }
                     break;
-                }
-                break;
-            case XMLStreamReader.END_ELEMENT:
-                switch (xmlReader.getLocalName()) {
-                case "way":
-                    System.out.println(tag);
-                    switch (tag) {
-                        case BUILDING:
-                            model.addBuilding(way);
+                case XMLStreamReader.END_ELEMENT:
+                    switch (xmlReader.getLocalName()) {
+                        case "way":
+                            System.out.println(tags);
+                            if (tags.isEmpty()) {
+                                model.addWay(way);
+                            }
+                            for (Tag tag : tags) {
+                                switch (tag) {
+                                    case BUILDING:
+                                        model.addBuilding(way);
+                                        break;
+                                    case COASTLINE:
+                                        model.addCoastline(way);
+                                        break;
+                                    case CYCLEWAY:
+                                        model.addCycleway(way);
+                                        break;
+                                    case FOOTWAY:
+                                        model.addFootway(way);
+                                        break;
+                                    case HIGHWAY:
+                                        model.addHighway(way);
+                                        break;
+                                    case JUNCTION:
+                                        model.addJunction(way);
+                                        break;
+                                    case LIVING_STREET:
+                                        model.addLiving_street(way);
+                                        break;
+                                    case MOTORWAY:
+                                        model.addMotorway(way);
+                                        break;
+                                    case PARK:
+                                        model.addPark(way);
+                                        break;
+                                    case PATH:
+                                        model.addPath(way);
+                                        break;
+                                    case PEDESTRIAN:
+                                        model.addPedestrianWay(way);
+                                        break;
+                                    case PRIMARY:
+                                        model.addPrimaryWay(way);
+                                        break;
+                                    case RESIDENTIAL:
+                                        model.addResidentialWay(way);
+                                        break;
+                                    case ROAD:
+                                        model.addRoad(way);
+                                        break;
+                                    case SECONDARY:
+                                        model.addSecondaryWay(way);
+                                        break;
+                                    case SERVICE:
+                                        model.addServiceWay(way);
+                                        break;
+                                    case TERTIARY:
+                                        model.addTertiaryWay(way);
+                                        break;
+                                    case TRUNK:
+                                        model.addTrunkWay(way);
+                                        break;
+                                    case TRACK:
+                                        model.addTrackWay(way);
+                                        break;
+                                    case TERRITORIALBORDER:
+                                        break;
+                                    case UNCLASSIFIED:
+                                        model.addUnclassifiedWay(way);
+                                        break;
+                                    case WATER:
+                                        model.addWater(way);
+                                        break;
+                                }
+                            }
+                            isWay = false;
+                            way = null;
+
                             break;
-                        case COASTLINE:
-                            model.addCoastline(way);
+                        case "relation":
+
+                            isRelation = false;
+                            relation = null;
                             break;
-                        case CYCLEWAY:
-                            model.addCycleway(way);
-                            break;
-                        case FOOTWAY:
-                            model.addFootway(way);
-                            break;
-                        case HIGHWAY:
-                            model.addHighway(way);
-                            break;
-                        case JUNCTION:
-                            model.addJunction(way);
-                            break;
-                        case LIVING_STREET:
-                            model.addLiving_street(way);
-                            break;
-                        case MOTORWAY:
-                            model.addMotorway(way);
-                            break;
-                        case PARK:
-                            model.addPark(way);
-                            break;
-                        case PATH:
-                            model.addPath(way);
-                            break;
-                        case PEDESTRIAN:
-                            model.addPedestrianWay(way);
-                            break;
-                        case PRIMARY:
-                            model.addPrimaryWay(way);
-                            break;
-                        case RESIDENTIAL:
-                            model.addResidentialWay(way);
-                            break;
-                        case ROAD:
-                            model.addRoad(way);
-                            break;
-                        case SECONDARY:
-                            model.addSecondaryWay(way);
-                            break;
-                        case SERVICE:
-                            model.addServiceWay(way);
-                            break;
-                        case TERTIARY:
-                            model.addTertiaryWay(way);
-                            break;
-                        case TRUNK:
-                            model.addTrunkWay(way);
-                            break;
-                        case TRACK:
-                            model.addTrackWay(way);
-                            break;
-                        case TERRITORIALBORDER:
-                            break;
-                        case UNCLASSIFIED:
-                            model.addUnclassifiedWay(way);
-                            break;
-                        case WATER:
-                            model.addWater(way);
-                            break;
-                        case EMPTY:
-                            System.out.println("added way");
-                            model.addWay(way);
                     }
-                    way = null;
-                    tag = Tag.EMPTY;
                     break;
-                }
-                break;
             }
         }
+        System.out.println("hi");
         //TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
+        System.out.println(model.getCoastlines());
+        if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
+            System.out.println("you fool, you think it is that simple? hahahahah");
+        }
     }
 
-    public static List<Drawable> mergeCoastlines(ArrayList<Way> coastlines){
-        Map<Node,Way> pieces = new HashMap<>();
-        for(var coast : coastlines){
+    public static List<Drawable> mergeCoastlines(ArrayList<Way> coastlines) {
+        Map<Node, Way> pieces = new HashMap<>();
+        for (var coast : coastlines) {
             var before = pieces.remove(coast.first());
             var after = pieces.remove(coast.last());
-            if(before == after) after = null;
-            var merged = Way.merge(before,coast,after);
-            pieces.put(merged.first(),merged);
-            pieces.put(merged.last(),merged);
+            if (before == after) after = null;
+            var merged = Way.merge(before, coast, after);
+            pieces.put(merged.first(), merged);
+            pieces.put(merged.last(), merged);
         }
         List<Drawable> merged = new ArrayList<>();
-        pieces.forEach((node,way) -> {
+        pieces.forEach((node, way) -> {
             if (way.last() == node) {
                 merged.add(way);
             }

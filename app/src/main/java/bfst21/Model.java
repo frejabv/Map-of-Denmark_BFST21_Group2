@@ -7,8 +7,10 @@ import bfst21.osm.*;
 
 public class Model {
     private NodeIndex nodeIndex;
+    private WayIndex wayIndex;
+    private RelationIndex relationIndex;
     //drawables are all ways that not in any other list
-    private List<Drawable> drawables;
+    private List<Drawable> undefinedDrawables;
     private ArrayList<Way> coastlines;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> buildings, cycleways, footways, highways, junctions, living_streets, motorways, parks, paths, pedestrianWays, primaryWays, residentialWays, roads, secondaryWays, serviceWays, tertiaryWays, trackWays, trunkWays, unclassifiedWays, water;
@@ -17,9 +19,12 @@ public class Model {
     private float minX, minY, maxX, maxY;
 
     public Model(String filepath) {
-        drawables = new ArrayList<>();
-        coastlines = new ArrayList<>();
         nodeIndex = new NodeIndex();
+        wayIndex = new WayIndex();
+        relationIndex = new RelationIndex();
+
+        undefinedDrawables = new ArrayList<>();
+        coastlines = new ArrayList<>();
         buildings = new ArrayList<>();
         cycleways = new ArrayList<>();
         footways = new ArrayList<>();
@@ -43,7 +48,7 @@ public class Model {
         try {
             OSMParser.readMapElements(filepath, this);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("error: "+ e.getClass());
         }
     }
 
@@ -113,12 +118,16 @@ public class Model {
         nodeIndex.addNode(node);
     }
 
-    public List<Drawable> getDrawables() {
-        return drawables;
+    public WayIndex getWayIndex() { return wayIndex;}
+    public void addToWayIndex(Way way) { wayIndex.addWay(way); }
+
+    public RelationIndex getRelationIndex() { return relationIndex; }
+    public void addToRelationIndex(Relation relation) { relationIndex.addRelation(relation); }
+
+    public List<Drawable> getUndefinedDrawables() {
+        return undefinedDrawables;
     }
-    public void addWay(Way way) {
-        drawables.add(way);
-    }
+    public void addWay(Way way) { undefinedDrawables.add(way);}
 
     public ArrayList<Way> getCoastlines() {
         return coastlines;
