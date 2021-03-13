@@ -61,36 +61,35 @@ import org.junit.jupiter.api.Test;
             testWay3.addNode(testNode5);
             testWay3.addNode(testNode6);
 
-            Way mergedTestWay = Way.merge(Way.merge(testWay1,testWay2),testWay3);
-            assertEquals(mergedTestWay.first(),testNode1);
-            assertEquals(mergedTestWay.last(),testNode6);
-        }
-
-        @Test
-        public void testAddingNodeToNodeIndex(){
-            NodeIndex testNodeIndex = new NodeIndex();
-            Node testNode1 = new Node(1000,560 ,123);
-            Node testNode2 = new Node(500,600,456);
-            Node testNode3 = new Node(600,700,789);
-            testNodeIndex.addNode(testNode1);
-            testNodeIndex.addNode(testNode2);
-            testNodeIndex.addNode(testNode3);
-            assertEquals(3,testNodeIndex.size());
-        }
-
-        @Test
-        public void testGettingNodesFromNodeIndex(){
-            NodeIndex testNodeIndex = new NodeIndex();
-            Node testNode1 = new Node(1000,560 ,123);
-            Node testNode2 = new Node(500,600,456);
-            Node testNode3 = new Node(600,700,789);
-            testNodeIndex.addNode(testNode1);
-            testNodeIndex.addNode(testNode2);
-            testNodeIndex.addNode(testNode3);
-            assertEquals(testNode1,testNodeIndex.getNode(123));
-            assertEquals(testNode2,testNodeIndex.getNode(456));
-            assertEquals(testNode3,testNodeIndex.getNode(789));
-        }
-
+        Way mergedTestWay = Way.merge(Way.merge(testWay1, testWay2), testWay3);
+        assertEquals(mergedTestWay.first(), testNode1);
+        assertEquals(mergedTestWay.last(), testNode6);
     }
 
+    @Test
+    public void testAddingNodeToNodeIndex() {
+        NodeIndex testNodeIndex = new NodeIndex();
+        Node testNode1 = new Node(1000, 560, 123);
+        Node testNode2 = new Node(500, 600, 456);
+        Node testNode3 = new Node(600, 700, 789);
+        testNodeIndex.addNode(testNode1);
+        testNodeIndex.addNode(testNode2);
+        testNodeIndex.addNode(testNode3);
+        assertEquals(3, testNodeIndex.size());
+    }
+
+    @Test
+    public void testGettingNodesFromNodeIndex() {
+        NodeIndex testNodeIndex = new NodeIndex();
+        Node testNode1 = new Node(1000, 560, 123);
+        Node testNode2 = new Node(500, 600, 456);
+        Node testNode3 = new Node(600, 700, 789);
+        testNodeIndex.addNode(testNode1);
+        testNodeIndex.addNode(testNode2);
+        testNodeIndex.addNode(testNode3);
+        assertEquals(testNode1, testNodeIndex.getNode(123));
+        assertEquals(testNode2, testNodeIndex.getNode(456));
+        assertEquals(testNode3, testNodeIndex.getNode(789));
+    }
+
+}
