@@ -37,7 +37,7 @@ public class MapCanvas extends Canvas {
         }
 
         gc.setStroke(Color.BLACK);
-        for (var line : model.getDrawables()) {
+        for (var line : model.getUndefinedDrawables()) {
             line.draw(gc);
         }
 
