@@ -15,9 +15,13 @@ public class MapCanvas extends Canvas {
     public void init(Model model) {
         this.model = model;
         colorScheme = new ColorScheme();
-        pan(-model.getMinX(), -model.getMinY());
-        zoom(getWidth() / (model.getMaxX() - model.getMinX()), new Point2D(0, 0));
-        repaint();
+        moveToInitialPosition();
+        widthProperty().addListener((obs, oldVal, newVal) -> {
+            zoom((Double)newVal/(Double) oldVal, new Point2D(0,getHeight()/2));
+        });
+        heightProperty().addListener((obs, oldVal, newVal) -> {
+            zoom(((Double)newVal/(Double) oldVal), new Point2D(getWidth()/2,0));
+        });
     }
 
     void repaint() {
@@ -149,8 +153,6 @@ public class MapCanvas extends Canvas {
         for (var line : model.getTrunkWays()) {
             line.draw(gc);
         }
-
-
         gc.restore();
     }
 
@@ -162,6 +164,7 @@ public class MapCanvas extends Canvas {
     public void zoom(double factor, Point2D center) {
         trans.prependScale(factor, factor, center);
         repaint();
+
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
@@ -170,6 +173,19 @@ public class MapCanvas extends Canvas {
         } catch (NonInvertibleTransformException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private void moveToInitialPosition(){
+        double deltaY = (-model.getMaxY())-(-model.getMinY());
+        double deltaX = model.getMaxX()-model.getMinX();
+        if(deltaX<deltaY){
+            pan(-model.getMinX(),-model.getMaxY());
+            zoom((getHeight()-getWidth()/(model.getMaxX()-model.getMinX()))*-1, new Point2D(0,0));
+            pan(-(model.getMinY()-(model.getMaxX())), 0);
+        }
+        else {
+            //TODO: please fix
         }
     }
 
