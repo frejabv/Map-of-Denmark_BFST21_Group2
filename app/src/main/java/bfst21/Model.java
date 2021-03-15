@@ -6,9 +6,9 @@ import java.util.List;
 import bfst21.osm.*;
 
 public class Model {
-    private NodeIndex nodeIndex;
-    private WayIndex wayIndex;
-    private RelationIndex relationIndex;
+    private MemberIndex nodeIndex;
+    private MemberIndex wayIndex;
+    private MemberIndex relationIndex;
     //drawables are all ways that not in any other list
     private List<Drawable> undefinedDrawables;
     private ArrayList<Way> coastlines;
@@ -19,9 +19,9 @@ public class Model {
     private float minX, minY, maxX, maxY;
 
     public Model(String filepath) {
-        nodeIndex = new NodeIndex();
-        wayIndex = new WayIndex();
-        relationIndex = new RelationIndex();
+        nodeIndex = new MemberIndex();
+        wayIndex = new MemberIndex();
+        relationIndex = new MemberIndex();
 
         undefinedDrawables = new ArrayList<>();
         coastlines = new ArrayList<>();
@@ -111,18 +111,18 @@ public class Model {
         this.maxY = maxY;
     }
 
-    public NodeIndex getNodeIndex() {
+    public MemberIndex getNodeIndex() {
         return nodeIndex;
     }
     public void addToNodeIndex(Node node) {
-        nodeIndex.addNode(node);
+        nodeIndex.addMember(node);
     }
 
-    public WayIndex getWayIndex() { return wayIndex;}
-    public void addToWayIndex(Way way) { wayIndex.addWay(way); }
+    public MemberIndex getWayIndex() { return wayIndex;}
+    public void addToWayIndex(Way way) { wayIndex.addMember(way); }
 
-    public RelationIndex getRelationIndex() { return relationIndex; }
-    public void addToRelationIndex(Relation relation) { relationIndex.addRelation(relation); }
+    public MemberIndex getRelationIndex() { return relationIndex; }
+    public void addToRelationIndex(Relation relation) { relationIndex.addMember(relation); }
 
     public List<Drawable> getUndefinedDrawables() {
         return undefinedDrawables;

@@ -73,7 +73,7 @@ public class OSMParser {
                         case "nd":
                             if (isWay && way != null) {
                                 var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
-                                way.addNode(model.getNodeIndex().getNode(ref));
+                                way.addNode((Node) model.getNodeIndex().getMember(ref));
                             }
                             break;
                         case "relation":
@@ -92,13 +92,13 @@ public class OSMParser {
                             Member memberRef = null;
                             switch (type) {
                                 case "node":
-                                    memberRef = model.getNodeIndex().getNode(ref);
+                                    memberRef = model.getNodeIndex().getMember(ref);
                                     break;
                                 case "way":
-                                    memberRef = model.getWayIndex().getWay(ref);
+                                    memberRef = model.getWayIndex().getMember(ref);
                                     break;
                                 case "relation":
-                                    memberRef = model.getRelationIndex().getRelation(ref);
+                                    memberRef = model.getRelationIndex().getMember(ref);
                                     break;
                             }
                             if (memberRef != null) {
