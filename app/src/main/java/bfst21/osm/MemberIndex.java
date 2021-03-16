@@ -3,46 +3,47 @@ package bfst21.osm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WayIndex {
-        private List<Way> ways;
+public class MemberIndex {
+        private List<Member> members;
         private boolean isSorted;
 
-        public WayIndex() {
-            this.ways = new ArrayList<>();
+        public MemberIndex() {
+            this.members = new ArrayList<>();
             this.isSorted = true;
         }
 
-        public void addWay(Way way) {
-            ways.add(way);
+        public void addMember(Member member) {
+            members.add(member);
             isSorted = false;
         }
 
-        public Way getWay(long id) {
+        public Member getMember(long id) {
             if (!isSorted) {
-                ways.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+                members.sort((a, b) -> Long.compare(a.getId(), b.getId()));
                 isSorted = true;
             }
 
             long lo = 0;
-            long hi = ways.size();
+            long hi = members.size();
             while (lo + 1 < hi) {
                 long mid = (lo + hi) / 2;
-                if (ways.get((int) mid).getId() <= id) {
+                if (members.get((int) mid).getId() <= id) {
                     lo = mid;
                 } else {
                     hi = mid;
                 }
             }
-            Way way = ways.get((int) lo);
+            Member member = members.get((int) lo);
 
-            if (way.getId() == id) {
-                return way;
+            if (member.getId() == id) {
+                return member;
             } else {
                 return null;
             }
         }
 
         public int size() {
-            return ways.size();
+            return members.size();
         }
-}
+    }
+

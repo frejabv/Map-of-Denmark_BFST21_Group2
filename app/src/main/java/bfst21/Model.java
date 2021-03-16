@@ -8,19 +8,18 @@ import java.util.Map;
 import bfst21.osm.*;
 
 public class Model {
-    private NodeIndex nodeIndex;
+    private MemberIndex nodeIndex;
 
     private Map<Tag, List<Drawable>> drawableMap;
     //
 
     // drawables are all ways that not in any other list
     private List<Drawable> drawables;
-    private WayIndex wayIndex;
-    private RelationIndex relationIndex;
-    // drawables are all ways that are not in any other list
-    private ArrayList<Way> coastlines;
+    private MemberIndex wayIndex;
+    private MemberIndex relationIndex;
     private List<Drawable> islands = new ArrayList<>();
     private Bounds bounds;
+    private ArrayList<Way> coastlines;
 
     private float minX, minY, maxX, maxY;
 
@@ -28,13 +27,11 @@ public class Model {
         drawableMap = new HashMap<>();
 
         drawables = new ArrayList<>();
+        nodeIndex = new MemberIndex();
         coastlines = new ArrayList<>();
-        nodeIndex = new NodeIndex();
-        coastlines = new ArrayList<>();
-        wayIndex = new WayIndex();
-        relationIndex = new RelationIndex();
+        wayIndex = new MemberIndex();
+        relationIndex = new MemberIndex();
 
-        coastlines = new ArrayList<>();
         try {
             OSMParser.readMapElements(filepath, this);
         } catch (Exception e) {
@@ -112,32 +109,32 @@ public class Model {
         this.maxY = maxY;
     }
 
-    public NodeIndex getNodeIndex() {
+    public MemberIndex getNodeIndex() {
         return nodeIndex;
     }
 
     public void addToNodeIndex(Node node) {
-        nodeIndex.addNode(node);
+        nodeIndex.addMember(node);
     }
 
     public List<Drawable> getDrawables() {
         return drawables;
     }
 
-    public WayIndex getWayIndex() {
+    public MemberIndex getWayIndex() {
         return wayIndex;
     }
 
     public void addToWayIndex(Way way) {
-        wayIndex.addWay(way);
+        wayIndex.addMember(way);
     }
 
-    public RelationIndex getRelationIndex() {
+    public MemberIndex getRelationIndex() {
         return relationIndex;
     }
 
     public void addToRelationIndex(Relation relation) {
-        relationIndex.addRelation(relation);
+        relationIndex.addMember(relation);
     }
 
     public ArrayList<Way> getCoastlines() {
