@@ -17,7 +17,7 @@ public class MapCanvas extends Canvas {
         colorScheme = new ColorScheme();
         moveToInitialPosition();
         widthProperty().addListener((obs, oldVal, newVal) -> {
-            pan(((Double)newVal -(Double)oldVal)/2,0);
+            pan(((Double)newVal-(Double)oldVal)/2,0);
         });
         heightProperty().addListener((obs, oldVal, newVal) -> {
             pan(0,((Double)newVal-(Double)oldVal)/2);
@@ -176,7 +176,7 @@ public class MapCanvas extends Canvas {
     }
 
     private void moveToInitialPosition(){
-        double deltaY = (model.getMaxY())-(model.getMinY());
+        double deltaY = model.getMaxY()-model.getMinY();
         double deltaX = model.getMaxX()-model.getMinX();
         trans.setToIdentity();
         if(deltaX<deltaY){
