@@ -31,7 +31,6 @@ public class Model {
         coastlines = new ArrayList<>();
         nodeIndex = new NodeIndex();
         coastlines = new ArrayList<>();
-        nodeIndex = new NodeIndex();
         wayIndex = new WayIndex();
         relationIndex = new RelationIndex();
 
