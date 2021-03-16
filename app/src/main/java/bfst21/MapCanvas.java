@@ -164,7 +164,6 @@ public class MapCanvas extends Canvas {
     public void zoom(double factor, Point2D center) {
         trans.prependScale(factor, factor, center);
         repaint();
-
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
