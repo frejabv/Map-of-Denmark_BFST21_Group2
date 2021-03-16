@@ -78,7 +78,7 @@ public class OSMParser {
                     var v = xmlReader.getAttributeValue(null, "v");
 
                     if (k.equals("highway") && isWay) {
-                        System.out.println("Road!");
+                        //System.out.println("Road!");
                     }
 
                     try {
@@ -140,7 +140,22 @@ public class OSMParser {
                         }
                     }
                 case "relation":
+                    if(isRelation) {
+                        List<Member> members = relation.getMembers();
+                        for(Member member : members) {
+                            //todo: duplicate code consider making the method separate
+                            for (var tag : tags) {
+                                if (tag == Tag.COASTLINE) {
+                                    model.addCoastline((Way) member);
+                                } else {
+                                    var drawableMap = model.getDrawableMap();
 
+                                    drawableMap.putIfAbsent(tag, new ArrayList<>());
+                                    drawableMap.get(tag).add((Drawable) member);
+                                }
+                            }
+                        }
+                    }
                     isRelation = false;
                     relation = null;
                     break;
