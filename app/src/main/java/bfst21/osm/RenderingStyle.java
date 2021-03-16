@@ -65,6 +65,7 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.SECONDARY, Color.WHITE);
         defaultColorMap.put(Tag.PRIMARY, Color.WHITE);
         defaultColorMap.put(Tag.TRUNK, Color.WHITE);
+        defaultColorMap.put(Tag.TRACK, Color.BROWN);
     }
 
     private void genDarkMode() {
@@ -87,6 +88,7 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.SECONDARY, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.PRIMARY, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.TRUNK, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.TRACK, Color.BROWN);
     }
 
     public void deuteranopeColorMode() {

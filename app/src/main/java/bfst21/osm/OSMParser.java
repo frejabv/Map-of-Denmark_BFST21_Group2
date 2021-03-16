@@ -77,6 +77,10 @@ public class OSMParser {
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
 
+                    if (k.equals("highway") && isWay) {
+                        System.out.println("Road!");
+                    }
+
                     try {
                         var tag = Tag.valueOf(v.toUpperCase());
                         tags.add(tag);
