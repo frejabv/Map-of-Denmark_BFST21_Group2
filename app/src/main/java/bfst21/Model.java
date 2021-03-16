@@ -18,7 +18,6 @@ public class Model {
     private WayIndex wayIndex;
     private RelationIndex relationIndex;
     // drawables are all ways that not in any other list
-    private List<Drawable> undefinedDrawables;
     private ArrayList<Way> coastlines;
     private List<Drawable> islands = new ArrayList<>();
     private Bounds bounds;
@@ -36,7 +35,6 @@ public class Model {
         wayIndex = new WayIndex();
         relationIndex = new RelationIndex();
 
-        undefinedDrawables = new ArrayList<>();
         coastlines = new ArrayList<>();
         try {
             OSMParser.readMapElements(filepath, this);
@@ -141,14 +139,6 @@ public class Model {
 
     public void addToRelationIndex(Relation relation) {
         relationIndex.addRelation(relation);
-    }
-
-    public List<Drawable> getUndefinedDrawables() {
-        return undefinedDrawables;
-    }
-
-    public void addWay(Way way) {
-        undefinedDrawables.add(way);
     }
 
     public ArrayList<Way> getCoastlines() {

@@ -32,7 +32,7 @@ public class MapCanvas extends Canvas {
         gc.fill();
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
 
-        gc.setFill(Color.LIGHTYELLOW);
+        gc.setFill(renderingStyle.island);
         for (var island : model.getIslands()) {
             island.draw(gc);
             gc.fill();

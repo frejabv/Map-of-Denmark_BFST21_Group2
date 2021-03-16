@@ -7,12 +7,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
-import javafx.scene.control.ToggleButton;
 
 import java.util.ArrayList;
 

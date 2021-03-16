@@ -135,7 +135,6 @@ public class OSMParser {
                             drawableMap.putIfAbsent(tag, new ArrayList<>());
                             drawableMap.get(tag).add(way);
                         }
-
                     }
                 case "relation":
 
