@@ -86,10 +86,12 @@ public class OSMParser {
                         // We don't care about tags not in our Tag enum
                     }
 
-                    try {
-                        tag = Tag.valueOf(k.toUpperCase());
-                    } catch (IllegalArgumentException e) {
-                        // We don't care about tags not in our Tag enum
+                    if (tag == Tag.EMPTY) {
+                        try {
+                            tag = Tag.valueOf(k.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            // We don't care about tags not in our Tag enum
+                        }
                     }
                     break;
                 }
