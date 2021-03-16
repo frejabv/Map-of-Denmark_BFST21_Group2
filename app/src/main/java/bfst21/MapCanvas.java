@@ -16,11 +16,12 @@ public class MapCanvas extends Canvas {
         this.model = model;
         colorScheme = new ColorScheme();
         moveToInitialPosition();
+        double a = getHeight();
         widthProperty().addListener((obs, oldVal, newVal) -> {
-            zoom((Double)newVal/(Double) oldVal, new Point2D(0,0));
+            pan(-((Double)oldVal-(Double)newVal)/2,0);
         });
         heightProperty().addListener((obs, oldVal, newVal) -> {
-            //TODO: take height in to consideration
+            pan(0,-((Double)oldVal-(Double)newVal)/2);
         });
     }
 
@@ -176,7 +177,7 @@ public class MapCanvas extends Canvas {
     }
 
     private void moveToInitialPosition(){
-        double deltaY = (-model.getMaxY())-(-model.getMinY());
+        double deltaY = (model.getMaxY())-(model.getMinY());
         double deltaX = model.getMaxX()-model.getMinX();
         trans.setToIdentity();
         if(deltaX<deltaY){
