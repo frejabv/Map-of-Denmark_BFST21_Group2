@@ -1,68 +1,65 @@
 package bfst21;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import bfst21.osm.Node;
 import bfst21.osm.NodeIndex;
 import bfst21.osm.Way;
 import org.junit.jupiter.api.Test;
 
-public class OSMObjectsTest {
-    @Test
-    public void testNewNode() {
-        Node testNode1 = new Node(1000, 560, 123);
-        assertEquals(1000, testNode1.getX());
-        assertEquals(-1000, testNode1.getY());
-        assertEquals(123, testNode1.getId());
-    }
+    public class OSMObjectsTest {
+        @Test
+        public void testNewNode(){
+            Node testNode1 = new Node(1000,560 ,123);
+            assertEquals(1000,testNode1.getX());
+            assertEquals(-1000,testNode1.getY());
+            assertEquals(123,testNode1.getId());
+        }
+        @Test
+        public void testAddingNodeToWay(){
+            Way testWay1 = new Way(1);
+            Node testNode1 = new Node(100,200,300);
+            Node testNode2 = new Node(200,300,400);
+            testWay1.addNode(testNode1);
+            testWay1.addNode(testNode2);
+            assertEquals(testNode1,testWay1.first());
+            assertEquals(testNode2,testWay1.last());
+        }
+        @Test
+        public void testMerging2Ways(){
+            Way testWay1 = new Way(1);
+            Node testNode1 = new Node(100,200,300);
+            Node testNode2 = new Node(200,300,400);
+            testWay1.addNode(testNode1);
+            testWay1.addNode(testNode2);
+            Way testWay2 = new Way(1);
+            Node testNode3 = new Node(300,400,500);
+            Node testNode4 = new Node(400,500,600);
+            testWay2.addNode(testNode3);
+            testWay2.addNode(testNode4);
+            Way mergedTestWay = Way.merge(testWay1,testWay2);
+            assertEquals(mergedTestWay.first(),testNode1);
+            assertEquals(mergedTestWay.last(),testNode4);
+        }
 
-    @Test
-    public void testAddingNodeToWay() {
-        Way testWay1 = new Way();
-        Node testNode1 = new Node(100, 200, 300);
-        Node testNode2 = new Node(200, 300, 400);
-        testWay1.addNode(testNode1);
-        testWay1.addNode(testNode2);
-        assertEquals(testNode1, testWay1.first());
-        assertEquals(testNode2, testWay1.last());
-    }
+        @Test
+        public void testMerging3Ways(){
+            Way testWay1 = new Way(1);
+            Node testNode1 = new Node(100,200,300);
+            Node testNode2 = new Node(200,300,400);
+            testWay1.addNode(testNode1);
+            testWay1.addNode(testNode2);
 
-    @Test
-    public void testMerging2Ways() {
-        Way testWay1 = new Way();
-        Node testNode1 = new Node(100, 200, 300);
-        Node testNode2 = new Node(200, 300, 400);
-        testWay1.addNode(testNode1);
-        testWay1.addNode(testNode2);
-        Way testWay2 = new Way();
-        Node testNode3 = new Node(300, 400, 500);
-        Node testNode4 = new Node(400, 500, 600);
-        testWay2.addNode(testNode3);
-        testWay2.addNode(testNode4);
-        Way mergedTestWay = Way.merge(testWay1, testWay2);
-        assertEquals(mergedTestWay.first(), testNode1);
-        assertEquals(mergedTestWay.last(), testNode4);
-    }
+            Way testWay2 = new Way(1);
+            Node testNode3 = new Node(300,400,500);
+            Node testNode4 = new Node(400,500,600);
+            testWay2.addNode(testNode3);
+            testWay2.addNode(testNode4);
 
-    @Test
-    public void testMerging3Ways() {
-        Way testWay1 = new Way();
-        Node testNode1 = new Node(100, 200, 300);
-        Node testNode2 = new Node(200, 300, 400);
-        testWay1.addNode(testNode1);
-        testWay1.addNode(testNode2);
-
-        Way testWay2 = new Way();
-        Node testNode3 = new Node(300, 400, 500);
-        Node testNode4 = new Node(400, 500, 600);
-        testWay2.addNode(testNode3);
-        testWay2.addNode(testNode4);
-
-        Way testWay3 = new Way();
-        Node testNode5 = new Node(500, 600, 700);
-        Node testNode6 = new Node(600, 700, 800);
-        testWay3.addNode(testNode5);
-        testWay3.addNode(testNode6);
+            Way testWay3 = new Way(1);
+            Node testNode5 = new Node(500,600,700);
+            Node testNode6 = new Node(600,700,800);
+            testWay3.addNode(testNode5);
+            testWay3.addNode(testNode6);
 
         Way mergedTestWay = Way.merge(Way.merge(testWay1, testWay2), testWay3);
         assertEquals(mergedTestWay.first(), testNode1);

@@ -1,7 +1,6 @@
 package bfst21.osm;
 
 import java.io.*;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -10,14 +9,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
-import bfst21.osm.Node;
-import bfst21.osm.Way;
 import bfst21.exceptions.UnsupportedFileTypeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import bfst21.osm.Drawable;
 
 public class OSMParser {
 
@@ -41,11 +37,13 @@ public class OSMParser {
             throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
-
-        Tag tag = Tag.EMPTY;
-        boolean isWay = false;
-
+        ArrayList<Tag> tags = new ArrayList<>();
         Way way = null;
+        Relation relation = null;
+
+        boolean isWay = false;
+        boolean isRelation = false;
+
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
             case XMLStreamReader.START_ELEMENT:
@@ -64,7 +62,10 @@ public class OSMParser {
                     break;
                 case "way":
                     isWay = true;
-                    way = new Way();
+                    var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                    way = new Way(wayId);
+                    model.addToWayIndex(way);
+                    tags.clear();
                     break;
                 case "nd":
                     if (isWay && way != null) {
@@ -76,39 +77,69 @@ public class OSMParser {
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
 
-                    // This is a temporary fix, we need to be able to handle multiple tags
-                    if (tag == Tag.COASTLINE)
-                        break;
-
                     try {
-                        tag = Tag.valueOf(v.toUpperCase());
+                        var tag = Tag.valueOf(v.toUpperCase());
+                        tags.add(tag);
                     } catch (IllegalArgumentException e) {
                         // We don't care about tags not in our Tag enum
                     }
 
-                    if (tag == Tag.EMPTY) {
-                        try {
-                            tag = Tag.valueOf(k.toUpperCase());
-                        } catch (IllegalArgumentException e) {
-                            // We don't care about tags not in our Tag enum
-                        }
+                    try {
+                        var tag = Tag.valueOf(k.toUpperCase());
+                        tags.add(tag);
+                    } catch (IllegalArgumentException e) {
+                        // We don't care about tags not in our Tag enum
                     }
                     break;
+                case "relation":
+                    isRelation = true;
+                    var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                    relation = new Relation(relationId);
+                    model.addToRelationIndex(relation);
+                    tags.clear();
+                    break;
+                case "member":
+                    var type = xmlReader.getAttributeValue(null, "type");
+                    var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                    var role = xmlReader.getAttributeValue(null, "role");
+
+                    Member memberRef = null;
+                    switch (type) {
+                    case "node":
+                        memberRef = model.getNodeIndex().getNode(ref);
+                        break;
+                    case "way":
+                        memberRef = model.getWayIndex().getWay(ref);
+                        break;
+                    case "relation":
+                        memberRef = model.getRelationIndex().getRelation(ref);
+                        break;
+                    }
+                    if (memberRef != null) {
+                        relation.addMember(memberRef);
+                        memberRef.addRole(relation.getId(), role);
+                    }
+                    break;
+
                 }
                 break;
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                 case "way":
-                    if (tag == Tag.COASTLINE) {
-                        model.addCoastline(way);
-                    } else {
-                        var drawableMap = model.getDrawableMap();
+                    for (var tag : tags) {
+                        if (tag == Tag.COASTLINE) {
+                            model.addCoastline(way);
+                        } else {
+                            var drawableMap = model.getDrawableMap();
 
-                        drawableMap.putIfAbsent(tag, new ArrayList<>());
-                        drawableMap.get(tag).add(way);
+                            drawableMap.putIfAbsent(tag, new ArrayList<>());
+                            drawableMap.get(tag).add(way);
+                        }
                     }
-                    way = null;
-                    tag = Tag.EMPTY;
+                case "relation":
+
+                    isRelation = false;
+                    relation = null;
                     break;
                 }
                 break;
@@ -116,6 +147,10 @@ public class OSMParser {
         }
         // TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
+        System.out.println(model.getCoastlines());
+        if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
+            System.out.println("you fool, you think it is that simple? hahahahah");
+        }
     }
 
     public static List<Drawable> mergeCoastlines(ArrayList<Way> coastlines) {
