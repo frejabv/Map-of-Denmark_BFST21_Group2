@@ -150,6 +150,11 @@ public class MapCanvas extends Canvas {
             line.draw(gc);
         }
 
+        gc.setStroke(colorScheme.trackWay);
+        gc.setFill(colorScheme.trackWay);
+        for (var line : model.getTrackWays()) {
+            line.draw(gc);
+        }
 
         gc.restore();
     }
