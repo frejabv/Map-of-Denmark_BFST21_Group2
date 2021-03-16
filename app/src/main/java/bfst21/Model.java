@@ -19,6 +19,7 @@ public class Model {
     private float minX, minY, maxX, maxY;
 
     public Model(String filepath) {
+        coastlines = new ArrayList<>();
         nodeIndex = new NodeIndex();
         wayIndex = new WayIndex();
         relationIndex = new RelationIndex();

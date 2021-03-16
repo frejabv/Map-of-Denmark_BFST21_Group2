@@ -22,6 +22,7 @@ public class ColorScheme{
     public Color secondaryWay;
     public Color primaryWay;
     public Color trunkWay;
+    public Color trackWay;
 
     public ColorScheme(){
         defaultMode();
@@ -47,10 +48,37 @@ public class ColorScheme{
         secondaryWay = Color.YELLOW;
         primaryWay = Color.ORANGE;
         trunkWay = Color.RED;
+        trackWay = Color.BROWN;
     }
 
     public void darkMode(){
+        sea = Color.rgb(47, 53, 66); 
+        island = Color.rgb(87, 96, 111);
+        park = Color.rgb(116, 125, 140);
+        buildings = Color.rgb(72, 84, 96);
 
+        unclassifiedWay = Color.rgb(128, 142, 155);
+        roads = Color.rgb(128, 142, 155);
+        livingStreets = Color.rgb(128, 142, 155);
+        residentialWay = Color.rgb(128, 142, 155);
+        serviceWay = Color.rgb(128, 142, 155);
+        junction = Color.rgb(128, 142, 155);
+        tertiaryWay = Color.rgb(128, 142, 155);
+        secondaryWay = Color.rgb(128, 142, 155);
+        primaryWay = Color.rgb(128, 142, 155);
+        trunkWay = Color.rgb(128, 142, 155);
+        trackWay = Color.rgb(128, 142, 155);
+    }
+
+    public void deuteranopeColorMode(){
+        
+    }
+
+    public void protanopeColorMode(){
+        
+    }
+
+    public void tritanopeColorMode(){
     }
 
     public void redGreenColorBlindMode(){

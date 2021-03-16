@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import java.io.*;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -10,12 +11,10 @@ import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class OSMParser {
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
@@ -38,8 +37,6 @@ public class OSMParser {
             throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
-
-
         ArrayList<Tag> tags = new ArrayList<>();
         Way way = null;
         Relation relation = null;
