@@ -5,10 +5,17 @@ import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 
-public class Way implements Drawable {
+
+public class Way extends Member implements Drawable {
     private List<Node> nodes;
 
+    public Way(long id) {
+        super(id);
+        this.nodes = new ArrayList<>();
+    }
+
     public Way() {
+        super(0);
         this.nodes = new ArrayList<>();
     }
 

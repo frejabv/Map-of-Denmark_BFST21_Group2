@@ -10,6 +10,7 @@ enum Theme {
 
 public class RenderingStyle {
     private Map<Tag, Color> defaultColorMap;
+    private Map<Tag, Color> darkModeColorMap;
     private Map<Tag, DrawStyle> styleMap;
     private Map<Tag, Integer> widthMap;
     private Theme theme;
@@ -19,6 +20,7 @@ public class RenderingStyle {
 
     public RenderingStyle() {
         defaultColorMap = new HashMap<>();
+        darkModeColorMap = new HashMap<>();
         styleMap = new HashMap<>();
         theme = theme.DEFAULT;
 
@@ -26,14 +28,24 @@ public class RenderingStyle {
         styleMap.put(Tag.WATER, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
 
+        genDefaultMode();
+        genDarkMode();
         defaultMode();
     }
 
     public void defaultMode() {
-        // These are special cases that are not related to osm tags
         sea = Color.rgb(170, 218, 255);
         island = Color.rgb(255, 241, 178);
+        theme = theme.DEFAULT;
+    }
 
+    public void darkMode() {
+        sea = Color.rgb(47, 53, 66);
+        island = Color.rgb(87, 96, 111);
+        theme = theme.DARK;
+    }
+
+    private void genDefaultMode() {
         defaultColorMap.put(Tag.BUILDING, Color.rgb(232, 232, 232));
         defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
         defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
@@ -55,12 +67,37 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.TRUNK, Color.WHITE);
     }
 
-    public void darkMode() {
+    private void genDarkMode() {
+
+        darkModeColorMap.put(Tag.WATER, Color.LIGHTBLUE);
+        darkModeColorMap.put(Tag.PARK, Color.rgb(116, 125, 140));
+        darkModeColorMap.put(Tag.FOOTWAY, Color.GREEN);
+        darkModeColorMap.put(Tag.PATH, Color.GREEN);
+        darkModeColorMap.put(Tag.BUILDING, Color.rgb(72, 84, 96));
+        darkModeColorMap.put(Tag.CYCLEWAY, Color.TURQUOISE);
+
+        darkModeColorMap.put(Tag.PEDESTRIAN, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.UNCLASSIFIED, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.ROAD, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.LIVING_STREET, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.RESIDENTIAL, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.SERVICE, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.JUNCTION, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.TERTIARY, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.SECONDARY, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.PRIMARY, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.TRUNK, Color.rgb(128, 142, 155));
+    }
+
+    public void deuteranopeColorMode() {
 
     }
 
-    public void redGreenColorBlindMode() {
+    public void protanopeColorMode() {
 
+    }
+
+    public void tritanopeColorMode() {
     }
 
     public Color getColorByTag(Tag tag) {
