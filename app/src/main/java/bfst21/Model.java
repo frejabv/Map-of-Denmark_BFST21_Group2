@@ -17,7 +17,7 @@ public class Model {
     private List<Drawable> drawables;
     private WayIndex wayIndex;
     private RelationIndex relationIndex;
-    // drawables are all ways that not in any other list
+    // drawables are all ways that are not in any other list
     private ArrayList<Way> coastlines;
     private List<Drawable> islands = new ArrayList<>();
     private Bounds bounds;
