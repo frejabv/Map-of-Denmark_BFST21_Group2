@@ -8,15 +8,16 @@ enum Theme {
     DEFAULT, DARK,
 }
 
-public class ColorScheme {
+public class RenderingStyle {
     private Map<Tag, Color> defaultColorMap;
     private Map<Tag, DrawStyle> styleMap;
+    private Map<Tag, Integer> widthMap;
     private Theme theme;
 
     public Color sea;
     public Color island;
 
-    public ColorScheme() {
+    public RenderingStyle() {
         defaultColorMap = new HashMap<>();
         styleMap = new HashMap<>();
         theme = theme.DEFAULT;
@@ -34,24 +35,24 @@ public class ColorScheme {
         island = Color.rgb(255, 241, 178);
 
         defaultColorMap.put(Tag.BUILDING, Color.rgb(232, 232, 232));
-        defaultColorMap.put(Tag.PARK,Color.rgb(195, 236, 178) );
-        defaultColorMap.put(Tag.WATER,  Color.LIGHTBLUE);
+        defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
+        defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
         defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);
         defaultColorMap.put(Tag.PATH, Color.GREEN);
 
         defaultColorMap.put(Tag.CYCLEWAY, Color.TURQUOISE);
 
-        defaultColorMap.put(Tag.PEDESTRIAN, Color.PURPLE);
-        defaultColorMap.put(Tag.UNCLASSIFIED, Color.PURPLE);
-        defaultColorMap.put(Tag.ROAD, Color.PURPLE);
-        defaultColorMap.put(Tag.LIVING_STREET, Color.PURPLE);
-        defaultColorMap.put(Tag.RESIDENTIAL, Color.PURPLE);
-        defaultColorMap.put(Tag.SERVICE, Color.PURPLE);
-        defaultColorMap.put(Tag.JUNCTION, Color.PURPLE);
-        defaultColorMap.put(Tag.TERTIARY, Color.PURPLE);
-        defaultColorMap.put(Tag.SECONDARY, Color.PURPLE);
-        defaultColorMap.put(Tag.PRIMARY, Color.PURPLE);
-        defaultColorMap.put(Tag.TRUNK, Color.PURPLE);
+        defaultColorMap.put(Tag.PEDESTRIAN, Color.WHITE);
+        defaultColorMap.put(Tag.UNCLASSIFIED, Color.WHITE);
+        defaultColorMap.put(Tag.ROAD, Color.WHITE);
+        defaultColorMap.put(Tag.LIVING_STREET, Color.WHITE);
+        defaultColorMap.put(Tag.RESIDENTIAL, Color.WHITE);
+        defaultColorMap.put(Tag.SERVICE, Color.WHITE);
+        defaultColorMap.put(Tag.JUNCTION, Color.WHITE);
+        defaultColorMap.put(Tag.TERTIARY, Color.WHITE);
+        defaultColorMap.put(Tag.SECONDARY, Color.WHITE);
+        defaultColorMap.put(Tag.PRIMARY, Color.WHITE);
+        defaultColorMap.put(Tag.TRUNK, Color.WHITE);
     }
 
     public void darkMode() {

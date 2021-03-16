@@ -10,22 +10,23 @@ import bfst21.osm.*;
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
-    ColorScheme colorScheme;
+    RenderingStyle renderingStyle;
 
     public void init(Model model) {
         this.model = model;
-        colorScheme = new ColorScheme();
+        renderingStyle = new RenderingStyle();
         trans.setToIdentity();
 
         pan(-model.getMinX(), -model.getMaxY());
-        zoom(getHeight() / (Math.min((model.getMaxX() - model.getMinX()), (model.getMinY() - model.getMaxY()))), new Point2D(0, 0));
+        zoom(getHeight() / (Math.min((model.getMaxX() - model.getMinX()), (model.getMinY() - model.getMaxY()))),
+                new Point2D(0, 0));
     }
 
     void repaint() {
         var gc = getGraphicsContext2D();
         gc.save();
         gc.setTransform(new Affine());
-        gc.setFill(colorScheme.sea);
+        gc.setFill(renderingStyle.sea);
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
@@ -38,12 +39,12 @@ public class MapCanvas extends Canvas {
         }
 
         model.getDrawableMap().forEach((tag, drawables) -> {
-            gc.setStroke(colorScheme.getColorByTag(tag));
-            var style = colorScheme.getDrawStyleByTag(tag);
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            var style = renderingStyle.getDrawStyleByTag(tag);
             drawables.forEach(drawable -> {
                 drawable.draw(gc);
                 if (style == DrawStyle.FILL) {
-                    gc.setFill(colorScheme.getColorByTag(tag));
+                    gc.setFill(renderingStyle.getColorByTag(tag));
                     gc.fill();
                 }
             });
