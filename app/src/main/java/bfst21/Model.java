@@ -9,6 +9,7 @@ public class Model {
     private MemberIndex nodeIndex;
     private MemberIndex wayIndex;
     private MemberIndex relationIndex;
+    private KDTree kdTree;
     //drawables are all ways that not in any other list
     private List<Drawable> undefinedDrawables;
     private ArrayList<Way> coastlines;
@@ -22,6 +23,8 @@ public class Model {
         nodeIndex = new MemberIndex();
         wayIndex = new MemberIndex();
         relationIndex = new MemberIndex();
+
+        kdTree = new KDTree(this);
 
         undefinedDrawables = new ArrayList<>();
         coastlines = new ArrayList<>();
@@ -263,4 +266,7 @@ public class Model {
         this.islands = islands;
     }
 
+    public KDTree getKdTree() {
+        return kdTree;
+    }
 }

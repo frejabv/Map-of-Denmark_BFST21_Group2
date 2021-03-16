@@ -11,6 +11,9 @@ import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
+
+import javafx.geometry.Point2D;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -58,7 +61,7 @@ public class OSMParser {
                             var nodeId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                             var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                            model.addToNodeIndex(new Node(lon, lat, nodeId));
+                            model.addToNodeIndex(model.getKdTree().insert(new Point2D(lon,lat)));
                             break;
                         case "way":
                             isWay = true;
