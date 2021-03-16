@@ -1,8 +1,9 @@
 package bfst21;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import bfst21.osm.MemberIndex;
 import bfst21.osm.Node;
-import bfst21.osm.NodeIndex;
 import bfst21.osm.Way;
 import org.junit.jupiter.api.Test;
 
@@ -66,30 +67,32 @@ import org.junit.jupiter.api.Test;
         assertEquals(mergedTestWay.last(), testNode6);
     }
 
+    //Consider renaming to MemberIndex
     @Test
     public void testAddingNodeToNodeIndex() {
-        NodeIndex testNodeIndex = new NodeIndex();
+        MemberIndex testNodeIndex = new MemberIndex();
         Node testNode1 = new Node(1000, 560, 123);
         Node testNode2 = new Node(500, 600, 456);
         Node testNode3 = new Node(600, 700, 789);
-        testNodeIndex.addNode(testNode1);
-        testNodeIndex.addNode(testNode2);
-        testNodeIndex.addNode(testNode3);
+        testNodeIndex.addMember(testNode1);
+        testNodeIndex.addMember(testNode2);
+        testNodeIndex.addMember(testNode3);
         assertEquals(3, testNodeIndex.size());
     }
 
+    //Consider renaming to MemberIndex
     @Test
     public void testGettingNodesFromNodeIndex() {
-        NodeIndex testNodeIndex = new NodeIndex();
+        MemberIndex testNodeIndex = new MemberIndex();
         Node testNode1 = new Node(1000, 560, 123);
         Node testNode2 = new Node(500, 600, 456);
         Node testNode3 = new Node(600, 700, 789);
-        testNodeIndex.addNode(testNode1);
-        testNodeIndex.addNode(testNode2);
-        testNodeIndex.addNode(testNode3);
-        assertEquals(testNode1, testNodeIndex.getNode(123));
-        assertEquals(testNode2, testNodeIndex.getNode(456));
-        assertEquals(testNode3, testNodeIndex.getNode(789));
+        testNodeIndex.addMember(testNode1);
+        testNodeIndex.addMember(testNode2);
+        testNodeIndex.addMember(testNode3);
+        assertEquals(testNode1, testNodeIndex.getMember(123));
+        assertEquals(testNode2, testNodeIndex.getMember(456));
+        assertEquals(testNode3, testNodeIndex.getMember(789));
     }
 
 }
