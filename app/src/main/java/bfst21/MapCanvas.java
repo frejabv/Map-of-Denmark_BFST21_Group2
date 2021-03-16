@@ -15,9 +15,10 @@ public class MapCanvas extends Canvas {
     public void init(Model model) {
         this.model = model;
         colorScheme = new ColorScheme();
-        pan(-model.getMinX(), -model.getMinY());
-        zoom(getWidth() / (model.getMaxX() - model.getMinX()), new Point2D(0, 0));
-        repaint();
+        trans.setToIdentity();
+
+        pan(-model.getMinX(), -model.getMaxY());
+        zoom(getHeight() / (Math.min((model.getMaxX() - model.getMinX()), (model.getMinY() - model.getMaxY()))), new Point2D(0, 0));
     }
 
     void repaint() {
