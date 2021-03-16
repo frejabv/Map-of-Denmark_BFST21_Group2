@@ -1,5 +1,7 @@
 package bfst21;
 
+import bfst21.osm.*;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
@@ -99,6 +101,8 @@ public class Controller {
     @FXML
     private void onMousePressedOnCanvas(MouseEvent e) {
         lastMouse = new Point2D(e.getX(), e.getY());
+        Node tester = model.getKdTree().nearest(lastMouse);
+        System.out.println("Nearest node coordinates are: x = " + tester.getX() + " y =" + tester.getY());
     }
 
 
