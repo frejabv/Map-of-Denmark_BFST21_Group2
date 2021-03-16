@@ -16,12 +16,11 @@ public class MapCanvas extends Canvas {
         this.model = model;
         colorScheme = new ColorScheme();
         moveToInitialPosition();
-        double a = getHeight();
         widthProperty().addListener((obs, oldVal, newVal) -> {
-            pan(-((Double)oldVal-(Double)newVal)/2,0);
+            pan(((Double)newVal -(Double)oldVal)/2,0);
         });
         heightProperty().addListener((obs, oldVal, newVal) -> {
-            pan(0,-((Double)oldVal-(Double)newVal)/2);
+            pan(0,((Double)newVal-(Double)oldVal)/2);
         });
     }
 
