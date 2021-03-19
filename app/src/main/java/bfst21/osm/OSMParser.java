@@ -139,6 +139,7 @@ public class OSMParser {
                             drawableMap.get(tag).add(way);
                         }
                     }
+                    break;
                 case "relation":
 
                     isRelation = false;
