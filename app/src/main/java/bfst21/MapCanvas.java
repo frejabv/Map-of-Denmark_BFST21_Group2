@@ -104,6 +104,14 @@ public class MapCanvas extends Canvas {
             return null;
         }
     }
+    public void goToPosition(double minX, double maxX, double maxY){
+            trans.setToIdentity();
+            pan(-minX, -maxY);
+            zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(0, 0));
+            if(maxX-minX < 0.1){
+                zoom(0.01, new Point2D(getWidth()/2, getHeight()/2));
+            }
+    }
 
     private void moveToInitialPosition() {
         double deltaY = model.getMaxY() - model.getMinY();

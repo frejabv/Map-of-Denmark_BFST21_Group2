@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.ScrollEvent;
@@ -93,6 +94,7 @@ public class Controller {
     }
 
     @FXML
+
     private void onMouseDraggedOnCanvas(MouseEvent e) {
         double dx = e.getX() - lastMouse.getX();
         double dy = e.getY() - lastMouse.getY();
