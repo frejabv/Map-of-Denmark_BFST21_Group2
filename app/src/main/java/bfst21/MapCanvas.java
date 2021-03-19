@@ -15,11 +15,13 @@ public class MapCanvas extends Canvas {
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
-        trans.setToIdentity();
-
-        pan(-model.getMinX(), -model.getMaxY());
-        zoom(getHeight() / (Math.min((model.getMaxX() - model.getMinX()), (model.getMinY() - model.getMaxY()))),
-                new Point2D(0, 0));
+        moveToInitialPosition();
+        widthProperty().addListener((obs, oldVal, newVal) -> {
+            pan(((Double) newVal - (Double) oldVal) / 2, 0);
+        });
+        heightProperty().addListener((obs, oldVal, newVal) -> {
+            pan(0, ((Double) newVal - (Double) oldVal) / 2);
+        });
     }
 
     void repaint() {
@@ -72,4 +74,21 @@ public class MapCanvas extends Canvas {
         }
     }
 
+    private void moveToInitialPosition(){
+        double deltaY = model.getMaxY() - model.getMinY();
+        double deltaX = model.getMaxX() - model.getMinX();
+        trans.setToIdentity();
+        if(deltaX<deltaY){
+            pan(-model.getMinX(),-model.getMaxY());
+            zoom((getHeight() - getWidth() / (model.getMaxX() - model.getMinX())) * -1, new Point2D(0,0));
+            pan(-(model.getMinY() - (model.getMaxX())), 0);
+        }
+        else {
+            pan(-model.getMinX(), -model.getMaxY());
+            zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
+            pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
+        }
+    }
+
 }
+        
