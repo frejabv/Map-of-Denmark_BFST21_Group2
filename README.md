@@ -42,3 +42,19 @@ And try again
 ### Running tests
 Tests can be run by the following command `./gradlew test`
 
+### Running performance tests
+
+#### TTI
+The time to interactive test is run exclusively on UNIX system, since we rely on the `time` command to measure the TTI (time to interactive)
+
+To run the test on your own machine run the following command: 
+```bash
+$ time ./gradlew run --args="ttiMode"
+```
+
+The program will run and exit immediately when the window is ready to handle user input. The output of the command will look something like this:
+```bash
+./gradlew run --args="ttiMode"  1,11s user 0,07s system 43% cpu 2,728 total
+```
+
+The number were interested in is the total (the last one).
