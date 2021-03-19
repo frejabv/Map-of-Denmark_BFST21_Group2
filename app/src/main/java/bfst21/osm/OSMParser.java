@@ -129,13 +129,13 @@ public class OSMParser {
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                 case "way":
-                    addWayToList(way, tags, model);
+                    addDrawableToList(way, tags, model);
                     break;
                 case "relation":
                     if(isRelation) {
                         List<Member> members = relation.getMembers();
                         for(Member member : members) {
-                            addWayToList(member, tags, model);
+                            addDrawableToList(member, tags, model);
                         }
                     }
                     isRelation = false;
@@ -153,7 +153,7 @@ public class OSMParser {
         }
     }
 
-    public static void addWayToList(Member way, List<Tag> tags, Model model) {
+    public static void addDrawableToList(Member way, List<Tag> tags, Model model) {
         var drawableMap = model.getDrawableMap();
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
