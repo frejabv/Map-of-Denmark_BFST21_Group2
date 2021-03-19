@@ -7,12 +7,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
-import javafx.scene.control.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -50,16 +48,18 @@ public class Controller {
             String[] result = autocorrector.correction(newText);
             for (String temp : result) {
                 searchStringCorrected = temp + " ";
-            }   
+            }
             addSuggestions();
         });
     }
+
     ArrayList<Text> suggestionList = new ArrayList<>();
-    public void addSuggestions(){
+
+    public void addSuggestions() {
         searchContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
-        if(searchField.textProperty().getValue().length() > 2) {
-            //for(Member temp : possibleMatches)
+        if (searchField.textProperty().getValue().length() > 2) {
+            // for(Member temp : possibleMatches)
             for (int i = 0; i < 8; i++) {
                 Text newSuggestion = new Text("Suggestion!" + i);
                 newSuggestion.getStyleClass().add("suggestion");
@@ -70,13 +70,12 @@ public class Controller {
     }
 
     @FXML
-    public void onKeyPressed(KeyEvent e){
+    public void onKeyPressed(KeyEvent e) {
 
         if (e.getText().equals("d")) {
-            if(debugContainer.isVisible()){
+            if (debugContainer.isVisible()) {
                 changeType("debug", false);
-            }
-            else {
+            } else {
                 changeType("debug", true);
             }
         }
@@ -101,97 +100,99 @@ public class Controller {
         lastMouse = new Point2D(e.getX(), e.getY());
     }
 
-
     public void onMousePressedSearch(MouseEvent mouseEvent) {
-        if(searchContainer.isVisible()){
+        if (searchContainer.isVisible()) {
             hideAll();
             fadeButtons();
-        }
-        else{
-            changeType("search",true);
-            changeType("route",false);
-            changeType("settings",false);
+        } else {
+            changeType("search", true);
+            changeType("route", false);
+            changeType("settings", false);
             fadeButtons();
             searchButton.setStyle("-fx-opacity: 1");
         }
     }
+
     public void onMousePressedRoute(MouseEvent mouseEvent) {
-        if(routeContainer.isVisible()){
+        if (routeContainer.isVisible()) {
             hideAll();
             fadeButtons();
-        }
-        else{
-            changeType("search",false);
-            changeType("route",true);
-            changeType("settings",false);
+        } else {
+            changeType("search", false);
+            changeType("route", true);
+            changeType("settings", false);
             fadeButtons();
             routeButton.setStyle("-fx-opacity: 1");
         }
     }
 
     public void onMousePressedSettings(MouseEvent mouseEvent) {
-        if(settingsContainer.isVisible()){
+        if (settingsContainer.isVisible()) {
             hideAll();
             fadeButtons();
-        }
-        else {
-            changeType("search",false);
-            changeType("route",false);
-            changeType("settings",true);
+        } else {
+            changeType("search", false);
+            changeType("route", false);
+            changeType("settings", true);
             fadeButtons();
             settingsButton.setStyle("-fx-opacity: 1");
         }
     }
 
-
-    public void defaultColorMode(MouseEvent mouseEvent){
-        canvas.colorScheme.defaultMode();
-        canvas.repaint();
-    }
-    public void darkColorMode(MouseEvent mouseEvent){
-        canvas.colorScheme.darkMode();
-        canvas.repaint();
-    }
-    public void deuteranopeColorMode(MouseEvent mouseEvent){
-        canvas.colorScheme.deuteranopeColorMode();
-        canvas.repaint();
-    }
-    public void protanopeColorMode(MouseEvent mouseEvent){
-        canvas.colorScheme.protanopeColorMode();
-        canvas.repaint();
-    }
-    public void tritanopeColorMode(MouseEvent mouseEvent){
-        canvas.colorScheme.tritanopeColorMode();
+    public void defaultColorMode(MouseEvent mouseEvent) {
+        canvas.renderingStyle.defaultMode();
         canvas.repaint();
     }
 
-    public void hideAll(){
-        changeType("search",false);
-        changeType("route",false);
-        changeType("settings",false);
+    public void darkColorMode(MouseEvent mouseEvent) {
+        canvas.renderingStyle.darkMode();
+        canvas.repaint();
     }
-    public void fadeButtons(){
+
+    public void deuteranopeColorMode(MouseEvent mouseEvent) {
+        canvas.renderingStyle.deuteranopeColorMode();
+        canvas.repaint();
+    }
+
+    public void protanopeColorMode(MouseEvent mouseEvent) {
+        canvas.renderingStyle.protanopeColorMode();
+        canvas.repaint();
+    }
+
+    public void tritanopeColorMode(MouseEvent mouseEvent) {
+        canvas.renderingStyle.tritanopeColorMode();
+        canvas.repaint();
+    }
+
+    public void hideAll() {
+        changeType("search", false);
+        changeType("route", false);
+        changeType("settings", false);
+    }
+
+    public void fadeButtons() {
         searchButton.setStyle("-fx-opacity: .5");
         routeButton.setStyle("-fx-opacity: .5");
         settingsButton.setStyle("-fx-opacity: .5");
     }
-    public void changeType(String type, boolean state){
-        switch (type){
-            case "route":
-                routeContainer.setVisible(state);
-                routeContainer.setManaged(state);
-                break;
-            case "settings":
-                settingsContainer.setVisible(state);
-                settingsContainer.setManaged(state);
-                break;
-            case "debug":
-                debugContainer.setVisible(state);
-                debugContainer.setManaged(state);
-                break;
-            default:
-                searchContainer.setVisible(state);
-                searchContainer.setManaged(state);
+
+    public void changeType(String type, boolean state) {
+        switch (type) {
+        case "route":
+            routeContainer.setVisible(state);
+            routeContainer.setManaged(state);
+            break;
+        case "settings":
+            settingsContainer.setVisible(state);
+            settingsContainer.setManaged(state);
+            break;
+        case "debug":
+            debugContainer.setVisible(state);
+            debugContainer.setManaged(state);
+            break;
+        default:
+            searchContainer.setVisible(state);
+            searchContainer.setManaged(state);
         }
     }
 }
