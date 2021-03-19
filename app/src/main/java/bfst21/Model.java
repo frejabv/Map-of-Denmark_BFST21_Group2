@@ -11,6 +11,7 @@ public class Model {
     private MemberIndex nodeIndex;
 
     private Map<Tag, List<Drawable>> drawableMap;
+    private Map<Tag, List<Drawable>> fillMap;
     //
 
     // drawables are all ways that not in any other list
@@ -25,6 +26,7 @@ public class Model {
 
     public Model(String filepath) {
         drawableMap = new HashMap<>();
+        fillMap = new HashMap<>();
 
         drawables = new ArrayList<>();
         nodeIndex = new MemberIndex();
@@ -155,6 +157,10 @@ public class Model {
 
     public Map<Tag, List<Drawable>> getDrawableMap() {
         return drawableMap;
+    }
+
+    public Map<Tag, List<Drawable>> getFillMap() {
+        return fillMap;
     }
 
 }

@@ -40,15 +40,22 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
+        model.getFillMap().forEach((tag, fillables) -> {
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            gc.setFill(renderingStyle.getColorByTag(tag));
+
+            fillables.forEach(fillable -> {
+                fillable.draw(gc);
+                gc.fill();
+            });
+
+        });
+
         model.getDrawableMap().forEach((tag, drawables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
             var style = renderingStyle.getDrawStyleByTag(tag);
             drawables.forEach(drawable -> {
                 drawable.draw(gc);
-                if (style == DrawStyle.FILL) {
-                    gc.setFill(renderingStyle.getColorByTag(tag));
-                    gc.fill();
-                }
             });
         });
 
@@ -74,16 +81,15 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    private void moveToInitialPosition(){
+    private void moveToInitialPosition() {
         double deltaY = model.getMaxY() - model.getMinY();
         double deltaX = model.getMaxX() - model.getMinX();
         trans.setToIdentity();
-        if(deltaX<deltaY){
-            pan(-model.getMinX(),-model.getMaxY());
-            zoom((getHeight() - getWidth() / (model.getMaxX() - model.getMinX())) * -1, new Point2D(0,0));
+        if (deltaX < deltaY) {
+            pan(-model.getMinX(), -model.getMaxY());
+            zoom((getHeight() - getWidth() / (model.getMaxX() - model.getMinX())) * -1, new Point2D(0, 0));
             pan(-(model.getMinY() - (model.getMaxX())), 0);
-        }
-        else {
+        } else {
             pan(-model.getMinX(), -model.getMaxY());
             zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
             pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
@@ -91,4 +97,3 @@ public class MapCanvas extends Canvas {
     }
 
 }
-        

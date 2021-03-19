@@ -44,6 +44,10 @@ public class OSMParser {
         boolean isWay = false;
         boolean isRelation = false;
 
+        var drawableMap = model.getDrawableMap();
+        var fillMap = model.getFillMap();
+        RenderingStyle renderingStyle = new RenderingStyle();
+
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
             case XMLStreamReader.START_ELEMENT:
@@ -133,10 +137,15 @@ public class OSMParser {
                         if (tag == Tag.COASTLINE) {
                             model.addCoastline(way);
                         } else {
-                            var drawableMap = model.getDrawableMap();
+                            var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
-                            drawableMap.putIfAbsent(tag, new ArrayList<>());
-                            drawableMap.get(tag).add(way);
+                            if (drawStyle == DrawStyle.FILL) {
+                                fillMap.putIfAbsent(tag, new ArrayList<>());
+                                fillMap.get(tag).add(way);
+                            } else {
+                                drawableMap.putIfAbsent(tag, new ArrayList<>());
+                                drawableMap.get(tag).add(way);
+                            }
                         }
                     }
                     break;
