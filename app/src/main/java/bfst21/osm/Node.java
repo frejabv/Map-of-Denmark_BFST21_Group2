@@ -1,6 +1,5 @@
 package bfst21.osm;
 
-
 public class Node extends Member{
     private float x;
     private float y;
