@@ -109,6 +109,7 @@ public class Controller {
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if(singleClick) {
+            searchContainer.getChildren().remove(searchContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("search", true);
             suggestionsHeader.textProperty().setValue(coordinates);
@@ -117,7 +118,6 @@ public class Controller {
                 canvas.setPin = false;
                 canvas.repaint();
                 hideAll();
-                searchContainer.getChildren().remove(removePin);
             });
             searchContainer.getChildren().add(removePin);
         }
