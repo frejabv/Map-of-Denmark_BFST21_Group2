@@ -128,6 +128,10 @@ public class Controller {
     public void onMousePressedSearch(MouseEvent mouseEvent) {
         if (searchContainer.isVisible()) {
             hideAll();
+            if(canvas.setPin){
+                canvas.setPin = false;
+                canvas.repaint();
+            }
         }
         else{
             changeType("search",true);
