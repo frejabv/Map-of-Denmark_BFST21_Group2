@@ -188,12 +188,14 @@ public class Controller {
         settingsButton.setStyle("-fx-opacity: .5");
     }
     public void changeType(String type, boolean state){
-        searchContainer.setVisible(false);
-        searchContainer.setManaged(false);
-        routeContainer.setVisible(false);
-        routeContainer.setManaged(false);
-        settingsContainer.setVisible(false);
-        settingsContainer.setManaged(false);
+        if(!type.equals("debug")){
+            searchContainer.setVisible(false);
+            searchContainer.setManaged(false);
+            routeContainer.setVisible(false);
+            routeContainer.setManaged(false);
+            settingsContainer.setVisible(false);
+            settingsContainer.setManaged(false);
+        }
         switch (type){
             case "route":
                 fadeButtons();
