@@ -21,10 +21,11 @@ public class Model {
     private List<Drawable> islands = new ArrayList<>();
     private Bounds bounds;
     private ArrayList<Way> coastlines;
+    private boolean ttiMode;
 
     private float minX, minY, maxX, maxY;
 
-    public Model(String filepath) {
+    public Model(String filepath, boolean ttiMode) {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
@@ -33,6 +34,8 @@ public class Model {
         coastlines = new ArrayList<>();
         wayIndex = new MemberIndex();
         relationIndex = new MemberIndex();
+
+        this.ttiMode = ttiMode;
 
         try {
             OSMParser.readMapElements(filepath, this);
@@ -163,4 +166,7 @@ public class Model {
         return fillMap;
     }
 
+    public boolean getTtiMode() {
+        return ttiMode;
+    }
 }

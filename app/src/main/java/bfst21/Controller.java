@@ -56,6 +56,10 @@ public class Controller {
             }
             addSuggestions();
         });
+
+        if (model.getTtiMode()) {
+            System.exit(0);
+        }
     }
 
     ArrayList<Text> suggestionList = new ArrayList<>();
