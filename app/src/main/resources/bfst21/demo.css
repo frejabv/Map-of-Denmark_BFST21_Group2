@@ -1,5 +1,9 @@
 .buttonSpacing{
     -fx-spacing: 20px;
+    /*JavaFX Margin Fix*/
+    -fx-padding: 0px 0px 20px 0px;
+    -fx-border-insets: 0 0 20px 0;
+    -fx-background-insets: 0 0 20px 0;
 }
 .roundedButton{
     -fx-min-height: 50px;
@@ -14,18 +18,79 @@
     -fx-pref-height: 250px;
     -fx-padding: 20px;
 }
+.rightContainer{
+    /*JavaFX Margin Fix*/
+    -fx-padding: 90px 20px 0px 0px;
+    -fx-border-insets: 90px 0 0 0;
+    -fx-background-insets: 90px 0 0 0;
+}
 .mainContainer{
     -fx-background-color: #ffffff;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
-
     -fx-pref-height: 100px;
-    -fx-pref-width: 350px;
+    -fx-min-width: 350px;
+    -fx-padding: 20px 20px 20px 20px;
+}
+.header-margin{
+    -fx-padding: 10px 5px 0px 5px;
+    -fx-border-insets: 10px 5px 0px 5px;
+    -fx-background-insets: 10px 5px 0px 5px;
+}
 
-    /*JavaFX Margin Fix*/
-    -fx-padding: 40px 20px 20px 20px;
-    -fx-border-insets: 20px 0 0 0;
-    -fx-background-insets: 20px 0 0 0;
+
+
+
+.mainContainer .scroll-pane {
+    -fx-background-color: transparent;
+    -fx-min-height: 450px;
+}
+.mainContainer .scroll-pane, .mainContainer .scroll-pane .viewport, .mainContainer .scroll-pane .content {
+    -fx-background-color: transparent ;
+}
+.mainContainer .scroll-pane .scroll-bar {
+    -fx-background-color:transparent;
+}
+.mainContainer .scroll-pane .scroll-bar:vertical {
+    -fx-background-color:transparent;
+}
+.mainContainer .scroll-pane .scroll-bar:horizontal {
+    -fx-background-color:transparent;
+}
+.mainContainer .scroll-pane .scroll-bar .thumb {
+    -fx-background-color: slategray;
+}
+.mainContainer .scroll-pane .increment-button:hover ,.text-area .decrement-button:hover {
+    -fx-background-color:transparent;
+}
+.mainContainer .scroll-pane .increment-button > .increment-arrow, .mainContainer .scroll-pane .decrement-button > .decrement-arrow{
+    -fx-background-color:transparent;
+}
+.mainContainer  .scroll-pane .track  {
+    -fx-background-color:transparent;
+}
+.mainContainer  .scroll-pane .context-menu .scroll-arrow {
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: transparent;
+}
+.mainContainer  .scroll-pane .context-menu .menu-item {
+    -fx-border-style: solid;
+    -fx-border-color: transparent;
+}
+.mainContainer .scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+.mainContainer .mainContainer-header{
+    -fx-font-size: 20px;
+}
+.mainContainer .mainContainer-subheader{
+    -fx-font-size: 14px;
+}
+.mainContainer .hr {
+    -fx-background-color: slategray;
+    -fx-background-insets: 15 0 15 0;
+    -fx-padding: 16 0 15 0;
 }
 .suggestion{
     -fx-font-size: 18px;

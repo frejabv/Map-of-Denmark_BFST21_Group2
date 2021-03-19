@@ -26,7 +26,7 @@ public class Controller {
     @FXML
     private VBox settingsContainer;
     @FXML
-    private HBox debugContainer;
+    private VBox debugContainer;
     @FXML
     private Button searchButton;
     @FXML
