@@ -44,10 +44,6 @@ public class OSMParser {
         boolean isWay = false;
         boolean isRelation = false;
 
-        var drawableMap = model.getDrawableMap();
-        var fillMap = model.getFillMap();
-        RenderingStyle renderingStyle = new RenderingStyle();
-
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
             case XMLStreamReader.START_ELEMENT:
@@ -133,37 +129,13 @@ public class OSMParser {
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                 case "way":
-                    for (var tag : tags) {
-                        if (tag == Tag.COASTLINE) {
-                            model.addCoastline(way);
-                        } else {
-                            var drawStyle = renderingStyle.getDrawStyleByTag(tag);
-
-                            if (drawStyle == DrawStyle.FILL) {
-                                fillMap.putIfAbsent(tag, new ArrayList<>());
-                                fillMap.get(tag).add(way);
-                            } else {
-                                drawableMap.putIfAbsent(tag, new ArrayList<>());
-                                drawableMap.get(tag).add(way);
-                            }
-                        }
-                    }
+                    addDrawableToList(way, tags, model);
                     break;
                 case "relation":
                     if(isRelation) {
                         List<Member> members = relation.getMembers();
                         for(Member member : members) {
-                            //todo: duplicate code consider making the method separate
-                            for (var tag : tags) {
-                                if (tag == Tag.COASTLINE) {
-                                    model.addCoastline((Way) member);
-                                } else {
-                                    var drawableMap = model.getDrawableMap();
-
-                                    drawableMap.putIfAbsent(tag, new ArrayList<>());
-                                    drawableMap.get(tag).add((Drawable) member);
-                                }
-                            }
+                            addDrawableToList(member, tags, model);
                         }
                     }
                     isRelation = false;
@@ -178,6 +150,28 @@ public class OSMParser {
         System.out.println(model.getCoastlines());
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("you fool, you think it is that simple? hahahahah");
+        }
+    }
+
+    public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
+        var drawableMap = model.getDrawableMap();
+        var fillMap = model.getFillMap();
+        RenderingStyle renderingStyle = new RenderingStyle();
+
+        for (var tag : tags) {
+            if (tag == Tag.COASTLINE) {
+                model.addCoastline((Way) drawable);
+            } else {
+                var drawStyle = renderingStyle.getDrawStyleByTag(tag);
+
+                if (drawStyle == DrawStyle.FILL) {
+                    fillMap.putIfAbsent(tag, new ArrayList<>());
+                    fillMap.get(tag).add((Drawable) drawable);
+                } else {
+                    drawableMap.putIfAbsent(tag, new ArrayList<>());
+                    drawableMap.get(tag).add((Drawable) drawable);
+                }
+            }
         }
     }
 
