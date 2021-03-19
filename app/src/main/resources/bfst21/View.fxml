@@ -37,6 +37,7 @@
             onScroll="#onScrollOnCanvas"
             onMousePressed="#onMousePressedOnCanvas"
             onMouseDragged="#onMouseDraggedOnCanvas"
+            onMouseReleased="#onMouseReleasedOnCanvas"
           />
           <GridPane pickOnBounds="false">
             <columnConstraints>
@@ -79,7 +80,7 @@
                   <TextField fx:id="searchField" styleClass="textfield">
                     <promptText>Where would you like to go?</promptText>
                   </TextField>
-                  <Text>Suggestions:</Text>
+                  <Text fx:id="suggestionsHeader" styleClass="suggestionsHeader">Suggestions:</Text>
                 </VBox>
                 <VBox fx:id="routeContainer" styleClass="mainContainer">
                   <TextField styleClass="textfield">

@@ -2,7 +2,9 @@ package bfst21;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import bfst21.osm.*;
@@ -10,6 +12,10 @@ import bfst21.osm.*;
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
+    GraphicsContext gc;
+    boolean setPin;
+    Point2D canvasPoint;
+    double size;
     RenderingStyle renderingStyle;
 
     public void init(Model model) {
@@ -25,7 +31,7 @@ public class MapCanvas extends Canvas {
     }
 
     void repaint() {
-        var gc = getGraphicsContext2D();
+        gc = getGraphicsContext2D();
         gc.save();
         gc.setTransform(new Affine());
         gc.setFill(renderingStyle.sea);
@@ -59,6 +65,20 @@ public class MapCanvas extends Canvas {
             });
         });
 
+        gc.setStroke(renderingStyle.trackWay);
+        gc.setFill(renderingStyle.trackWay);
+        for (var line : model.getTrackWays()) {
+            line.draw(gc);
+        }
+        if(setPin){
+            gc.setFill(Color.rgb(231, 76, 60));
+            gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
+            double[] xPoints = {canvasPoint.getX()+0.00307*size,canvasPoint.getX()+0.025*size,canvasPoint.getX() + 0.04693*size}; //+0.05
+            double[] yPoints = {canvasPoint.getY()+0.037*size,canvasPoint.getY()+0.076*size,canvasPoint.getY()+0.037*size};
+            gc.fillPolygon(xPoints, yPoints, 3);
+            gc.setFill(Color.rgb(192, 57, 43));
+            gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
+        }
         gc.restore();
     }
 
@@ -70,6 +90,15 @@ public class MapCanvas extends Canvas {
     public void zoom(double factor, Point2D center) {
         trans.prependScale(factor, factor, center);
         repaint();
+    }
+
+    public String setPin(Point2D point){
+        size = .3;
+        canvasPoint = mouseToModelCoords(point);
+        canvasPoint = new Point2D(canvasPoint.getX()-(0.025*size),canvasPoint.getY()-(0.076*size));
+        setPin = true;
+        repaint();
+        return canvasPoint.getY()*-0.56f + ", " + canvasPoint.getX();
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
