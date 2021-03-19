@@ -153,23 +153,23 @@ public class OSMParser {
         }
     }
 
-    public static void addDrawableToList(Member way, List<Tag> tags, Model model) {
+    public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
         var drawableMap = model.getDrawableMap();
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
 
         for (var tag : tags) {
             if (tag == Tag.COASTLINE) {
-                model.addCoastline((Way) way);
+                model.addCoastline((Way) drawable);
             } else {
                 var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
                 if (drawStyle == DrawStyle.FILL) {
                     fillMap.putIfAbsent(tag, new ArrayList<>());
-                    fillMap.get(tag).add((Drawable) way);
+                    fillMap.get(tag).add((Drawable) drawable);
                 } else {
                     drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    drawableMap.get(tag).add((Drawable) way);
+                    drawableMap.get(tag).add((Drawable) drawable);
                 }
             }
         }
