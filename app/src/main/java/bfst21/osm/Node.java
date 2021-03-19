@@ -12,12 +12,12 @@ public class Node extends Member{
     private Node left;
     private Node right;
     private RectHV rect;
-    private boolean vertical;
 
     public Node(Point2D p, RectHV rect, Node left, Node right, long id) {
         super(id);
         this.x = (float) p.getX();
         this.y = (float) p.getY() / scalingConstant;
+        this.rect = rect;
         this.left = left;
         this.right = right;
     }

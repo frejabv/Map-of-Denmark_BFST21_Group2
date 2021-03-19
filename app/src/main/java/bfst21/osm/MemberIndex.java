@@ -13,6 +13,8 @@ public class MemberIndex {
         }
 
         public void addMember(Member member) {
+            if (member == null)
+                System.out.println("Member set to null");
             members.add(member);
             isSorted = false;
         }

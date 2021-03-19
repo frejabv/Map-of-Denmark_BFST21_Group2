@@ -46,7 +46,6 @@ public class OSMParser {
 
         boolean isWay = false;
         boolean isRelation = false;
-
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
                 case XMLStreamReader.START_ELEMENT:
@@ -61,7 +60,11 @@ public class OSMParser {
                             var nodeId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                             var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                            model.addToNodeIndex(model.getKdTree().insert(new Point2D(lon,lat)));
+                            System.out.println("input: nodeID = " + nodeId + " lon: " + lon + " lat: " + lat);
+                            Node n = model.getKdTree().insert(new Point2D(lon,lat), nodeId);
+                            System.out.println("node successfully created");
+                            model.addToNodeIndex(n);
+                            System.out.println("node successfully added to nodeIndex");
                             break;
                         case "way":
                             isWay = true;

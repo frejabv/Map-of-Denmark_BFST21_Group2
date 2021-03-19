@@ -3,9 +3,6 @@ package bfst21.osm;
 import bfst21.Model;
 import javafx.geometry.Point2D;
 
-import java.awt.*;
-
-
 public class KDTree {
     Model model;
     private Node root;
@@ -24,30 +21,32 @@ public class KDTree {
     /**
      * Add point p to the tree, if it is not null and does not exist in the tree already.
      */
-    public Node insert(Point2D p) {
+    public Node insert(Point2D p, long id) {
+        System.out.println("Inserting point p" + p +" with coordinates: " + p.getX() + " " + p.getY() + " with ID " + id);
         if (p == null) {
             throw new NullPointerException("Point2D is null upon insertion into KDTree");
         }
         if (!contains(p)) {
-            root = insert(root, null, p, true);
+            root = insert(root, null, p, true, id);
         }
-        return null;
+        return root;
     }
 
     /**
      * This is a recursive call that inserts a node into the correct empty spot.
-     *
      * @param n           is the element of which we want to insert.
      * @param parent      is the current parent of out element.
      * @param p           are the coordinates of our node.
      * @param orientation flips every recursion
      * @returns the Node at with its correct parent and left/right rectangle/domain
      */
-    private Node insert(Node n, Node parent, Point2D p, boolean orientation) {
+    private Node insert(Node n, Node parent, Point2D p, boolean orientation, long id) {
         if (n == null) {
             RectHV r = null;
 
             if (parent == null) {
+                System.out.println("parent == null. creating new r");
+                System.out.println("minx:"+model.getMinX() + " miny:"+model.getMinY() + " maxx:"+model.getMaxX() + " maxy:"+ model.getMaxY());
                 r = new RectHV(model.getMinX(), model.getMinY(), model.getMaxX(), model.getMaxY());
             } else {
                 float xmin = parent.getRect().getXmin();
@@ -72,7 +71,8 @@ public class KDTree {
                 r = new RectHV(xmin, ymin, xmax, ymax);
             }
             size++;
-            return new Node(p, r, null, null, 0);
+            return new Node(p, r, null, null, id);
+
         } else {
             boolean areCoordinatesLessThan = false;
             if (orientation) {
@@ -82,9 +82,9 @@ public class KDTree {
             }
 
             if (areCoordinatesLessThan) {
-                n.setLeft(insert(n.getLeft(), n, p, !orientation));
+                n.setLeft(insert(n.getLeft(), n, p, !orientation, id));
             } else {
-                n.setRight(insert(n.getRight(), n, p, !orientation));
+                n.setRight(insert(n.getRight(), n, p, !orientation, id));
             }
 
             return n;
@@ -95,7 +95,6 @@ public class KDTree {
         if (p == null) {
             throw new NullPointerException("null key at KdTree.contians(Point2D p)");
         }
-
         return contains(root, p, true);
     }
 
@@ -167,7 +166,7 @@ public class KDTree {
 
         if (areCoordinatesLessThan) {
             c = nearest(n.getLeft(), c, p, !orientation);
-            c = nearest(n.getLeft(), c, p, !orientation);
+            c = nearest(n.getRight(), c, p, !orientation);
         } else {
             c = nearest(n.getRight(), c, p, !orientation);
             c = nearest(n.getLeft(), c, p, !orientation);
@@ -187,17 +186,27 @@ public class KDTree {
             this.xmax = xmax;
             this.ymax = ymax;
             if (Float.isNaN(xmin) || Float.isNaN(xmax)) {
+                System.out.println("if 1 returned true");
                 throw new IllegalArgumentException("x-coordinate is NaN: " + toString());
             }
             if (Float.isNaN(ymin) || Float.isNaN(ymax)) {
+                System.out.println("if 2 returned true");
                 throw new IllegalArgumentException("y-coordinate is NaN: " + toString());
             }
             if (xmax < xmin) {
-                throw new IllegalArgumentException("xmax < xmin: " + toString());
+                System.out.println("if 3 returned true");
+                System.out.println(xmax + " < " + xmin + " is " + (xmax < xmin));
+                System.out.println("ILLEGAL ARGUMENT EXCEPTION");
+                //throw new IllegalArgumentException("xmax < xmin: " + toString());
             }
             if (ymax < ymin) {
-                throw new IllegalArgumentException("ymax < ymin: " + toString());
+                //TODO fix hvorfor vi ganger -1 på
+                System.out.println("if 4 returned true");
+                System.out.println(ymax + " < " + ymin + " is " + (ymax < ymin));
+                //throw new IllegalArgumentException("ymax < ymin: " + toString());
+                System.out.println("ILLEGAL ARGUMENT EXCEPTION");
             }
+            System.out.println("successfully created RectHV");
         }
 
         public float getXmin() {
