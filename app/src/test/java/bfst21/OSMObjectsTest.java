@@ -2,12 +2,13 @@ package bfst21;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import bfst21.osm.MemberIndex;
-import bfst21.osm.Node;
-import bfst21.osm.Way;
+import bfst21.osm.*;
 import org.junit.jupiter.api.Test;
 
-    public class OSMObjectsTest {
+import java.util.ArrayList;
+import java.util.List;
+
+public class OSMObjectsTest {
         @Test
         public void testNewNode(){
             Node testNode1 = new Node(1000,560 ,123);
@@ -93,6 +94,42 @@ import org.junit.jupiter.api.Test;
         assertEquals(testNode1, testNodeIndex.getMember(123));
         assertEquals(testNode2, testNodeIndex.getMember(456));
         assertEquals(testNode3, testNodeIndex.getMember(789));
+    }
+
+    @Test
+    public void testNewRelation() {
+            Relation testRelation = new Relation(123);
+            assertEquals(123, testRelation.getId());
+    }
+
+    @Test
+    public void testAddMemberToRelation() {
+        Relation testRelation1 = new Relation(123);
+        Relation testRelation2 = new Relation(321);
+        Node testNode = new Node(10,10,456);
+        Way testWay = new Way(789);
+        testRelation1.addMember(testNode);
+        testRelation1.addMember(testWay);
+        testRelation1.addMember(testRelation2);
+        List<Member> members = testRelation1.getMembers();
+        assertEquals(testNode, members.get(0));
+        assertEquals(testWay, members.get(1));
+        assertEquals(testRelation2, members.get(2));
+    }
+
+    @Test
+    public void testMemberIndex() {
+        MemberIndex testMemberIndex = new MemberIndex();
+        Relation testRelation = new Relation(123);
+        Node testNode = new Node(10,10,456);
+        Way testWay = new Way(789);
+        testMemberIndex.addMember(testRelation);
+        testMemberIndex.addMember(testNode);
+        testMemberIndex.addMember(testWay);
+        assertEquals(3,testMemberIndex.size());
+        assertEquals(testRelation,testMemberIndex.getMember(123));
+        assertEquals(testNode,testMemberIndex.getMember(456));
+        assertEquals(testWay,testMemberIndex.getMember(789));
     }
 
 }
