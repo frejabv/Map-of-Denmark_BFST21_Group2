@@ -6,6 +6,7 @@ import bfst21.osm.*;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class OSMObjectsTest {
@@ -115,6 +116,20 @@ public class OSMObjectsTest {
         assertEquals(testNode, members.get(0));
         assertEquals(testWay, members.get(1));
         assertEquals(testRelation2, members.get(2));
+    }
+
+    @Test
+    public void testMemberRoles() {
+            Relation testRelation1 = new Relation(111);
+            Relation testRelation2 = new Relation(222);
+            Member testNode = new Node(10, 10, 123);
+            testNode.addRole(111, "inner");
+            testNode.addRole(222, "outer");
+            testRelation1.addMember(testNode);
+            testRelation2.addMember(testNode);
+            HashMap<Long, String> roles = testNode.getRoleMap();
+            assertEquals("inner", roles.get(Long.valueOf(111)));
+            assertEquals("outer", roles.get(Long.valueOf(222)));
     }
 
     @Test
