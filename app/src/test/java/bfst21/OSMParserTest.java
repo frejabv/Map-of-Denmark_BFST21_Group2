@@ -2,12 +2,15 @@ package bfst21;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import bfst21.exceptions.UnsupportedFileTypeException;
+import bfst21.osm.OSMParser;
 import bfst21.osm.Tag;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class OSMParserTest {
     private final Model samsoeModel = new Model("data/TEST_MAP_SAMSOE.osm",false);
-    private final Model sjaelsoeModel = new Model("data/TEST_MAP_SJAELSOE.osm",false);
+    private final Model sjaelsoeModel = new Model("data/TEST_MAP_SJAELSOE.osm.zip",false);
 
     @Test
     public void testLatLonBoundsSamsoe(){
@@ -23,6 +26,13 @@ public class OSMParserTest {
         assertEquals(12.4173f, sjaelsoeModel.getMinX());
         assertEquals(55.8840f/-0.56f, sjaelsoeModel.getMaxY());
         assertEquals(55.8584f/-0.56f, sjaelsoeModel.getMinY());
+    }
+
+    @Test
+    public void testUnsupportedFileTypeException(){
+        Assertions.assertThrows(UnsupportedFileTypeException.class,()-> {
+            OSMParser.readMapElements("data/TEST_MAP_SAMSOE.osm.png",new Model(null,false));
+        });
     }
 
     @Test
