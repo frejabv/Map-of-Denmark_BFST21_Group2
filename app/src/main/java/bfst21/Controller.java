@@ -146,7 +146,6 @@ public class Controller {
         }
         else{
             changeType("route",true);
-            fadeButtons();
         }
     }
 
