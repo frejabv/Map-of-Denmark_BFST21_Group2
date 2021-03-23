@@ -207,7 +207,7 @@ public class OSMParser {
     public static void loadZIP(InputStream inputStream, Model model) throws IOException, XMLStreamException {
         var zip = new ZipInputStream(inputStream);
         zip.getNextEntry();
-        loadOSM(zip, model);
+        loadOSM(zip,model);
     }
 
     private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){
