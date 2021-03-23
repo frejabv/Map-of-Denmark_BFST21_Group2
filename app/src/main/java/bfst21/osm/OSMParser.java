@@ -10,6 +10,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
+import org.w3c.dom.ls.LSException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -76,9 +78,12 @@ public class OSMParser {
                 case "tag":
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
-
-                    if (k.equals("highway") && isWay) {
-                        //System.out.println("Road!");
+                    if(k.equals("building")){
+                        tags.add(Tag.BUILDING);
+                        break;
+                    }
+                    if(k.equals("service")){
+                        break;
                     }
 
                     try {
@@ -166,10 +171,14 @@ public class OSMParser {
 
                 if (drawStyle == DrawStyle.FILL) {
                     fillMap.putIfAbsent(tag, new ArrayList<>());
-                    fillMap.get(tag).add((Drawable) drawable);
+                    if(!isDublet(drawable,tag,fillMap)) {
+                        fillMap.get(tag).add((Drawable) drawable);
+                    }
                 } else {
                     drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    drawableMap.get(tag).add((Drawable) drawable);
+                    if(!isDublet(drawable,tag,drawableMap)) {
+                        drawableMap.get(tag).add((Drawable) drawable);
+                    }
                 }
             }
         }
@@ -199,5 +208,14 @@ public class OSMParser {
         var zip = new ZipInputStream(inputStream);
         zip.getNextEntry();
         loadOSM(zip, model);
+    }
+
+    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){
+        List listToCheck = map.get(tag);
+        boolean isDublet = true;
+        if(listToCheck.size()==0 || listToCheck.get(listToCheck.size()-1) != drawable) {
+            isDublet = false;
+        }
+        return isDublet;
     }
 }
