@@ -3,9 +3,9 @@ package bfst21;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import bfst21.osm.*;
+import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OSMObjectsTest {
@@ -130,6 +130,33 @@ public class OSMObjectsTest {
         assertEquals(testRelation,testMemberIndex.getMember(123));
         assertEquals(testNode,testMemberIndex.getMember(456));
         assertEquals(testWay,testMemberIndex.getMember(789));
+    }
+
+    @Test
+    public void testRenderingStyleGetColor() {
+            RenderingStyle testStyle = new RenderingStyle();
+            testStyle.darkMode();
+            assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
+            assertEquals(Color.rgb(128, 142, 155), testStyle.getColorByTag(Tag.PRIMARY));
+            testStyle.defaultMode();
+            assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
+            assertEquals(Color.WHITE, testStyle.getColorByTag(Tag.PRIMARY));
+    }
+
+    @Test
+    public void testRenderingStyleGetDrawStyle() {
+        RenderingStyle testStyle = new RenderingStyle();
+        assertEquals(DrawStyle.FILL, testStyle.getDrawStyleByTag(Tag.BUILDING));
+        assertEquals(DrawStyle.STROKE, testStyle.getDrawStyleByTag(Tag.PRIMARY));
+    }
+
+    @Test
+    public void testColorModes() {
+        RenderingStyle testStyle = new RenderingStyle();
+        testStyle.deuteranopeColorMode();
+        testStyle.tritanopeColorMode();
+        testStyle.protanopeColorMode();
+        assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
     }
 
 }
