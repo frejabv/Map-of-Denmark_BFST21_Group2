@@ -8,16 +8,14 @@ import java.util.Map;
 import bfst21.osm.*;
 
 public class Model {
-    private MemberIndex nodeIndex;
-
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
-    //
 
     // drawables are all ways that not in any other list
     private List<Drawable> drawables;
-    private MemberIndex wayIndex;
-    private MemberIndex relationIndex;
+    private MemberIndex<Node> nodeIndex;
+    private MemberIndex<Way> wayIndex;
+    private MemberIndex<Relation> relationIndex;
     private List<Drawable> islands = new ArrayList<>();
     private Bounds bounds;
     private ArrayList<Way> coastlines;
@@ -30,10 +28,10 @@ public class Model {
         fillMap = new HashMap<>();
 
         drawables = new ArrayList<>();
-        nodeIndex = new MemberIndex();
+        nodeIndex = new MemberIndex<>();
         coastlines = new ArrayList<>();
-        wayIndex = new MemberIndex();
-        relationIndex = new MemberIndex();
+        wayIndex = new MemberIndex<>();
+        relationIndex = new MemberIndex<>();
 
         this.ttiMode = ttiMode;
 
@@ -114,7 +112,7 @@ public class Model {
         this.maxY = maxY;
     }
 
-    public MemberIndex getNodeIndex() {
+    public MemberIndex<Node> getNodeIndex() {
         return nodeIndex;
     }
 
@@ -126,7 +124,7 @@ public class Model {
         return drawables;
     }
 
-    public MemberIndex getWayIndex() {
+    public MemberIndex<Way> getWayIndex() {
         return wayIndex;
     }
 
@@ -134,7 +132,7 @@ public class Model {
         wayIndex.addMember(way);
     }
 
-    public MemberIndex getRelationIndex() {
+    public MemberIndex<Relation> getRelationIndex() {
         return relationIndex;
     }
 
