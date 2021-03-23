@@ -9,6 +9,8 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import bfst21.osm.*;
 
+import java.awt.*;
+
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
@@ -17,6 +19,7 @@ public class MapCanvas extends Canvas {
     Point2D canvasPoint;
     double size;
     RenderingStyle renderingStyle;
+    Point2D pinPoint;
 
     public void init(Model model) {
         this.model = model;
@@ -88,8 +91,12 @@ public class MapCanvas extends Canvas {
     }
 
     public String setPin(Point2D point){
-        size = .3;
-        canvasPoint = mouseToModelCoords(point);
+        var currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(),0)).getX();
+        var currentMinX = (float) mouseToModelCoords(new Point2D(0,0)).getX();
+        size = (((currentMaxX-currentMinX)*111.320*0.56)/100);
+        System.out.println(size);
+        pinPoint = point;
+        canvasPoint = mouseToModelCoords(pinPoint);
         canvasPoint = new Point2D(canvasPoint.getX()-(0.025*size),canvasPoint.getY()-(0.076*size));
         setPin = true;
         repaint();
