@@ -3,6 +3,7 @@ package bfst21;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
@@ -38,6 +39,8 @@ public class Controller {
     private Button settingsButton;
     @FXML
     private TextField searchField;
+    @FXML
+    private CheckBox enableDebugWindow;
 
     @FXML Text suggestionsHeader;
 
@@ -83,11 +86,19 @@ public class Controller {
     public void onKeyPressed(KeyEvent e) {
 
         if (e.getText().equals("d")) {
-            if (debugContainer.isVisible()) {
-                changeType("debug", false);
-            } else {
-                changeType("debug", true);
-            }
+            toogleDebugMode();
+        }
+    }
+
+
+
+    public void toogleDebugMode(){
+        if (debugContainer.isVisible()) {
+            changeType("debug", false);
+            enableDebugWindow.setSelected(false);
+        } else {
+            changeType("debug", true);
+            enableDebugWindow.setSelected(true);
         }
     }
 
