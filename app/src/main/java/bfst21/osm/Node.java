@@ -1,25 +1,28 @@
 package bfst21.osm;
 import bfst21.osm.KDTree.RectHV;
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 
 public class Node extends Member{
     private float x;
     private float y;
     // Scale nodes lattitude to account for the curvature of the earth
-    private static float scalingConstant = 0.56f;
+    private static float scalingConstant = -0.56f;
+    //private static float scalingConstant = 1;
 
     private Node left;
     private Node right;
     private RectHV rect;
 
-    public Node(Point2D p, RectHV rect, Node left, Node right, long id) {
+    public Node(float x, float y, long id) {
         super(id);
-        this.x = (float) p.getX();
-        this.y = (float) p.getY() / scalingConstant;
-        this.rect = rect;
-        this.left = left;
-        this.right = right;
+        this.x = x;
+        this.y = y / scalingConstant;
+        this.rect = null;
+        this.left = null;
+        this.right = null;
     }
 
     public float getX() {
@@ -42,4 +45,20 @@ public class Node extends Member{
 
     public void setLeft(Node n) { left = n; }
     public void setRight(Node n){ right = n; }
+
+    public void drawKDTLine(boolean orientation, GraphicsContext gc) {
+        gc.setFill(Color.BLACK);
+        gc.fillOval(x-0.25,y-0.25,0.5,0.5);
+        gc.beginPath();
+        if (orientation){
+            gc.setStroke(Color.RED);
+            gc.moveTo(x, rect.getMinY());
+            gc.lineTo(x, rect.getMaxX());
+        } else {
+            gc.setStroke(Color.BLUE);
+            gc.moveTo(rect.getMinX() , y);
+            gc.lineTo(rect.getMaxY(), y);
+        }
+        gc.stroke();
+    }
 }

@@ -2,6 +2,8 @@ package bfst21.osm;
 
 import bfst21.Model;
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import org.w3c.dom.css.Rect;
 
 public class KDTree {
     Model model;
@@ -19,104 +21,105 @@ public class KDTree {
     }
 
     /**
-     * Add point p to the tree, if it is not null and does not exist in the tree already.
+     * Add query Node to the tree, if it is not null and does not exist in the tree already.
      */
-    public Node insert(Point2D p, long id) {
-        System.out.println("Inserting point p" + p +" with coordinates: " + p.getX() + " " + p.getY() + " with ID " + id);
-        if (p == null) {
+    public void insert(Node qNode) {
+        System.out.println("Inserting point p" + qNode + " with coordinates: " + qNode.getX() + " " + qNode.getY() + " with ID ");
+        if (qNode == null) {
             throw new NullPointerException("Point2D is null upon insertion into KDTree");
         }
-        if (!contains(p)) {
-            root = insert(root, null, p, true, id);
+
+        //create root
+        if (isEmpty()) {
+            RectHV r = new RectHV(model.getMinX(), model.getMinY(), model.getMaxX(), model.getMaxY());
+            root = qNode;
+            root.setRect(r);
+            size++;
+        } else {
+            insert(root, null, qNode, true);
         }
-        return root;
     }
 
     /**
      * This is a recursive call that inserts a node into the correct empty spot.
-     * @param n           is the element of which we want to insert.
+     *
+     * @param n           is the node position we want to try and insert p into.
      * @param parent      is the current parent of out element.
-     * @param p           are the coordinates of our node.
+     * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
      * @returns the Node at with its correct parent and left/right rectangle/domain
      */
-    private Node insert(Node n, Node parent, Point2D p, boolean orientation, long id) {
+    private Node insert(Node n, Node parent, Node qNode, boolean orientation) {
         if (n == null) {
             RectHV r = null;
 
-            if (parent == null) {
-                System.out.println("parent == null. creating new r");
-                System.out.println("minx:"+model.getMinX() + " miny:"+model.getMinY() + " maxx:"+model.getMaxX() + " maxy:"+ model.getMaxY());
-                r = new RectHV(model.getMinX(), model.getMinY(), model.getMaxX(), model.getMaxY());
-            } else {
-                float xmin = parent.getRect().getXmin();
-                float ymin = parent.getRect().getYmin();
-                float xmax = parent.getRect().getXmax();
-                float ymax = parent.getRect().getYmax();
+            float xmin = parent.getRect().getMinX();
+            float ymin = parent.getRect().getMinY();
+            float xmax = parent.getRect().getMaxX();
+            float ymax = parent.getRect().getMaxY();
 
-                if (orientation) {
-                    if (p.getY() < parent.getY()) {
-                        ymax = parent.getY();
-                    } else {
-                        ymin = parent.getY();
-                    }
-                } else {
-                    if (p.getX() < parent.getX()) {
-                        xmax = parent.getX();
-                    } else {
-                        xmin = parent.getX();
-                    }
-                }
-
-                r = new RectHV(xmin, ymin, xmax, ymax);
-            }
-            size++;
-            return new Node(p, r, null, null, id);
-
-        } else {
-            boolean areCoordinatesLessThan = false;
             if (orientation) {
-                areCoordinatesLessThan = p.getX() < n.getX();
+                if (qNode.getY() < parent.getY()) {
+                    ymax = parent.getY();
+                } else {
+                    ymin = parent.getY();
+                }
             } else {
-                areCoordinatesLessThan = p.getY() < n.getY();
+                if (qNode.getX() < parent.getX()) {
+                    xmax = parent.getX();
+                } else {
+                    xmin = parent.getX();
+                }
             }
-
-            if (areCoordinatesLessThan) {
-                n.setLeft(insert(n.getLeft(), n, p, !orientation, id));
-            } else {
-                n.setRight(insert(n.getRight(), n, p, !orientation, id));
-            }
-
-            return n;
+            r = new RectHV(xmin, ymin, xmax, ymax);
+            size++;
+            qNode.setRect(r);
+            return qNode;
         }
+
+        boolean areCoodinatesLessThan = false;
+        if (orientation) {
+            areCoodinatesLessThan = qNode.getX() < n.getX();
+        } else {
+            areCoodinatesLessThan = qNode.getY() < n.getY();
+        }
+
+        if (areCoodinatesLessThan) {
+            n.setLeft(insert(n.getLeft(), n, qNode, !orientation));
+        } else {
+            n.setRight(insert(n.getRight(), n, qNode, !orientation));
+        }
+
+        return n;
     }
 
-    public boolean contains(Point2D p) {
-        if (p == null) {
+
+    public boolean contains(Node qNode) {
+        if (qNode == null) {
             throw new NullPointerException("null key at KdTree.contians(Point2D p)");
         }
-        return contains(root, p, true);
+        return contains(root, qNode, true);
     }
 
-    private boolean contains(Node n, Point2D p, boolean orientation) {
+    private boolean contains(Node n, Node qNode, boolean orientation) {
         if (n == null) {
             return false;
         }
-        if (n.getX() == p.getX() && n.getY() == p.getY()) {
+        if (n.getId() == qNode.getId()) {
             return true;
         }
 
         boolean areCoodinatesLessThan = false;
         if (orientation) {
-            areCoodinatesLessThan = p.getX() < n.getX();
+            areCoodinatesLessThan = qNode.getX() < n.getX();
         } else {
-            areCoodinatesLessThan = p.getY() < n.getY();
+            areCoodinatesLessThan = qNode.getY() < n.getY();
         }
 
         if (areCoodinatesLessThan) {
-            return contains(n.getLeft(), p, !orientation);
+            return contains(n.getLeft(), qNode, !orientation);
         } else {
-            return contains(n.getRight(), p, !orientation);
+            return contains(n.getRight(), qNode, !orientation);
         }
     }
 
@@ -153,9 +156,13 @@ public class KDTree {
         double minDistance = Math.sqrt(p.distance(c.getX(), c.getY()));
         double thisDistance = Math.sqrt(p.distance(n.getX(), n.getY()));
 
-        if(n.getRect().distanceSquaredTo(p) >= minDistance) { return c; }
+        if (n.getRect().distanceSquaredTo(p) >= minDistance) {
+            return c;
+        }
 
-        if (thisDistance < minDistance) { c = n; }
+        if (thisDistance < minDistance) {
+            c = n;
+        }
 
         boolean areCoordinatesLessThan = false;
         if (orientation) {
@@ -173,6 +180,28 @@ public class KDTree {
         }
 
         return c;
+    }
+
+    public void drawLines(GraphicsContext gc) {
+        if (!isEmpty()) {
+            root.drawKDTLine(true, gc);
+            if (root.getRight() != null) {
+                drawLines(root.getRight(), gc, false);
+            }
+            if (root.getLeft() != null) {
+                drawLines(root.getLeft(), gc, false);
+            }
+        }
+    }
+
+    private void drawLines(Node n, GraphicsContext gc, boolean orientation) {
+        n.drawKDTLine(orientation, gc);
+        if (n.getRight() != null) {
+            drawLines(n.getRight(), gc, !orientation);
+        }
+        if (n.getLeft() != null) {
+            drawLines(n.getLeft(), gc, !orientation);
+        }
     }
 
     //taken from Sedgewick and Wayne
@@ -206,22 +235,21 @@ public class KDTree {
                 //throw new IllegalArgumentException("ymax < ymin: " + toString());
                 System.out.println("ILLEGAL ARGUMENT EXCEPTION");
             }
-            System.out.println("successfully created RectHV");
         }
 
-        public float getXmin() {
+        public float getMinX() {
             return xmin;
         }
 
-        public float getYmin() {
+        public float getMinY() {
             return ymin;
         }
 
-        public float getXmax() {
+        public float getMaxX() {
             return xmax;
         }
 
-        public float getYmax() {
+        public float getMaxY() {
             return ymax;
         }
 
@@ -237,11 +265,11 @@ public class KDTree {
 
         public double distanceSquaredTo(Point2D p) {
             double dx = 0.0, dy = 0.0;
-            if      (p.getX() < xmin) dx = p.getX() - xmin;
+            if (p.getX() < xmin) dx = p.getX() - xmin;
             else if (p.getX() > xmax) dx = p.getX() - xmax;
-            if      (p.getY() < ymin) dy = p.getY() - ymin;
+            if (p.getY() < ymin) dy = p.getY() - ymin;
             else if (p.getY() > ymax) dy = p.getY() - ymax;
-            return dx*dx + dy*dy;
+            return dx * dx + dy * dy;
         }
     }
 }

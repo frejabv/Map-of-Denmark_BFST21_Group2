@@ -53,18 +53,22 @@ public class OSMParser {
                         case "bounds":
                             model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                             model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
+                            //TODO haha, world go boooooooooooom
                             model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
                             model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
+                            //model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / 1);
+                            //model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / 1);
                             break;
                         case "node":
                             var nodeId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                             var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
                             System.out.println("input: nodeID = " + nodeId + " lon: " + lon + " lat: " + lat);
-                            Node n = model.getKdTree().insert(new Point2D(lon,lat), nodeId);
-                            System.out.println("node successfully created");
+                            Node n = new Node(lon, lat, nodeId);
+                            model.getKdTree().insert(n);
+
+                            System.out.println("node successfully added to KDTree");
                             model.addToNodeIndex(n);
-                            System.out.println("node successfully added to nodeIndex");
                             break;
                         case "way":
                             isWay = true;

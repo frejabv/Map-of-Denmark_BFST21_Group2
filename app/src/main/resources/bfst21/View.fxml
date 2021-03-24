@@ -13,7 +13,9 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.ColumnConstraints?>
+
 <Scene xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        fx:controller="bfst21.Controller"
@@ -137,6 +139,7 @@
               <VBox pickOnBounds="false" styleClass="rightContainer" GridPane.columnIndex="2" GridPane.rowIndex="0">
                 <HBox fx:id="debugContainer" styleClass="mainContainer">
                   <Text>Debug</Text>
+                  <CheckBox onMouseClicked="#ToggleKDLines">Kd-Lines</CheckBox>
                 </HBox>
               </VBox>
             </children>

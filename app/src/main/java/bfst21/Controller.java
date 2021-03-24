@@ -100,11 +100,11 @@ public class Controller {
 
     @FXML
     private void onMousePressedOnCanvas(MouseEvent e) {
-        lastMouse = new Point2D(e.getX(), e.getY());
+        lastMouse = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
 
         //used to test nearest neighbor
         Node tester = model.getKdTree().nearest(lastMouse);
-        System.out.println("Nearest node coordinates are: x = " + tester.getX() + " y =" + tester.getY());
+        System.out.println("Nearest node coordinates to " + lastMouse + " are: x = " + tester.getX() + " y =" + tester.getY());
     }
 
 
@@ -199,5 +199,11 @@ public class Controller {
                 searchContainer.setVisible(state);
                 searchContainer.setManaged(state);
         }
+    }
+
+    @FXML
+    public void ToggleKDLines(){
+        canvas.kdLines = !canvas.kdLines;
+        canvas.repaint();
     }
 }

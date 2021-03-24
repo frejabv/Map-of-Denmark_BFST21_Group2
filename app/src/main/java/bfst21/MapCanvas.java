@@ -12,6 +12,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     ColorScheme colorScheme;
 
+    public boolean kdLines;
     public void init(Model model) {
         this.model = model;
         colorScheme = new ColorScheme();
@@ -154,6 +155,10 @@ public class MapCanvas extends Canvas {
         gc.setFill(colorScheme.trackWay);
         for (var line : model.getTrackWays()) {
             line.draw(gc);
+        }
+
+        if (kdLines){
+            model.getKdTree().drawLines(gc);
         }
 
         gc.restore();
