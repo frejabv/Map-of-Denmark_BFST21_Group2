@@ -33,16 +33,6 @@ public class OSMParserTest {
     }
 
     @Test
-    public void testCreateBounds() {
-        samsoeModel.createBounds(1,2,10,12);
-        Model.Bounds bounds = samsoeModel.getBounds();
-        assertEquals(1, bounds.getMinX());
-        assertEquals(2, bounds.getMinY());
-        assertEquals(10, bounds.getMaxX());
-        assertEquals(12, bounds.getMaxY());
-    }
-
-    @Test
     public void testInputFileSamsoe() { assertEquals(96751, samsoeModel.getNodeIndex().size()); }
 
     @Test
