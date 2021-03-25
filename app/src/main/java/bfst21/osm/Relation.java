@@ -21,6 +21,11 @@ public class Relation extends Member {
     }
 
     public void draw(GraphicsContext gc, RenderingStyle style) {
+        System.out.println("Relation.draw() began running");
+        System.out.println("Tag size when running: " + tags.size());
+        System.out.println("Tags in relation: " + tags);
+        ArrayList<Tag> tag2 = getTags();
+        System.out.println("Result of getTags() " + tag2);
         if(!tags.isEmpty()) {
             gc.setStroke(style.getColorByTag(tags.get(0)));
             gc.setFill(style.getColorByTag(tags.get(0)));
@@ -55,20 +60,24 @@ public class Relation extends Member {
                 }
             }*/
         }
+        //System.out.println("Relation.draw() finished");
+        System.out.println();
     }
 
     public void drawBuilding(GraphicsContext gc) {
 
-        /*for(Member member : members) {
+        for(Member member : members) {
             if(member instanceof Way) {
                 // her vil jeg tjekke om dette member har rollen inner
-                for(String value : member.getRoleMap().values()) {
+                ((Way) member).draw(gc);
+                gc.fill();
+                /*for(String value : member.getRoleMap().values()) {
                     if(value.equals("inner")) {
                         ((Way) member).draw(gc);
 
                     }
-                }
+                }*/
             }
-        }*/
+        }
     }
 }

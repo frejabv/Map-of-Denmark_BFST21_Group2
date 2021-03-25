@@ -65,6 +65,12 @@ public class MapCanvas extends Canvas {
             });
         });
 
+        model.getRelationIndex().forEach(relation -> {
+            System.out.println("Relation draw called");
+            relation.draw(gc, renderingStyle);
+            //System.out.println("Relation draw finished");
+        });
+
         if(setPin){
             gc.setFill(Color.rgb(231, 76, 60));
             gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);

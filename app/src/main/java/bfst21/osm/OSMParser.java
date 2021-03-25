@@ -130,14 +130,17 @@ public class OSMParser {
                 switch (xmlReader.getLocalName()) {
                 case "way":
                     addDrawableToList(way, tags, model);
+                    //System.out.println("Length of tags for way: " + tags.size());
                     break;
                 case "relation":
-                    if(isRelation) {
+                    /*if(isRelation) {
                         List<Member> members = relation.getMembers();
                         for(Member member : members) {
                             addDrawableToList(member, tags, model);
                         }
-                    }
+                    }*/
+                    System.out.println("Length of tags for relation: " + tags.size());
+                    relation.setTags(tags);
                     isRelation = false;
                     relation = null;
                     break;
