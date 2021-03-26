@@ -17,7 +17,6 @@ public class Model {
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
     private List<Drawable> islands = new ArrayList<>();
-    private Bounds bounds;
     private ArrayList<Way> coastlines;
     private boolean ttiMode;
 
@@ -42,37 +41,6 @@ public class Model {
         }
     }
 
-    public static class Bounds {
-        private final float minX, minY, maxX, maxY;
-
-        public Bounds(float minX, float minY, float maxX, float maxY) {
-            this.minX = minX;
-            this.minY = minY;
-            this.maxX = maxX;
-            this.maxY = maxY;
-        }
-
-        public float getMinX() {
-            return minX;
-        }
-
-        public float getMinY() {
-            return minY;
-        }
-
-        public float getMaxX() {
-            return maxX;
-        }
-
-        public float getMaxY() {
-            return maxY;
-        }
-    }
-
-    public void createBounds(float minX, float minY, float maxX, float maxY) {
-        this.bounds = new Bounds(minX, minY, maxX, maxY);
-    }
-
     /*
      * getters, setters and adders
      */
@@ -90,10 +58,6 @@ public class Model {
 
     public float getMaxY() {
         return maxY;
-    }
-
-    public Bounds getBounds() {
-        return this.bounds;
     }
 
     public void setMinX(float minX) {
