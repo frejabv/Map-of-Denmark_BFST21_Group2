@@ -9,6 +9,9 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import bfst21.osm.*;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
@@ -17,6 +20,8 @@ public class MapCanvas extends Canvas {
     Point2D canvasPoint;
     double size;
     RenderingStyle renderingStyle;
+    int redrawIndex = 0;
+    public long[] redrawAverage = new long[20];
 
     public void init(Model model) {
         this.model = model;
@@ -31,6 +36,7 @@ public class MapCanvas extends Canvas {
     }
 
     void repaint() {
+        long start = System.nanoTime();
         gc = getGraphicsContext2D();
         gc.save();
         gc.setTransform(new Affine());
@@ -75,6 +81,14 @@ public class MapCanvas extends Canvas {
             gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
         }
         gc.restore();
+        long elapsedTime = System.nanoTime() - start;
+        if(redrawIndex<20) {
+            redrawAverage[redrawIndex] = elapsedTime;
+            redrawIndex++;
+        }
+        else {
+            redrawIndex = 0;
+        }
     }
 
     public void pan(double dx, double dy) {
