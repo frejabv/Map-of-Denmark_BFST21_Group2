@@ -47,17 +47,15 @@ public class Node extends Member{
     public void setRight(Node n){ right = n; }
 
     public void drawKDTLine(boolean orientation, GraphicsContext gc) {
-        gc.setFill(Color.BLACK);
-        gc.fillOval(x-0.25,y-0.25,0.5,0.5);
         gc.beginPath();
         if (orientation){
             gc.setStroke(Color.RED);
             gc.moveTo(x, rect.getMinY());
-            gc.lineTo(x, rect.getMaxX());
+            gc.lineTo(x, rect.getMaxY());
         } else {
             gc.setStroke(Color.BLUE);
             gc.moveTo(rect.getMinX() , y);
-            gc.lineTo(rect.getMaxY(), y);
+            gc.lineTo(rect.getMaxX(), y);
         }
         gc.stroke();
     }
