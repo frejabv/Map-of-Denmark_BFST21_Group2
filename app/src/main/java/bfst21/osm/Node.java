@@ -10,7 +10,6 @@ public class Node extends Member{
     private float y;
     // Scale nodes lattitude to account for the curvature of the earth
     private static float scalingConstant = -0.56f;
-    //private static float scalingConstant = 1;
 
     private Node left;
     private Node right;

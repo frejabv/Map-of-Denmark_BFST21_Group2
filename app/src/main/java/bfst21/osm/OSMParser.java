@@ -53,21 +53,15 @@ public class OSMParser {
                         case "bounds":
                             model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                             model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                            //TODO haha, world go boooooooooooom
                             model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
                             model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
-                            //model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / 1);
-                            //model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / 1);
                             break;
                         case "node":
                             var nodeId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                             var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                            System.out.println("input: nodeID = " + nodeId + " lon: " + lon + " lat: " + lat);
                             Node n = new Node(lon, lat, nodeId);
                             model.getKdTree().insert(n);
-
-                            System.out.println("node successfully added to KDTree");
                             model.addToNodeIndex(n);
                             break;
                         case "way":
@@ -292,13 +286,8 @@ public class OSMParser {
                     break;
             }
         }
-        System.out.println("hi");
-        //TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
-        System.out.println(model.getCoastlines());
-        if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
-            System.out.println("you fool, you think it is that simple? hahahahah");
-        }
+        System.out.println("coastlines: " + model.getCoastlines());
     }
 
     public static List<Drawable> mergeCoastlines(ArrayList<Way> coastlines) {

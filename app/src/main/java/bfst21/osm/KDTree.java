@@ -24,7 +24,6 @@ public class KDTree {
      * Add query Node to the tree, if it is not null and does not exist in the tree already.
      */
     public void insert(Node qNode) {
-        System.out.println("Inserting point p" + qNode + " with coordinates: " + qNode.getX() + " " + qNode.getY() + " with ID ");
         if (qNode == null) {
             throw new NullPointerException("Point2D is null upon insertion into KDTree");
         }
@@ -47,7 +46,7 @@ public class KDTree {
      * @param parent      is the current parent of out element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
-     * @returns the Node at with its correct parent and left/right rectangle/domain
+     * @returns           the Node at with its correct parent and left/right rectangle/domain
      */
     private Node insert(Node n, Node parent, Node qNode, boolean orientation) {
         if (n == null) {
@@ -215,11 +214,11 @@ public class KDTree {
             this.xmax = xmax;
             this.ymax = ymax;
             if (Float.isNaN(xmin) || Float.isNaN(xmax)) {
-                System.out.println("if 1 returned true");
+                System.out.println("if 1 returned true: x coordinate NaN");
                 throw new IllegalArgumentException("x-coordinate is NaN: " + toString());
             }
             if (Float.isNaN(ymin) || Float.isNaN(ymax)) {
-                System.out.println("if 2 returned true");
+                System.out.println("if 2 returned true: y coordinate is NaN");
                 throw new IllegalArgumentException("y-coordinate is NaN: " + toString());
             }
             if (xmax < xmin) {
@@ -229,7 +228,6 @@ public class KDTree {
                 //throw new IllegalArgumentException("xmax < xmin: " + toString());
             }
             if (ymax < ymin) {
-                //TODO fix hvorfor vi ganger -1 på
                 System.out.println("if 4 returned true");
                 System.out.println(ymax + " < " + ymin + " is " + (ymax < ymin));
                 //throw new IllegalArgumentException("ymax < ymin: " + toString());
