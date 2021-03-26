@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Relation extends Member {
     ArrayList<Member> members = new ArrayList<>();
+    ArrayList<Way> ways = new ArrayList<>();
 
     public Relation(long id) {
         super(id);
@@ -14,6 +15,10 @@ public class Relation extends Member {
 
     public void  addMember(Member member) {
         members.add(member);
+    }
+
+    public void addWay(Way way) {
+        ways.add(way);
     }
 
     public List<Member> getMembers() {
@@ -37,12 +42,12 @@ public class Relation extends Member {
                 drawBuilding(gc);
                 System.out.println("relation building drawn");
             } else {
-                for(Member member : members) {
-                    if(member instanceof Way) {
-                        ((Way) member).draw(gc);
-                        gc.fill();
-                        System.out.println("relation drawn");
-                    }
+                for(Way way : ways) {
+                    var drawStyle = style.getDrawStyleByTag(way.tags.get(0));
+
+                    way.draw(gc);
+                    //gc.fill();
+                    System.out.println("relation drawn");
                 }
             }
             /*boolean innerDrawn = false;
@@ -65,19 +70,15 @@ public class Relation extends Member {
     }
 
     public void drawBuilding(GraphicsContext gc) {
-
-        for(Member member : members) {
-            if(member instanceof Way) {
-                // her vil jeg tjekke om dette member har rollen inner
-                ((Way) member).draw(gc);
-                gc.fill();
-                /*for(String value : member.getRoleMap().values()) {
+        for(Way way : ways) {
+            // her vil jeg tjekke om dette member har rollen inner
+            /*for(String value : member.getRoleMap().values()) {
                     if(value.equals("inner")) {
-                        ((Way) member).draw(gc);
-
+                        way.draw(gc);
                     }
-                }*/
-            }
+            }*/
+            way.draw(gc);
+            gc.fill();
         }
     }
 

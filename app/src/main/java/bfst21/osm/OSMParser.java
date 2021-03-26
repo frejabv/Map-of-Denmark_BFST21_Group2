@@ -65,7 +65,7 @@ public class OSMParser {
                     var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     way = new Way(wayId);
                     model.addToWayIndex(way);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "nd":
                     if (isWay && way != null) {
@@ -100,7 +100,7 @@ public class OSMParser {
                     var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     relation = new Relation(relationId);
                     model.addToRelationIndex(relation);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "member":
                     var type = xmlReader.getAttributeValue(null, "type");
@@ -113,6 +113,7 @@ public class OSMParser {
                         break;
                     case "way":
                         memberRef = model.getWayIndex().getMember(ref);
+                        relation.addWay(model.getWayIndex().getMember(ref));
                         break;
                     case "relation":
                         memberRef = model.getRelationIndex().getMember(ref);
