@@ -3,8 +3,8 @@ package bfst21.osm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemberIndex {
-        private List<Member> members;
+public class MemberIndex<T extends Member> {
+        private List<T> members;
         private boolean isSorted;
 
         public MemberIndex() {
@@ -12,12 +12,12 @@ public class MemberIndex {
             this.isSorted = true;
         }
 
-        public void addMember(Member member) {
+        public void addMember(T member) {
             members.add(member);
             isSorted = false;
         }
 
-        public Member getMember(long id) {
+        public T getMember(long id) {
             if (!isSorted) {
                 members.sort((a, b) -> Long.compare(a.getId(), b.getId()));
                 isSorted = true;
@@ -33,7 +33,7 @@ public class MemberIndex {
                     hi = mid;
                 }
             }
-            Member member = members.get((int) lo);
+            T member = members.get((int) lo);
 
             if (member.getId() == id) {
                 return member;

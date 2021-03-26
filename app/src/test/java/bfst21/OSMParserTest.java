@@ -5,16 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.osm.OSMParser;
 import bfst21.osm.Tag;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class OSMParserTest {
-    private final Model samsoeModel = new Model("data/TEST_MAP_SAMSOE.osm", false);
-    private final Model sjaelsoeModel = new Model("data/TEST_MAP_SJAELSOE.osm", false);
-
-    @Test
-    public void testUnsupportedFileTypeExceptionThrown() {
-        assertThrows(UnsupportedFileTypeException.class, () -> OSMParser.readMapElements("filename.jpg", samsoeModel));
-    }
+    private final Model samsoeModel = new Model("data/TEST_MAP_SAMSOE.osm",false);
+    private final Model sjaelsoeModel = new Model("data/TEST_MAP_SJAELSOE.osm.zip",false);
 
     @Test
     public void testLatLonBoundsSamsoe(){
@@ -30,6 +26,13 @@ public class OSMParserTest {
         assertEquals(12.4173f, sjaelsoeModel.getMinX());
         assertEquals(55.8840f/-0.56f, sjaelsoeModel.getMaxY());
         assertEquals(55.8584f/-0.56f, sjaelsoeModel.getMinY());
+    }
+
+    @Test
+    public void testUnsupportedFileTypeException(){
+        Assertions.assertThrows(UnsupportedFileTypeException.class,()-> {
+            OSMParser.readMapElements("data/TEST_MAP_SAMSOE.osm.png",new Model(null,false));
+        });
     }
 
     @Test
@@ -51,19 +54,23 @@ public class OSMParserTest {
     public void testSjaelsoeIslands(){ assertEquals(0, sjaelsoeModel.getIslands().size()); }
 
     @Test
-    public void testSamsoeBuildings(){ assertEquals(5894,samsoeModel.getFillMap().get(Tag.BUILDING).size()); }
+    public void testSamsoeBuildings(){
+        assertEquals(5926,samsoeModel.getFillMap().get(Tag.BUILDING).size());
+    }
 
     @Test
-    public void testSjaelsoeBuildings(){ assertEquals(2894,sjaelsoeModel.getFillMap().get(Tag.BUILDING).size()); }
+    public void testSjaelsoeBuildings(){
+        assertEquals(2900,sjaelsoeModel.getFillMap().get(Tag.BUILDING).size());
+    }
 
     @Test
     public void testSamsoeCycleways(){ assertEquals(19,samsoeModel.getDrawableMap().get(Tag.CYCLEWAY).size()); }
 
     @Test
-    public void testSjaelsoeCycleways(){ assertEquals(154,sjaelsoeModel.getDrawableMap().get(Tag.CYCLEWAY).size()); }
+    public void testSjaelsoeCycleways(){ assertEquals(188,sjaelsoeModel.getDrawableMap().get(Tag.CYCLEWAY).size()); }
 
     @Test
-    public void testSamsoeFootways(){ assertEquals(107,samsoeModel.getDrawableMap().get(Tag.FOOTWAY).size()); }
+    public void testSamsoeFootways(){ assertEquals(108,samsoeModel.getDrawableMap().get(Tag.FOOTWAY).size()); }
 
     @Test
     public void testSjaelsoeFootways(){ assertEquals(157,sjaelsoeModel.getDrawableMap().get(Tag.FOOTWAY).size()); }
@@ -99,10 +106,10 @@ public class OSMParserTest {
     public void testSjaelsoePrimary(){ assertEquals(8,sjaelsoeModel.getDrawableMap().get(Tag.PRIMARY).size()); }
 
     @Test
-    public void testSamsoeResidential(){ assertEquals(348,samsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
+    public void testSamsoeResidential(){ assertEquals(492,samsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
 
     @Test
-    public void testSjaelsoeResidential(){ assertEquals(152,sjaelsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
+    public void testSjaelsoeResidential(){ assertEquals(164,sjaelsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
 
     @Test
     public void testSamsoeSecondary(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.SECONDARY).size()); }
@@ -111,7 +118,7 @@ public class OSMParserTest {
     public void testSjaelsoeSecondary(){ assertEquals(63,sjaelsoeModel.getDrawableMap().get(Tag.SECONDARY).size()); }
 
     @Test
-    public void testSamsoeService(){ assertEquals(798,samsoeModel.getDrawableMap().get(Tag.SERVICE).size()); }
+    public void testSamsoeService(){ assertEquals(799,samsoeModel.getDrawableMap().get(Tag.SERVICE).size()); }
 
     @Test
     public void testSjaelsoeService(){ assertEquals(402,sjaelsoeModel.getDrawableMap().get(Tag.SERVICE).size()); }
@@ -126,7 +133,7 @@ public class OSMParserTest {
     public void testSamsoeTrack(){ assertEquals(337,samsoeModel.getDrawableMap().get(Tag.TRACK).size()); }
 
     @Test
-    public void testSjaelsoTrack(){ assertEquals(28,sjaelsoeModel.getDrawableMap().get(Tag.TRACK).size()); }
+    public void testSjaelsoTrack(){ assertEquals(54,sjaelsoeModel.getDrawableMap().get(Tag.TRACK).size()); }
 
     @Test
     public void testSamsoeTrunk(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.TRUNK).size()); }
@@ -135,16 +142,15 @@ public class OSMParserTest {
     public void testSjaelsoeTrunk(){ assertEquals(2,sjaelsoeModel.getDrawableMap().get(Tag.TRUNK).size()); }
 
     @Test
-    public void testSamsoeUnclassifiedWays(){ assertEquals(222,samsoeModel.getDrawableMap().get(Tag.UNCLASSIFIED).size()); }
+    public void testSamsoeUnclassifiedWays(){ assertEquals(223,samsoeModel.getDrawableMap().get(Tag.UNCLASSIFIED).size()); }
 
     @Test
     public void testSjaelsoeUnclassifiedWays(){ assertEquals(26,sjaelsoeModel.getDrawableMap().get(Tag.UNCLASSIFIED).size()); }
 
     @Test
-    public void testSamsoeInlandWater(){ assertEquals(351,samsoeModel.getFillMap().get(Tag.WATER).size()); }
+    public void testSamsoeInlandWater(){ assertEquals(355,samsoeModel.getFillMap().get(Tag.WATER).size()); }
 
     @Test
-    public void testSjaelsoeInlandWater(){ assertEquals(103,sjaelsoeModel.getFillMap().get(Tag.WATER).size()); }
+    public void testSjaelsoeInlandWater(){ assertEquals(105,sjaelsoeModel.getFillMap().get(Tag.WATER).size()); }
 
-    //TODO: test junctions when read as junctions and not secoundry ways
 }
