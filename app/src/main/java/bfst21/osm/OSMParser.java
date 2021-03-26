@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
-import org.w3c.dom.ls.LSException;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,12 +171,12 @@ public class OSMParser {
 
                 if (drawStyle == DrawStyle.FILL) {
                     fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if(!isDublet(drawable,tag,fillMap)) {
+                    if(!isDublet(drawable, tag, fillMap)) {
                         fillMap.get(tag).add((Drawable) drawable);
                     }
                 } else {
                     drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if(!isDublet(drawable,tag,drawableMap)) {
+                    if(!isDublet(drawable, tag, drawableMap)) {
                         drawableMap.get(tag).add((Drawable) drawable);
                     }
                 }
