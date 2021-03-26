@@ -1,6 +1,6 @@
 package bfst21;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.osm.OSMParser;
@@ -42,14 +42,16 @@ public class OSMParserTest {
     public void testInputFileSjaelsoe(){ assertEquals(41017, sjaelsoeModel.getNodeIndex().size()); }
 
     @Test
-    public void testSamsoeCoastlines(){
-        assertEquals(27,samsoeModel.getCoastlines().size());
-    }
+    public void testSamsoeCoastlines(){ assertEquals(27,samsoeModel.getCoastlines().size()); }
 
     @Test
-    public void testSjaelsoeCoastlines(){
-        assertEquals(0,sjaelsoeModel.getCoastlines().size());
-    }
+    public void testSjaelsoeCoastlines(){ assertEquals(0,sjaelsoeModel.getCoastlines().size()); }
+
+    @Test
+    public void testSamsoeIslands(){ assertEquals(20, samsoeModel.getIslands().size()); }
+
+    @Test
+    public void testSjaelsoeIslands(){ assertEquals(0, sjaelsoeModel.getIslands().size()); }
 
     @Test
     public void testSamsoeBuildings(){
@@ -74,7 +76,7 @@ public class OSMParserTest {
     public void testSjaelsoeFootways(){ assertEquals(157,sjaelsoeModel.getDrawableMap().get(Tag.FOOTWAY).size()); }
 
     @Test
-    public void testSamsoeMotorways(){ assertNull(samsoeModel.getDrawableMap().get(Tag.MOTORWAY)); }
+    public void testSamsoeMotorways(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.MOTORWAY).size()); }
 
     @Test
     public void testSjaelsoeMotorways(){ assertEquals(11,sjaelsoeModel.getDrawableMap().get(Tag.MOTORWAY).size()); }
@@ -92,13 +94,13 @@ public class OSMParserTest {
     public void testSjaelsoePaths(){ assertEquals(126,sjaelsoeModel.getDrawableMap().get(Tag.PATH).size()); }
 
     @Test
-    public void testSamsoePedestrian(){ assertNull(samsoeModel.getDrawableMap().get(Tag.PEDESTRIAN)); }
+    public void testSamsoePedestrian(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.PEDESTRIAN).size()); }
 
     @Test
     public void testSjaelsoePedestrian(){ assertEquals(5,sjaelsoeModel.getDrawableMap().get(Tag.PEDESTRIAN).size()); }
 
     @Test
-    public void testSamsoePrimary(){ assertNull(samsoeModel.getDrawableMap().get(Tag.PRIMARY)); }
+    public void testSamsoePrimary(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.PRIMARY).size()); }
 
     @Test
     public void testSjaelsoePrimary(){ assertEquals(8,sjaelsoeModel.getDrawableMap().get(Tag.PRIMARY).size()); }
@@ -110,7 +112,7 @@ public class OSMParserTest {
     public void testSjaelsoeResidential(){ assertEquals(164,sjaelsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
 
     @Test
-    public void testSamsoeSecondary(){ assertNull(samsoeModel.getDrawableMap().get(Tag.SECONDARY)); }
+    public void testSamsoeSecondary(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.SECONDARY).size()); }
 
     @Test
     public void testSjaelsoeSecondary(){ assertEquals(63,sjaelsoeModel.getDrawableMap().get(Tag.SECONDARY).size()); }
@@ -134,7 +136,7 @@ public class OSMParserTest {
     public void testSjaelsoTrack(){ assertEquals(54,sjaelsoeModel.getDrawableMap().get(Tag.TRACK).size()); }
 
     @Test
-    public void testSamsoeTrunk(){ assertNull(samsoeModel.getDrawableMap().get(Tag.TRUNK)); }
+    public void testSamsoeTrunk(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.TRUNK).size()); }
 
     @Test
     public void testSjaelsoeTrunk(){ assertEquals(2,sjaelsoeModel.getDrawableMap().get(Tag.TRUNK).size()); }
