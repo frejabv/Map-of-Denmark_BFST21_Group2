@@ -67,6 +67,7 @@ public class MapCanvas extends Canvas {
 
         model.getRelationIndex().forEach(relation -> {
             System.out.println("Relation draw called");
+            relation.showTags();
             relation.draw(gc, renderingStyle);
             //System.out.println("Relation draw finished");
         });

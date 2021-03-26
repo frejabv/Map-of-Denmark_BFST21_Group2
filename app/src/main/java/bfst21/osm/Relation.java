@@ -21,11 +21,11 @@ public class Relation extends Member {
     }
 
     public void draw(GraphicsContext gc, RenderingStyle style) {
-        System.out.println("Relation.draw() began running");
+        //System.out.println("Relation.draw() began running");
         System.out.println("Tag size when running: " + tags.size());
-        System.out.println("Tags in relation: " + tags);
-        ArrayList<Tag> tag2 = getTags();
-        System.out.println("Result of getTags() " + tag2);
+        //System.out.println("Tags in relation: " + tags);
+        //ArrayList<Tag> tag2 = getTags();
+        //System.out.println("Result of getTags() " + tag2);
         if(!tags.isEmpty()) {
             gc.setStroke(style.getColorByTag(tags.get(0)));
             gc.setFill(style.getColorByTag(tags.get(0)));
@@ -80,4 +80,9 @@ public class Relation extends Member {
             }
         }
     }
+
+    public void showTags() {
+        System.out.println("Result from show tags: " + tags);
+    }
+
 }

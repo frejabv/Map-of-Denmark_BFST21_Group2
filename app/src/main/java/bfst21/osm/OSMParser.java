@@ -141,6 +141,7 @@ public class OSMParser {
                     }*/
                     System.out.println("Length of tags for relation: " + tags.size());
                     relation.setTags(tags);
+                    relation.showTags();
                     isRelation = false;
                     relation = null;
                     break;
