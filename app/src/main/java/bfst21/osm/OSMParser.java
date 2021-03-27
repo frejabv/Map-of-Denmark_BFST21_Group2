@@ -42,7 +42,6 @@ public class OSMParser {
         Relation relation = null;
 
         boolean isWay = false;
-        boolean isRelation = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -96,7 +95,6 @@ public class OSMParser {
                     }
                     break;
                 case "relation":
-                    isRelation = true;
                     var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     relation = new Relation(relationId);
                     model.addToRelationIndex(relation);
@@ -134,7 +132,6 @@ public class OSMParser {
                     break;
                 case "relation":
                     relation.setTags(tags);
-                    isRelation = false;
                     relation = null;
                     break;
                 }
