@@ -24,9 +24,7 @@ public class Member {
     }
 
     public void setTags(ArrayList<Tag> tags){
-        System.out.println("Input tags: " + tags);
         this.tags = tags;
-        System.out.println("Output tags: " + this.tags);
     }
 
     public ArrayList<Tag> getTags() {

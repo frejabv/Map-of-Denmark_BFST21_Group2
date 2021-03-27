@@ -1,10 +1,13 @@
 package bfst21.osm;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static javafx.scene.shape.FillRule.EVEN_ODD;
 
 public class Relation extends Member {
     ArrayList<Member> members = new ArrayList<>();
@@ -36,24 +39,33 @@ public class Relation extends Member {
             //i want to check if what we are about to draw needs to be drawn with
             //empty space (building) or else which style it needs to be drawn as
 
-            //outer of vestballegård
+            /*gc.setFill(Color.RED);
+            gc.setFillRule(EVEN_ODD);
             gc.beginPath();
-            var firstNode = new Node(10.5212460f, 55.9666861f, 1755108083);
-            gc.moveTo(firstNode.getX(), firstNode.getY());
-            ArrayList<Node> nodes = new ArrayList<>();
-            nodes.add(firstNode);
-            nodes.add(new Node(10.5218011f,55.9666945f, 2));
-            nodes.add(new Node(10.5218114f,55.9664824f,3));
-            nodes.add(new Node(10.5214534f,55.9664770f, 4));
-            nodes.add(new Node(10.5214464f,55.9666215f, 5));
-            nodes.add(new Node(10.5212493f,55.9666185f,6));
-            nodes.add(new Node(10.5212460f,55.9666861f,7));
-            //Node(lon,lat,id)
+            gc.moveTo(120,130);
+            gc.lineTo(140,180);
+            gc.lineTo(170,180);
+            gc.lineTo(170,130);
+            gc.lineTo(120,130);
 
-            for (var node : nodes) {
-                gc.lineTo(node.getX(), node.getY());
-            }
-            gc.stroke();
+            gc.moveTo(100,100);
+            gc.lineTo(120,150);
+            gc.lineTo(90,200);
+            gc.lineTo(200,200);
+            gc.lineTo(180,175);
+            gc.lineTo(200,100);
+            gc.lineTo(100,100);
+
+            gc.moveTo(10,10);
+            gc.lineTo(10,250);
+            gc.lineTo(250,250);
+            gc.lineTo(250,10);
+            gc.lineTo(10,10);
+            gc.fill();*/
+
+            //Test for VESTBALLEGÅRD
+            /*gc.setFill(Color.PURPLE);
+            gc.setFillRule(FillRule.EVEN_ODD);
 
             //inner of vestballegård
             gc.beginPath();
@@ -70,9 +82,27 @@ public class Relation extends Member {
             for (var node : nodes1) {
                 gc.lineTo(node.getX(), node.getY());
             }
-            gc.stroke();
 
-            /*if(tags.contains(Tag.BUILDING)) {
+            //outer of vestballegård
+            var firstNode = new Node(10.5212460f, 55.9666861f, 1755108083);
+            gc.moveTo(firstNode.getX(), firstNode.getY());
+            ArrayList<Node> nodes = new ArrayList<>();
+            nodes.add(firstNode);
+            nodes.add(new Node(10.5218011f,55.9666945f, 2));
+            nodes.add(new Node(10.5218114f,55.9664824f,3));
+            nodes.add(new Node(10.5214534f,55.9664770f, 4));
+            nodes.add(new Node(10.5214464f,55.9666215f, 5));
+            nodes.add(new Node(10.5212493f,55.9666185f,6));
+            nodes.add(new Node(10.5212460f,55.9666861f,7));
+            //Node(lon,lat,id)
+
+            for (var node : nodes) {
+                gc.lineTo(node.getX(), node.getY());
+            }
+
+            gc.fill();*/
+
+            if(tags.contains(Tag.BUILDING)) {
                 drawBuilding(gc);
                 System.out.println("relation building drawn");
             } else {
@@ -83,7 +113,7 @@ public class Relation extends Member {
                         gc.fill();
                     }
                 }
-            }*/
+            }
         }
         System.out.println();
     }
@@ -91,25 +121,33 @@ public class Relation extends Member {
     public void drawBuilding(GraphicsContext gc) {
         boolean innerDrawn = false;
         gc.setFillRule(FillRule.EVEN_ODD);
+        gc.beginPath();
+        if(id == 2186043) System.out.println("VESTBALLEGÅRD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         for(Way way : ways) {
             // I want to check if the way has role inner
-            for(String value : way.getRoleMap().values()) {
-                if(value.equals("inner")) {
-                    way.draw(gc);
-                    innerDrawn = true;
-                    System.out.println("inner drawn");
-                } else if(innerDrawn) {
-                    way.draw(gc);
+            String value = way.getRoleMap().get(id);
+            //System.out.println(value + " role value read");
+            if(value.equals("inner")) {
+                way.specialDraw(gc);
+                innerDrawn = true;
+                System.out.println("inner drawn");
+            }
+        }
+        if(innerDrawn) {
+            for(Way way :ways) {
+                String value = way.getRoleMap().get(id);
+                //System.out.println(value + " role value read in second loop");
+                if(value.equals("outer")) {
+                    way.specialDraw(gc);
                     System.out.println(value + " drawn");
                 }
             }
-            //gc.fill();
         }
         gc.fill();
     }
 
-    public void showTags() {
+    /*public void showTags() {
         System.out.println("Result from show tags: " + tags);
-    }
+    }*/
 
 }
