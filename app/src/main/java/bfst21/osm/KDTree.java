@@ -10,6 +10,10 @@ public class KDTree {
     private Node root;
     private int size;
 
+    //fields for debugging
+    public static int IAE3Counter = 0;
+    public static int IAE4Counter = 0;
+
     public KDTree(Model model) {
         this.model = model;
         this.root = null;
@@ -21,7 +25,7 @@ public class KDTree {
     }
 
     /**
-     * Add query Node to the tree, if it is not null and does not exist in the tree already.
+     * insert query Node into the tree, if it is not null and does not exist in the tree already.
      */
     public void insert(Node qNode) {
         if (qNode == null) {
@@ -41,90 +45,89 @@ public class KDTree {
 
     /**
      * This is a recursive call that inserts a node into the correct empty spot.
-     *
-     * @param n           is the node position we want to try and insert p into.
+     * @param currentNode           is the node position we want to try and insert qNode into.
      * @param parent      is the current parent of out element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
      * @returns           the Node at with its correct parent and left/right rectangle/domain
      */
-    private Node insert(Node n, Node parent, Node qNode, boolean orientation) {
-        if (n == null) {
+    private Node insert(Node currentNode, Node parent, Node qNode, boolean orientation) {
+        if (currentNode == null) {
             RectHV r = null;
 
-            float xmin = parent.getRect().getMinX();
-            float ymin = parent.getRect().getMinY();
-            float xmax = parent.getRect().getMaxX();
-            float ymax = parent.getRect().getMaxY();
+            float minX = parent.getRect().getMinX();
+            float minY = parent.getRect().getMinY();
+            float maxX = parent.getRect().getMaxX();
+            float maxY = parent.getRect().getMaxY();
 
             if (orientation) {
                 if (qNode.getY() < parent.getY()) {
-                    ymax = parent.getY();
+                    maxY = parent.getY();
                 } else {
-                    ymin = parent.getY();
+                    minY = parent.getY();
                 }
             } else {
                 if (qNode.getX() < parent.getX()) {
-                    xmax = parent.getX();
+                    maxX = parent.getX();
                 } else {
-                    xmin = parent.getX();
+                    minX = parent.getX();
                 }
             }
-            r = new RectHV(xmin, ymin, xmax, ymax);
+            r = new RectHV(minX, minY, maxX, maxY);
             size++;
             qNode.setRect(r);
             return qNode;
         }
 
-        boolean areCoodinatesLessThan = false;
+        boolean areCoordinatesLessThan = false;
         if (orientation) {
-            areCoodinatesLessThan = qNode.getX() < n.getX();
+            areCoordinatesLessThan = qNode.getX() < currentNode.getX();
         } else {
-            areCoodinatesLessThan = qNode.getY() < n.getY();
+            areCoordinatesLessThan = qNode.getY() < currentNode.getY();
         }
 
-        if (areCoodinatesLessThan) {
-            n.setLeft(insert(n.getLeft(), n, qNode, !orientation));
+        if (areCoordinatesLessThan) {
+            currentNode.setLeft(insert(currentNode.getLeft(), currentNode, qNode, !orientation));
         } else {
-            n.setRight(insert(n.getRight(), n, qNode, !orientation));
+            currentNode.setRight(insert(currentNode.getRight(), currentNode, qNode, !orientation));
         }
 
-        return n;
+        return currentNode;
     }
 
 
     public boolean contains(Node qNode) {
         if (qNode == null) {
-            throw new NullPointerException("null key at KdTree.contians(Point2D p)");
+            throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
         return contains(root, qNode, true);
     }
 
-    private boolean contains(Node n, Node qNode, boolean orientation) {
-        if (n == null) {
+    private boolean contains(Node currentNode, Node qNode, boolean orientation) {
+        if (currentNode == null) {
             return false;
         }
-        if (n.getId() == qNode.getId()) {
+
+        if (currentNode.getId() == qNode.getId()) {
             return true;
         }
 
-        boolean areCoodinatesLessThan = false;
+        boolean areCoordinatesLessThan = false;
         if (orientation) {
-            areCoodinatesLessThan = qNode.getX() < n.getX();
+            areCoordinatesLessThan = qNode.getX() < currentNode.getX();
         } else {
-            areCoodinatesLessThan = qNode.getY() < n.getY();
+            areCoordinatesLessThan = qNode.getY() < currentNode.getY();
         }
 
-        if (areCoodinatesLessThan) {
-            return contains(n.getLeft(), qNode, !orientation);
+        if (areCoordinatesLessThan) {
+            return contains(currentNode.getLeft(), qNode, !orientation);
         } else {
-            return contains(n.getRight(), qNode, !orientation);
+            return contains(currentNode.getRight(), qNode, !orientation);
         }
     }
 
     /**
      * begins the recursive call to nearest.
-     *
      * @param p the point we are querying about
      * @return the nearest Node
      */
@@ -140,42 +143,43 @@ public class KDTree {
     /**
      * The recursive part of the nearest function.
      *
-     * @param n       the current root.
+     * @param currentNode       the current root.
      * @param closest our current closest node.
      * @param p       the point we are querying about.
      * @return returns the closest node when there are no other candidates.
      */
-    private Node nearest(Node n, Node closest, Point2D p, boolean orientation) {
+    private Node nearest(Node currentNode, Node closest, Point2D p, boolean orientation) {
         Node c = closest;
 
-        if (n == null) {
+        if (currentNode == null) {
             return c;
         }
 
         double minDistance = Math.sqrt(p.distance(c.getX(), c.getY()));
-        double thisDistance = Math.sqrt(p.distance(n.getX(), n.getY()));
 
-        if (n.getRect().distanceSquaredTo(p) >= minDistance) {
+        if (currentNode.getRect().distanceSquaredTo(p) >= minDistance) {
             return c;
         }
 
+        double thisDistance = Math.sqrt(p.distance(currentNode.getX(), currentNode.getY()));
+
         if (thisDistance < minDistance) {
-            c = n;
+            c = currentNode;
         }
 
         boolean areCoordinatesLessThan = false;
         if (orientation) {
-            areCoordinatesLessThan = p.getX() < n.getX();
+            areCoordinatesLessThan = p.getX() < currentNode.getX();
         } else {
-            areCoordinatesLessThan = p.getY() < n.getY();
+            areCoordinatesLessThan = p.getY() < currentNode.getY();
         }
 
         if (areCoordinatesLessThan) {
-            c = nearest(n.getLeft(), c, p, !orientation);
-            c = nearest(n.getRight(), c, p, !orientation);
+            c = nearest(currentNode.getLeft(), c, p, !orientation);
+            c = nearest(currentNode.getRight(), c, p, !orientation);
         } else {
-            c = nearest(n.getRight(), c, p, !orientation);
-            c = nearest(n.getLeft(), c, p, !orientation);
+            c = nearest(currentNode.getRight(), c, p, !orientation);
+            c = nearest(currentNode.getLeft(), c, p, !orientation);
         }
 
         return c;
@@ -193,80 +197,82 @@ public class KDTree {
         }
     }
 
-    private void drawLines(Node n, GraphicsContext gc, boolean orientation) {
-        n.drawKDTLine(orientation, gc);
-        if (n.getRight() != null) {
-            drawLines(n.getRight(), gc, !orientation);
+    private void drawLines(Node currentNode, GraphicsContext gc, boolean orientation) {
+        currentNode.drawKDTLine(orientation, gc);
+        if (currentNode.getRight() != null) {
+            drawLines(currentNode.getRight(), gc, !orientation);
         }
-        if (n.getLeft() != null) {
-            drawLines(n.getLeft(), gc, !orientation);
+        if (currentNode.getLeft() != null) {
+            drawLines(currentNode.getLeft(), gc, !orientation);
         }
     }
 
     //taken from Sedgewick and Wayne
     public class RectHV {
-        private final float xmin, ymin;
-        private final float xmax, ymax;
+        private final float minX, minY;
+        private final float maxX, maxY;
 
-        public RectHV(float xmin, float ymin, float xmax, float ymax) {
-            this.xmin = xmin;
-            this.ymin = ymin;
-            this.xmax = xmax;
-            this.ymax = ymax;
-            if (Float.isNaN(xmin) || Float.isNaN(xmax)) {
+        public RectHV(float minX, float minY, float maxX, float maxY) {
+            this.minX = minX;
+            this.minY = minY;
+            this.maxX = maxX;
+            this.maxY = maxY;
+            if (Float.isNaN(minX) || Float.isNaN(maxX)) {
                 System.out.println("if 1 returned true: x coordinate NaN");
                 throw new IllegalArgumentException("x-coordinate is NaN: " + toString());
             }
-            if (Float.isNaN(ymin) || Float.isNaN(ymax)) {
+            if (Float.isNaN(minY) || Float.isNaN(maxY)) {
                 System.out.println("if 2 returned true: y coordinate is NaN");
                 throw new IllegalArgumentException("y-coordinate is NaN: " + toString());
             }
-            if (xmax < xmin) {
+            if (maxX < minX) {
+                IAE3Counter++;
                 System.out.println("if 3 returned true");
-                System.out.println(xmax + " < " + xmin + " is " + (xmax < xmin));
+                System.out.println(maxX + " < " + minX + " is " + (maxX < minX));
                 System.out.println("ILLEGAL ARGUMENT EXCEPTION");
-                //throw new IllegalArgumentException("xmax < xmin: " + toString());
+                //throw new IllegalArgumentException("maxX < minX: " + toString());
             }
-            if (ymax < ymin) {
+            if (maxY < minY) {
+                IAE4Counter++;
                 System.out.println("if 4 returned true");
-                System.out.println(ymax + " < " + ymin + " is " + (ymax < ymin));
-                //throw new IllegalArgumentException("ymax < ymin: " + toString());
+                System.out.println(maxY + " < " + minY + " is " + (maxY < minY));
                 System.out.println("ILLEGAL ARGUMENT EXCEPTION");
+                //throw new IllegalArgumentException("maxY < minY: " + toString());
             }
         }
 
         public float getMinX() {
-            return xmin;
+            return minX;
         }
 
         public float getMinY() {
-            return ymin;
+            return minY;
         }
 
         public float getMaxX() {
-            return xmax;
+            return maxX;
         }
 
         public float getMaxY() {
-            return ymax;
+            return maxY;
         }
 
         public boolean intersects(RectHV that) {
-            return this.xmax >= that.xmin && this.ymax >= that.ymin
-                    && that.xmax >= this.xmin && that.ymax >= this.ymin;
+            return this.maxX >= that.minX && this.maxY >= that.minY
+                    && that.maxX >= this.minX && that.maxY >= this.minY;
         }
 
         public boolean contains(Point2D p) {
-            return (p.getX() >= xmin) && (p.getX() <= xmax)
-                    && (p.getY() >= ymin) && (p.getY() <= ymax);
+            return (p.getX() >= minX) && (p.getX() <= maxX)
+                    && (p.getY() >= minY) && (p.getY() <= maxY);
         }
 
         public double distanceSquaredTo(Point2D p) {
             double dx = 0.0, dy = 0.0;
-            if (p.getX() < xmin) dx = p.getX() - xmin;
-            else if (p.getX() > xmax) dx = p.getX() - xmax;
-            if (p.getY() < ymin) dy = p.getY() - ymin;
-            else if (p.getY() > ymax) dy = p.getY() - ymax;
+            if (p.getX() < minX) dx = p.getX() - minX;
+            else if (p.getX() > maxX) dx = p.getX() - maxX;
+            if (p.getY() < minY) dy = p.getY() - minY;
+            else if (p.getY() > maxY) dy = p.getY() - maxY;
             return dx * dx + dy * dy;
         }
     }

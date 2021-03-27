@@ -10,7 +10,7 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        var model = new Model("data/samsoe.osm");
+        var model = new Model("data/kdTree.osm");
         new View(model, primaryStage);
     }
 }

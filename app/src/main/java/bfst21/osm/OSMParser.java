@@ -53,8 +53,9 @@ public class OSMParser {
                         case "bounds":
                             model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                             model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
-                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
+                            //min lat and max lat are swapped
+                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
+                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
                             break;
                         case "node":
                             var nodeId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -200,7 +201,6 @@ public class OSMParser {
                 case XMLStreamReader.END_ELEMENT:
                     switch (xmlReader.getLocalName()) {
                         case "way":
-                            System.out.println(tags);
                             if (tags.isEmpty()) {
                                 model.addWay(way);
                             }
@@ -288,6 +288,7 @@ public class OSMParser {
         }
         model.setIslands(mergeCoastlines(model.getCoastlines()));
         System.out.println("coastlines: " + model.getCoastlines());
+        System.out.println("Illegal Argument Exceptions: T3:" + KDTree.IAE3Counter + " T4:"+KDTree.IAE4Counter);
     }
 
     public static List<Drawable> mergeCoastlines(ArrayList<Way> coastlines) {

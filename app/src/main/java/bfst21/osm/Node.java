@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 public class Node extends Member{
     private float x;
     private float y;
-    // Scale nodes lattitude to account for the curvature of the earth
+    // Scale node's lattitude to account for the curvature of the earth
     private static float scalingConstant = -0.56f;
 
     private Node left;
