@@ -19,10 +19,10 @@ All code must be formatted using the default java formatter.
 
 #### Possible issues
 ##### Permission denied
-If you run into a the following permission error on a unix system (macOS or Linux):
+If you run into the following permission error on a unix system (macOS or Linux):
 ```gradlew: permission denied```
 
-You need to make the file executable by running
+You need to make the file executable by running:
 ```bash
 $ chmod +x gradlew
 ```
@@ -57,4 +57,4 @@ The program will run and exit immediately when the window is ready to handle use
 ./gradlew run --args="ttiMode"  1,11s user 0,07s system 43% cpu 2,728 total
 ```
 
-The number were interested in is the total (the last one).
+The number we're interested in is the total (the last one).
