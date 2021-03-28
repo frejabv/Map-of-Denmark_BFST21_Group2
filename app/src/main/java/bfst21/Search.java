@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import java.util.*;
 import java.nio.file.*;
 public class Search {
-    /*
+
     public static void main(String[] args) {
        List<String> randomAddresses = new ArrayList<>();
        randomAddresses.add("Haveforeningen Af 10. Maj 1918 44 20.th., 8260 Viby J");
@@ -58,7 +58,7 @@ public class Search {
        postalcodeAndCity.add("4540 Fårevejle");
        postalcodeAndCity.add("8240 Risskov");
 
-       List<ArrayList<String>> addresses = new ArrayList<>();
+       List<List<String>> addresses = new ArrayList<>();
        addresses.add(randomAddresses);
        addresses.add(roadnameAndNumber);
        addresses.add(roadname);
@@ -74,6 +74,7 @@ public class Search {
        List<String> regexList = new ArrayList<>();
        regexList.add("(?<postcode>\\d{4})(?:\\s*)?(?<city>.*)"); //[Postcode] + [City]
        regexList.add(".*"); // [City]
+        regexList.add("(?<street>.*)(?:[,\\.]*\\s+)(?<house>\\d+[a-z|A-Z]*)\n"); //[Street] + [House]
        regexList.add("(?<street>[^\\n,]*?)\\s+(?<house>\\d+[A-zÆØÅæøå]*)(?:(?:,)?\\s+(?:(?<floor>[A-z0-9ÆØÅæøå]+(?:\\.)?))?(?:\\s*)?(?:(?<side>[A-z0-9ÆØÅæøå\\. ]*?))?(?:,)?(?:\\s*)?(?<postcode>\\d{4})(?:\\s*)?(?<city>.*))?");
 
        //Creating a pattern objects
@@ -88,13 +89,28 @@ public class Search {
           Matcher matcher = patterns.get(i).matcher(input);
           if(matcher.find()) {
              System.out.println("For regex "+i+" "+input+" is valid");
+             if(i == 0) {
+                 System.out.println("searching in postalcode and city");
+                 if(addresses.get(4).contains(input)) {
+                     System.out.println("Match found: " + matcher.group("postcode") + " " + matcher.group("city"));
+                 }
+             } else if(i == 1) {
+                 System.out.println("Searching in city");
+                 if(addresses.get(3).contains(input)) System.out.println("Match found");
+             } else if (i == 2) {
+                 System.out.println("Searching in road and number");
+                 if(addresses.get(1).contains(input)) System.out.println("Match found");
+             } else if (i == 3) {
+                 System.out.println("Searching in random addresses");
+                 if(addresses.get(0).contains(input)) System.out.println("Match found");
+             }
           } else {
              System.out.println("For regex "+i+" "+input+" is not valid");
           }
        }
     }
-    */
-    public static void main(String[] args) throws Exception {
+
+    /*public static void main(String[] args) throws Exception {
         Path path = Paths.get("file:///Users/jacobm/Desktop/testdict.txt");
         Spelling spel = new Spelling(path);
         spel.correct("haj");
@@ -115,5 +131,5 @@ public class Search {
             System.out.println(word + " : correct");
          else
             System.out.println(word + " : incorrect");*/
-    }
+    //}
 }
