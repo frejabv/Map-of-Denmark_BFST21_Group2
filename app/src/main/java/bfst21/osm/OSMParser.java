@@ -18,6 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OSMParser {
+    private static ArrayList<String> city = new ArrayList<>();
+    private static ArrayList<String> postcode = new ArrayList<>();
+    private static ArrayList<String> street = new ArrayList<>();
+    private static ArrayList<String> housenumber = new ArrayList<>();
+    private static HashMap<String, List<String>> addresses = new HashMap<>();
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
@@ -45,6 +50,7 @@ public class OSMParser {
 
         boolean isWay = false;
         boolean isRelation = false;
+        boolean isNode = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -61,6 +67,7 @@ public class OSMParser {
                     var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                     var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
                     model.addToNodeIndex(new Node(lon, lat, id));
+                    isNode = true;
                     break;
                 case "way":
                     isWay = true;
@@ -99,6 +106,17 @@ public class OSMParser {
                     } catch (IllegalArgumentException e) {
                         // We don't care about tags not in our Tag enum
                     }
+
+                    if(isNode) {
+                        if(k.contains("addr:")){
+                            try {
+                                saveAddressData(k.replace("addr:", ""), v);
+                            } catch(Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+
                     break;
                 case "relation":
                     isRelation = true;
@@ -156,6 +174,16 @@ public class OSMParser {
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
+
+        addresses.put("city", city);
+        addresses.put("postcode", postcode);
+        addresses.put("street", street);
+        addresses.put("housenumber", housenumber);
+        try {
+            writeAddressesToFile();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
@@ -208,6 +236,38 @@ public class OSMParser {
         var zip = new ZipInputStream(inputStream);
         zip.getNextEntry();
         loadOSM(zip,model);
+    }
+
+    public static void saveAddressData(String dataset, String data){
+        switch (dataset) {
+            case "city":
+                city.add(data);
+                break;
+            case "postcode":
+                postcode.add(data);
+                break;
+            case "street":
+                street.add(data);
+                break;
+            case "housenumber":
+                housenumber.add(data);
+                break;
+        }
+        /*try (var out = new PrintStream("data/" + dataset + ".txt")) {
+            out.println(data);
+        }*/
+    }
+
+    public static void writeAddressesToFile() throws IOException{
+        for(Map.Entry<String,List<String>> entry : addresses.entrySet()) {
+            String dataset = entry.getKey();
+            System.out.println(dataset);
+            BufferedWriter writer = new BufferedWriter(new FileWriter("data/" + dataset + ".txt"));
+            for(String data : entry.getValue()) {
+                writer.append(data + '\n');
+            }
+            writer.close();
+        }
     }
 
     private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){
