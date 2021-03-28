@@ -18,10 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OSMParser {
-    private static ArrayList<String> city = new ArrayList<>();
-    private static ArrayList<String> postcode = new ArrayList<>();
-    private static ArrayList<String> street = new ArrayList<>();
-    private static ArrayList<String> housenumber = new ArrayList<>();
     private static HashMap<String, List<String>> addresses = new HashMap<>();
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
@@ -109,11 +105,7 @@ public class OSMParser {
 
                     if(isNode) {
                         if(k.contains("addr:")){
-                            try {
-                                saveAddressData(k.replace("addr:", ""), v);
-                            } catch(Exception e) {
-                                System.out.println(e.getMessage());
-                            }
+                            saveAddressData(k.replace("addr:", ""), v);
                         }
                     }
 
@@ -175,10 +167,6 @@ public class OSMParser {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
 
-        addresses.put("city", city);
-        addresses.put("postcode", postcode);
-        addresses.put("street", street);
-        addresses.put("housenumber", housenumber);
         try {
             writeAddressesToFile();
         } catch (Exception e) {
@@ -239,7 +227,9 @@ public class OSMParser {
     }
 
     public static void saveAddressData(String dataset, String data){
-        switch (dataset) {
+        addresses.putIfAbsent(dataset, new ArrayList<>());
+        addresses.get(dataset).add(data);
+        /*switch (dataset) {
             case "city":
                 city.add(data);
                 break;
@@ -252,7 +242,7 @@ public class OSMParser {
             case "housenumber":
                 housenumber.add(data);
                 break;
-        }
+        }*/
         /*try (var out = new PrintStream("data/" + dataset + ".txt")) {
             out.println(data);
         }*/
