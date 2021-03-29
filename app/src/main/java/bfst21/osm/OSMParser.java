@@ -47,6 +47,7 @@ public class OSMParser {
         boolean isWay = false;
         boolean isRelation = false;
         boolean isNode = false;
+        boolean addressReceived = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -106,6 +107,7 @@ public class OSMParser {
                     if(isNode) {
                         if(k.contains("addr:")){
                             saveAddressData(k.replace("addr:", ""), v);
+                            addressReceived = true;
                         }
                     }
 
@@ -143,19 +145,31 @@ public class OSMParser {
                 break;
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
-                case "way":
-                    addDrawableToList(way, tags, model);
-                    break;
-                case "relation":
-                    if(isRelation) {
-                        List<Member> members = relation.getMembers();
-                        for(Member member : members) {
-                            addDrawableToList(member, tags, model);
+                    case "way":
+                        addDrawableToList(way, tags, model);
+                        break;
+                    case "relation":
+                        if(isRelation) {
+                            List<Member> members = relation.getMembers();
+                            for(Member member : members) {
+                                addDrawableToList(member, tags, model);
+                            }
                         }
-                    }
-                    isRelation = false;
-                    relation = null;
-                    break;
+                        isRelation = false;
+                        relation = null;
+                        break;
+                    case "node":
+                        if(addressReceived) {
+                            int size = addresses.get("street").size();
+                            String str = addresses.get("street").get(size - 1);
+                            size = addresses.get("housenumber").size();
+                            String number = addresses.get("housenumber").get(size - 1);
+                            String strNumber = str + " " + number;
+                            System.out.println(strNumber);
+                        }
+                        isNode = false;
+                        addressReceived = false;
+                        break;
                 }
                 break;
             }
@@ -229,23 +243,6 @@ public class OSMParser {
     public static void saveAddressData(String dataset, String data){
         addresses.putIfAbsent(dataset, new ArrayList<>());
         addresses.get(dataset).add(data);
-        /*switch (dataset) {
-            case "city":
-                city.add(data);
-                break;
-            case "postcode":
-                postcode.add(data);
-                break;
-            case "street":
-                street.add(data);
-                break;
-            case "housenumber":
-                housenumber.add(data);
-                break;
-        }*/
-        /*try (var out = new PrintStream("data/" + dataset + ".txt")) {
-            out.println(data);
-        }*/
     }
 
     public static void writeAddressesToFile() throws IOException{
