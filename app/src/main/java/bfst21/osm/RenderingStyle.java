@@ -26,6 +26,15 @@ public class RenderingStyle {
 
         styleMap.put(Tag.BUILDING, DrawStyle.FILL);
         styleMap.put(Tag.WATER, DrawStyle.FILL);
+
+        styleMap.put(Tag.CEMETERY, DrawStyle.FILL);
+        //styleMap.put(Tag.FARMLAND, DrawStyle.FILL);
+        styleMap.put(Tag.FOREST, DrawStyle.FILL);
+        styleMap.put(Tag.GRASS, DrawStyle.FILL);
+        styleMap.put(Tag.GRASSLAND, DrawStyle.FILL);
+        styleMap.put(Tag.GRAVE_YARD, DrawStyle.FILL);
+        styleMap.put(Tag.MEADOW, DrawStyle.FILL);
+        styleMap.put(Tag.ORCHARD, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
 
         genDefaultMode();
@@ -47,11 +56,20 @@ public class RenderingStyle {
 
     private void genDefaultMode() {
         defaultColorMap.put(Tag.BUILDING, Color.rgb(232, 232, 232));
-        defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
         defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
+
+        defaultColorMap.put(Tag.CEMETERY, Color.rgb(149, 205, 126));
+        //defaultColorMap.put(Tag.FARMLAND, Color.rgb(247, 255, 178));
+        defaultColorMap.put(Tag.FOREST, Color.rgb(149, 205, 126));
+        defaultColorMap.put(Tag.GRASS, Color.rgb(151, 194, 131));
+        defaultColorMap.put(Tag.GRASSLAND, Color.rgb(133, 182, 112));
+        defaultColorMap.put(Tag.GRAVE_YARD, Color.rgb(149, 205, 126));
+        defaultColorMap.put(Tag.MEADOW, Color.rgb(149, 205, 126));
+        defaultColorMap.put(Tag.ORCHARD, Color.rgb(149, 205, 126));
+        defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
+
         defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);
         defaultColorMap.put(Tag.PATH, Color.GREEN);
-
         defaultColorMap.put(Tag.CYCLEWAY, Color.TURQUOISE);
 
         defaultColorMap.put(Tag.PEDESTRIAN, Color.WHITE);
@@ -72,6 +90,9 @@ public class RenderingStyle {
 
         darkModeColorMap.put(Tag.WATER, Color.LIGHTBLUE);
         darkModeColorMap.put(Tag.PARK, Color.rgb(116, 125, 140));
+        darkModeColorMap.put(Tag.FOREST, Color.rgb(116, 125, 140));
+        darkModeColorMap.put(Tag.GRASS, Color.rgb(116, 125, 140));
+        darkModeColorMap.put(Tag.GRASSLAND, Color.rgb(116, 125, 140));
         darkModeColorMap.put(Tag.FOOTWAY, Color.GREEN);
         darkModeColorMap.put(Tag.PATH, Color.GREEN);
         darkModeColorMap.put(Tag.BUILDING, Color.rgb(72, 84, 96));
