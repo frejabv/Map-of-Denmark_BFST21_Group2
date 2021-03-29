@@ -161,11 +161,15 @@ public class OSMParser {
                     case "node":
                         if(addressReceived) {
                             int size = addresses.get("street").size();
-                            String str = addresses.get("street").get(size - 1);
+                            String one = addresses.get("street").get(size - 1);
                             size = addresses.get("housenumber").size();
-                            String number = addresses.get("housenumber").get(size - 1);
-                            String strNumber = str + " " + number;
-                            System.out.println(strNumber);
+                            String two = addresses.get("housenumber").get(size - 1);
+                            String strNumber = one + " " + two;
+                            size = addresses.get("postcode").size();
+                            one = addresses.get("postcode").get(size-1);
+                            size = addresses.get("city").size();
+                            two = addresses.get("city").get(size-1);
+                            System.out.println(strNumber + ", " + one + " " + two);
                         }
                         isNode = false;
                         addressReceived = false;
