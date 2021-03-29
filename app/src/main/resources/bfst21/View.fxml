@@ -204,9 +204,10 @@
                     <Text styleClass="mainContainer-subheader">Data</Text>
                   </FlowPane>
                   <Region styleClass="hr" />
-                  <Text>Time to interactive: 00:00</Text>
-                  <Text>Redraw time: 00:00</Text>
-                  <Text>RAM: 0.00</Text>
+                  <Text fx:id="ttd">Redraw time: 00:00</Text>
+                  <Text fx:id="cpuProcess">CPU Process Load: 0.00</Text>
+                  <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
+                  <Text fx:id="memoryUse">Memory Use: 0.00</Text>
                   <FlowPane styleClass="header-margin">
                     <Text styleClass="mainContainer-subheader">Dev Settings</Text>
                   </FlowPane>

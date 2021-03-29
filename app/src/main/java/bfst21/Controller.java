@@ -1,5 +1,6 @@
 package bfst21;
 
+import com.sun.management.OperatingSystemMXBean;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -7,7 +8,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -15,7 +15,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Controller {
     private Model model;
@@ -44,6 +49,8 @@ public class Controller {
 
     @FXML Text suggestionsHeader;
 
+    ScheduledExecutorService executor;
+
 
     public void init(Model model, Stage stage) {
         this.model = model;
@@ -60,11 +67,37 @@ public class Controller {
             }
             addSuggestions();
         });
-
+        executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(updateStats, 0, 3, TimeUnit.SECONDS);
         if (model.getTtiMode()) {
             System.exit(0);
         }
     }
+
+    OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
+            .getOperatingSystemMXBean();
+    Runtime runtime = Runtime.getRuntime();
+    long processMemory = runtime.totalMemory() - runtime.freeMemory();
+    @FXML
+    private Text cpuProcess;
+    @FXML
+    private Text cpuSystem;
+    @FXML
+    private Text ttd;
+    @FXML
+    private Text memoryUse;
+    Runnable updateStats = new Runnable() {
+        public void run() {
+            cpuProcess.textProperty().setValue("CPU Process Load: " + bean.getProcessCpuLoad());
+            cpuSystem.textProperty().setValue("CPU System Load: " + bean.getSystemCpuLoad() + "( " + bean.getSystemLoadAverage() + " average)");
+            memoryUse.textProperty().setValue("Memory Use (Experimental): " + processMemory);
+            long total = 0;
+            for (long temp : canvas.redrawAverage){
+                total += temp;
+            }
+            ttd.textProperty().set("Redraw time (Rolling Average): ~" + TimeUnit.NANOSECONDS.toMillis(total/canvas.redrawAverage.length) + "ms (" + total/canvas.redrawAverage.length + "ns)");
+        }
+    };
 
     ArrayList<Text> suggestionList = new ArrayList<>();
 
@@ -145,6 +178,10 @@ public class Controller {
     public void onMousePressedSearch(MouseEvent mouseEvent) {
         if (searchContainer.isVisible()) {
             hideAll();
+            if(canvas.setPin){
+                canvas.setPin = false;
+                canvas.repaint();
+            }
         }
         else{
             changeType("search",true);
