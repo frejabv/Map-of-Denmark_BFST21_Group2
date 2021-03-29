@@ -159,10 +159,14 @@ public class OSMParser {
 
                 if (drawStyle == DrawStyle.FILL) {
                     fillMap.putIfAbsent(tag, new ArrayList<>());
-                    fillMap.get(tag).add(drawable);
+                    if (!isDublet(drawable, tag, fillMap)) {
+                        fillMap.get(tag).add(drawable);
+                    }
                 } else {
                     drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    drawableMap.get(tag).add(drawable);
+                    if (!isDublet(drawable, tag, drawableMap)) {
+                        drawableMap.get(tag).add(drawable);
+                    }
                 }
             }
         }
