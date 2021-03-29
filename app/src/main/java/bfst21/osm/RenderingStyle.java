@@ -36,6 +36,7 @@ public class RenderingStyle {
         styleMap.put(Tag.MEADOW, DrawStyle.FILL);
         styleMap.put(Tag.ORCHARD, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
+        styleMap.put(Tag.SCRUB, DrawStyle.FILL);
 
         genDefaultMode();
         genDarkMode();
@@ -67,6 +68,8 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.MEADOW, Color.rgb(149, 205, 126));
         defaultColorMap.put(Tag.ORCHARD, Color.rgb(149, 205, 126));
         defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
+        defaultColorMap.put(Tag.SCRUB, Color.rgb(182, 220, 166));
+
 
         defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);
         defaultColorMap.put(Tag.PATH, Color.GREEN);
