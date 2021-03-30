@@ -29,7 +29,7 @@ public class KDTree {
      */
     public void insert(Node qNode) {
         if (qNode == null) {
-            throw new NullPointerException("Point2D is null upon insertion into KDTree");
+            throw new NullPointerException("Query Node is null upon insertion into KDTree");
         }
 
         //create root
@@ -45,7 +45,7 @@ public class KDTree {
 
     /**
      * This is a recursive call that inserts a node into the correct empty spot.
-     * @param currentNode           is the node position we want to try and insert qNode into.
+     * @param currentNode is the node position we want to try and insert qNode into.
      * @param parent      is the current parent of out element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
@@ -142,7 +142,6 @@ public class KDTree {
 
     /**
      * The recursive part of the nearest function.
-     *
      * @param currentNode       the current root.
      * @param closest our current closest node.
      * @param p       the point we are querying about.

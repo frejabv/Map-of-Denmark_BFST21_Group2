@@ -37,7 +37,6 @@ public class Node extends Member{
     public RectHV getRect() {
         return rect;
     }
-
     public void setRect(RectHV rect) {
         this.rect = rect;
     }
