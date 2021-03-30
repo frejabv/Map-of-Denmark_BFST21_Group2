@@ -6,9 +6,7 @@ import bfst21.osm.Node;
 import bfst21.osm.KDTree;
 import bfst21.osm.KDTree.RectHV;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KDTreeTest {
     Model model = new Model("data/kdTreeTest.osm", false);
@@ -25,15 +23,24 @@ public class KDTreeTest {
     }
 
     @Test
+    public void testBounds(){
+        KDTree kdTree = new KDTree(model);
+        assertNull(kdTree.getBounds());
+        kdTree.setBounds();
+        assertNotNull(kdTree.getBounds());
+    }
+
+    @Test
     public void testKDTreeRoot(){
         //assert that root is null, and then set to first node inserted, and not second node.
         KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
         assertTrue(kdTree.isEmpty());
         Node node = new Node(1, 2, 3);
         kdTree.insert(node);
         assertTrue(kdTree.contains(node));
         //assert that the size is correct and that there are no exceptions
-        //assertEquals(3, kdTree.size);
+        assertEquals(1, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
     }
@@ -42,6 +49,7 @@ public class KDTreeTest {
     public void testInsertWithContains(){
         //assert that the tree contains
         KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
         Node node = new Node(1, 2, 3);
         kdTree.insert(node);
         Node node1 = new Node(22, 22, 222);
@@ -56,6 +64,7 @@ public class KDTreeTest {
     public void testInsertPosition(){
         //assert that children are placed correctly
         KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
         Node node = new Node(5, 5, 1);
         kdTree.insert(node);
         Node node1 = new Node(1, 2, 2);
@@ -78,6 +87,7 @@ public class KDTreeTest {
     public void testKDTreeInsertLinkedList(){
         //assert that output is a linked list
         KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
         Node node = new Node(10, 10, 1);
         kdTree.insert(node);
         Node node1 = new Node(7, 9, 2);
@@ -118,8 +128,8 @@ public class KDTreeTest {
 
     @Test
     public void testNearest(){
-        Model model = new Model("data/kdTreeTest.osm",false);
         KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
     }
 
 

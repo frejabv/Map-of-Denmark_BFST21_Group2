@@ -230,6 +230,14 @@ public class KDTree {
         }
     }
 
+    public int getSize(){
+        return size;
+    }
+
+    public RectHV getBounds(){
+        return bounds;
+    }
+
     //taken from Sedgewick and Wayne
     public class RectHV {
         private final float minX, minY;
