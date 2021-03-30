@@ -51,7 +51,7 @@ public class Node extends Member{
             gc.lineTo(x, rect.getMaxY());
         } else {
             gc.setStroke(Color.BLUE);
-            gc.moveTo(rect.getMinX() , y);
+            gc.moveTo(rect.getMinX(), y);
             gc.lineTo(rect.getMaxX(), y);
         }
         gc.stroke();
