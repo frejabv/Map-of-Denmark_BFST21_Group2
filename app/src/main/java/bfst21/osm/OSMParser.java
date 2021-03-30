@@ -51,8 +51,8 @@ public class OSMParser {
                 case "bounds":
                     model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                     model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                    model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
-                    model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
+                    model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
+                    model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
                     break;
                 case "node":
                     var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));

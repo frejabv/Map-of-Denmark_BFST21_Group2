@@ -34,7 +34,8 @@ public class KDTree {
 
         //create root
         if (isEmpty()) {
-            RectHV r = new RectHV(model.getMinX(), model.getMinY(), model.getMaxX(), model.getMaxY());
+            //note: maxY and minY are swapped
+            RectHV r = new RectHV(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
             root = qNode;
             root.setRect(r);
             size++;
@@ -224,9 +225,9 @@ public class KDTree {
 
         public RectHV(float minX, float minY, float maxX, float maxY) {
             this.minX = minX;
-            this.minY = minY;
-            this.maxX = maxX;
             this.maxY = maxY;
+            this.maxX = maxX;
+            this.minY = minY;
             if (Float.isNaN(minX) || Float.isNaN(maxX)) {
                 System.out.println("if 1 returned true: x coordinate NaN");
                 throw new IllegalArgumentException("x-coordinate is NaN: " + toString());
