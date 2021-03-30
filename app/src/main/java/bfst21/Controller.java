@@ -3,14 +3,12 @@ package bfst21;
 import bfst21.osm.Node;
 
 import com.sun.management.OperatingSystemMXBean;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
@@ -19,15 +17,22 @@ import javafx.scene.text.Text;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Controller {
+    boolean singleClick = true;
+    @FXML
+    Text suggestionsHeader;
+    ScheduledExecutorService executor;
+    OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
+            .getOperatingSystemMXBean();
+    Runtime runtime = Runtime.getRuntime();
+    long processMemory = runtime.totalMemory() - runtime.freeMemory();
+    ArrayList<Text> suggestionList = new ArrayList<>();
     private Model model;
     private Point2D lastMouse;
-    boolean singleClick = true;
     @FXML
     private MapCanvas canvas;
     @FXML
@@ -48,11 +53,26 @@ public class Controller {
     private TextField searchField;
     @FXML
     private CheckBox enableDebugWindow;
-
-    @FXML Text suggestionsHeader;
-
-    ScheduledExecutorService executor;
-
+    @FXML
+    private Text cpuProcess;
+    @FXML
+    private Text cpuSystem;
+    @FXML
+    private Text ttd;
+    @FXML
+    private Text memoryUse;
+    Runnable updateStats = new Runnable() {
+        public void run() {
+            cpuProcess.textProperty().setValue("CPU Process Load: " + bean.getProcessCpuLoad());
+            cpuSystem.textProperty().setValue("CPU System Load: " + bean.getSystemCpuLoad() + "( " + bean.getSystemLoadAverage() + " average)");
+            memoryUse.textProperty().setValue("Memory Use (Experimental): " + processMemory);
+            long total = 0;
+            for (long temp : canvas.redrawAverage) {
+                total += temp;
+            }
+            ttd.textProperty().set("Redraw time (Rolling Average): ~" + TimeUnit.NANOSECONDS.toMillis(total / canvas.redrawAverage.length) + "ms (" + total / canvas.redrawAverage.length + "ns)");
+        }
+    };
 
     public void init(Model model, Stage stage) {
         this.model = model;
@@ -75,33 +95,6 @@ public class Controller {
             System.exit(0);
         }
     }
-
-    OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
-            .getOperatingSystemMXBean();
-    Runtime runtime = Runtime.getRuntime();
-    long processMemory = runtime.totalMemory() - runtime.freeMemory();
-    @FXML
-    private Text cpuProcess;
-    @FXML
-    private Text cpuSystem;
-    @FXML
-    private Text ttd;
-    @FXML
-    private Text memoryUse;
-    Runnable updateStats = new Runnable() {
-        public void run() {
-            cpuProcess.textProperty().setValue("CPU Process Load: " + bean.getProcessCpuLoad());
-            cpuSystem.textProperty().setValue("CPU System Load: " + bean.getSystemCpuLoad() + "( " + bean.getSystemLoadAverage() + " average)");
-            memoryUse.textProperty().setValue("Memory Use (Experimental): " + processMemory);
-            long total = 0;
-            for (long temp : canvas.redrawAverage){
-                total += temp;
-            }
-            ttd.textProperty().set("Redraw time (Rolling Average): ~" + TimeUnit.NANOSECONDS.toMillis(total/canvas.redrawAverage.length) + "ms (" + total/canvas.redrawAverage.length + "ns)");
-        }
-    };
-
-    ArrayList<Text> suggestionList = new ArrayList<>();
 
     public void addSuggestions() {
         searchContainer.getChildren().removeAll(suggestionList);
@@ -126,8 +119,7 @@ public class Controller {
     }
 
 
-
-    public void toggleDebugMode(){
+    public void toggleDebugMode() {
         if (debugContainer.isVisible()) {
             changeType("debug", false);
             enableDebugWindow.setSelected(false);
@@ -155,17 +147,18 @@ public class Controller {
     @FXML
     private void onMousePressedOnCanvas(MouseEvent e) {
         lastMouse = new Point2D(e.getX(), e.getY());
-
-        Point2D testermouse = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
-
-        //used to test nearest neighbor
-        Node tester = model.getKdTree().nearest(testermouse);
-        System.out.println("Nearest node ID: " + tester.getId() + " with the coordinates (" + tester.getX()+ ", "+ tester.getY()*0.56f + ")");
     }
 
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
-        if(singleClick) {
+        if (singleClick) {
+            //TODO make this look good
+            Point2D lastMouseCoords = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
+            Node tester = model.getKdTree().nearest(lastMouseCoords);
+            System.out.println(tester == null ?
+                    "You clicked outside the map! We can't find anything in the void"
+                    : "Nearest node ID: " + tester.getId() + " with the coordinates (" + tester.getX() + ", " + tester.getY() * -0.56f + ")");
+
             searchContainer.getChildren().remove(searchContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("search", true);
@@ -177,39 +170,36 @@ public class Controller {
                 hideAll();
             });
             searchContainer.getChildren().add(removePin);
-        }
-        else{
+        } else {
             singleClick = true;
         }
     }
+
     public void onMousePressedSearch(MouseEvent mouseEvent) {
         if (searchContainer.isVisible()) {
             hideAll();
-            if(canvas.setPin){
+            if (canvas.setPin) {
                 canvas.setPin = false;
                 canvas.repaint();
             }
-        }
-        else{
-            changeType("search",true);
+        } else {
+            changeType("search", true);
         }
     }
 
     public void onMousePressedRoute(MouseEvent mouseEvent) {
         if (routeContainer.isVisible()) {
             hideAll();
-        }
-        else{
-            changeType("route",true);
+        } else {
+            changeType("route", true);
         }
     }
 
     public void onMousePressedSettings(MouseEvent mouseEvent) {
         if (settingsContainer.isVisible()) {
             hideAll();
-        }
-        else {
-            changeType("settings",true);
+        } else {
+            changeType("settings", true);
         }
     }
 
@@ -238,8 +228,8 @@ public class Controller {
         canvas.repaint();
     }
 
-    public void hideAll(){
-        changeType("search",false);
+    public void hideAll() {
+        changeType("search", false);
     }
 
     public void fadeButtons() {
@@ -247,8 +237,9 @@ public class Controller {
         routeButton.setStyle("-fx-opacity: .5");
         settingsButton.setStyle("-fx-opacity: .5");
     }
-    public void changeType(String type, boolean state){
-        if(!type.equals("debug")){
+
+    public void changeType(String type, boolean state) {
+        if (!type.equals("debug")) {
             searchContainer.setVisible(false);
             searchContainer.setManaged(false);
             routeContainer.setVisible(false);
@@ -256,21 +247,21 @@ public class Controller {
             settingsContainer.setVisible(false);
             settingsContainer.setManaged(false);
         }
-        switch (type){
+        switch (type) {
             case "route":
                 fadeButtons();
                 routeContainer.setVisible(state);
                 routeContainer.setManaged(state);
-                if(state){
-                  routeButton.setStyle("-fx-opacity: 1");
+                if (state) {
+                    routeButton.setStyle("-fx-opacity: 1");
                 }
                 break;
             case "settings":
                 fadeButtons();
                 settingsContainer.setVisible(state);
                 settingsContainer.setManaged(state);
-                if(state){
-                  settingsButton.setStyle("-fx-opacity: 1");
+                if (state) {
+                    settingsButton.setStyle("-fx-opacity: 1");
                 }
                 break;
             case "debug":
@@ -281,14 +272,14 @@ public class Controller {
                 fadeButtons();
                 searchContainer.setVisible(state);
                 searchContainer.setManaged(state);
-                if(state){
-                  searchButton.setStyle("-fx-opacity: 1");
+                if (state) {
+                    searchButton.setStyle("-fx-opacity: 1");
                 }
         }
     }
 
     @FXML
-    public void ToggleKDLines(){
+    public void ToggleKDLines() {
         canvas.kdLines = !canvas.kdLines;
         canvas.repaint();
     }

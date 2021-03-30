@@ -3,16 +3,18 @@ package bfst21.osm;
 import bfst21.Model;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import org.w3c.dom.css.Rect;
+import javafx.scene.paint.Color;
 
 public class KDTree {
     Model model;
+    private RectHV bounds;
     private Node root;
     private int size;
 
     //fields for debugging and testing
     public static int IAE3Counter = 0;
     public static int IAE4Counter = 0;
+    public static int outOfBoundsCounter = 0;
 
     public KDTree(Model model) {
         this.model = model;
@@ -24,6 +26,11 @@ public class KDTree {
         return size == 0;
     }
 
+    public void setBounds(){
+        //note: maxY and minY are swapped, such that the negative scaling constant has no effect on the tree
+        bounds = new RectHV(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
+    }
+
     /**
      * insert query Node into the tree, if it is not null and does not exist in the tree already.
      */
@@ -31,13 +38,13 @@ public class KDTree {
         if (qNode == null) {
             throw new NullPointerException("Query Node is null upon insertion into KDTree");
         }
-
-        //create root
-        if (isEmpty()) {
-            //note: maxY and minY are swapped
-            RectHV r = new RectHV(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
+        //check if the node is outside the border
+        if (!bounds.contains(new Point2D(qNode.getX(), qNode.getY())))
+            outOfBoundsCounter++;
+        else if (isEmpty()) {
+            //create root if tree is empty
             root = qNode;
-            root.setRect(r);
+            root.setRect(bounds);
             size++;
         } else {
             insert(root, null, qNode, true);
@@ -137,6 +144,10 @@ public class KDTree {
             return null;
         }
 
+        if (!root.getRect().contains(p)){
+            return null;
+        }
+
         Node closest = root;
         return nearest(root, closest, p, true);
     }
@@ -188,12 +199,13 @@ public class KDTree {
     public void drawLines(GraphicsContext gc) {
         if (!isEmpty()) {
             //draw border
+            gc.setStroke(Color.BLACK);
             gc.beginPath();
-            gc.moveTo(root.getRect().getMinX(), root.getRect().getMinY());
-            gc.lineTo(root.getRect().getMaxX(), root.getRect().getMinY());
-            gc.lineTo(root.getRect().getMaxX(), root.getRect().getMaxY());
-            gc.lineTo(root.getRect().getMinX(), root.getRect().getMaxY());
-            gc.lineTo(root.getRect().getMinX(), root.getRect().getMinY());
+            gc.moveTo(bounds.getMinX(), bounds.getMinY());
+            gc.lineTo(bounds.getMaxX(), bounds.getMinY());
+            gc.lineTo(bounds.getMaxX(), bounds.getMaxY());
+            gc.lineTo(bounds.getMinX(), bounds.getMaxY());
+            gc.lineTo(bounds.getMinX(), bounds.getMinY());
             gc.stroke();
 
             //begin lines

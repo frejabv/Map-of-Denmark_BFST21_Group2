@@ -53,6 +53,7 @@ public class OSMParser {
                     model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
                     model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
                     model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
+                    model.getKdTree().setBounds();
                     break;
                 case "node":
                     var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -154,6 +155,7 @@ public class OSMParser {
         model.setIslands(mergeCoastlines(model.getCoastlines()));
         System.out.println("coastlines: " + model.getCoastlines());
         System.out.println("Illegal Argument Exceptions: T3:" + KDTree.IAE3Counter + " T4:"+KDTree.IAE4Counter);
+        System.out.println("Nodes out of bounds = " + KDTree.outOfBoundsCounter);
     }
 
     public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
