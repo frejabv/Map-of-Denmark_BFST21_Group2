@@ -206,4 +206,13 @@ public class OSMParser {
         zip.getNextEntry();
         loadOSM(zip, model);
     }
+
+    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){
+        List listToCheck = map.get(tag);
+        boolean isDublet = true;
+        if(listToCheck.size()==0 || listToCheck.get(listToCheck.size()-1) != drawable) {
+            isDublet = false;
+        }
+        return isDublet;
+    }
 }

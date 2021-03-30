@@ -72,6 +72,10 @@ public class MapCanvas extends Canvas {
             });
         });
 
+        if (kdLines){
+            model.getKdTree().drawLines(gc);
+        }
+
         if(setPin){
             gc.setFill(Color.rgb(231, 76, 60));
             gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
@@ -80,10 +84,6 @@ public class MapCanvas extends Canvas {
             gc.fillPolygon(xPoints, yPoints, 3);
             gc.setFill(Color.rgb(192, 57, 43));
             gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
-        }
-
-        if (kdLines){
-            model.getKdTree().drawLines(gc);
         }
 
         gc.restore();

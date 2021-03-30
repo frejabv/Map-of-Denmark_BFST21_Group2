@@ -10,7 +10,7 @@ public class KDTree {
     private Node root;
     private int size;
 
-    //fields for debugging
+    //fields for debugging and testing
     public static int IAE3Counter = 0;
     public static int IAE4Counter = 0;
 
