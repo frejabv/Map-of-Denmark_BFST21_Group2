@@ -15,6 +15,13 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.CheckBox?>
 
 <Scene xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
@@ -32,6 +39,7 @@
             onScroll="#onScrollOnCanvas"
             onMousePressed="#onMousePressedOnCanvas"
             onMouseDragged="#onMouseDraggedOnCanvas"
+            onMouseReleased="#onMouseReleasedOnCanvas"
           />
           <GridPane pickOnBounds="false">
             <columnConstraints>
@@ -74,7 +82,7 @@
                   <TextField fx:id="searchField" styleClass="textfield">
                     <promptText>Where would you like to go?</promptText>
                   </TextField>
-                  <Text>Suggestions:</Text>
+                  <Text fx:id="suggestionsHeader" styleClass="suggestionsHeader">Suggestions:</Text>
                 </VBox>
                 <VBox fx:id="routeContainer" styleClass="mainContainer">
                   <TextField styleClass="textfield">
@@ -85,62 +93,129 @@
                   </TextField>
                 </VBox>
                 <VBox fx:id="settingsContainer" styleClass="mainContainer">
-                  <Text>Settings</Text>
-                  <ToggleButton text="Car" selected="true">
-                    <toggleGroup>
-                      <ToggleGroup fx:id="selectTransportType"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton text="Bike">
-                    <toggleGroup>
-                      <fx:reference source="selectTransportType"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton text="Walk">
-                    <toggleGroup>
-                      <fx:reference source="selectTransportType"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton text="Public Transport">
-                    <toggleGroup>
-                      <fx:reference source="selectTransportType"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <Text>Color Modes</Text>
-                  <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode" selected="true">
-                    <toggleGroup>
-                      <ToggleGroup fx:id="selectColorMode"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton fx:id="darkColorMode" text="Dark Mode" onMousePressed="#darkColorMode">
-                    <toggleGroup>
-                      <fx:reference source="selectColorMode"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton fx:id="deuteranopeColorMode" text="Red/Green Color Blind (Deuteranope)" onMousePressed="#deuteranopeColorMode">
-                    <toggleGroup>
-                      <fx:reference source="selectColorMode"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton fx:id="protanopeColorMode" text="Red/Green Color Blind (Protanope)" onMousePressed="#protanopeColorMode">
-                    <toggleGroup>
-                      <fx:reference source="selectColorMode"/>
-                    </toggleGroup>
-                  </ToggleButton>
-                  <ToggleButton fx:id="tritanopeColorMode" text="Blue/Yellow Color Blind (Tritanope)" onMousePressed="#tritanopeColorMode">
-                    <toggleGroup>
-                      <fx:reference source="selectColorMode"/>
-                    </toggleGroup>
-                  </ToggleButton>
+                  <FlowPane styleClass="header-margin">
+                    <Text styleClass="mainContainer-header">Settings</Text>
+                  </FlowPane>
+                  <ScrollPane styleClass="scroll-pane">
+                    <content>
+                      <VBox>
+                        <FlowPane styleClass="header-margin">
+                          <Text styleClass="mainContainer-subheader">Color Modes</Text>
+                        </FlowPane>
+                        <Region styleClass="hr" />
+                        <FlowPane>
+                          <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode" selected="true">
+                            <toggleGroup>
+                              <ToggleGroup fx:id="selectColorMode"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                          <ToggleButton fx:id="darkColorMode" text="Dark Mode" onMousePressed="#darkColorMode">
+                            <toggleGroup>
+                              <fx:reference source="selectColorMode"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                          <ToggleButton fx:id="deuteranopeColorMode" text="Red/Green Color Blind (Deuteranope)" onMousePressed="#deuteranopeColorMode">
+                            <toggleGroup>
+                              <fx:reference source="selectColorMode"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                          <ToggleButton fx:id="protanopeColorMode" text="Red/Green Color Blind (Protanope)" onMousePressed="#protanopeColorMode">
+                            <toggleGroup>
+                              <fx:reference source="selectColorMode"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                          <ToggleButton fx:id="tritanopeColorMode" text="Blue/Yellow Color Blind (Tritanope)" onMousePressed="#tritanopeColorMode">
+                            <toggleGroup>
+                              <fx:reference source="selectColorMode"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                        </FlowPane>
+                        <FlowPane styleClass="header-margin">
+                          <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
+                        </FlowPane>
+                        <Region styleClass="hr" />
+                        <FlowPane>
+                          <ToggleButton text="Car" selected="true">
+                            <toggleGroup>
+                              <ToggleGroup fx:id="selectTransportType"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                          <ToggleButton text="Bike">
+                            <toggleGroup>
+                              <fx:reference source="selectTransportType"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                          <ToggleButton text="Walk">
+                            <toggleGroup>
+                              <fx:reference source="selectTransportType"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                          <ToggleButton text="Public Transport">
+                            <toggleGroup>
+                              <fx:reference source="selectTransportType"/>
+                            </toggleGroup>
+                          </ToggleButton>
+                        </FlowPane>
+                        <FlowPane styleClass="header-margin">
+                          <Text styleClass="mainContainer-subheader">Unit</Text>
+                        </FlowPane>
+                        <Region styleClass="hr" />
+                        <ComboBox>
+                          <items>
+                            <FXCollections fx:factory="observableArrayList">
+                              <String fx:value="km/h" />
+                              <String fx:value="mph" />
+                            </FXCollections>
+                          </items>
+                          <value>
+                            <String fx:value="km/h" />
+                          </value>
+                        </ComboBox>
+                        <FlowPane styleClass="header-margin">
+                          <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
+                        </FlowPane>
+                        <Region styleClass="hr" />
+                        <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toogleDebugMode">Debug Window</CheckBox>
+                        <FlowPane styleClass="header-margin">
+                          <Text styleClass="mainContainer-subheader">Favorites</Text>
+                        </FlowPane>
+                        <Region styleClass="hr" />
+                        <VBox>
+                          <Text>Item1</Text>
+                          <Text>Item2</Text>
+                          <Text>Item3</Text>
+                          <Text>Item4</Text>
+                          <Text>Item5</Text>
+                          <Text>Item6</Text>
+                          <Text>Item7</Text>
+                          <Text>Item8</Text>
+                        </VBox>
+                      </VBox>
+                    </content>
+                  </ScrollPane>
                 </VBox>
               </VBox>
               <VBox pickOnBounds="false" styleClass="centerContainer"  GridPane.columnIndex="1" GridPane.rowIndex="0">
               </VBox>
               <VBox pickOnBounds="false" styleClass="rightContainer" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                <HBox fx:id="debugContainer" styleClass="mainContainer">
-                  <Text>Debug</Text>
-                  <CheckBox onMouseClicked="#ToggleKDLines">Kd-Lines</CheckBox>
-                </HBox>
+                <VBox fx:id="debugContainer" styleClass="mainContainer">
+                  <FlowPane styleClass="header-margin">
+                    <Text styleClass="mainContainer-header">Debug</Text>
+                  </FlowPane>
+                  <FlowPane styleClass="header-margin">
+                    <Text styleClass="mainContainer-subheader">Data</Text>
+                  </FlowPane>
+                  <Region styleClass="hr" />
+                  <Text fx:id="ttd">Redraw time: 00:00</Text>
+                  <Text fx:id="cpuProcess">CPU Process Load: 0.00</Text>
+                  <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
+                  <Text fx:id="memoryUse">Memory Use: 0.00</Text>
+                  <FlowPane styleClass="header-margin">
+                    <Text styleClass="mainContainer-subheader">Dev Settings</Text>
+                  </FlowPane>
+                  <Region styleClass="hr" />
+                  <CheckBox onMouseClicked="#ToggleKDLines">Show KD-tree lines</CheckBox>
+                </VBox>
               </VBox>
             </children>
           </GridPane>

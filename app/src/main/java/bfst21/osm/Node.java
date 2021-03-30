@@ -4,7 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-
 public class Node extends Member{
     private float x;
     private float y;

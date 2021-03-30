@@ -10,7 +10,8 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        var model = new Model("data/kdTree.osm");
+        var ttiMode = getParameters().getRaw().size() > 0 && getParameters().getRaw().get(0).equals("ttiMode");
+        var model = new Model("data/samsoe.osm", ttiMode);
         new View(model, primaryStage);
     }
 }

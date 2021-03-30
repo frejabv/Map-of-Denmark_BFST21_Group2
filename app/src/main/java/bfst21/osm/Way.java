@@ -5,7 +5,6 @@ import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 
-
 public class Way extends Member implements Drawable {
     private List<Node> nodes;
 

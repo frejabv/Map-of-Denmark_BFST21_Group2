@@ -2,159 +2,84 @@ package bfst21;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import bfst21.osm.*;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
-    ColorScheme colorScheme;
+    GraphicsContext gc;
+    boolean setPin;
+    Point2D canvasPoint;
+    double size;
+    RenderingStyle renderingStyle;
+    int redrawIndex = 0;
+    public long[] redrawAverage = new long[20];
 
     public boolean kdLines;
     public void init(Model model) {
         this.model = model;
-        colorScheme = new ColorScheme();
-        pan(-model.getMinX(), -model.getMinY());
-        zoom(getWidth() / (model.getMaxX() - model.getMinX()), new Point2D(0, 0));
-        repaint();
+        renderingStyle = new RenderingStyle();
+        moveToInitialPosition();
+        widthProperty().addListener((obs, oldVal, newVal) -> {
+            pan(((Double) newVal - (Double) oldVal) / 2, 0);
+        });
+        heightProperty().addListener((obs, oldVal, newVal) -> {
+            pan(0, ((Double) newVal - (Double) oldVal) / 2);
+        });
     }
 
     void repaint() {
-        var gc = getGraphicsContext2D();
+        long start = System.nanoTime();
+        gc = getGraphicsContext2D();
         gc.save();
         gc.setTransform(new Affine());
-        gc.setFill(colorScheme.sea);
+        gc.setFill(renderingStyle.sea);
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
-        gc.setFill(colorScheme.island);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        gc.setStroke(colorScheme.island);
+
+        gc.setFill(renderingStyle.island);
         for (var island : model.getIslands()) {
             island.draw(gc);
             gc.fill();
         }
 
-        gc.setStroke(Color.BLACK);
-        for (var line : model.getUndefinedDrawables()) {
-            line.draw(gc);
-        }
+        model.getFillMap().forEach((tag, fillables) -> {
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            gc.setFill(renderingStyle.getColorByTag(tag));
 
-        gc.setStroke(colorScheme.park); //Park
-        gc.setFill(colorScheme.park); //Park
-        for (var park : model.getParks()) {
-            park.draw(gc);
-            gc.fill();
-        }
+            fillables.forEach(fillable -> {
+                fillable.draw(gc);
+                gc.fill();
+            });
 
-        gc.setStroke(colorScheme.inlandWater); //Inland water
-        gc.setFill(colorScheme.inlandWater); //Inland water
-        for (var line : model.getWater()) {
-            line.draw(gc);
-            gc.fill();
-        }
+        });
 
-        gc.setStroke(colorScheme.buildings);
-        gc.setFill(colorScheme.buildings);
-        for (var building : model.getBuildings()){
-            building.draw(gc);
-            gc.fill();
-        }
+        model.getDrawableMap().forEach((tag, drawables) -> {
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            var style = renderingStyle.getDrawStyleByTag(tag);
+            drawables.forEach(drawable -> {
+                drawable.draw(gc);
+            });
+        });
 
-        //roads added from smallest to largest
-        gc.setStroke(colorScheme.footways);
-        gc.setFill(colorScheme.footways);
-        for (var line : model.getFootways()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.paths);
-        gc.setFill(colorScheme.paths);
-        for (var line : model.getPaths()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.pedestrianWay);
-        gc.setFill(colorScheme.pedestrianWay);
-        for (var line : model.getPedestrianWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.cycleway);
-        gc.setFill(colorScheme.cycleway);
-        for (var line : model.getCycleways()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.unclassifiedWay);
-        gc.setFill(colorScheme.unclassifiedWay);
-        for (var line : model.getUnclassifiedWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.roads);
-        gc.setFill(colorScheme.roads);
-        for (var line : model.getRoads()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.livingStreets);
-        gc.setFill(colorScheme.livingStreets);
-        for (var line : model.getLiving_streets()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.residentialWay);
-        gc.setFill(colorScheme.residentialWay);
-        for (var line : model.getResidentialWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.serviceWay);
-        gc.setFill(colorScheme.serviceWay);
-        for (var line : model.getServiceWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.junction);
-        gc.setFill(colorScheme.junction);
-        for (var line : model.getJunctions()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.tertiaryWay);
-        gc.setFill(colorScheme.tertiaryWay);
-        for (var line : model.getTertiaryWays()) {
-            var oldLineWidth = gc.getLineWidth();
-            gc.setLineWidth(1/Math.sqrt(trans.determinant())*2);
-            line.draw(gc);
-            gc.setLineWidth(oldLineWidth);
-        }
-
-        gc.setStroke(colorScheme.secondaryWay);
-        gc.setFill(colorScheme.secondaryWay);
-        for (var line : model.getSecondaryWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.primaryWay);
-        gc.setFill(colorScheme.primaryWay);
-        for (var line : model.getPrimaryWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.trunkWay);
-        gc.setFill(colorScheme.trunkWay);
-        for (var line : model.getTrunkWays()) {
-            line.draw(gc);
-        }
-
-        gc.setStroke(colorScheme.trackWay);
-        gc.setFill(colorScheme.trackWay);
-        for (var line : model.getTrackWays()) {
-            line.draw(gc);
+        if(setPin){
+            gc.setFill(Color.rgb(231, 76, 60));
+            gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
+            double[] xPoints = {canvasPoint.getX()+0.00307*size,canvasPoint.getX()+0.025*size,canvasPoint.getX() + 0.04693*size}; //+0.05
+            double[] yPoints = {canvasPoint.getY()+0.037*size,canvasPoint.getY()+0.076*size,canvasPoint.getY()+0.037*size};
+            gc.fillPolygon(xPoints, yPoints, 3);
+            gc.setFill(Color.rgb(192, 57, 43));
+            gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
         }
 
         if (kdLines){
@@ -162,6 +87,14 @@ public class MapCanvas extends Canvas {
         }
 
         gc.restore();
+        long elapsedTime = System.nanoTime() - start;
+        if(redrawIndex<20) {
+            redrawAverage[redrawIndex] = elapsedTime;
+            redrawIndex++;
+        }
+        else {
+            redrawIndex = 0;
+        }
     }
 
     public void pan(double dx, double dy) {
@@ -174,12 +107,44 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
+    public String setPin(Point2D point){
+        size = .3;
+        canvasPoint = mouseToModelCoords(point);
+        canvasPoint = new Point2D(canvasPoint.getX()-(0.025*size),canvasPoint.getY()-(0.076*size));
+        setPin = true;
+        repaint();
+        return canvasPoint.getY()*-0.56f + ", " + canvasPoint.getX();
+    }
+
     public Point2D mouseToModelCoords(Point2D point) {
         try {
             return trans.inverseTransform(point);
         } catch (NonInvertibleTransformException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+    public void goToPosition(double minX, double maxX, double maxY){
+            trans.setToIdentity();
+            pan(-minX, -maxY);
+            zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(0, 0));
+            if(maxX-minX < 0.1){
+                zoom(0.01, new Point2D(getWidth()/2, getHeight()/2));
+            }
+    }
+
+    private void moveToInitialPosition() {
+        double deltaY = model.getMaxY() - model.getMinY();
+        double deltaX = model.getMaxX() - model.getMinX();
+        trans.setToIdentity();
+        if (deltaX < deltaY) {
+            pan(-model.getMinX(), -model.getMaxY());
+            zoom((getHeight() - getWidth() / (model.getMaxX() - model.getMinX())) * -1, new Point2D(0, 0));
+            pan(-(model.getMinY() - (model.getMaxX())), 0);
+        } else {
+            pan(-model.getMinX(), -model.getMaxY());
+            zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
+            pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
         }
     }
 
