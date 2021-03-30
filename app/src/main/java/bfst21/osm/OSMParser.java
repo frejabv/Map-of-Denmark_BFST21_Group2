@@ -165,11 +165,12 @@ public class OSMParser {
                             size = addresses.get("housenumber").size();
                             String two = addresses.get("housenumber").get(size - 1);
                             String strNumber = one + " " + two;
+                            //tree.insert(one);
                             size = addresses.get("postcode").size();
                             one = addresses.get("postcode").get(size-1);
                             size = addresses.get("city").size();
                             two = addresses.get("city").get(size-1);
-                            System.out.println(strNumber + ", " + one + " " + two);
+                            //System.out.println(strNumber + ", " + one + " " + two);
                         }
                         isNode = false;
                         addressReceived = false;
@@ -185,11 +186,25 @@ public class OSMParser {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
 
-        try {
+        RadixTree tree = new RadixTree();
+        tree.insert("test");
+        tree.insert("highroad");
+        tree.insert("roadkill");
+        tree.insert("road");
+        tree.insert("tester");
+        tree.insert("toast");
+        System.out.println("lookup result for roadkill: " + tree.lookup("roadkill"));
+        System.out.println("lookup result for toast: " + tree.lookup("toast"));
+        System.out.println("lookup result for tester: " + tree.lookup("tester"));
+        System.out.println(tree.getSize());
+        /*System.out.println(tree.getSize());
+        System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));*/
+
+        /*try {
             writeAddressesToFile();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
+        }*/
     }
 
     public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
