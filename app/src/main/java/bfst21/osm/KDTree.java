@@ -186,6 +186,16 @@ public class KDTree {
 
     public void drawLines(GraphicsContext gc) {
         if (!isEmpty()) {
+            //draw border
+            gc.beginPath();
+            gc.moveTo(root.getRect().getMinX(), root.getRect().getMinY());
+            gc.lineTo(root.getRect().getMaxX(), root.getRect().getMinY());
+            gc.lineTo(root.getRect().getMaxX(), root.getRect().getMaxY());
+            gc.lineTo(root.getRect().getMinX(), root.getRect().getMaxY());
+            gc.lineTo(root.getRect().getMinX(), root.getRect().getMinY());
+            gc.stroke();
+
+            //begin lines
             root.drawKDTLine(true, gc);
             if (root.getRight() != null) {
                 drawLines(root.getRight(), gc, false);
@@ -197,6 +207,7 @@ public class KDTree {
     }
 
     private void drawLines(Node currentNode, GraphicsContext gc, boolean orientation) {
+        //draw lines
         currentNode.drawKDTLine(orientation, gc);
         if (currentNode.getRight() != null) {
             drawLines(currentNode.getRight(), gc, !orientation);
