@@ -19,6 +19,7 @@ public class Model {
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
     private boolean ttiMode;
+    private List<Node> AStarPath;
 
     private float minX, minY, maxX, maxY;
 
@@ -130,5 +131,16 @@ public class Model {
 
     public boolean getTtiMode() {
         return ttiMode;
+    }
+
+    public boolean existsAStarPath(){
+        return AStarPath != null;
+    }
+
+    public List<Node> getAStarPath(){
+        return AStarPath;
+    }
+    public void setAStarPath(List<Node> AStarPath){
+        this.AStarPath = AStarPath;
     }
 }

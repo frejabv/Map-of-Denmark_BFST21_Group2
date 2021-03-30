@@ -11,6 +11,7 @@ import bfst21.osm.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 public class MapCanvas extends Canvas {
     private Model model;
@@ -80,6 +81,9 @@ public class MapCanvas extends Canvas {
             gc.setFill(Color.rgb(192, 57, 43));
             gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
         }
+        if(model.existsAStarPath()){
+            paintPath(model.getAStarPath());
+        }
         gc.restore();
         long elapsedTime = System.nanoTime() - start;
         if(redrawIndex<20) {
@@ -99,6 +103,20 @@ public class MapCanvas extends Canvas {
     public void zoom(double factor, Point2D center) {
         trans.prependScale(factor, factor, center);
         repaint();
+    }
+
+    public void paintPath(List<Node> path){
+        System.out.println("Painting Path!");
+        gc.setStroke(Color.GREEN);
+        gc.setLineWidth(10);
+        gc.beginPath();
+        for (int i = 0;i < path.size()-1; i++){
+            Node current = path.get(i);
+            Node next = path.get(i+1);
+            gc.moveTo(current.getX(),current.getY());
+            gc.lineTo(next.getX(),next.getY());
+        }
+        gc.stroke();
     }
 
     public String setPin(Point2D point){

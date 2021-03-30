@@ -1,117 +1,99 @@
 package bfst21;
 
-
-import bfst21.osm.Drawable;
-import bfst21.osm.Tag;
-
 import java.util.*;
+import bfst21.osm.*;
 
 public class AStar {
-    //Model model;
-    //Replace with Model
-    public static void main(String[] args) {
-        /*ArrayList<Drawable> ways = model.getDrawableMap().get(Tag.PRIMARY);
-        System.out.println(Math.sqrt(Math.pow(700,2)+Math.pow(500,2)));*/
+    Model model;
+    public AStar(Model model, Node start, Node end){
+        this.model = model;
 
-        //Initialize the graph base on the Danish map
-        Vertex n1 = new Vertex("København",4784);
-        Vertex n2 = new Vertex("Roskilde",4703);
-        Vertex n3 = new Vertex("Helsingør",4282);
-        Vertex n4 = new Vertex("Korsør", 5008);
-        Vertex n5 = new Vertex("Odense",4860);
-        Vertex n6 = new Vertex("Vejle", 4360);
-        Vertex n7 = new Vertex("Esbjerg",5248);
-        Vertex n8 = new Vertex("Aarhus",3380);
-        Vertex n9 = new Vertex("Randers",2661);
-        Vertex n10 = new Vertex("Viborg",2955);
-        Vertex n11 = new Vertex("Aalborg", 1553);
-        Vertex n12 = new Vertex("Skagen",0);
+        //Read data
+        readData(end);
+        //Sets up the search
+        AStarSearch(start,end);
 
-        //Initialize the edges
+        //Gets the path elements
+        //List<Node> path = printPath(end);
+        //System.out.println("dk");
 
-        //København
-        n1.adjacencies = new ArrayList<>();
-        n1.adjacencies.add(new Edge(n2,560)); //Roskilde
-        n1.adjacencies.add(new Edge(n3,637));  //Helsingør
+        System.out.println("Path: " + printPath(end)); //Prints the path
+    }
 
-        //Roskilde
-        n2.adjacencies = new ArrayList<>();
-        n2.adjacencies.add(new Edge(n1,560)); //København
-        n2.adjacencies.add(new Edge(n4,1232)); //Korsør
+    private void readData(Node end) {
+        List<Node> initialisedNodes = new ArrayList<>();
+        List<Drawable> ways = model.getDrawableMap().get(Tag.PRIMARY);
+        for (Drawable way : ways){
+            Way wayButNowCasted = (Way) way;
+            //TODO: Some nodes are in multiple ways and therefore set twice. plz fix
+            for (int i = 0; i < wayButNowCasted.getNodes().size(); i++){
+                Node node = wayButNowCasted.getNodes().get(i);
+                if(i > 0){
+                    Node previousNode = wayButNowCasted.getNodes().get(i - 1);
+                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)));
+                }
+                if(i != (wayButNowCasted.getNodes().size()-1)) {
+                    Node nextNode = wayButNowCasted.getNodes().get(i + 1);
+                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)));
+                }
+                if (!initialisedNodes.contains(node)) {
+                    node.setHScores(distanceToNode(node, end));
+                    initialisedNodes.add(node);
+                }
+            }
+        }
 
-        //Helsingør
-        n3.adjacencies = new ArrayList<>();
-        n3.adjacencies.add(new Edge(n1,637)); //København
+        //Merge issue
+        initialisedNodes.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+        int counter = 0;
+        while (counter<initialisedNodes.size()-1) {
+            long valueOnCurrentVertex = initialisedNodes.get(counter).getId();
+            long valueOnNextVertex = initialisedNodes.get(counter+1).getId();
+            if(valueOnCurrentVertex == valueOnNextVertex){
+                for(Edge adjecentEdge: initialisedNodes.get(counter+1).getAdjecencies()){
+                    initialisedNodes.get(counter).addAdjecencies(adjecentEdge);
+                    initialisedNodes.remove(counter+1);
+                }
+            }
+            else{
+                counter++;
+            }
+        }
 
-        //Korsør
-        n4.adjacencies = new ArrayList<>();
-        n4.adjacencies.add(new Edge(n5,916)); //Odense
-        n4.adjacencies.add(new Edge(n2,1232)); //Roskilde
+        System.out.println("Jobs done.");
+    }
 
-        //Odense
-        n5.adjacencies = new ArrayList<>();
-        n5.adjacencies.add(new Edge(n4,916)); //Korsør
-        n5.adjacencies.add(new Edge(n6,1301)); //Vejle
-
-        //Vejle
-        n6.adjacencies = new ArrayList<>();
-        n6.adjacencies.add(new Edge(n5,1301)); //Odense
-        n6.adjacencies.add(new Edge(n7,1288)); //Esbjerg
-        n6.adjacencies.add(new Edge(n8,1142)); //Aarhus
-
-        //Esbjerg
-        n7.adjacencies = new ArrayList<>();
-        n7.adjacencies.add(new Edge(n6,1288)); //Vejle
-
-        //Aarhus
-        n8.adjacencies = new ArrayList<>();
-        n8.adjacencies.add(new Edge(n6,1142)); //Vejle
-        n8.adjacencies.add(new Edge(n9,747)); //Randers
-
-        //Randers
-        n9.adjacencies = new ArrayList<>();
-        n9.adjacencies.add(new Edge(n10,886)); //Viborg
-        n9.adjacencies.add(new Edge(n8,747)); //Aarhus
-        n6.adjacencies.add(new Edge(n11,1227)); //Aalborg
-
-        //Viborg
-        n10.adjacencies = new ArrayList<>();
-        n10.adjacencies.add(new Edge(n9,886)); //Randers
-        n10.adjacencies.add(new Edge(n8,747)); //Aarhus
-
-        //Aalborg
-        n11.adjacencies = new ArrayList<>();
-        n11.adjacencies.add(new Edge(n9,1227)); //Randers
-        n11.adjacencies.add(new Edge(n10,1369)); //Viborg
-        n11.adjacencies.add(new Edge(n12,1586)); //Skagen
-
-        //Skagen
-        n12.adjacencies = new ArrayList<>();
-        n12.adjacencies.add(new Edge(n11,120)); //Aalborg
-
-        AStarSearch(n1,n12); //Sets up the search
-
-        List<Vertex> path = printPath(n12); //Gets the path elements
-
-        System.out.println("Path: " + path); //Prints the path
+    private double distanceToNode(Node current, Node destination){
+        double distance = 0;
+        if(current!=destination) {
+            double deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
+            double deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
+            distance = Math.sqrt(Math.pow(deltaX,2)+Math.pow(deltaY,2));
+        }
+        return distance;
     }
 
     //Static for now
-    public static List<Vertex> printPath(Vertex target){
-        List<Vertex> path = new ArrayList<Vertex>();
+    public String printPath(Node target){
+        List<Node> path = new ArrayList<Node>();
+        String result = "";
 
-        for(Vertex node = target; node!=null; node = node.parent){//Starts on the target and work back to start
+        for(Node node = target; node!=null; node = node.parent){//Starts on the target and work back to start
             path.add(node);
         }
 
         Collections.reverse(path); //To print in the order from start to target
-
-        return path;
+        for (Node temp:  path){
+            result += temp.getId() + " -> ";
+        }
+        model.setAStarPath(path);
+        return result;
     }
 
     //Static for now
-    public static void AStarSearch(Vertex start, Vertex end){
-        PriorityQueue<Vertex> pq = new PriorityQueue<Vertex>(20, new VertexComparator()); //Maybe set initial capacity based on educated guess?
+    public static void AStarSearch(Node start, Node end){
+
+        PriorityQueue<Node> pq = new PriorityQueue<Node>(20, new NodeComparator()); //Maybe set initial capacity based on educated guess?
 
         //cost from start
         start.g_scores = 0;
@@ -122,18 +104,18 @@ public class AStar {
 
         while((!pq.isEmpty())&&(!found)) { //While content in PQ and goal not found
             //the node in having the lowest f_score value
-            Vertex current = pq.poll(); //Gets the first element in the PQ
+            Node current = pq.poll(); //Gets the first element in the PQ
 
             current.explored = true; //Adds current to the explored set to remember that it is explored
 
             //Checks if current is goal
-            if (current.value.equals(end.value)) {
+            if (current.getId() == end.getId()) {
                 found = true;
             }
 
             //Checks every child of current node
-            for (Edge e : current.adjacencies) {
-                Vertex child = e.target;
+            for (Edge e : current.getAdjecencies()) {
+                Node child = e.target;
                 double cost = e.weight;
                 double temp_g_scores = current.g_scores + cost;
                 double temp_f_scores = temp_g_scores + child.h_scores;
@@ -159,9 +141,9 @@ public class AStar {
         }
     }
 
-    private static class VertexComparator implements Comparator<Vertex>{
+    private static class NodeComparator implements Comparator<Node>{
         //override compare method
-        public int compare(Vertex i, Vertex j){
+        public int compare(Node i, Node j){
             if(i.f_scores > j.f_scores){
                 return 1;
             }

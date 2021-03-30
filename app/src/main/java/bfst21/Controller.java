@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.osm.Node;
 import com.sun.management.OperatingSystemMXBean;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +18,7 @@ import javafx.scene.text.Text;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -72,6 +74,7 @@ public class Controller {
         if (model.getTtiMode()) {
             System.exit(0);
         }
+        new AStar(model, model.getNodeIndex().getMember(3), model.getNodeIndex().getMember(10));
     }
 
     OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory

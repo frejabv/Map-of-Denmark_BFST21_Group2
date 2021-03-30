@@ -53,4 +53,8 @@ public class Way extends Member implements Drawable {
         }
         gc.stroke();
     }
+
+    public List<Node> getNodes() {
+        return nodes;
+    }
 }
