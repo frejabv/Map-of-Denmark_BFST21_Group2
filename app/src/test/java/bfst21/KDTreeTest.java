@@ -1,5 +1,6 @@
 package bfst21;
 
+import javafx.geometry.Point2D;
 import org.junit.jupiter.api.Test;
 
 import bfst21.osm.Node;
@@ -9,7 +10,7 @@ import bfst21.osm.KDTree.RectHV;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class KDTreeTest {
-    Model model = new Model("data/kdTreeTest.osm", false);
+    private final Model model = new Model("data/kdTreeTest.osm", false);
 
     @Test
     public void testNodeInit(){
@@ -33,7 +34,7 @@ public class KDTreeTest {
     @Test
     public void testKDTreeRoot(){
         //assert that root is null, and then set to first node inserted, and not second node.
-        KDTree kdTree = new KDTree(model);
+        KDTree kdTree = model.getKdTree();
         kdTree.setBounds();
         assertTrue(kdTree.isEmpty());
         Node node = new Node(1, 2, 3);
@@ -43,6 +44,7 @@ public class KDTreeTest {
         assertEquals(1, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
@@ -50,14 +52,21 @@ public class KDTreeTest {
         //assert that the tree contains
         KDTree kdTree = new KDTree(model);
         kdTree.setBounds();
-        Node node = new Node(1, 2, 3);
+
+        Node node = new Node(1, 1, 3);
         kdTree.insert(node);
-        Node node1 = new Node(22, 22, 222);
+        Node node1 = new Node(2, 2, 222);
         kdTree.insert(node1);
+        Node node2 = new Node(100, 100, 0);
+        kdTree.insert(node2); //out of bounds
+
         assertTrue(kdTree.contains(node));
         assertTrue(kdTree.contains(node1));
+        assertFalse(kdTree.contains(node2));
+
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(1, kdTree.outOfBoundsCounter);
     }
 
     @Test
@@ -65,22 +74,23 @@ public class KDTreeTest {
         //assert that children are placed correctly
         KDTree kdTree = new KDTree(model);
         kdTree.setBounds();
+
         Node node = new Node(5, 5, 1);
         kdTree.insert(node);
-        Node node1 = new Node(1, 2, 2);
+        Node node1 = new Node(1, 3, 2);
         kdTree.insert(node1); //should be left of root
-        Node node2 = new Node(6, 3, 3);
+        Node node2 = new Node(6, 2, 3);
         kdTree.insert(node2); //should be right of root
-        Node node3 = new Node(1, 4, 4); // THIS SHIT FAILS??? making y smaller means it goes right?
+        Node node3 = new Node(4, 2, 4);
         kdTree.insert(node3); //should be right on left child
 
-        System.out.println(node1.getLeft() + " " + node1.getRight());
         assertEquals(node1, node.getLeft());
         assertEquals(node2, node.getRight());
-        assertEquals(node3, node1.getRight()); //this fails because it is left
+        assertEquals(node3, node1.getRight());
 
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
@@ -90,47 +100,87 @@ public class KDTreeTest {
         kdTree.setBounds();
         Node node = new Node(10, 10, 1);
         kdTree.insert(node);
-        Node node1 = new Node(7, 9, 2);
+        Node node1 = new Node(9, 1, 2);
         kdTree.insert(node1);
-        Node node2 = new Node(8, 7, 3);
+        Node node2 = new Node(8, 2, 3);
         kdTree.insert(node2);
-        Node node3 = new Node(1, 2, 4);
+        Node node3 = new Node(7, 3, 4);
         kdTree.insert(node3);
 
-        System.out.println(node1.getLeft() + " " + node1.getRight());
         assertEquals(node1, node.getLeft());
         assertEquals(node2, node1.getLeft());  //this fails, because it is right
         assertEquals(node3, node2.getLeft());
 
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
-    }
-
-    @Test
-    public void testRectInit(){
-
-    }
-
-    @Test
-    public void testChildRect(){
-
+        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
     public void testRectContains(){
+        KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
 
+        Node node = new Node(5, 5, 1);
+        kdTree.insert(node); //root
+        Node node1 = new Node(3, 3, 2);
+        kdTree.insert(node1); // left of root
+        Node node2 = new Node(1, 9, 3);
+        kdTree.insert(node2); // left of node1
+        Node node3 = new Node(3, 6, 4);
+        kdTree.insert(node3); // right of node2
+        Node node4 = new Node(2, 4, 5);
+        kdTree.insert(node4); // right of node3
+        Node node5 = new Node(6,7,6);
+        kdTree.insert(node5); // right of root
+
+        Point2D p1 = new Point2D(2,5/-0.56f); //within node4's square
+        assertTrue(node.getRect().contains(p1));
+        assertTrue(node1.getRect().contains(p1));
+        assertTrue(node2.getRect().contains(p1));
+        assertTrue(node3.getRect().contains(p1));
+        assertTrue(node4.getRect().contains(p1));
+        assertFalse(node5.getRect().contains(p1));
+
+        Point2D p2 = new Point2D(2,8/-0.56f);
+        assertTrue(node.getRect().contains(p2));
+        assertTrue(node1.getRect().contains(p2));
+        assertTrue(node2.getRect().contains(p2));
+        assertTrue(node3.getRect().contains(p2));
+        assertFalse(node4.getRect().contains(p2));
+        assertFalse(node5.getRect().contains(p2));
     }
 
-    @Test
-    public void testRectDistTo(){
-
-    }
-
+    //TODO
     @Test
     public void testNearest(){
         KDTree kdTree = new KDTree(model);
         kdTree.setBounds();
+
+        Node node = new Node(5, 5, 1);
+        kdTree.insert(node);
+        Node node1 = new Node(3, 3, 2);
+        kdTree.insert(node1);
+        Node node2 = new Node(1, 9, 3);
+        kdTree.insert(node2);
+        Node node3 = new Node(3, 6, 4);
+        kdTree.insert(node3);
+        Node node4 = new Node(2, 4, 5);
+        kdTree.insert(node4);
+        Node node5 = new Node(6, 7, 6);
+        kdTree.insert(node5);
+        Node node6 = new Node(9, 1, 7);
+        kdTree.insert(node6);
+        Node node7 = new Node(5.1f, 10, 8);
+        kdTree.insert(node7);
+
+        Point2D test1 = new Point2D(4.9, 10/-0.56);
+        assertEquals(node7, kdTree.nearest(test1));
     }
 
+    @Test
+    public void testKDTreeBounds(){
+
+    }
 
 }

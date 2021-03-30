@@ -20,6 +20,9 @@ public class KDTree {
         this.model = model;
         this.root = null;
         size = 0;
+        IAE3Counter = 0;
+        IAE4Counter = 0;
+        outOfBoundsCounter = 0;
     }
 
     public boolean isEmpty() {
