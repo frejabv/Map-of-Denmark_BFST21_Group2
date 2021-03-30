@@ -35,7 +35,7 @@ public class KDTreeTest {
         //assert that the size is correct and that there are no exceptions
         //assertEquals(3, kdTree.size);
         assertEquals(0, kdTree.IAE3Counter);
-        //assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.IAE4Counter);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class KDTreeTest {
         assertTrue(kdTree.contains(node));
         assertTrue(kdTree.contains(node1));
         assertEquals(0, kdTree.IAE3Counter);
-        //assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.IAE4Counter);
     }
 
     @Test
@@ -62,14 +62,16 @@ public class KDTreeTest {
         kdTree.insert(node1); //should be left of root
         Node node2 = new Node(6, 3, 3);
         kdTree.insert(node2); //should be right of root
-        Node node3 = new Node(1, 5, 4);
+        Node node3 = new Node(1, 4, 4); // THIS SHIT FAILS??? making y smaller means it goes right?
         kdTree.insert(node3); //should be right on left child
-        assertTrue(kdTree.contains(node));
-        assertTrue(kdTree.contains(node1));
-        assertTrue(kdTree.contains(node2));
-        assertTrue(kdTree.contains(node3));
+
+        System.out.println(node1.getLeft() + " " + node1.getRight());
+        assertEquals(node1, node.getLeft());
+        assertEquals(node2, node.getRight());
+        assertEquals(node3, node1.getRight()); //this fails because it is left
+
         assertEquals(0, kdTree.IAE3Counter);
-        //assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.IAE4Counter);
     }
 
     @Test
@@ -84,12 +86,14 @@ public class KDTreeTest {
         kdTree.insert(node2);
         Node node3 = new Node(1, 2, 4);
         kdTree.insert(node3);
-        assertTrue(kdTree.contains(node));
-        assertTrue(kdTree.contains(node1));
-        assertTrue(kdTree.contains(node2));
-        assertTrue(kdTree.contains(node3));
+
+        System.out.println(node1.getLeft() + " " + node1.getRight());
+        assertEquals(node1, node.getLeft());
+        assertEquals(node2, node1.getLeft());  //this fails, because it is right
+        assertEquals(node3, node2.getLeft());
+
         assertEquals(0, kdTree.IAE3Counter);
-        //assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.IAE4Counter);
     }
 
     @Test
