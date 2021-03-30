@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class KDTreeTest {
 
+    Model model = new Model("data/kdTreeTest.osm", false);
+
     @Test
     public void testNodeInit(){
         Node testNode = new Node(1,2,3);
@@ -72,7 +74,8 @@ public class KDTreeTest {
 
     @Test
     public void testNearest(){
-
+        Model model = new Model("data/kdTreeTest.osm",false);
+        KDTree kdTree = new KDTree(model);
     }
 
 
