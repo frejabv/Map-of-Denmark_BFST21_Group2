@@ -8,7 +8,8 @@ public class Vertex {
     public final double h_scores;
     public double f_scores = 0;
     public ArrayList<Edge> adjacencies;
-    public NodeAStar parent;
+    public Vertex parent;
+    public boolean explored = false;
 
     public Vertex(String val, double hVal){
         value = val;
@@ -18,4 +19,5 @@ public class Vertex {
     public String toString(){
         return value;
     }
+
 }
