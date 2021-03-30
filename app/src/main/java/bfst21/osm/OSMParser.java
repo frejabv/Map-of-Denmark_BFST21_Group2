@@ -43,6 +43,7 @@ public class OSMParser {
         ArrayList<Tag> tags = new ArrayList<>();
         Way way = null;
         Relation relation = null;
+        RadixTree tree = new RadixTree();
 
         boolean isWay = false;
         boolean isRelation = false;
@@ -165,7 +166,7 @@ public class OSMParser {
                             size = addresses.get("housenumber").size();
                             String two = addresses.get("housenumber").get(size - 1);
                             String strNumber = one + " " + two;
-                            //tree.insert(one);
+                            tree.insert(one);
                             size = addresses.get("postcode").size();
                             one = addresses.get("postcode").get(size-1);
                             size = addresses.get("city").size();
@@ -186,7 +187,7 @@ public class OSMParser {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
 
-        RadixTree tree = new RadixTree();
+        /*RadixTree tree = new RadixTree();
         tree.insert("test");
         tree.insert("highroad");
         tree.insert("roadkill");
@@ -196,9 +197,9 @@ public class OSMParser {
         System.out.println("lookup result for roadkill: " + tree.lookup("roadkill"));
         System.out.println("lookup result for toast: " + tree.lookup("toast"));
         System.out.println("lookup result for tester: " + tree.lookup("tester"));
+        System.out.println(tree.getSize());*/
         System.out.println(tree.getSize());
-        /*System.out.println(tree.getSize());
-        System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));*/
+        System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
 
         /*try {
             writeAddressesToFile();
