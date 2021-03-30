@@ -34,7 +34,8 @@ public class KDTree {
 
         //create root
         if (isEmpty()) {
-            RectHV r = new RectHV(model.getMinX(), model.getMinY(), model.getMaxX(), model.getMaxY());
+            //note: maxY and minY are swapped
+            RectHV r = new RectHV(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
             root = qNode;
             root.setRect(r);
             size++;
@@ -186,6 +187,16 @@ public class KDTree {
 
     public void drawLines(GraphicsContext gc) {
         if (!isEmpty()) {
+            //draw border
+            gc.beginPath();
+            gc.moveTo(root.getRect().getMinX(), root.getRect().getMinY());
+            gc.lineTo(root.getRect().getMaxX(), root.getRect().getMinY());
+            gc.lineTo(root.getRect().getMaxX(), root.getRect().getMaxY());
+            gc.lineTo(root.getRect().getMinX(), root.getRect().getMaxY());
+            gc.lineTo(root.getRect().getMinX(), root.getRect().getMinY());
+            gc.stroke();
+
+            //begin lines
             root.drawKDTLine(true, gc);
             if (root.getRight() != null) {
                 drawLines(root.getRight(), gc, false);
@@ -197,6 +208,7 @@ public class KDTree {
     }
 
     private void drawLines(Node currentNode, GraphicsContext gc, boolean orientation) {
+        //draw lines
         currentNode.drawKDTLine(orientation, gc);
         if (currentNode.getRight() != null) {
             drawLines(currentNode.getRight(), gc, !orientation);
@@ -213,9 +225,9 @@ public class KDTree {
 
         public RectHV(float minX, float minY, float maxX, float maxY) {
             this.minX = minX;
-            this.minY = minY;
-            this.maxX = maxX;
             this.maxY = maxY;
+            this.maxX = maxX;
+            this.minY = minY;
             if (Float.isNaN(minX) || Float.isNaN(maxX)) {
                 System.out.println("if 1 returned true: x coordinate NaN");
                 throw new IllegalArgumentException("x-coordinate is NaN: " + toString());

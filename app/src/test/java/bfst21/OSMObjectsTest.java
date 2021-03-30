@@ -1,6 +1,7 @@
 package bfst21;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import bfst21.osm.*;
 import javafx.scene.paint.Color;

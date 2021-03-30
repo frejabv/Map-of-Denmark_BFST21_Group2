@@ -160,7 +160,7 @@ public class Controller {
 
         //used to test nearest neighbor
         Node tester = model.getKdTree().nearest(testermouse);
-        System.out.println("Nearest node coordinates to " + lastMouse + " (converted to + " + testermouse + ") are: x = " + tester.getX() + " y =" + tester.getY());
+        System.out.println("Nearest node ID: " + tester.getId() + " with the coordinates (" + tester.getX()+ ", "+ tester.getY()*0.56f + ")");
     }
 
     @FXML
