@@ -133,7 +133,7 @@ public class OSMParser {
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                 case "way":
-                    addDrawableToList(way, tags, model);
+                    addWayToList(way, tags, model);
                     break;
                 case "relation":
                     relation.setTags(tags);
@@ -151,26 +151,26 @@ public class OSMParser {
         }
     }
 
-    public static void addDrawableToList(Way drawable, List<Tag> tags, Model model) {
+    public static void addWayToList(Way way, List<Tag> tags, Model model) {
         var drawableMap = model.getDrawableMap();
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
 
         for (var tag : tags) {
             if (tag == Tag.COASTLINE) {
-                model.addCoastline(drawable);
+                model.addCoastline(way);
             } else {
                 var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
                 if (drawStyle == DrawStyle.FILL) {
                     fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(drawable, tag, fillMap)) {
-                        fillMap.get(tag).add(drawable);
+                    if (!isDublet(way, tag, fillMap)) {
+                        fillMap.get(tag).add(way);
                     }
                 } else {
                     drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(drawable, tag, drawableMap)) {
-                        drawableMap.get(tag).add(drawable);
+                    if (!isDublet(way, tag, drawableMap)) {
+                        drawableMap.get(tag).add(way);
                     }
                 }
             }

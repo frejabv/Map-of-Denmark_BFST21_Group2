@@ -53,7 +53,7 @@ public class Relation extends Member {
         for(Way way : ways) {
             String value = way.getRoleMap().get(id);
             if(value.equals("inner")) {
-                way.specialDraw(gc);
+                way.drawRelationPart(gc);
                 innerDrawn = true;
             }
         }
@@ -61,7 +61,7 @@ public class Relation extends Member {
             for(Way way : ways) {
                 String value = way.getRoleMap().get(id);
                 if(value.equals("outer")) {
-                    way.specialDraw(gc);
+                    way.drawRelationPart(gc);
                 }
             }
         }

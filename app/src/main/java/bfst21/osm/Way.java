@@ -54,7 +54,7 @@ public class Way extends Member implements Drawable {
         gc.stroke();
     }
 
-    public void specialDraw(GraphicsContext gc) {
+    public void drawRelationPart(GraphicsContext gc) {
         var firstNode = nodes.get(0);
         gc.moveTo(firstNode.getX(), firstNode.getY());
 
