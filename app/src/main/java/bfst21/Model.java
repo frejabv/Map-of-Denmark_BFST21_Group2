@@ -37,7 +37,7 @@ public class Model {
         try {
             OSMParser.readMapElements(filepath, this);
         } catch (Exception e) {
-            System.out.println("error: " + e.getClass());
+            System.out.println("error: " + e.getClass() + " " + e.getMessage());
         }
     }
 
