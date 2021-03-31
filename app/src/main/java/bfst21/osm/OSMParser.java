@@ -187,17 +187,17 @@ public class OSMParser {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
 
-        /*RadixTree tree = new RadixTree();
-        tree.insert("test");
+        //RadixTree tree = new RadixTree();
+        /*tree.insert("test");
         tree.insert("highroad");
         tree.insert("roadkill");
         tree.insert("road");
         tree.insert("tester");
         tree.insert("toast");
+        tree.insert("road");
         System.out.println("lookup result for roadkill: " + tree.lookup("roadkill"));
         System.out.println("lookup result for toast: " + tree.lookup("toast"));
-        System.out.println("lookup result for tester: " + tree.lookup("tester"));
-        System.out.println(tree.getSize());*/
+        System.out.println("lookup result for tester: " + tree.lookup("tester"));*/
         System.out.println(tree.getSize());
         System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
 
