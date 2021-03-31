@@ -86,6 +86,7 @@
                   <TextField styleClass="textfield">
                     <promptText>Where from?</promptText>
                   </TextField>
+                  <Region styleClass="hr" />
                   <TextField styleClass="textfield">
                     <promptText>Where to?</promptText>
                   </TextField>

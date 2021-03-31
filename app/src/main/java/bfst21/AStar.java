@@ -1,6 +1,9 @@
 package bfst21;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import bfst21.osm.*;
 
 public class AStar {
@@ -22,7 +25,12 @@ public class AStar {
 
     private void readData(Node end) {
         List<Node> initialisedNodes = new ArrayList<>();
-        List<Drawable> ways = model.getDrawableMap().get(Tag.PRIMARY);
+
+        //TODO: Combining multiple lists of drawables. Temporary solution.
+        List<Drawable> ways2 = model.getDrawableMap().get(Tag.TERTIARY);
+        List<Drawable> ways3 = model.getDrawableMap().get(Tag.RESIDENTIAL);
+        List<Drawable> ways = Stream.of(ways2, ways3).flatMap(Collection::stream).collect(Collectors.toList());
+
         for (Drawable way : ways){
             Way wayButNowCasted = (Way) way;
             //TODO: Some nodes are in multiple ways and therefore set twice. plz fix
