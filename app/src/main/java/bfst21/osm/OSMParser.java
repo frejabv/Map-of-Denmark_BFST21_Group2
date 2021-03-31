@@ -116,7 +116,9 @@ public class OSMParser {
                         break;
                     case "way":
                         memberRef = model.getWayIndex().getMember(ref);
-                        relation.addWay(model.getWayIndex().getMember(ref));
+                        if(memberRef != null) {
+                            relation.addWay((Way) memberRef);
+                        }
                         break;
                     case "relation":
                         memberRef = model.getRelationIndex().getMember(ref);
