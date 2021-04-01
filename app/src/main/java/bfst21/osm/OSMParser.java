@@ -166,7 +166,7 @@ public class OSMParser {
                             size = addresses.get("housenumber").size();
                             String two = addresses.get("housenumber").get(size - 1);
                             String strNumber = one + " " + two;
-                            tree.insert(one);
+                            //tree.insert(one, 1);
                             size = addresses.get("postcode").size();
                             one = addresses.get("postcode").get(size-1);
                             size = addresses.get("city").size();
@@ -188,18 +188,22 @@ public class OSMParser {
         }
 
         //RadixTree tree = new RadixTree();
-        /*tree.insert("test");
-        tree.insert("highroad");
-        tree.insert("roadkill");
-        tree.insert("road");
-        tree.insert("tester");
-        tree.insert("toast");
-        tree.insert("road");
+        tree.insert("test",1);
+        tree.insert("highroad",1);
+        tree.insert("roadkill",1);
+        tree.insert("road",1);
+        tree.insert("tester",1);
+        tree.insert("toast",1);
+        tree.insert("road",1);
         System.out.println("lookup result for roadkill: " + tree.lookup("roadkill"));
         System.out.println("lookup result for toast: " + tree.lookup("toast"));
-        System.out.println("lookup result for tester: " + tree.lookup("tester"));*/
+        System.out.println("lookup result for tester: " + tree.lookup("tester"));
         System.out.println(tree.getSize());
-        System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
+        ArrayList<RadixNode> suggestions =  tree.getSuggestions("t");
+        for (RadixNode r: suggestions) {
+            System.out.println(r.getContent());
+        }
+        //System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
 
         /*try {
             writeAddressesToFile();
