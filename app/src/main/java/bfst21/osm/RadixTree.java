@@ -60,9 +60,36 @@ public class RadixTree {
                 return null;
             }
         }
-        System.out.println(result.equals(searchTerm) + " " + result + " " + searchTerm);
         return currentNode;
     }
+
+    public String lookup(String searchTerm) {
+        RadixNode currentNode = root;
+        int charLength = 0;
+        String result = "";
+
+        while(!result.equals(searchTerm)) { //!currentNode.isPlace() &&
+            boolean foundChild = false;
+            ArrayList<RadixNode> children = currentNode.getChildren();
+
+            for(int i = 0; i < children.size(); i++) {
+                if(searchTerm.substring(charLength).startsWith(children.get(i).getContent())) {
+                    currentNode = children.get(i);
+                    foundChild = true;
+                    charLength += currentNode.getContent().length();
+                }
+            }
+
+            result += currentNode.getContent();
+            System.out.println(result);
+
+            if(!foundChild) {
+                return null;
+            }
+        }
+        return result;
+    }
+
 
     public void insert(String road, long id) {
         //System.out.println("insertion called for: " + road);
@@ -70,7 +97,8 @@ public class RadixTree {
     }
 
     private void insert(String road, long id, RadixNode currentNode) {
-        if (currentNode != root && (currentNode == null || currentNode.getContent().equals(""))) {
+        if (currentNode != root && (currentNode == null || currentNode.getContent().equals("") || road.equals(""))) {
+            //adding road to the check took the number of nodes from 393 to 148
             System.out.println("Something is fishy?");
             return;
         }
@@ -107,7 +135,7 @@ public class RadixTree {
             } else if (children.get(i).getContent().charAt(0) == road.charAt(0)) { //they are partly equal like test and team
                 String nodeContent = children.get(i).getContent();
                 for (int j = 0; j < (Math.min(road.length(), nodeContent.length())); j++) {
-                    if (road.charAt(j) != nodeContent.charAt(i) && j > 0) {
+                    if (road.charAt(j) != nodeContent.charAt(j) && j > 0) {
                         RadixNode temp = children.get(i);
                         temp.setContent(nodeContent.substring(j));
                         RadixNode temp2 = new RadixNode(road.substring(j), id);
@@ -131,34 +159,6 @@ public class RadixTree {
                 return;
             }
         }
-    }
-
-
-    public String lookup(String searchTerm) {
-        RadixNode currentNode = root;
-        int charLength = 0;
-        String result = "";
-
-        while(!result.equals(searchTerm)) { //!currentNode.isPlace() &&
-            boolean foundChild = false;
-            ArrayList<RadixNode> children = currentNode.getChildren();
-
-            for(int i = 0; i < children.size(); i++) {
-                if(searchTerm.substring(charLength).startsWith(children.get(i).getContent())) {
-                    currentNode = children.get(i);
-                    foundChild = true;
-                    charLength += currentNode.getContent().length();
-                }
-            }
-
-            result += currentNode.getContent();
-
-            if(!foundChild) {
-                return null;
-            }
-        }
-        System.out.println(result.equals(searchTerm) + " " + result + " " + searchTerm);
-        return result;
     }
 
 }

@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import java.io.*;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -10,12 +11,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
@@ -44,6 +39,7 @@ public class OSMParser {
         Way way = null;
         Relation relation = null;
         RadixTree tree = new RadixTree();
+        HashSet<String> set = new HashSet<>();
 
         boolean isWay = false;
         boolean isRelation = false;
@@ -166,7 +162,8 @@ public class OSMParser {
                             size = addresses.get("housenumber").size();
                             String two = addresses.get("housenumber").get(size - 1);
                             String strNumber = one + " " + two;
-                            //tree.insert(one, 1);
+                            tree.insert(one, 1);
+                            set.add(one);
                             size = addresses.get("postcode").size();
                             one = addresses.get("postcode").get(size-1);
                             size = addresses.get("city").size();
@@ -188,7 +185,7 @@ public class OSMParser {
         }
 
         //RadixTree tree = new RadixTree();
-        tree.insert("test",1);
+        /*tree.insert("test",1);
         tree.insert("highroad",1);
         tree.insert("roadkill",1);
         tree.insert("road",1);
@@ -197,13 +194,22 @@ public class OSMParser {
         tree.insert("road",1);
         System.out.println("lookup result for roadkill: " + tree.lookup("roadkill"));
         System.out.println("lookup result for toast: " + tree.lookup("toast"));
-        System.out.println("lookup result for tester: " + tree.lookup("tester"));
+        System.out.println("lookup result for tester: " + tree.lookup("tester"));*/
         System.out.println(tree.getSize());
-        ArrayList<RadixNode> suggestions =  tree.getSuggestions("t");
+        System.out.println(set.size());
+        ArrayList<RadixNode> suggestions =  tree.getSuggestions("A");
         for (RadixNode r: suggestions) {
             System.out.println(r.getContent());
         }
-        //System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
+        System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
+        System.out.println("lookup result for Anemonevej: " + tree.lookup("Anemonevej"));
+        System.out.println("lookup result for Alstrup: " + tree.lookup("Alstrup"));
+        System.out.println("lookup result for Alstrupvej: " + tree.lookup("Alstrupvej"));
+        System.out.println("lookup result for Agerup: " + tree.lookup("Agerup"));
+
+
+
+
 
         /*try {
             writeAddressesToFile();
