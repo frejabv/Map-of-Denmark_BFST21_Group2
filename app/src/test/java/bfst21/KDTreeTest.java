@@ -287,4 +287,21 @@ public class KDTreeTest {
         assertEquals(1, kdTree.IAE4Counter);
         assertEquals(0, kdTree.outOfBoundsCounter);
     }
+
+    @Test
+    public void testRectIntersects(){
+        RectHV r1 = new RectHV(0,0,2,2);
+        RectHV r2 = new RectHV(1,1,3,3);
+        RectHV r3 = new RectHV(5,5,10,10);
+
+        assertTrue(r1.intersects(r2));
+        assertTrue(r2.intersects(r1));
+
+        assertFalse(r1.intersects(r3));
+        assertFalse(r3.intersects(r1));
+
+        assertFalse(r2.intersects(r3));
+        assertFalse(r3.intersects(r2));
+
+    }
 }
