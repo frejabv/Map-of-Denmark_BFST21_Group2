@@ -42,7 +42,6 @@ public class OSMParser {
         Relation relation = null;
 
         boolean isWay = false;
-        boolean isRelation = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -68,12 +67,12 @@ public class OSMParser {
                     var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     way = new Way(wayId);
                     model.addToWayIndex(way);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "nd":
                     if (isWay && way != null) {
                         var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
-                        way.addNode((Node) model.getNodeIndex().getMember(ref));
+                        way.addNode(model.getNodeIndex().getMember(ref));
                     }
                     break;
                 case "tag":
@@ -102,11 +101,10 @@ public class OSMParser {
                     }
                     break;
                 case "relation":
-                    isRelation = true;
                     var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     relation = new Relation(relationId);
                     model.addToRelationIndex(relation);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "member":
                     var type = xmlReader.getAttributeValue(null, "type");
@@ -119,6 +117,9 @@ public class OSMParser {
                         break;
                     case "way":
                         memberRef = model.getWayIndex().getMember(ref);
+                        if(memberRef != null) {
+                            relation.addWay((Way) memberRef);
+                        }
                         break;
                     case "relation":
                         memberRef = model.getRelationIndex().getMember(ref);
@@ -135,16 +136,10 @@ public class OSMParser {
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                 case "way":
-                    addDrawableToList(way, tags, model);
+                    addWayToList(way, tags, model);
                     break;
                 case "relation":
-                    if(isRelation) {
-                        List<Member> members = relation.getMembers();
-                        for(Member member : members) {
-                            addDrawableToList(member, tags, model);
-                        }
-                    }
-                    isRelation = false;
+                    relation.setTags(tags);
                     relation = null;
                     break;
                 }
@@ -158,26 +153,26 @@ public class OSMParser {
         System.out.println("Nodes out of bounds = " + KDTree.outOfBoundsCounter);
     }
 
-    public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
+    public static void addWayToList(Way way, List<Tag> tags, Model model) {
         var drawableMap = model.getDrawableMap();
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
 
         for (var tag : tags) {
             if (tag == Tag.COASTLINE) {
-                model.addCoastline((Way) drawable);
+                model.addCoastline(way);
             } else {
                 var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
                 if (drawStyle == DrawStyle.FILL) {
                     fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if(!isDublet(drawable, tag, fillMap)) {
-                        fillMap.get(tag).add((Drawable) drawable);
+                    if (!isDublet(way, tag, fillMap)) {
+                        fillMap.get(tag).add(way);
                     }
                 } else {
                     drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if(!isDublet(drawable, tag, drawableMap)) {
-                        drawableMap.get(tag).add((Drawable) drawable);
+                    if (!isDublet(way, tag, drawableMap)) {
+                        drawableMap.get(tag).add(way);
                     }
                 }
             }

@@ -26,4 +26,8 @@ public class Member {
     public void setTags(ArrayList<Tag> tags){
         this.tags = tags;
     }
+
+    public ArrayList<Tag> getTags() {
+        return tags;
+    }
 }

@@ -1,9 +1,10 @@
 package bfst21.osm;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class MemberIndex<T extends Member> {
+public class MemberIndex<T extends Member> implements Iterable<T>{
         private List<T> members;
         private boolean isSorted;
 
@@ -45,5 +46,10 @@ public class MemberIndex<T extends Member> {
         public int size() {
             return members.size();
         }
+
+    @Override
+    public Iterator<T> iterator() {
+        return members.iterator();
     }
+}
 
