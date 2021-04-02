@@ -117,6 +117,24 @@ public class KDTreeTest {
     }
 
     @Test
+    public void testInsertNullNode(){
+        KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
+
+        boolean success = false;
+        try {
+            kdTree.insert(null);
+        } catch (NullPointerException e){
+            success = true;
+        }
+        assertTrue(success);
+
+        assertEquals(0, kdTree.IAE3Counter);
+        assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.outOfBoundsCounter);
+    }
+
+    @Test
     public void testRectContains(){
         KDTree kdTree = new KDTree(model);
         kdTree.setBounds();
@@ -149,6 +167,18 @@ public class KDTreeTest {
         assertTrue(node3.getRect().contains(p2));
         assertFalse(node4.getRect().contains(p2));
         assertFalse(node5.getRect().contains(p2));
+
+        boolean nullInsertSuccess = false;
+        try {
+            assertTrue(kdTree.contains(null));
+        } catch (NullPointerException e){
+            nullInsertSuccess = true;
+        }
+        assertTrue(nullInsertSuccess);
+
+        assertEquals(0, kdTree.IAE3Counter);
+        assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     //TODO
@@ -156,6 +186,9 @@ public class KDTreeTest {
     public void testNearest(){
         KDTree kdTree = new KDTree(model);
         kdTree.setBounds();
+
+        Point2D testEmpty = new Point2D(1,1);
+        assertNull(kdTree.nearest(testEmpty));
 
         Node node = new Node(5, 5, 1);
         kdTree.insert(node);
@@ -173,14 +206,79 @@ public class KDTreeTest {
         kdTree.insert(node6);
         Node node7 = new Node(5.1f, 10, 8);
         kdTree.insert(node7);
+        Node node8 = new Node(0,0, 9);
+        kdTree.insert(node8);
+        Node node9 = new Node(1,0,10);
+        kdTree.insert(node9);
 
-        Point2D test1 = new Point2D(4.9, 10/-0.56);
+        //right beside node7, but to the left of root
+        Point2D test1 = new Point2D(4.9, 10/-0.56f);
         assertEquals(node7, kdTree.nearest(test1));
+
+        //Node that is equally close to node8 and node9, should return node8
+        Point2D test2 = new Point2D(0.5,0);
+        assertEquals(node8, kdTree.nearest(test2));
+
+        //out of bounds
+        Point2D test3 = new Point2D(-1,-1/-0.56f);
+        assertNull(kdTree.nearest(test3));
+
+        //next to node 4
+        Point2D test4 = new Point2D(2.7,3.7/-0.56f);
+        assertEquals(node4, kdTree.nearest(test4));
+
+        //next to node 6
+        Point2D test5 = new Point2D(8,2/-0.56f);
+        assertEquals(node6, kdTree.nearest(test5));
+
+        assertEquals(0, kdTree.IAE3Counter);
+        assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
-    public void testKDTreeBounds(){
+    public void testRectExceptions(){
+        KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
 
+        boolean minXNaN = false;
+        boolean maxXNaN = false;
+        boolean minYNaN = false;
+        boolean maxYNaN = false;
+
+        try {
+            RectHV r1 = new RectHV((float) Math.sqrt(-1), 0, 1,1);
+        } catch (IllegalArgumentException e) {
+            minXNaN = true;
+        }
+        assertTrue(minXNaN);
+
+        try {
+            RectHV r2 = new RectHV(0,0, (float) Math.sqrt(-1),0);
+        } catch (IllegalArgumentException e) {
+            maxXNaN = true;
+        }
+        assertTrue(maxXNaN);
+
+        try {
+            RectHV r3 = new RectHV(0, (float) Math.sqrt(-1), 1, 1);
+        } catch (IllegalArgumentException e) {
+            minYNaN = true;
+        }
+        assertTrue(minYNaN);
+
+        try {
+            RectHV r4 = new RectHV(0,0,0, (float) Math.sqrt(-1));
+        } catch (IllegalArgumentException e) {
+            maxYNaN = true;
+        }
+        assertTrue(maxYNaN);
+
+        RectHV r5 = new RectHV(1,0,0,1);
+        RectHV r6 = new RectHV(0,1,1,0);
+
+        assertEquals(1, kdTree.IAE3Counter);
+        assertEquals(1, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.outOfBoundsCounter);
     }
-
 }

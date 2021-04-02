@@ -111,6 +111,10 @@ public class KDTree {
         if (qNode == null) {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
+
+        if (bounds.contains(new Point2D(qNode.getX(),qNode.getY())))
+            return false;
+
         return contains(root, qNode, true);
     }
 
@@ -242,7 +246,7 @@ public class KDTree {
     }
 
     //taken from Sedgewick and Wayne
-    public class RectHV {
+    public static class RectHV {
         private final float minX, minY;
         private final float maxX, maxY;
 
