@@ -106,7 +106,6 @@ public class MapCanvas extends Canvas {
     }
 
     public void paintPath(List<Node> path){
-        System.out.println("Painting Path!");
         gc.setStroke(Color.ORANGERED);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant())*3);
         gc.beginPath();
