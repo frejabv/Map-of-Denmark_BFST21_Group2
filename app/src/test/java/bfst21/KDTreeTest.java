@@ -48,21 +48,28 @@ public class KDTreeTest {
     }
 
     @Test
-    public void testInsertWithContains(){
-        //assert that the tree contains
+    public void testContains(){
         KDTree kdTree = new KDTree(model);
         kdTree.setBounds();
 
-        Node node = new Node(1, 1, 3);
+        Node node = new Node(1, 1, 0);
         kdTree.insert(node);
-        Node node1 = new Node(2, 2, 222);
+        Node node1 = new Node(2, 2, 1);
         kdTree.insert(node1);
-        Node node2 = new Node(100, 100, 0);
+        Node node2 = new Node(100, 100, 2);
         kdTree.insert(node2); //out of bounds
+        Node node3 = new Node(2, 4, 3);
+        kdTree.insert(node3);
+        Node node4 = new Node(6,7,4);
+        kdTree.insert(node4);
+        Node node5 = new Node(5,5,5); //not in tree
 
         assertTrue(kdTree.contains(node));
         assertTrue(kdTree.contains(node1));
         assertFalse(kdTree.contains(node2));
+        assertTrue(kdTree.contains(node3));
+        assertTrue(kdTree.contains(node4));
+        assertFalse(kdTree.contains(node5));
 
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
@@ -108,7 +115,7 @@ public class KDTreeTest {
         kdTree.insert(node3);
 
         assertEquals(node1, node.getLeft());
-        assertEquals(node2, node1.getLeft());  //this fails, because it is right
+        assertEquals(node2, node1.getLeft());
         assertEquals(node3, node2.getLeft());
 
         assertEquals(0, kdTree.IAE3Counter);
@@ -181,7 +188,6 @@ public class KDTreeTest {
         assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
-    //TODO
     @Test
     public void testNearest(){
         KDTree kdTree = new KDTree(model);
