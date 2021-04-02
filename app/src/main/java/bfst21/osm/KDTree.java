@@ -44,8 +44,8 @@ public class KDTree {
         //check if the node is outside the border
         if (!bounds.contains(new Point2D(qNode.getX(), qNode.getY())))
             outOfBoundsCounter++;
+        //create root if tree is empty
         else if (isEmpty()) {
-            //create root if tree is empty
             root = qNode;
             root.setRect(bounds);
             size++;
@@ -112,7 +112,7 @@ public class KDTree {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
 
-        if (bounds.contains(new Point2D(qNode.getX(),qNode.getY())))
+        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())))
             return false;
 
         return contains(root, qNode, true);
@@ -151,7 +151,7 @@ public class KDTree {
             return null;
         }
 
-        if (!root.getRect().contains(p)){
+        if (!bounds.contains(p)){
             return null;
         }
 
