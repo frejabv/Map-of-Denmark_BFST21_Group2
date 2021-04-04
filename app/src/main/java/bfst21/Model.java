@@ -16,6 +16,7 @@ public class Model {
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
+    private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
     private boolean ttiMode;
@@ -31,6 +32,7 @@ public class Model {
         coastlines = new ArrayList<>();
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
+        streetTree = new RadixTree();
 
         this.ttiMode = ttiMode;
 
@@ -131,4 +133,6 @@ public class Model {
     public boolean getTtiMode() {
         return ttiMode;
     }
+
+    public RadixTree getStreetTree() { return streetTree; }
 }

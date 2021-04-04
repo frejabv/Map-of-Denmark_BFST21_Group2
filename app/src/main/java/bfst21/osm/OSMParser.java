@@ -38,8 +38,6 @@ public class OSMParser {
         ArrayList<Tag> tags = new ArrayList<>();
         Way way = null;
         Relation relation = null;
-        RadixTree tree = new RadixTree();
-        HashSet<String> set = new HashSet<>();
 
         boolean isWay = false;
         boolean isRelation = false;
@@ -162,12 +160,11 @@ public class OSMParser {
                             size = addresses.get("housenumber").size();
                             String two = addresses.get("housenumber").get(size - 1);
                             String strNumber = one + " " + two;
-                            tree.insert(one, 1);
-                            set.add(one);
-                            size = addresses.get("postcode").size();
+                            model.getStreetTree().insert(one, 1);
+                            /*size = addresses.get("postcode").size();
                             one = addresses.get("postcode").get(size-1);
                             size = addresses.get("city").size();
-                            two = addresses.get("city").get(size-1);
+                            two = addresses.get("city").get(size-1);*/
                             //System.out.println(strNumber + ", " + one + " " + two);
                         }
                         isNode = false;
@@ -192,24 +189,17 @@ public class OSMParser {
         tree.insert("tester",1);
         tree.insert("toast",1);
         tree.insert("road",1);
+        tree.insert("tes dorph", 1);
         System.out.println("lookup result for roadkill: " + tree.lookup("roadkill"));
         System.out.println("lookup result for toast: " + tree.lookup("toast"));
-        System.out.println("lookup result for tester: " + tree.lookup("tester"));*/
-        System.out.println(tree.getSize());
-        System.out.println(set.size());
-        ArrayList<RadixNode> suggestions =  tree.getSuggestions("A");
+        System.out.println("lookup result for tester: " + tree.lookup("tester"));
+        System.out.println("lookup result for tes dorph: " + tree.lookup("tes dorph"));*/
+        //System.out.println(tree.getSize());
+        ArrayList<RadixNode> suggestions =  model.getStreetTree().getSuggestions("Må");
         for (RadixNode r: suggestions) {
             System.out.println(r.getContent());
         }
-        System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
-        System.out.println("lookup result for Anemonevej: " + tree.lookup("Anemonevej"));
-        System.out.println("lookup result for Alstrup: " + tree.lookup("Alstrup"));
-        System.out.println("lookup result for Alstrupvej: " + tree.lookup("Alstrupvej"));
-        System.out.println("lookup result for Agerup: " + tree.lookup("Agerup"));
-
-
-
-
+        /*System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
 
         /*try {
             writeAddressesToFile();
