@@ -73,4 +73,19 @@ public class RadixTreeTest {
         assertEquals("hammock", tree.lookupNode("hammock").getContent());
         assertEquals("road", tree.lookupNode("road").getContent());
     }
+
+    @Test
+    public void suggestions() {
+        RadixTree tree = new RadixTree();
+        tree.insert("Test", 1);
+        tree.insert("Team", 2);
+        tree.insert("Tester", 3);
+        tree.insert("Testing", 4);
+        tree.insert("Tested", 5);
+        assertEquals(8, tree.getSize());
+        assertEquals(5, tree.getPlaces());
+
+        assertEquals(4, tree.getSuggestions("tes").size());
+
+    }
 }
