@@ -180,12 +180,6 @@ public class OSMParser {
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
-
-        /*try {
-            writeAddressesToFile();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }*/
     }
 
     public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
@@ -243,18 +237,6 @@ public class OSMParser {
     public static void saveAddressData(String dataset, String data){
         addresses.putIfAbsent(dataset, new ArrayList<>());
         addresses.get(dataset).add(data);
-    }
-
-    public static void writeAddressesToFile() throws IOException{
-        for(Map.Entry<String,List<String>> entry : addresses.entrySet()) {
-            String dataset = entry.getKey();
-            System.out.println(dataset);
-            BufferedWriter writer = new BufferedWriter(new FileWriter("data/" + dataset + ".txt"));
-            for(String data : entry.getValue()) {
-                writer.append(data + '\n');
-            }
-            writer.close();
-        }
     }
 
     private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){

@@ -51,10 +51,10 @@ public class RadixTree {
             }
 
             ArrayList<RadixNode> children = currentNode.getChildren();
-            for (int i = 0; i < children.size(); i++) {
-                queue.add(children.get(i));
-                if (children.get(i).isPlace()) {
-                    suggestions.add(children.get(i));
+            for (RadixNode child : children) {
+                queue.add(child);
+                if (child.isPlace()) {
+                    suggestions.add(child);
                     listItems++;
                 }
             }
@@ -80,13 +80,13 @@ public class RadixTree {
             boolean foundChild = false;
             ArrayList<RadixNode> children = currentNode.getChildren();
 
-            for (int i = 0; i < children.size(); i++) {
+            for (RadixNode child : children) {
                 if (searchTerm.length() > charLength) {
-                    if (children.get(i).getContent().startsWith(searchTerm.substring(charLength))) {
-                        safeNode = children.get(i);
+                    if (child.getContent().startsWith(searchTerm.substring(charLength))) {
+                        safeNode = child;
                     }
-                    if (searchTerm.substring(charLength).startsWith(children.get(i).getContent())) { //|| children.get(i).getContent().startsWith(searchTerm)
-                        currentNode = children.get(i);
+                    if (searchTerm.substring(charLength).startsWith(child.getContent())) {
+                        currentNode = child;
                         foundChild = true;
                         charLength += currentNode.getContent().length();
                     }
