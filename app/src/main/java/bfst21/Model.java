@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import bfst21.osm.*;
+import bfst21.search.RadixTree;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;

@@ -1,4 +1,4 @@
-package bfst21.osm;
+package bfst21.search;
 
 import java.util.ArrayList;
 

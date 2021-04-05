@@ -1,15 +1,13 @@
 package bfst21;
 
-import bfst21.osm.RadixNode;
+import bfst21.search.RadixNode;
 import com.sun.management.OperatingSystemMXBean;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
@@ -18,7 +16,6 @@ import javafx.scene.text.Text;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
