@@ -72,15 +72,15 @@ public class MapCanvas extends Canvas {
             });
         });
 
-        if (kdLines){
-            model.getKdTree().drawLines(gc);
-        }
-
         model.getRelationIndex().forEach(relation -> {
             if(relation.getTags().size() != 0) {
                 relation.draw(gc, renderingStyle);
             }
         });
+
+        if (kdLines){
+            model.getKdTree().drawLines(gc);
+        }
 
         if(setPin){
             gc.setFill(Color.rgb(231, 76, 60));
