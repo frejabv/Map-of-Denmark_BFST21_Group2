@@ -129,7 +129,6 @@ public class RadixTree {
 
         if (currentNode.getChildren().size() == 0) {
             RadixNode node = new RadixNode(stringToInsert, fullName, id);
-            node.setIsPlace(true);
             currentNode.getChildren().add(node);
             size++;
             places++;
@@ -144,7 +143,6 @@ public class RadixTree {
             } else if (children.get(i).getContent().startsWith(stringToInsert)) { //stringToInsert is a prefix to child, like child: tester and stringToInsert: test
                 RadixNode originalNode = children.get(i);
                 RadixNode newParentNode = new RadixNode(stringToInsert, fullName, id);
-                newParentNode.setIsPlace(true);
                 children.set(i, newParentNode);
                 originalNode.setContent(originalNode.getContent().substring(stringToInsert.length()));
                 children.get(i).addChild(originalNode);
@@ -161,7 +159,6 @@ public class RadixTree {
                         RadixNode originalNode = children.get(i);
                         originalNode.setContent(nodeContent.substring(j));
                         RadixNode newChildNode = new RadixNode(stringToInsert.substring(j), fullName, id);
-                        newChildNode.setIsPlace(true);
                         RadixNode newParentNode = new RadixNode(stringToInsert.substring(0, j));
                         children.set(i, newParentNode);
                         children.get(i).addChild(originalNode);
@@ -174,7 +171,6 @@ public class RadixTree {
             } else if (i == children.size() - 1) { //none of the children contain stringToInsert
                 RadixNode node = new RadixNode(stringToInsert, fullName, id);
                 currentNode.getChildren().add(node);
-                node.setIsPlace(true);
                 size++;
                 places++;
                 return;

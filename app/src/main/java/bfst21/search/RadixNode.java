@@ -19,6 +19,7 @@ public class RadixNode {
         this(content);
         this.fullName = fullName;
         this.id = id;
+        isPlace = true;
     }
 
     public void addChild(RadixNode child) {
@@ -41,10 +42,6 @@ public class RadixNode {
 
     public boolean isPlace() {
         return isPlace;
-    }
-
-    public void setIsPlace(boolean isPlace) {
-        this.isPlace = isPlace;
     }
 
     public long getId() {
