@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class RadixTree {
-    private RadixNode root;
+    private final RadixNode root;
     private int size;
     private int places;
     private String fullName;
@@ -24,7 +24,7 @@ public class RadixTree {
     }
 
     /**
-     * From a searchterm we find the node with the best match using {@lookupNode}
+     * From a searchterm we find the node with the best match using {@link #lookupNode}
      * From this node we look at the children and add them to a list of suggestions
      * if they are valid nodes (isPlace = true).
      *
