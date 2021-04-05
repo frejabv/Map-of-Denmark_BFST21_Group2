@@ -146,15 +146,7 @@ public class OSMParser {
                         int size = addresses.get("street").size();
                         String one = addresses.get("street").get(size - 1);
                         size = addresses.get("housenumber").size();
-                        String two = addresses.get("housenumber").get(size - 1);
-                        String strNumber = one + " " + two;
                         model.getStreetTree().insert(one, 1);
-                        /*
-                         * size = addresses.get("postcode").size(); one =
-                         * addresses.get("postcode").get(size-1); size = addresses.get("city").size();
-                         * two = addresses.get("city").get(size-1);
-                         */
-                        // System.out.println(strNumber + ", " + one + " " + two);
                     }
                     isNode = false;
                     addressReceived = false;
