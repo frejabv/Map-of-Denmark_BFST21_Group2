@@ -6,6 +6,7 @@ public class RadixNode {
     private ArrayList<RadixNode> children;
     boolean isPlace;
     String content;
+    String fullName;
     long id;
 
     public RadixNode(String content) {
@@ -14,8 +15,9 @@ public class RadixNode {
         this.content = content;
     }
 
-    public RadixNode(String content, long id) {
+    public RadixNode(String content, String fullName, long id) {
         this(content);
+        this.fullName = fullName;
         this.id = id;
     }
 
@@ -34,6 +36,8 @@ public class RadixNode {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getFullName() { return fullName; }
 
     public boolean isPlace() {
         return isPlace;

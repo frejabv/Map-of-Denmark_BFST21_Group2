@@ -7,6 +7,7 @@ public class RadixTree {
     private RadixNode root;
     private int size;
     private int places;
+    private String fullName;
 
     public RadixTree() {
         root = new RadixNode("");
@@ -26,11 +27,10 @@ public class RadixTree {
         boolean first = true;
         RadixNode currentNode;
 
-        //todo this might be a problem, might want to include part matches
+        //this might be a problem, might want to include part matches
         queue.add(lookupNode(searchTerm));
         while (listItems <= 8 && !queue.isEmpty()) {
             currentNode = queue.remove();
-            //todo handle when the first currentNode is a place
             if (first && currentNode.isPlace()) {
                 suggestions.add(currentNode);
             }
@@ -40,7 +40,6 @@ public class RadixTree {
                 System.out.println("Suggestions, child: " + children.get(i).getContent());
                 queue.add(children.get(i));
                 if (children.get(i).isPlace()) {
-                    //todo add the whole result word
                     suggestions.add(children.get(i));
                     listItems++;
                 }
@@ -50,22 +49,24 @@ public class RadixTree {
         return suggestions;
     }
 
+    //looking through the tree using (...) to find a full match for the searchterm
+    //if that does not exist we settle on any part matches we found, if none exist we return null
     public RadixNode lookupNode(String searchTerm) {
         RadixNode currentNode = root;
         int charLength = 0;
         String result = "";
         RadixNode safeNode = null;
 
-        while (!result.equals(searchTerm)) { //!currentNode.isPlace() &&
+        while (!result.equals(searchTerm)) {
             boolean foundChild = false;
             ArrayList<RadixNode> children = currentNode.getChildren();
-            System.out.println("currentnode: " + currentNode.getContent());
+            System.out.println("Currentnode: " + currentNode.getContent());
 
             for (int i = 0; i < children.size(); i++) {
                 System.out.println(charLength);
                 System.out.println("A child: " + children.get(i).getContent());
                 if (searchTerm.length() > charLength) {
-                    //todo somehow find part matches, but still be strict
+                    //somehow find part matches, but still be strict
                     //System.out.println(children.get(i).getContent().startsWith(searchTerm.substring(charLength)) + " a child starts with: " + searchTerm);
                     if (children.get(i).getContent().startsWith(searchTerm.substring(charLength))) {
                         System.out.println("A safe node was created");
@@ -125,6 +126,7 @@ public class RadixTree {
 
     public void insert(String road, long id) {
         //System.out.println("insertion called for: " + road);
+        fullName = road;
         insert(road, id, root);
     }
 
@@ -136,7 +138,7 @@ public class RadixTree {
         }
 
         if (currentNode.getChildren().size() == 0) {
-            RadixNode newNode = new RadixNode(road, id);
+            RadixNode newNode = new RadixNode(road, fullName, id);
             newNode.setIsPlace(true);
             currentNode.getChildren().add(newNode);
             System.out.println(road + " inserted");
@@ -147,7 +149,7 @@ public class RadixTree {
 
         ArrayList<RadixNode> children = currentNode.getChildren();
         for (int i = 0; i < children.size(); i++) {
-            System.out.println("currently looking at node: " + children.get(i).getContent());
+            //System.out.println("currently looking at node: " + children.get(i).getContent());
             if (road.startsWith(children.get(i).getContent())) { //the child is a prefix to road, like child: test and road: tester
                 System.out.println("recursion called for: " + road);
                 System.out.println("with new string: " + road.substring(children.get(i).getContent().length()));
@@ -156,7 +158,7 @@ public class RadixTree {
                 return;
             } else if (children.get(i).getContent().startsWith(road)) { //road is a prefix to child, like child: tester and road: test
                 RadixNode temp = children.get(i);
-                RadixNode node = new RadixNode(road, id);
+                RadixNode node = new RadixNode(road, fullName, id);
                 node.setIsPlace(true);
                 children.set(i, node);
                 temp.setContent(temp.getContent().substring(road.length()));
@@ -172,7 +174,7 @@ public class RadixTree {
                     if (road.charAt(j) != nodeContent.charAt(j) && j > 0) {
                         RadixNode temp = children.get(i);
                         temp.setContent(nodeContent.substring(j));
-                        RadixNode temp2 = new RadixNode(road.substring(j), id);
+                        RadixNode temp2 = new RadixNode(road.substring(j), fullName, id);
                         temp2.setIsPlace(true);
                         RadixNode node = new RadixNode(road.substring(0, j));
                         children.set(i, node);
@@ -187,7 +189,7 @@ public class RadixTree {
                     }
                 }
             } else if (i == children.size() - 1) { //none of the children contain road
-                RadixNode newNode = new RadixNode(road, id);
+                RadixNode newNode = new RadixNode(road, fullName, id);
                 currentNode.getChildren().add(newNode);
                 newNode.setIsPlace(true);
                 size++;

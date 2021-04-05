@@ -109,7 +109,7 @@ public class Controller {
             ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(searchField.textProperty().getValue());
             // for(Member temp : possibleMatches)
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
-                Text newSuggestion = new Text(suggestions.get(i).getContent()); //"Suggestion!" + i
+                Text newSuggestion = new Text(suggestions.get(i).getFullName()); //"Suggestion!" + i
                 newSuggestion.getStyleClass().add("suggestion");
                 suggestionList.add(newSuggestion);
             }
