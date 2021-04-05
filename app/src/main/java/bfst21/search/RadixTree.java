@@ -37,8 +37,12 @@ public class RadixTree {
         int listItems = 0;
         boolean first = true;
         RadixNode currentNode;
+        RadixNode initialNode = lookupNode(searchTerm);
 
-        queue.add(lookupNode(searchTerm));
+        if(initialNode != null) {
+            queue.add(initialNode);
+        }
+
         while (listItems <= 8 && !queue.isEmpty()) {
             currentNode = queue.remove();
 
