@@ -29,6 +29,58 @@ public class KDTreeTest {
         assertNull(kdTree.getBounds());
         kdTree.setBounds();
         assertNotNull(kdTree.getBounds());
+
+        Node node = new Node(5, 5, 0);
+        kdTree.insert(node);
+        Node node1 = new Node(0, 0, 1);
+        kdTree.insert(node1);
+        Node node2 = new Node(0, 10, 2);
+        kdTree.insert(node2);
+        Node node3 = new Node(10, 10, 3);
+        kdTree.insert(node3);
+        Node node4 = new Node(10, 0, 4);
+        kdTree.insert(node4);
+        assertEquals(5, kdTree.getSize());
+        assertEquals(0, kdTree.outOfBoundsCounter);
+
+        Node node5 = new Node(0, -1, 5);
+        kdTree.insert(node5);
+        Node node6 = new Node(-1, 0, 6);
+        kdTree.insert(node6);
+        Node node7 = new Node(-1, -1, 7);
+        kdTree.insert(node7);
+        assertEquals(5, kdTree.getSize());
+        assertEquals(3, kdTree.outOfBoundsCounter);
+
+        Node node8 = new Node(0, 11, 8);
+        kdTree.insert(node8);
+        Node node9 = new Node(-1, 10, 9);
+        kdTree.insert(node9);
+        Node node10 = new Node(-1, 11, 10);
+        kdTree.insert(node10);
+        assertEquals(5, kdTree.getSize());
+        assertEquals(6, kdTree.outOfBoundsCounter);
+
+        Node node11 = new Node(11, 0, 11);
+        kdTree.insert(node11);
+        Node node12 = new Node(10, -1, 12);
+        kdTree.insert(node12);
+        Node node13 = new Node(11, -1, 13);
+        kdTree.insert(node13);
+        assertEquals(5, kdTree.getSize());
+        assertEquals(9, kdTree.outOfBoundsCounter);
+
+        Node node14 = new Node(10, 11, 14);
+        kdTree.insert(node14);
+        Node node15 = new Node(11, 10, 15);
+        kdTree.insert(node15);
+        Node node16 = new Node(11, 11, 16);
+        kdTree.insert(node16);
+        assertEquals(5, kdTree.getSize());
+        assertEquals(12, kdTree.outOfBoundsCounter);
+
+        assertEquals(0, kdTree.IAE3Counter);
+        assertEquals(0, kdTree.IAE4Counter);
     }
 
     @Test
@@ -57,20 +109,21 @@ public class KDTreeTest {
         Node node1 = new Node(2, 2, 1);
         kdTree.insert(node1);
         Node node2 = new Node(100, 100, 2);
-        kdTree.insert(node2); //out of bounds
+        kdTree.insert(node2);
         Node node3 = new Node(2, 4, 3);
         kdTree.insert(node3);
         Node node4 = new Node(6,7,4);
         kdTree.insert(node4);
-        Node node5 = new Node(5,5,5); //not in tree
+        Node node5 = new Node(5,5,5);
 
         assertTrue(kdTree.contains(node));
         assertTrue(kdTree.contains(node1));
-        assertFalse(kdTree.contains(node2));
         assertTrue(kdTree.contains(node3));
         assertTrue(kdTree.contains(node4));
-        assertFalse(kdTree.contains(node5));
+        assertFalse(kdTree.contains(node2)); //out of bounds
+        assertFalse(kdTree.contains(node5)); //not added to tree
 
+        assertEquals(4, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
         assertEquals(1, kdTree.outOfBoundsCounter);
@@ -95,6 +148,7 @@ public class KDTreeTest {
         assertEquals(node2, node.getRight());
         assertEquals(node3, node1.getRight());
 
+        assertEquals(4, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
         assertEquals(0, kdTree.outOfBoundsCounter);
@@ -118,6 +172,7 @@ public class KDTreeTest {
         assertEquals(node2, node1.getLeft());
         assertEquals(node3, node2.getLeft());
 
+        assertEquals(4, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
         assertEquals(0, kdTree.outOfBoundsCounter);
@@ -136,6 +191,7 @@ public class KDTreeTest {
         }
         assertTrue(success);
 
+        assertEquals(0, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
         assertEquals(0, kdTree.outOfBoundsCounter);
@@ -175,14 +231,26 @@ public class KDTreeTest {
         assertFalse(node4.getRect().contains(p2));
         assertFalse(node5.getRect().contains(p2));
 
-        boolean nullInsertSuccess = false;
+        assertEquals(6, kdTree.getSize());
+        assertEquals(0, kdTree.IAE3Counter);
+        assertEquals(0, kdTree.IAE4Counter);
+        assertEquals(0, kdTree.outOfBoundsCounter);
+    }
+
+    @Test
+    public void testContainsNull(){
+        KDTree kdTree = new KDTree(model);
+        kdTree.setBounds();
+
+        boolean nullContainsSuccess = false;
         try {
             assertTrue(kdTree.contains(null));
         } catch (NullPointerException e){
-            nullInsertSuccess = true;
+            nullContainsSuccess = true;
         }
-        assertTrue(nullInsertSuccess);
+        assertTrue(nullContainsSuccess);
 
+        assertEquals(0, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
         assertEquals(0, kdTree.outOfBoundsCounter);
@@ -237,6 +305,7 @@ public class KDTreeTest {
         Point2D test5 = new Point2D(8,2/-0.56f);
         assertEquals(node6, kdTree.nearest(test5));
 
+        assertEquals(10, kdTree.getSize());
         assertEquals(0, kdTree.IAE3Counter);
         assertEquals(0, kdTree.IAE4Counter);
         assertEquals(0, kdTree.outOfBoundsCounter);
