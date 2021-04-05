@@ -29,6 +29,7 @@ public class KDTreeTest {
         assertNull(kdTree.getBounds());
         kdTree.setBounds();
         assertNotNull(kdTree.getBounds());
+        //Bounds are [(0,0) -> (10, 10)]
 
         Node node = new Node(5, 5, 0);
         kdTree.insert(node);
@@ -43,6 +44,7 @@ public class KDTreeTest {
         assertEquals(5, kdTree.getSize());
         assertEquals(0, kdTree.outOfBoundsCounter);
 
+        //Test each corner to assert that bounds work
         Node node5 = new Node(0, -1, 5);
         kdTree.insert(node5);
         Node node6 = new Node(-1, 0, 6);
