@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.osm.RadixNode;
 import com.sun.management.OperatingSystemMXBean;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -105,9 +106,10 @@ public class Controller {
         searchContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
         if (searchField.textProperty().getValue().length() > 2) {
+            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(searchField.textProperty().getValue());
             // for(Member temp : possibleMatches)
-            for (int i = 0; i < 8; i++) {
-                Text newSuggestion = new Text("Suggestion!" + i);
+            for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
+                Text newSuggestion = new Text(suggestions.get(i).getContent()); //"Suggestion!" + i
                 newSuggestion.getStyleClass().add("suggestion");
                 suggestionList.add(newSuggestion);
             }
