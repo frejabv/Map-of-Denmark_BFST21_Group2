@@ -40,7 +40,6 @@ public class OSMParser {
         Relation relation = null;
 
         boolean isWay = false;
-        boolean isRelation = false;
         boolean isNode = false;
         boolean addressReceived = false;
 
@@ -66,22 +65,22 @@ public class OSMParser {
                     var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     way = new Way(wayId);
                     model.addToWayIndex(way);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "nd":
                     if (isWay && way != null) {
                         var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
-                        way.addNode((Node) model.getNodeIndex().getMember(ref));
+                        way.addNode(model.getNodeIndex().getMember(ref));
                     }
                     break;
                 case "tag":
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
-                    if(k.equals("building")){
+                    if (k.equals("building")) {
                         tags.add(Tag.BUILDING);
                         break;
                     }
-                    if(k.equals("service")){
+                    if (k.equals("service")) {
                         break;
                     }
 
@@ -99,8 +98,8 @@ public class OSMParser {
                         // We don't care about tags not in our Tag enum
                     }
 
-                    if(isNode) {
-                        if(k.contains("addr:")){
+                    if (isNode) {
+                        if (k.contains("addr:")) {
                             saveAddressData(k.replace("addr:", ""), v);
                             addressReceived = true;
                         }
@@ -108,11 +107,10 @@ public class OSMParser {
 
                     break;
                 case "relation":
-                    isRelation = true;
                     var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     relation = new Relation(relationId);
                     model.addToRelationIndex(relation);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "member":
                     var type = xmlReader.getAttributeValue(null, "type");
@@ -125,6 +123,9 @@ public class OSMParser {
                         break;
                     case "way":
                         memberRef = model.getWayIndex().getMember(ref);
+                        if (memberRef != null) {
+                            relation.addWay((Way) memberRef);
+                        }
                         break;
                     case "relation":
                         memberRef = model.getRelationIndex().getMember(ref);
@@ -140,36 +141,31 @@ public class OSMParser {
                 break;
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
-                    case "way":
-                        addDrawableToList(way, tags, model);
-                        break;
-                    case "relation":
-                        if(isRelation) {
-                            List<Member> members = relation.getMembers();
-                            for(Member member : members) {
-                                addDrawableToList(member, tags, model);
-                            }
-                        }
-                        isRelation = false;
-                        relation = null;
-                        break;
-                    case "node":
-                        if(addressReceived) {
-                            int size = addresses.get("street").size();
-                            String one = addresses.get("street").get(size - 1);
-                            size = addresses.get("housenumber").size();
-                            String two = addresses.get("housenumber").get(size - 1);
-                            String strNumber = one + " " + two;
-                            model.getStreetTree().insert(one, 1);
-                            /*size = addresses.get("postcode").size();
-                            one = addresses.get("postcode").get(size-1);
-                            size = addresses.get("city").size();
-                            two = addresses.get("city").get(size-1);*/
-                            //System.out.println(strNumber + ", " + one + " " + two);
-                        }
-                        isNode = false;
-                        addressReceived = false;
-                        break;
+                case "node":
+                    if (addressReceived) {
+                        int size = addresses.get("street").size();
+                        String one = addresses.get("street").get(size - 1);
+                        size = addresses.get("housenumber").size();
+                        String two = addresses.get("housenumber").get(size - 1);
+                        String strNumber = one + " " + two;
+                        model.getStreetTree().insert(one, 1);
+                        /*
+                         * size = addresses.get("postcode").size(); one =
+                         * addresses.get("postcode").get(size-1); size = addresses.get("city").size();
+                         * two = addresses.get("city").get(size-1);
+                         */
+                        // System.out.println(strNumber + ", " + one + " " + two);
+                    }
+                    isNode = false;
+                    addressReceived = false;
+                    break;
+                case "way":
+                    addWayToList(way, tags, model);
+                    break;
+                case "relation":
+                    relation.setTags(tags);
+                    relation = null;
+                    break;
                 }
                 break;
             }
@@ -182,26 +178,26 @@ public class OSMParser {
         }
     }
 
-    public static void addDrawableToList(Member drawable, List<Tag> tags, Model model) {
+    public static void addWayToList(Way way, List<Tag> tags, Model model) {
         var drawableMap = model.getDrawableMap();
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
 
         for (var tag : tags) {
             if (tag == Tag.COASTLINE) {
-                model.addCoastline((Way) drawable);
+                model.addCoastline(way);
             } else {
                 var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
                 if (drawStyle == DrawStyle.FILL) {
                     fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if(!isDublet(drawable, tag, fillMap)) {
-                        fillMap.get(tag).add((Drawable) drawable);
+                    if (!isDublet(way, tag, fillMap)) {
+                        fillMap.get(tag).add(way);
                     }
                 } else {
                     drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if(!isDublet(drawable, tag, drawableMap)) {
-                        drawableMap.get(tag).add((Drawable) drawable);
+                    if (!isDublet(way, tag, drawableMap)) {
+                        drawableMap.get(tag).add(way);
                     }
                 }
             }
@@ -231,18 +227,18 @@ public class OSMParser {
     public static void loadZIP(InputStream inputStream, Model model) throws IOException, XMLStreamException {
         var zip = new ZipInputStream(inputStream);
         zip.getNextEntry();
-        loadOSM(zip,model);
+        loadOSM(zip, model);
     }
 
-    public static void saveAddressData(String dataset, String data){
+    public static void saveAddressData(String dataset, String data) {
         addresses.putIfAbsent(dataset, new ArrayList<>());
         addresses.get(dataset).add(data);
     }
 
-    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){
+    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map) {
         List listToCheck = map.get(tag);
         boolean isDublet = true;
-        if(listToCheck.size()==0 || listToCheck.get(listToCheck.size()-1) != drawable) {
+        if (listToCheck.size() == 0 || listToCheck.get(listToCheck.size() - 1) != drawable) {
             isDublet = false;
         }
         return isDublet;
