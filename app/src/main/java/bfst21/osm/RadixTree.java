@@ -21,13 +21,13 @@ public class RadixTree {
     }
 
     public ArrayList<RadixNode> getSuggestions(String searchTerm) {
+        searchTerm = searchTerm.substring(0,1).toUpperCase() + searchTerm.substring(1);
         ArrayList<RadixNode> suggestions = new ArrayList<>();
         LinkedList<RadixNode> queue = new LinkedList<>();
         int listItems = 0;
         boolean first = true;
         RadixNode currentNode;
 
-        //this might be a problem, might want to include part matches
         queue.add(lookupNode(searchTerm));
         while (listItems <= 8 && !queue.isEmpty()) {
             currentNode = queue.remove();

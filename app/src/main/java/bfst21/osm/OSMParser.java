@@ -181,26 +181,6 @@ public class OSMParser {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
 
-        //RadixTree tree = new RadixTree();
-        /*tree.insert("test",1);
-        tree.insert("highroad",1);
-        tree.insert("roadkill",1);
-        tree.insert("road",1);
-        tree.insert("tester",1);
-        tree.insert("toast",1);
-        tree.insert("road",1);
-        tree.insert("tes dorph", 1);
-        System.out.println("lookup result for roadkill: " + tree.lookup("roadkill"));
-        System.out.println("lookup result for toast: " + tree.lookup("toast"));
-        System.out.println("lookup result for tester: " + tree.lookup("tester"));
-        System.out.println("lookup result for tes dorph: " + tree.lookup("tes dorph"));*/
-        //System.out.println(tree.getSize());
-        ArrayList<RadixNode> suggestions =  model.getStreetTree().getSuggestions("Må");
-        for (RadixNode r: suggestions) {
-            System.out.println(r.getContent());
-        }
-        /*System.out.println("lookup result for Grøvten: " + tree.lookup("Grøvten"));
-
         /*try {
             writeAddressesToFile();
         } catch (Exception e) {
