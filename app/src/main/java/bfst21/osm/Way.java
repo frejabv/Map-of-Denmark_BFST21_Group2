@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class Way extends Member implements Drawable {
     private List<Node> nodes;
+    int maxSpeed = -1;
 
     public Way(long id) {
         super(id);
@@ -40,6 +41,28 @@ public class Way extends Member implements Drawable {
 
     public static Way merge(Way first, Way second, Way third) {
         return merge(merge(first,second),third);
+    }
+
+    public int getSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public void checkSpeed() {
+        if(maxSpeed == -1){
+            //Maybe check if way has areatype declared????? like urban
+            if (tags.contains(Tag.MOTORWAY)) {
+                maxSpeed = 130;
+            } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.PRIMARY)) {
+                maxSpeed = 80;
+            } else if (tags.contains(Tag.JUNCTION) || tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
+                maxSpeed = 50;
+            }
+        }
+
     }
 
     @Override

@@ -67,7 +67,7 @@ public class OSMParser {
                     var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     way = new Way(wayId);
                     model.addToWayIndex(way);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "nd":
                     if (isWay && way != null) {
@@ -84,6 +84,11 @@ public class OSMParser {
                     }
                     if(k.equals("service")){
                         break;
+                    }
+
+                    if(k.equals("maxspeed")) {
+                        v.replace(" km","").replace(" mph","");
+                        way.setMaxSpeed(Integer.parseInt(v));
                     }
 
                     try {
@@ -105,7 +110,7 @@ public class OSMParser {
                     var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     relation = new Relation(relationId);
                     model.addToRelationIndex(relation);
-                    tags.clear();
+                    tags = new ArrayList<>();
                     break;
                 case "member":
                     var type = xmlReader.getAttributeValue(null, "type");
@@ -134,6 +139,8 @@ public class OSMParser {
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                 case "way":
+                    way.setTags(tags);
+                    way.checkSpeed();
                     addDrawableToList(way, tags, model);
                     break;
                 case "relation":

@@ -29,7 +29,11 @@ public class AStar {
         //TODO: Combining multiple lists of drawables. Temporary solution.
         List<Drawable> ways2 = model.getDrawableMap().get(Tag.TERTIARY);
         List<Drawable> ways3 = model.getDrawableMap().get(Tag.RESIDENTIAL);
-        List<Drawable> ways = Stream.of(ways2,ways3).flatMap(Collection::stream).collect(Collectors.toList());
+        List<Drawable> ways4 = model.getDrawableMap().get(Tag.UNCLASSIFIED);
+        List<Drawable> ways5 = model.getDrawableMap().get(Tag.LIVING_STREET);
+        List<Drawable> ways6 = model.getDrawableMap().get(Tag.SERVICE);
+
+        List<Drawable> ways = Stream.of(ways2,ways3,ways4,ways5,ways6).flatMap(Collection::stream).collect(Collectors.toList());
         for (Drawable way : ways){
             Way wayButNowCasted = (Way) way;
             //TODO: Some nodes are in multiple ways and therefore set twice. plz fix
@@ -37,11 +41,11 @@ public class AStar {
                 Node node = wayButNowCasted.getNodes().get(i);
                 if(i > 0){
                     Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)));
+                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)/wayButNowCasted.getSpeed()));
                 }
                 if(i != (wayButNowCasted.getNodes().size()-1)) {
                     Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)));
+                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)/wayButNowCasted.getSpeed()));
                 }
                 if (!initialisedNodes.contains(node)) {
                     node.setHScores(distanceToNode(node, end));
