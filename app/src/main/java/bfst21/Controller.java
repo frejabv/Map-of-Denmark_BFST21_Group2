@@ -104,9 +104,8 @@ public class Controller {
         suggestionList.clear();
         if (searchField.textProperty().getValue().length() > 2) {
             ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(searchField.textProperty().getValue());
-            // for(Member temp : possibleMatches)
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
-                Text newSuggestion = new Text(suggestions.get(i).getFullName()); //"Suggestion!" + i
+                Text newSuggestion = new Text(suggestions.get(i).getFullName());
                 newSuggestion.getStyleClass().add("suggestion");
                 suggestionList.add(newSuggestion);
             }
