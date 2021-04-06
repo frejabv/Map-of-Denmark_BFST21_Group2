@@ -144,9 +144,8 @@ public class OSMParser {
                 case "node":
                     if (addressReceived) {
                         int size = addresses.get("street").size();
-                        String one = addresses.get("street").get(size - 1);
-                        size = addresses.get("housenumber").size();
-                        model.getStreetTree().insert(one, 1);
+                        String streetName = addresses.get("street").get(size - 1);
+                        model.getStreetTree().insert(streetName, 1);
                     }
                     isNode = false;
                     addressReceived = false;
