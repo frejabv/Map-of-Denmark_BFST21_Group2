@@ -36,6 +36,7 @@ public class OSMParser {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
         ArrayList<Tag> tags = new ArrayList<>();
+        Node node = null;
         Way way = null;
         Relation relation = null;
 
@@ -57,7 +58,8 @@ public class OSMParser {
                     var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                     var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                    model.addToNodeIndex(new Node(lon, lat, id));
+                    node = new Node(lon, lat, id);
+                    model.addToNodeIndex(node);
                     isNode = true;
                     break;
                 case "way":
@@ -145,7 +147,7 @@ public class OSMParser {
                     if (addressReceived) {
                         int size = addresses.get("street").size();
                         String streetName = addresses.get("street").get(size - 1);
-                        model.getStreetTree().insert(streetName, 1);
+                        model.getStreetTree().insert(streetName, node.getId());
                     }
                     isNode = false;
                     addressReceived = false;

@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.osm.Node;
 import bfst21.search.RadixNode;
 import com.sun.management.OperatingSystemMXBean;
 import javafx.fxml.FXML;
@@ -105,8 +106,18 @@ public class Controller {
         if (searchField.textProperty().getValue().length() > 2) {
             ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(searchField.textProperty().getValue());
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
-                Text newSuggestion = new Text(suggestions.get(i).getFullName());
+                RadixNode suggestion = suggestions.get(i);
+                Text newSuggestion = new Text(suggestion.getFullName());
                 newSuggestion.getStyleClass().add("suggestion");
+                newSuggestion.setOnMouseClicked(e -> {
+                    searchField.textProperty().setValue(suggestion.getFullName());
+                    Node node = model.getNodeIndex().getMember(suggestion.getId());
+                    //System.out.println(node + " " + node.getX() + " " + node.getY());
+                    canvas.setPin(node.getX(), node.getY());
+                    System.out.println(node.getX() + " " + node.getY()/-0.56f + " y normal: " + node.getY());
+                    System.out.println("The best: " + 10.5334671 + " " + 10.5336671 + " " + 55.9687206/-0.56f);
+                    canvas.goToPosition(node.getX(), node.getX()+0.0002, node.getY());
+                });
                 suggestionList.add(newSuggestion);
             }
         }
