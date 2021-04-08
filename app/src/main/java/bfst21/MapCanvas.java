@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.osm.RenderingStyle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,10 +9,6 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import bfst21.osm.*;
-
-import java.time.Duration;
-import java.time.Instant;
 
 public class MapCanvas extends Canvas {
     private Model model;
@@ -23,7 +20,7 @@ public class MapCanvas extends Canvas {
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
-    private float currentMaxX,currentMaxY,currentMinX,currentMinY;
+    private float currentMaxX, currentMaxY, currentMinX, currentMinY;
 
     public void init(Model model) {
         this.model = model;
@@ -70,48 +67,47 @@ public class MapCanvas extends Canvas {
             gc.setStroke(renderingStyle.getColorByTag(tag));
             var style = renderingStyle.getDrawStyleByTag(tag);
             drawables.forEach(drawable -> {
-                if(tag.zoomLimit > getDistanceWidth()) {
+                if (tag.zoomLimit > getDistanceWidth()) {
                     drawable.draw(gc);
                 }
             });
         });
 
         model.getRelationIndex().forEach(relation -> {
-            if(relation.getTags().size() != 0) {
+            if (relation.getTags().size() != 0) {
                 relation.draw(gc, renderingStyle);
             }
         });
         //optimal pinsize = getDistanceWidth()/100;
-        if(setPin){
+        if (setPin) {
             gc.setFill(Color.rgb(231, 76, 60));
-            gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
-            double[] xPoints = {canvasPoint.getX()+0.00307*size,canvasPoint.getX()+0.025*size,canvasPoint.getX() + 0.04693*size}; //+0.05
-            double[] yPoints = {canvasPoint.getY()+0.037*size,canvasPoint.getY()+0.076*size,canvasPoint.getY()+0.037*size};
+            gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05 * size, 0.05 * size, -30, 240, ArcType.OPEN);
+            double[] xPoints = {canvasPoint.getX() + 0.00307 * size, canvasPoint.getX() + 0.025 * size, canvasPoint.getX() + 0.04693 * size}; //+0.05
+            double[] yPoints = {canvasPoint.getY() + 0.037 * size, canvasPoint.getY() + 0.076 * size, canvasPoint.getY() + 0.037 * size};
             gc.fillPolygon(xPoints, yPoints, 3);
             gc.setFill(Color.rgb(192, 57, 43));
-            gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
+            gc.fillOval(canvasPoint.getX() + 0.015 * size, canvasPoint.getY() + 0.015 * size, 0.020 * size, 0.020 * size);
         }
 
-            gc.setStroke(Color.BLACK);
-            gc.beginPath();
-            Point2D test = mouseToModelCoords(new Point2D(getWidth()-20,getHeight()-20));
-            Point2D test2 = mouseToModelCoords(new Point2D(getWidth()-(getWidth()/100*10+20),getHeight()-20));
-            double textPosition = mouseToModelCoords(new Point2D(0,getHeight()-40)).getY();
-            gc.moveTo(test.getX(),test.getY());
-            gc.lineTo(test2.getX(),test2.getY());
-            gc.setFill(Color.BLACK);
-            gc.setFont(new Font(getDistanceWidth()/5000));
-            gc.fillText( Math.round(getDistanceWidth())/10 + " KM",test2.getX(),textPosition);//(test.getX()+test2.getX())/2,test2.getY()-20
-            gc.stroke();
+        gc.setStroke(Color.BLACK);
+        gc.beginPath();
+        Point2D test = mouseToModelCoords(new Point2D(getWidth() - 20, getHeight() - 20));
+        Point2D test2 = mouseToModelCoords(new Point2D(getWidth() - (getWidth() / 100 * 10 + 20), getHeight() - 20));
+        double textPosition = mouseToModelCoords(new Point2D(0, getHeight() - 40)).getY();
+        gc.moveTo(test.getX(), test.getY());
+        gc.lineTo(test2.getX(), test2.getY());
+        gc.setFill(Color.BLACK);
+        gc.setFont(new Font(getDistanceWidth() / 5000));
+        gc.fillText(Math.round(getDistanceWidth()) / 10 + " KM", test2.getX(), textPosition);//(test.getX()+test2.getX())/2,test2.getY()-20
+        gc.stroke();
 
 
         gc.restore();
         long elapsedTime = System.nanoTime() - start;
-        if(redrawIndex<20) {
+        if (redrawIndex < 20) {
             redrawAverage[redrawIndex] = elapsedTime;
             redrawIndex++;
-        }
-        else {
+        } else {
             redrawIndex = 0;
         }
 
@@ -124,28 +120,27 @@ public class MapCanvas extends Canvas {
 
     public void zoom(double factor, Point2D center) {
         setCurrentCanvasEdges();
-        if(factor>1){
-            if(getDistanceWidth()>0.1) {
+        if (factor > 1) {
+            if (getDistanceWidth() > 0.1) {
                 trans.prependScale(factor, factor, center);
                 repaint();
             }
-        }
-        else{
+        } else {
             //TODO: make the boundry go to inital zoom position
-            if(getDistanceWidth()<1000) {
+            if (getDistanceWidth() < 1000) {
                 trans.prependScale(factor, factor, center);
                 repaint();
             }
         }
     }
 
-    public String setPin(Point2D point){
+    public String setPin(Point2D point) {
         canvasPoint = mouseToModelCoords(point);
         System.out.println(size);
-        canvasPoint = new Point2D(canvasPoint.getX()-(0.025*size),canvasPoint.getY()-(0.076*size));
+        canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
-        return canvasPoint.getY()*-0.56f + ", " + canvasPoint.getX();
+        return canvasPoint.getY() * -0.56f + ", " + canvasPoint.getX();
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
@@ -156,13 +151,14 @@ public class MapCanvas extends Canvas {
             return null;
         }
     }
-    public void goToPosition(double minX, double maxX, double maxY){
-            trans.setToIdentity();
-            pan(-minX, -maxY);
-            zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(0, 0));
-            if(maxX-minX < 0.1){
-                zoom(0.01, new Point2D(getWidth()/2, getHeight()/2));
-            }
+
+    public void goToPosition(double minX, double maxX, double maxY) {
+        trans.setToIdentity();
+        pan(-minX, -maxY);
+        zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(0, 0));
+        if (maxX - minX < 0.1) {
+            zoom(0.01, new Point2D(getWidth() / 2, getHeight() / 2));
+        }
     }
 
     private void moveToInitialPosition() {
@@ -180,15 +176,15 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    private void setCurrentCanvasEdges(){
-        currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(),0)).getX();
-        currentMinX = (float) mouseToModelCoords(new Point2D(0,0)).getX();
-        currentMaxY = (float) (mouseToModelCoords(new Point2D(0,getHeight())).getY());
-        currentMinY = (float) (mouseToModelCoords(new Point2D(0,0)).getY());
+    private void setCurrentCanvasEdges() {
+        currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(), 0)).getX();
+        currentMinX = (float) mouseToModelCoords(new Point2D(0, 0)).getX();
+        currentMaxY = (float) (mouseToModelCoords(new Point2D(0, getHeight())).getY());
+        currentMinY = (float) (mouseToModelCoords(new Point2D(0, 0)).getY());
     }
 
-    public float getDistanceWidth(){
-        return (currentMaxX-currentMinX)*111.320f*0.56f;
+    public float getDistanceWidth() {
+        return (currentMaxX - currentMinX) * 111.320f * 0.56f;
     }
 
 }
