@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import bfst21.osm.*;
@@ -90,6 +91,20 @@ public class MapCanvas extends Canvas {
             gc.setFill(Color.rgb(192, 57, 43));
             gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
         }
+
+            gc.setStroke(Color.BLACK);
+            gc.beginPath();
+            Point2D test = mouseToModelCoords(new Point2D(getWidth()-20,getHeight()-20));
+            Point2D test2 = mouseToModelCoords(new Point2D(getWidth()-(getWidth()/100*10+20),getHeight()-20));
+            double textPosition = mouseToModelCoords(new Point2D(0,getHeight()-40)).getY();
+            gc.moveTo(test.getX(),test.getY());
+            gc.lineTo(test2.getX(),test2.getY());
+            gc.setFill(Color.BLACK);
+            gc.setFont(new Font(getDistanceWidth()/5000));
+            gc.fillText( Math.round(getDistanceWidth())/10 + " KM",test2.getX(),textPosition);//(test.getX()+test2.getX())/2,test2.getY()-20
+            gc.stroke();
+
+
         gc.restore();
         long elapsedTime = System.nanoTime() - start;
         if(redrawIndex<20) {
@@ -99,6 +114,7 @@ public class MapCanvas extends Canvas {
         else {
             redrawIndex = 0;
         }
+
     }
 
     public void pan(double dx, double dy) {
