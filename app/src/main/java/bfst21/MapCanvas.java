@@ -80,7 +80,7 @@ public class MapCanvas extends Canvas {
                 relation.draw(gc, renderingStyle);
             }
         });
-
+        //optimal pinsize = getDistanceWidth()/100;
         if(setPin){
             gc.setFill(Color.rgb(231, 76, 60));
             gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
@@ -124,8 +124,8 @@ public class MapCanvas extends Canvas {
     }
 
     public String setPin(Point2D point){
-        size = .3;
         canvasPoint = mouseToModelCoords(point);
+        System.out.println(size);
         canvasPoint = new Point2D(canvasPoint.getX()-(0.025*size),canvasPoint.getY()-(0.076*size));
         setPin = true;
         repaint();
