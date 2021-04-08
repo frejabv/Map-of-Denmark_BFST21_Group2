@@ -22,6 +22,7 @@ public class MapCanvas extends Canvas {
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
+    private float currentMaxX,currentMaxY,currentMinX,currentMinY;
 
     public void init(Model model) {
         this.model = model;
@@ -57,17 +58,20 @@ public class MapCanvas extends Canvas {
             gc.setFill(renderingStyle.getColorByTag(tag));
 
             fillables.forEach(fillable -> {
-                fillable.draw(gc);
-                gc.fill();
+                if (tag.zoomLimit > getDistanceWidth()) {
+                    fillable.draw(gc);
+                    gc.fill();
+                }
             });
-
         });
 
         model.getDrawableMap().forEach((tag, drawables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
             var style = renderingStyle.getDrawStyleByTag(tag);
             drawables.forEach(drawable -> {
-                drawable.draw(gc);
+                if(tag.zoomLimit > getDistanceWidth()) {
+                    drawable.draw(gc);
+                }
             });
         });
 
@@ -104,6 +108,7 @@ public class MapCanvas extends Canvas {
 
     public void zoom(double factor, Point2D center) {
         trans.prependScale(factor, factor, center);
+        setCurrentCanvasEdges();
         repaint();
     }
 
@@ -146,6 +151,17 @@ public class MapCanvas extends Canvas {
             zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
             pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
         }
+    }
+
+    private void setCurrentCanvasEdges(){
+        currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(),0)).getX();
+        currentMinX = (float) mouseToModelCoords(new Point2D(0,0)).getX();
+        currentMaxY = (float) (mouseToModelCoords(new Point2D(0,getHeight())).getY());
+        currentMinY = (float) (mouseToModelCoords(new Point2D(0,0)).getY());
+    }
+
+    public float getDistanceWidth(){
+        return (currentMaxX-currentMinX)*111.320f*0.56f;
     }
 
 }
