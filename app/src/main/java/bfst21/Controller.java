@@ -5,15 +5,15 @@ import bfst21.search.RadixNode;
 import com.sun.management.OperatingSystemMXBean;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -50,7 +50,8 @@ public class Controller {
     @FXML
     private CheckBox enableDebugWindow;
 
-    @FXML Text suggestionsHeader;
+    @FXML
+    Text suggestionsHeader;
 
     ScheduledExecutorService executor;
 
@@ -104,10 +105,10 @@ public class Controller {
             cpuSystem.textProperty().setValue("CPU System Load: " + bean.getSystemCpuLoad() + "( " + bean.getSystemLoadAverage() + " average)");
             memoryUse.textProperty().setValue("Memory Use (Experimental): " + processMemory);
             long total = 0;
-            for (long temp : canvas.redrawAverage){
+            for (long temp : canvas.redrawAverage) {
                 total += temp;
             }
-            ttd.textProperty().set("Redraw time (Rolling Average): ~" + TimeUnit.NANOSECONDS.toMillis(total/canvas.redrawAverage.length) + "ms (" + total/canvas.redrawAverage.length + "ns)");
+            ttd.textProperty().set("Redraw time (Rolling Average): ~" + TimeUnit.NANOSECONDS.toMillis(total / canvas.redrawAverage.length) + "ms (" + total / canvas.redrawAverage.length + "ns)");
         }
     };
 
@@ -116,13 +117,13 @@ public class Controller {
     public void addSuggestions(String containerType, String fieldType) {
         VBox selectedContainer;
         TextField selectedField;
-        if(containerType.equals("search")) {
+        if (containerType.equals("search")) {
             selectedContainer = searchContainer;
             selectedField = searchField;
         } else {
             selectedContainer = routeContainer;
-            if(fieldType.equals("from")) {
-                selectedField  = routeFieldFrom;
+            if (fieldType.equals("from")) {
+                selectedField = routeFieldFrom;
             } else {
                 selectedField = routeFieldTo;
             }
@@ -138,7 +139,7 @@ public class Controller {
                 newSuggestion.setOnMouseClicked(e -> {
                     selectedField.textProperty().setValue(suggestion.getFullName());
                     Node node = model.getNodeIndex().getMember(suggestion.getId());
-                    if(containerType.equals("search")) {
+                    if (containerType.equals("search")) {
                         canvas.setPin(node.getX(), node.getY());
                         //todo maybe fix adding constant?
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
@@ -163,8 +164,7 @@ public class Controller {
     }
 
 
-
-    public void toogleDebugMode(){
+    public void toogleDebugMode() {
         if (debugContainer.isVisible()) {
             changeType("debug", false);
             enableDebugWindow.setSelected(false);
@@ -197,7 +197,7 @@ public class Controller {
 
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
-        if(singleClick) {
+        if (singleClick) {
             searchContainer.getChildren().remove(searchContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("search", true);
@@ -209,39 +209,36 @@ public class Controller {
                 hideAll();
             });
             searchContainer.getChildren().add(removePin);
-        }
-        else{
+        } else {
             singleClick = true;
         }
     }
+
     public void onMousePressedSearch(MouseEvent mouseEvent) {
         if (searchContainer.isVisible()) {
             hideAll();
-            if(canvas.setPin){
+            if (canvas.setPin) {
                 canvas.setPin = false;
                 canvas.repaint();
             }
-        }
-        else{
-            changeType("search",true);
+        } else {
+            changeType("search", true);
         }
     }
 
     public void onMousePressedRoute(MouseEvent mouseEvent) {
         if (routeContainer.isVisible()) {
             hideAll();
-        }
-        else{
-            changeType("route",true);
+        } else {
+            changeType("route", true);
         }
     }
 
     public void onMousePressedSettings(MouseEvent mouseEvent) {
         if (settingsContainer.isVisible()) {
             hideAll();
-        }
-        else {
-            changeType("settings",true);
+        } else {
+            changeType("settings", true);
         }
     }
 
@@ -270,8 +267,8 @@ public class Controller {
         canvas.repaint();
     }
 
-    public void hideAll(){
-        changeType("search",false);
+    public void hideAll() {
+        changeType("search", false);
     }
 
     public void fadeButtons() {
@@ -279,8 +276,9 @@ public class Controller {
         routeButton.setStyle("-fx-opacity: .5");
         settingsButton.setStyle("-fx-opacity: .5");
     }
-    public void changeType(String type, boolean state){
-        if(!type.equals("debug")){
+
+    public void changeType(String type, boolean state) {
+        if (!type.equals("debug")) {
             searchContainer.setVisible(false);
             searchContainer.setManaged(false);
             routeContainer.setVisible(false);
@@ -288,21 +286,21 @@ public class Controller {
             settingsContainer.setVisible(false);
             settingsContainer.setManaged(false);
         }
-        switch (type){
+        switch (type) {
             case "route":
                 fadeButtons();
                 routeContainer.setVisible(state);
                 routeContainer.setManaged(state);
-                if(state){
-                  routeButton.setStyle("-fx-opacity: 1");
+                if (state) {
+                    routeButton.setStyle("-fx-opacity: 1");
                 }
                 break;
             case "settings":
                 fadeButtons();
                 settingsContainer.setVisible(state);
                 settingsContainer.setManaged(state);
-                if(state){
-                  settingsButton.setStyle("-fx-opacity: 1");
+                if (state) {
+                    settingsButton.setStyle("-fx-opacity: 1");
                 }
                 break;
             case "debug":
@@ -313,8 +311,8 @@ public class Controller {
                 fadeButtons();
                 searchContainer.setVisible(state);
                 searchContainer.setManaged(state);
-                if(state){
-                  searchButton.setStyle("-fx-opacity: 1");
+                if (state) {
+                    searchButton.setStyle("-fx-opacity: 1");
                 }
         }
     }
