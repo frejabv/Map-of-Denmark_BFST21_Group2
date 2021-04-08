@@ -120,7 +120,6 @@ public class Controller {
             selectedContainer = searchContainer;
             selectedField = searchField;
         } else {
-            //System.out.println("Selected container is NOOT search >:(");
             selectedContainer = routeContainer;
             if(fieldType.equals("from")) {
                 selectedField  = routeFieldFrom;
