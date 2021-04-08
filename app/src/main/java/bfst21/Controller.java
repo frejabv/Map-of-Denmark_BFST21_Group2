@@ -32,6 +32,10 @@ public class Controller {
     @FXML
     private VBox routeContainer;
     @FXML
+    private TextField routeFieldFrom;
+    @FXML
+    private TextField routeFieldTo;
+    @FXML
     private VBox settingsContainer;
     @FXML
     private VBox debugContainer;
@@ -64,8 +68,17 @@ public class Controller {
             for (String temp : result) {
                 searchStringCorrected = temp + " ";
             }
-            addSuggestions();
+            addSuggestions("search", null);
         });
+
+        routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
+            addSuggestions("route", "from");
+        });
+
+        routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
+            addSuggestions("route", "to");
+        });
+
         executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(updateStats, 0, 3, TimeUnit.SECONDS);
         if (model.getTtiMode()) {
@@ -100,28 +113,46 @@ public class Controller {
 
     ArrayList<Text> suggestionList = new ArrayList<>();
 
-    public void addSuggestions() {
-        searchContainer.getChildren().removeAll(suggestionList);
+    public void addSuggestions(String containerType, String fieldType) {
+        VBox selectedContainer;
+        TextField selectedField;
+        if(containerType.equals("search")) {
+            selectedContainer = searchContainer;
+            selectedField = searchField;
+        } else {
+            //System.out.println("Selected container is NOOT search >:(");
+            selectedContainer = routeContainer;
+            if(fieldType.equals("from")) {
+                selectedField  = routeFieldFrom;
+            } else {
+                selectedField = routeFieldTo;
+            }
+        }
+        selectedContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
-        if (searchField.textProperty().getValue().length() > 2) {
-            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(searchField.textProperty().getValue());
+        if (selectedField.textProperty().getValue().length() > 2) {
+            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
                 RadixNode suggestion = suggestions.get(i);
                 Text newSuggestion = new Text(suggestion.getFullName());
                 newSuggestion.getStyleClass().add("suggestion");
                 newSuggestion.setOnMouseClicked(e -> {
-                    searchField.textProperty().setValue(suggestion.getFullName());
+                    selectedField.textProperty().setValue(suggestion.getFullName());
                     Node node = model.getNodeIndex().getMember(suggestion.getId());
-                    //System.out.println(node + " " + node.getX() + " " + node.getY());
-                    canvas.setPin(node.getX(), node.getY());
-                    System.out.println(node.getX() + " " + node.getY()/-0.56f + " y normal: " + node.getY());
-                    System.out.println("The best: " + 10.5334671 + " " + 10.5336671 + " " + 55.9687206/-0.56f);
-                    canvas.goToPosition(node.getX(), node.getX()+0.0002, node.getY());
+                    if(containerType.equals("search")) {
+                        canvas.setPin(node.getX(), node.getY());
+                        //todo maybe fix adding constant?
+                        canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                    } else {
+                        System.out.println(fieldType + ": " + node.getId());
+                    }
+                    selectedContainer.getChildren().removeAll(suggestionList);
+                    suggestionList.clear();
                 });
                 suggestionList.add(newSuggestion);
             }
         }
-        searchContainer.getChildren().addAll(suggestionList);
+        selectedContainer.getChildren().addAll(suggestionList);
     }
 
     @FXML
