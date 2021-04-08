@@ -107,9 +107,20 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoom(double factor, Point2D center) {
-        trans.prependScale(factor, factor, center);
         setCurrentCanvasEdges();
-        repaint();
+        if(factor>1){
+            if(getDistanceWidth()>0.1) {
+                trans.prependScale(factor, factor, center);
+                repaint();
+            }
+        }
+        else{
+            //TODO: make the boundry go to inital zoom position
+            if(getDistanceWidth()<1000) {
+                trans.prependScale(factor, factor, center);
+                repaint();
+            }
+        }
     }
 
     public String setPin(Point2D point){
