@@ -141,7 +141,6 @@ public class Controller {
                     Node node = model.getNodeIndex().getMember(suggestion.getId());
                     if (containerType.equals("search")) {
                         canvas.setPin(node.getX(), node.getY());
-                        //todo maybe fix adding constant?
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
                         System.out.println(fieldType + ": " + node.getId());
@@ -159,12 +158,12 @@ public class Controller {
     public void onKeyPressed(KeyEvent e) {
 
         if (e.getText().equals("d")) {
-            toogleDebugMode();
+            toggleDebugMode();
         }
     }
 
 
-    public void toogleDebugMode() {
+    public void toggleDebugMode() {
         if (debugContainer.isVisible()) {
             changeType("debug", false);
             enableDebugWindow.setSelected(false);

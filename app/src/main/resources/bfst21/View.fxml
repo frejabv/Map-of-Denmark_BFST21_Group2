@@ -173,7 +173,7 @@
                           <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
                         </FlowPane>
                         <Region styleClass="hr" />
-                        <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toogleDebugMode">Debug Window</CheckBox>
+                        <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
                         <FlowPane styleClass="header-margin">
                           <Text styleClass="mainContainer-subheader">Favorites</Text>
                         </FlowPane>

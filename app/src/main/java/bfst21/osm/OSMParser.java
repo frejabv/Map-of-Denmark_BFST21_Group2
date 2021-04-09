@@ -47,7 +47,6 @@ public class OSMParser {
 
         boolean isWay = false;
         boolean isNode = false;
-        boolean addressReceived = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -106,9 +105,10 @@ public class OSMParser {
                             }
 
                             if (isNode) {
-                                if (k.contains("addr:")) {
-                                    saveAddressData(k.replace("addr:", ""), v);
-                                    addressReceived = true;
+                                //Example from samsoe.osm of an addr tag:
+                                //<tag k="addr:street" v="Havnevej"/>
+                                if (k.equals("addr:street")) {
+                                    model.getStreetTree().insert(v, node.getId());
                                 }
                             }
 
@@ -149,13 +149,7 @@ public class OSMParser {
                 case XMLStreamReader.END_ELEMENT:
                     switch (xmlReader.getLocalName()) {
                         case "node":
-                            if (addressReceived) {
-                                int size = addresses.get("street").size();
-                                String streetName = addresses.get("street").get(size - 1);
-                                model.getStreetTree().insert(streetName, node.getId());
-                            }
                             isNode = false;
-                            addressReceived = false;
                             break;
                         case "way":
                             addWayToList(way, tags, model);
@@ -226,11 +220,6 @@ public class OSMParser {
         var zip = new ZipInputStream(inputStream);
         zip.getNextEntry();
         loadOSM(zip, model);
-    }
-
-    public static void saveAddressData(String dataset, String data) {
-        addresses.putIfAbsent(dataset, new ArrayList<>());
-        addresses.get(dataset).add(data);
     }
 
     private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map) {
