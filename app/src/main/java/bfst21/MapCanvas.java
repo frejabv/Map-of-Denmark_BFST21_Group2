@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import bfst21.osm.*;
 
 public class MapCanvas extends Canvas {
     private Model model;
@@ -69,7 +68,7 @@ public class MapCanvas extends Canvas {
             drawables.forEach(drawable -> {
                 if (tag.zoomLimit > getDistanceWidth()) {
                     drawable.draw(gc);
-                }
+                }     
             });
         });
 
@@ -78,6 +77,7 @@ public class MapCanvas extends Canvas {
                 relation.draw(gc, renderingStyle);
             }
         });
+      
         if (setPin) {
             gc.setFill(Color.rgb(231, 76, 60));
             gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05 * size, 0.05 * size, -30, 240, ArcType.OPEN);
@@ -123,6 +123,14 @@ public class MapCanvas extends Canvas {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
         canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
+        setPin = true;
+        repaint();
+        return canvasPoint.getY() * -0.56f + ", " + canvasPoint.getX();
+    }
+
+    public String setPin(double x, double y) {
+        size = .3;
+        canvasPoint = new Point2D(x - (0.025 * size), y - (0.076 * size));
         setPin = true;
         repaint();
         return canvasPoint.getY() * -0.56f + ", " + canvasPoint.getX();

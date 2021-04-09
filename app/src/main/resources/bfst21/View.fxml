@@ -77,10 +77,10 @@
           <Text fx:id="suggestionsHeader">Suggestions:</Text>
         </VBox>
         <VBox fx:id="routeContainer" styleClass="mainContainer">
-          <TextField styleClass="textfield">
+          <TextField fx:id="routeFieldFrom" styleClass="textfield">
             <promptText>Where from?</promptText>
           </TextField>
-          <TextField styleClass="textfield">
+          <TextField fx:id="routeFieldTo" styleClass="textfield">
             <promptText>Where to?</promptText>
           </TextField>
         </VBox>

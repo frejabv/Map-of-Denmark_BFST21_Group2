@@ -29,7 +29,7 @@ public class RadixTree {
      * if they are valid nodes (isPlace = true).
      *
      * @return A list of RadixNodes which are places and children of the searchTerm node.
-     * */
+     */
     public ArrayList<RadixNode> getSuggestions(String searchTerm) {
         searchTerm = searchTerm.substring(0, 1).toUpperCase() + searchTerm.substring(1);
         ArrayList<RadixNode> suggestions = new ArrayList<>();
@@ -39,7 +39,7 @@ public class RadixTree {
         RadixNode currentNode;
         RadixNode initialNode = lookupNode(searchTerm);
 
-        if(initialNode != null) {
+        if (initialNode != null) {
             queue.add(initialNode);
         }
 
@@ -69,7 +69,7 @@ public class RadixTree {
      * part matches we found along the way, if none exist we return null.
      *
      * @return A RadixNode which perfectly or partly matches the searchTerm, else null.
-     * */
+     */
     public RadixNode lookupNode(String searchTerm) {
         RadixNode currentNode = root;
         int charLength = 0;
@@ -109,7 +109,7 @@ public class RadixTree {
      * Starts the recursive call to insert.
      * Saves the stringToInsert, so that we can insert the fullName into every
      * RadixNode we create in insert.
-     * */
+     */
     public void insert(String stringToInsert, long id) {
         fullName = stringToInsert;
         insert(stringToInsert, id, root);
@@ -125,7 +125,7 @@ public class RadixTree {
      * Case 3: stringToInsert is a prefix to the child node we are looking at.
      * Case 4: The child node we are looking at and stringToInsert are partly equal.
      * Case 5: None of the children have something in common with stringToInsert.
-     * */
+     */
     private void insert(String stringToInsert, long id, RadixNode currentNode) {
         if (currentNode != root && (currentNode == null || currentNode.getValue().equals("") || stringToInsert.equals(""))) {
             return;
