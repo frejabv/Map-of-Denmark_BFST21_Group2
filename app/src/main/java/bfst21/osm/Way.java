@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 public class Way extends Member implements Drawable {
     private List<Node> nodes;
     int maxSpeed = -1;
+    boolean isOneway;
 
     public Way(long id) {
         super(id);
@@ -63,6 +64,13 @@ public class Way extends Member implements Drawable {
             }
         }
 
+    }
+    public void setIsOneway(){
+        this.isOneway = true;
+    }
+
+    public boolean isOneway(){
+        return isOneway;
     }
 
     @Override

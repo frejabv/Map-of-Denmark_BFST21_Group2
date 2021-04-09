@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import java.io.*;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -10,12 +11,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OSMParser {
 
@@ -89,6 +84,20 @@ public class OSMParser {
                     if(k.equals("maxspeed")) {
                         v.replace(" km","").replace(" mph","");
                         way.setMaxSpeed(Integer.parseInt(v));
+                    }
+
+                    if(k.equals("oneway")){
+                        if(v.equals("yes") || v.equals("true") || v.equals("1")){
+                            way.setIsOneway();
+                        }
+                        if(v.equals("-1")){
+                            Collections.reverse(way.getNodes());
+                            way.setIsOneway();
+                        }
+                    }
+
+                    if(k.equals("junction") || v.equals("roundabout")){
+                        way.setIsOneway();
                     }
 
                     try {
