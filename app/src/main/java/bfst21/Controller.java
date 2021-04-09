@@ -1,5 +1,7 @@
 package bfst21;
 
+import bfst21.search.RadixNode;
+import com.sun.management.OperatingSystemMXBean;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
@@ -38,8 +40,10 @@ public class Controller {
     private TextField searchField;
     @FXML
     private CheckBox enableDebugWindow;
-    @FXML Text suggestionsHeader;
-    @FXML Text pinText;
+    @FXML
+    private Text suggestionsHeader;
+    @FXML
+    private Text pinText;
     @FXML
     private Text cpuProcess;
     @FXML
@@ -63,6 +67,7 @@ public class Controller {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             //Run Regex Matcher
             regex.run(newText);
+            addSuggestions(model);
         });
         if (model.getTtiMode()) {
             System.exit(0);
@@ -87,6 +92,22 @@ public class Controller {
             regexContainer.getChildren().add(hbox);
         }
         return regexVisualisers;
+    }
+
+    ArrayList<Text> suggestionList = new ArrayList<>();
+
+    public void addSuggestions(Model model) {
+        searchContainer.getChildren().removeAll(suggestionList);
+        suggestionList.clear();
+        if (searchField.textProperty().getValue().length() > 2) {
+            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(searchField.textProperty().getValue());
+            for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
+                Text newSuggestion = new Text(suggestions.get(i).getFullName());
+                newSuggestion.getStyleClass().add("suggestion");
+                suggestionList.add(newSuggestion);
+            }
+        }
+        searchContainer.getChildren().addAll(suggestionList);
     }
 
     @FXML

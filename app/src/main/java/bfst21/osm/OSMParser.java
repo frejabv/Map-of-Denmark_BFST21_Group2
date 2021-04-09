@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import java.io.*;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -11,13 +12,8 @@ import javax.xml.stream.XMLStreamReader;
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-
 public class OSMParser {
+    private static HashMap<String, List<String>> addresses = new HashMap<>();
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
@@ -44,6 +40,8 @@ public class OSMParser {
         Relation relation = null;
 
         boolean isWay = false;
+        boolean isNode = false;
+        boolean addressReceived = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -60,6 +58,7 @@ public class OSMParser {
                     var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                     var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
                     model.addToNodeIndex(new Node(lon, lat, id));
+                    isNode = true;
                     break;
                 case "way":
                     isWay = true;
@@ -77,11 +76,11 @@ public class OSMParser {
                 case "tag":
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
-                    if(k.equals("building")){
+                    if (k.equals("building")) {
                         tags.add(Tag.BUILDING);
                         break;
                     }
-                    if(k.equals("service")){
+                    if (k.equals("service")) {
                         break;
                     }
 
@@ -98,6 +97,14 @@ public class OSMParser {
                     } catch (IllegalArgumentException e) {
                         // We don't care about tags not in our Tag enum
                     }
+
+                    if (isNode) {
+                        if (k.contains("addr:")) {
+                            saveAddressData(k.replace("addr:", ""), v);
+                            addressReceived = true;
+                        }
+                    }
+
                     break;
                 case "relation":
                     var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -116,7 +123,7 @@ public class OSMParser {
                         break;
                     case "way":
                         memberRef = model.getWayIndex().getMember(ref);
-                        if(memberRef != null) {
+                        if (memberRef != null) {
                             relation.addWay((Way) memberRef);
                         }
                         break;
@@ -134,6 +141,15 @@ public class OSMParser {
                 break;
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
+                case "node":
+                    if (addressReceived) {
+                        int size = addresses.get("street").size();
+                        String streetName = addresses.get("street").get(size - 1);
+                        model.getStreetTree().insert(streetName, 1);
+                    }
+                    isNode = false;
+                    addressReceived = false;
+                    break;
                 case "way":
                     addWayToList(way, tags, model);
                     break;
@@ -202,13 +218,18 @@ public class OSMParser {
     public static void loadZIP(InputStream inputStream, Model model) throws IOException, XMLStreamException {
         var zip = new ZipInputStream(inputStream);
         zip.getNextEntry();
-        loadOSM(zip,model);
+        loadOSM(zip, model);
     }
 
-    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){
+    public static void saveAddressData(String dataset, String data) {
+        addresses.putIfAbsent(dataset, new ArrayList<>());
+        addresses.get(dataset).add(data);
+    }
+
+    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map) {
         List listToCheck = map.get(tag);
         boolean isDublet = true;
-        if(listToCheck.size()==0 || listToCheck.get(listToCheck.size()-1) != drawable) {
+        if (listToCheck.size() == 0 || listToCheck.get(listToCheck.size() - 1) != drawable) {
             isDublet = false;
         }
         return isDublet;
