@@ -67,6 +67,7 @@ public class Controller {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             //Run Regex Matcher
             regex.run(newText);
+            addSuggestions(model);
         });
         if (model.getTtiMode()) {
             System.exit(0);
@@ -95,7 +96,7 @@ public class Controller {
 
     ArrayList<Text> suggestionList = new ArrayList<>();
 
-    public void addSuggestions() {
+    public void addSuggestions(Model model) {
         searchContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
         if (searchField.textProperty().getValue().length() > 2) {
