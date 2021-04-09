@@ -215,6 +215,7 @@
                   </FlowPane>
                   <Region styleClass="hr" />
                   <CheckBox onMouseClicked="#ToggleKDLines">Show KD-tree lines</CheckBox>
+                  <CheckBox onMouseClicked="#ToggleRedrawWindow">toggle redraw window</CheckBox>
                 </VBox>
               </VBox>
             </children>

@@ -283,4 +283,10 @@ public class Controller {
         canvas.kdLines = !canvas.kdLines;
         canvas.repaint();
     }
+
+    @FXML
+    public void ToggleRedrawWindow(){
+        canvas.redrawWindow = !canvas.redrawWindow;
+        canvas.repaint();
+    }
 }

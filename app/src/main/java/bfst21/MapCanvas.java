@@ -23,7 +23,9 @@ public class MapCanvas extends Canvas {
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
 
-    public boolean kdLines;
+    public boolean kdLines = false;
+    public boolean redrawWindow = false;
+
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
@@ -53,53 +55,97 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
-        model.getFillMap().forEach((tag, fillables) -> {
-            gc.setStroke(renderingStyle.getColorByTag(tag));
-            gc.setFill(renderingStyle.getColorByTag(tag));
+        //TODO
+        if (redrawWindow) {
+            model.getFillMap().forEach((tag, fillables) -> {
+                gc.setStroke(renderingStyle.getColorByTag(tag));
+                gc.setFill(renderingStyle.getColorByTag(tag));
 
-            fillables.forEach(fillable -> {
-                fillable.draw(gc);
-                gc.fill();
+                fillables.forEach(fillable -> {
+                    fillable.draw(gc);
+                    gc.fill();
+                });
+
             });
 
-        });
-
-        model.getDrawableMap().forEach((tag, drawables) -> {
-            gc.setStroke(renderingStyle.getColorByTag(tag));
-            var style = renderingStyle.getDrawStyleByTag(tag);
-            drawables.forEach(drawable -> {
-                drawable.draw(gc);
+            model.getDrawableMap().forEach((tag, drawables) -> {
+                gc.setStroke(renderingStyle.getColorByTag(tag));
+                var style = renderingStyle.getDrawStyleByTag(tag);
+                drawables.forEach(drawable -> {
+                    drawable.draw(gc);
+                });
             });
-        });
 
-        model.getRelationIndex().forEach(relation -> {
-            if(relation.getTags().size() != 0) {
-                relation.draw(gc, renderingStyle);
+            model.getRelationIndex().forEach(relation -> {
+                if (relation.getTags().size() != 0) {
+                    relation.draw(gc, renderingStyle);
+                }
+            });
+
+            if (kdLines) {
+                model.getKdTree().drawLines(gc);
             }
-        });
 
-        if (kdLines){
-            model.getKdTree().drawLines(gc);
-        }
+            gc.setStroke(Color.RED);
+            gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
+            gc.beginPath();
+            var minCoords = mouseToModelCoords(new Point2D(getWidth() / 3, getHeight() / 3));
+            var maxCoords = mouseToModelCoords(new Point2D(getWidth() * 2 / 3, getHeight() * 2 / 3));
+            gc.moveTo(minCoords.getX(), minCoords.getY());
+            gc.lineTo(minCoords.getX(), maxCoords.getY());
+            gc.lineTo(maxCoords.getX(), maxCoords.getY());
+            gc.lineTo(maxCoords.getX(), minCoords.getY());
+            gc.lineTo(minCoords.getX(), minCoords.getY());
+            gc.stroke();
+        } else {
 
-        if(setPin){
-            gc.setFill(Color.rgb(231, 76, 60));
-            gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
-            double[] xPoints = {canvasPoint.getX()+0.00307*size,canvasPoint.getX()+0.025*size,canvasPoint.getX() + 0.04693*size}; //+0.05
-            double[] yPoints = {canvasPoint.getY()+0.037*size,canvasPoint.getY()+0.076*size,canvasPoint.getY()+0.037*size};
-            gc.fillPolygon(xPoints, yPoints, 3);
-            gc.setFill(Color.rgb(192, 57, 43));
-            gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
-        }
+            model.getFillMap().forEach((tag, fillables) -> {
+                gc.setStroke(renderingStyle.getColorByTag(tag));
+                gc.setFill(renderingStyle.getColorByTag(tag));
 
-        gc.restore();
-        long elapsedTime = System.nanoTime() - start;
-        if(redrawIndex<20) {
-            redrawAverage[redrawIndex] = elapsedTime;
-            redrawIndex++;
-        }
-        else {
-            redrawIndex = 0;
+                fillables.forEach(fillable -> {
+                    fillable.draw(gc);
+                    gc.fill();
+                });
+
+            });
+
+            model.getDrawableMap().forEach((tag, drawables) -> {
+                gc.setStroke(renderingStyle.getColorByTag(tag));
+                var style = renderingStyle.getDrawStyleByTag(tag);
+                drawables.forEach(drawable -> {
+                    drawable.draw(gc);
+                });
+            });
+
+            model.getRelationIndex().forEach(relation -> {
+                if (relation.getTags().size() != 0) {
+                    relation.draw(gc, renderingStyle);
+                }
+            });
+
+            if (kdLines) {
+                model.getKdTree().drawLines(gc);
+            }
+
+            if (setPin) {
+                gc.setFill(Color.rgb(231, 76, 60));
+                gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05 * size, 0.05 * size, -30, 240, ArcType.OPEN);
+                double[] xPoints = {canvasPoint.getX() + 0.00307 * size, canvasPoint.getX() + 0.025 * size, canvasPoint.getX() + 0.04693 * size}; //+0.05
+                double[] yPoints = {canvasPoint.getY() + 0.037 * size, canvasPoint.getY() + 0.076 * size, canvasPoint.getY() + 0.037 * size};
+                gc.fillPolygon(xPoints, yPoints, 3);
+                gc.setFill(Color.rgb(192, 57, 43));
+                gc.fillOval(canvasPoint.getX() + 0.015 * size, canvasPoint.getY() + 0.015 * size, 0.020 * size, 0.020 * size);
+            }
+
+            gc.restore();
+            long elapsedTime = System.nanoTime() - start;
+            if (redrawIndex < 20) {
+                redrawAverage[redrawIndex] = elapsedTime;
+                redrawIndex++;
+            } else {
+                redrawIndex = 0;
+            }
         }
     }
 
