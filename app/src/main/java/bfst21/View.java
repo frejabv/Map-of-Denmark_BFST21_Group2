@@ -15,9 +15,9 @@ public class View {
         stage.centerOnScreen();
         Controller controller = loader.getController();
         stage.show();
-        controller.init(model, stage);
+        controller.init(model);
         stage.setOnCloseRequest(
-                event -> controller.executor.shutdown()
+                event -> controller.shutdownExecutor()
         );
     }
 }

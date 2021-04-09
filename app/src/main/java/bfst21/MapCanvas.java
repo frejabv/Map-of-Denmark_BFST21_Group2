@@ -9,9 +9,6 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import bfst21.osm.*;
 
-import java.time.Duration;
-import java.time.Instant;
-
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
@@ -66,9 +63,7 @@ public class MapCanvas extends Canvas {
         model.getDrawableMap().forEach((tag, drawables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
             var style = renderingStyle.getDrawStyleByTag(tag);
-            drawables.forEach(drawable -> {
-                drawable.draw(gc);
-            });
+            drawables.forEach(drawable -> drawable.draw(gc));
         });
 
         model.getRelationIndex().forEach(relation -> {
