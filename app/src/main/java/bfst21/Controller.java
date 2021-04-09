@@ -72,8 +72,19 @@ public class Controller {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             //Run Regex Matcher
             regex.run(newText);
-            addSuggestions(model);
+            addSuggestions(model,"search", null);
         });
+
+        routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model,"route", "from");
+        });
+
+        routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model,"route", "to");
+        });
+
         if (model.getTtiMode()) {
             System.exit(0);
         }
