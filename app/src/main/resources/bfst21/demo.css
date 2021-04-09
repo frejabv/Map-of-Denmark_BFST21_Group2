@@ -95,3 +95,17 @@
 .textfield:focused {
     -fx-focus-color: transparent;
 }
+.regexLine{
+    -fx-spacing: 10;
+    -fx-padding: 0 0 10 0;
+}
+.regexMatch{
+    -fx-fill: #ecf0f1;
+    -fx-padding: 0 10px 0 0;
+}
+.regexMatchGreen{
+    -fx-fill: #2ecc71;
+}
+.regexMatchRed{
+    -fx-fill: #e74c3c;
+}
