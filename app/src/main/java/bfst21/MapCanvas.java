@@ -78,7 +78,6 @@ public class MapCanvas extends Canvas {
                 relation.draw(gc, renderingStyle);
             }
         });
-        //optimal pinsize = getDistanceWidth()/100;
         if (setPin) {
             gc.setFill(Color.rgb(231, 76, 60));
             gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05 * size, 0.05 * size, -30, 240, ArcType.OPEN);
@@ -88,19 +87,6 @@ public class MapCanvas extends Canvas {
             gc.setFill(Color.rgb(192, 57, 43));
             gc.fillOval(canvasPoint.getX() + 0.015 * size, canvasPoint.getY() + 0.015 * size, 0.020 * size, 0.020 * size);
         }
-
-        gc.setStroke(Color.BLACK);
-        gc.beginPath();
-        Point2D test = mouseToModelCoords(new Point2D(getWidth() - 20, getHeight() - 20));
-        Point2D test2 = mouseToModelCoords(new Point2D(getWidth() - (getWidth() / 100 * 10 + 20), getHeight() - 20));
-        double textPosition = mouseToModelCoords(new Point2D(0, getHeight() - 40)).getY();
-        gc.moveTo(test.getX(), test.getY());
-        gc.lineTo(test2.getX(), test2.getY());
-        gc.setFill(Color.BLACK);
-        gc.setFont(new Font(getDistanceWidth() / 5000));
-        gc.fillText(Math.round(getDistanceWidth()) / 10 + " KM", test2.getX(), textPosition);//(test.getX()+test2.getX())/2,test2.getY()-20
-        gc.stroke();
-
 
         gc.restore();
         long elapsedTime = System.nanoTime() - start;
@@ -135,8 +121,8 @@ public class MapCanvas extends Canvas {
     }
 
     public String setPin(Point2D point) {
+        size = .3;
         canvasPoint = mouseToModelCoords(point);
-        System.out.println(size);
         canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
