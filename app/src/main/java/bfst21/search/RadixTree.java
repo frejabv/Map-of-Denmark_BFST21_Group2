@@ -82,18 +82,18 @@ public class RadixTree {
 
             for (RadixNode child : children) {
                 if (searchTerm.length() > charLength) {
-                    if (child.getContent().startsWith(searchTerm.substring(charLength))) {
+                    if (child.getValue().startsWith(searchTerm.substring(charLength))) {
                         safeNode = child;
                     }
-                    if (searchTerm.substring(charLength).startsWith(child.getContent())) {
+                    if (searchTerm.substring(charLength).startsWith(child.getValue())) {
                         currentNode = child;
                         foundChild = true;
-                        charLength += currentNode.getContent().length();
+                        charLength += currentNode.getValue().length();
                     }
                 }
             }
 
-            result += currentNode.getContent();
+            result += currentNode.getValue();
 
             if (!foundChild) {
                 if (safeNode != null) {
@@ -127,7 +127,7 @@ public class RadixTree {
      * Case 5: None of the children have something in common with stringToInsert.
      * */
     private void insert(String stringToInsert, long id, RadixNode currentNode) {
-        if (currentNode != root && (currentNode == null || currentNode.getContent().equals("") || stringToInsert.equals(""))) {
+        if (currentNode != root && (currentNode == null || currentNode.getValue().equals("") || stringToInsert.equals(""))) {
             return;
         }
 
@@ -141,27 +141,27 @@ public class RadixTree {
 
         ArrayList<RadixNode> children = currentNode.getChildren();
         for (int i = 0; i < children.size(); i++) {
-            if (stringToInsert.startsWith(children.get(i).getContent())) { //the child is a prefix to stringToInsert, like child: test and stringToInsert: tester
-                insert(stringToInsert.substring(children.get(i).getContent().length()), id, currentNode.getChildren().get(i));
+            if (stringToInsert.startsWith(children.get(i).getValue())) { //the child is a prefix to stringToInsert, like child: test and stringToInsert: tester
+                insert(stringToInsert.substring(children.get(i).getValue().length()), id, currentNode.getChildren().get(i));
                 return;
-            } else if (children.get(i).getContent().startsWith(stringToInsert)) { //stringToInsert is a prefix to child, like child: tester and stringToInsert: test
+            } else if (children.get(i).getValue().startsWith(stringToInsert)) { //stringToInsert is a prefix to child, like child: tester and stringToInsert: test
                 RadixNode originalNode = children.get(i);
                 RadixNode newParentNode = new RadixNode(stringToInsert, fullName, id);
                 children.set(i, newParentNode);
-                originalNode.setContent(originalNode.getContent().substring(stringToInsert.length()));
+                originalNode.setValue(originalNode.getValue().substring(stringToInsert.length()));
                 children.get(i).addChild(originalNode);
                 size++;
                 places++;
                 return;
-            } else if (children.get(i).getContent().charAt(0) == stringToInsert.charAt(0)) { //they are partly equal like test and team
-                String nodeContent = children.get(i).getContent();
+            } else if (children.get(i).getValue().charAt(0) == stringToInsert.charAt(0)) { //they are partly equal like test and team
+                String nodeContent = children.get(i).getValue();
                 for (int j = 0; j < (Math.min(stringToInsert.length(), nodeContent.length())); j++) {
                     if (stringToInsert.charAt(j) != nodeContent.charAt(j) && j > 0) {
                         /* This child and the node we want to insert are partly equal,
                         so we want to add a new node which contains the part they have in common
                         and then set them both as the children of this new node. */
                         RadixNode originalNode = children.get(i);
-                        originalNode.setContent(nodeContent.substring(j));
+                        originalNode.setValue(nodeContent.substring(j));
                         RadixNode newChildNode = new RadixNode(stringToInsert.substring(j), fullName, id);
                         RadixNode newParentNode = new RadixNode(stringToInsert.substring(0, j));
                         children.set(i, newParentNode);

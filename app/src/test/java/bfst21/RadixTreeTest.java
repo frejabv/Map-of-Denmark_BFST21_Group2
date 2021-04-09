@@ -30,7 +30,7 @@ public class RadixTreeTest {
         assertEquals(2, tree.getPlaces());
         assertEquals("test", tree.lookupNode("test").getFullName());
         assertEquals("tester", tree.lookupNode("tester").getFullName());
-        assertEquals("er", tree.lookupNode("tester").getContent());
+        assertEquals("er", tree.lookupNode("tester").getValue());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class RadixTreeTest {
         assertEquals(2, tree.getPlaces());
         assertEquals("road", tree.lookupNode("road").getFullName());
         assertEquals("roadkill", tree.lookupNode("roadkill").getFullName());
-        assertEquals("kill", tree.lookupNode("roadkill").getContent());
+        assertEquals("kill", tree.lookupNode("roadkill").getValue());
     }
 
     @Test
@@ -54,8 +54,8 @@ public class RadixTreeTest {
         assertEquals(2, tree.getPlaces());
         assertEquals("test", tree.lookupNode("test").getFullName());
         assertEquals("team", tree.lookupNode("team").getFullName());
-        assertEquals("st", tree.lookupNode("test").getContent());
-        assertEquals("am", tree.lookupNode("team").getContent());
+        assertEquals("st", tree.lookupNode("test").getValue());
+        assertEquals("am", tree.lookupNode("team").getValue());
     }
 
     @Test
@@ -69,9 +69,9 @@ public class RadixTreeTest {
         assertEquals("test", tree.lookupNode("test").getFullName());
         assertEquals("hammock", tree.lookupNode("hammock").getFullName());
         assertEquals("road", tree.lookupNode("road").getFullName());
-        assertEquals("test", tree.lookupNode("test").getContent());
-        assertEquals("hammock", tree.lookupNode("hammock").getContent());
-        assertEquals("road", tree.lookupNode("road").getContent());
+        assertEquals("test", tree.lookupNode("test").getValue());
+        assertEquals("hammock", tree.lookupNode("hammock").getValue());
+        assertEquals("road", tree.lookupNode("road").getValue());
     }
 
     @Test

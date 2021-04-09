@@ -5,18 +5,18 @@ import java.util.ArrayList;
 public class RadixNode {
     private ArrayList<RadixNode> children;
     boolean isPlace;
-    String content;
+    String value;
     String fullName;
     long id;
 
-    public RadixNode(String content) {
+    public RadixNode(String value) {
         children = new ArrayList<>();
         isPlace = false;
-        this.content = content;
+        this.value = value;
     }
 
-    public RadixNode(String content, String fullName, long id) {
-        this(content);
+    public RadixNode(String value, String fullName, long id) {
+        this(value);
         this.fullName = fullName;
         this.id = id;
         isPlace = true;
@@ -30,12 +30,12 @@ public class RadixNode {
         return children;
     }
 
-    public String getContent() {
-        return content;
+    public String getValue() {
+        return value;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getFullName() { return fullName; }
