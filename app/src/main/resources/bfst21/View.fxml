@@ -28,196 +28,198 @@
        stylesheets="@demo.css"
        onKeyPressed="#onKeyPressed"
 >
-    <root>
-      <StackPane fx:id="pane">
-        <children>
-          <MapCanvas fx:id="canvas"
-            width="${scene.width}"
-            height="${scene.height}"
-            onScroll="#onScrollOnCanvas"
-            onMousePressed="#onMousePressedOnCanvas"
-            onMouseDragged="#onMouseDraggedOnCanvas"
-            onMouseReleased="#onMouseReleasedOnCanvas"
-          />
-          <GridPane pickOnBounds="false">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="45.0" minWidth="250.0" prefWidth="250.0" />
-                <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="10.0" minWidth="10.0" prefWidth="125.0" />
-                <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="45.0" minWidth="250.0" prefWidth="250.0" />
-            </columnConstraints>
-            <children>
-              <VBox pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <HBox styleClass="buttonSpacing" pickOnBounds="false">
-                  <Button onMousePressed="#onMousePressedSearch" styleClass="roundedButton" fx:id="searchButton">
-                    <graphic>
-                      <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                          <Image url="@icons/search.png" />
-                        </image>
-                      </ImageView>
-                    </graphic>
-                  </Button>
-                  <Button onMousePressed="#onMousePressedRoute" styleClass="roundedButton" fx:id="routeButton">
-                    <graphic>
-                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                          <image>
-                            <Image url="@icons/route.png" />
-                          </image>
-                        </ImageView>
-                    </graphic>
-                  </Button>
-                  <Button onMousePressed="#onMousePressedSettings" styleClass="roundedButton" fx:id="settingsButton">
-                    <graphic>
-                      <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                          <Image url="@icons/settings.png" />
-                        </image>
-                      </ImageView>
-                    </graphic>
-                  </Button>
-                </HBox>
-                <VBox fx:id="searchContainer" styleClass="mainContainer">
-                  <TextField fx:id="searchField" styleClass="textfield">
-                    <promptText>Where would you like to go?</promptText>
-                  </TextField>
-                  <Text fx:id="suggestionsHeader" styleClass="suggestionsHeader">Suggestions:</Text>
-                </VBox>
-                <VBox fx:id="routeContainer" styleClass="mainContainer">
-                  <TextField fx:id="routeFieldFrom" styleClass="textfield">
-                    <promptText>Where from?</promptText>
-                  </TextField>
-                  <TextField fx:id="routeFieldTo" styleClass="textfield">
-                    <promptText>Where to?</promptText>
-                  </TextField>
-                </VBox>
-                <VBox fx:id="settingsContainer" styleClass="mainContainer">
-                  <FlowPane styleClass="header-margin">
-                    <Text styleClass="mainContainer-header">Settings</Text>
-                  </FlowPane>
-                  <ScrollPane styleClass="scroll-pane">
-                    <content>
-                      <VBox>
-                        <FlowPane styleClass="header-margin">
-                          <Text styleClass="mainContainer-subheader">Color Modes</Text>
-                        </FlowPane>
-                        <Region styleClass="hr" />
-                        <FlowPane>
-                          <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode" selected="true">
-                            <toggleGroup>
-                              <ToggleGroup fx:id="selectColorMode"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                          <ToggleButton fx:id="darkColorMode" text="Dark Mode" onMousePressed="#darkColorMode">
-                            <toggleGroup>
-                              <fx:reference source="selectColorMode"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                          <ToggleButton fx:id="deuteranopeColorMode" text="Red/Green Color Blind (Deuteranope)" onMousePressed="#deuteranopeColorMode">
-                            <toggleGroup>
-                              <fx:reference source="selectColorMode"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                          <ToggleButton fx:id="protanopeColorMode" text="Red/Green Color Blind (Protanope)" onMousePressed="#protanopeColorMode">
-                            <toggleGroup>
-                              <fx:reference source="selectColorMode"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                          <ToggleButton fx:id="tritanopeColorMode" text="Blue/Yellow Color Blind (Tritanope)" onMousePressed="#tritanopeColorMode">
-                            <toggleGroup>
-                              <fx:reference source="selectColorMode"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                        </FlowPane>
-                        <FlowPane styleClass="header-margin">
-                          <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
-                        </FlowPane>
-                        <Region styleClass="hr" />
-                        <FlowPane>
-                          <ToggleButton text="Car" selected="true">
-                            <toggleGroup>
-                              <ToggleGroup fx:id="selectTransportType"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                          <ToggleButton text="Bike">
-                            <toggleGroup>
-                              <fx:reference source="selectTransportType"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                          <ToggleButton text="Walk">
-                            <toggleGroup>
-                              <fx:reference source="selectTransportType"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                          <ToggleButton text="Public Transport">
-                            <toggleGroup>
-                              <fx:reference source="selectTransportType"/>
-                            </toggleGroup>
-                          </ToggleButton>
-                        </FlowPane>
-                        <FlowPane styleClass="header-margin">
-                          <Text styleClass="mainContainer-subheader">Unit</Text>
-                        </FlowPane>
-                        <Region styleClass="hr" />
-                        <ComboBox>
-                          <items>
-                            <FXCollections fx:factory="observableArrayList">
-                              <String fx:value="km/h" />
-                              <String fx:value="mph" />
-                            </FXCollections>
-                          </items>
-                          <value>
-                            <String fx:value="km/h" />
-                          </value>
-                        </ComboBox>
-                        <FlowPane styleClass="header-margin">
-                          <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
-                        </FlowPane>
-                        <Region styleClass="hr" />
-                        <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
-                        <FlowPane styleClass="header-margin">
-                          <Text styleClass="mainContainer-subheader">Favorites</Text>
-                        </FlowPane>
-                        <Region styleClass="hr" />
-                        <VBox>
-                          <Text>Item1</Text>
-                          <Text>Item2</Text>
-                          <Text>Item3</Text>
-                          <Text>Item4</Text>
-                          <Text>Item5</Text>
-                          <Text>Item6</Text>
-                          <Text>Item7</Text>
-                          <Text>Item8</Text>
-                        </VBox>
-                      </VBox>
-                    </content>
-                  </ScrollPane>
-                </VBox>
+  <StackPane>
+    <MapCanvas fx:id="canvas"
+               width="${scene.width}"
+               height="${scene.height}"
+               onScroll="#onScrollOnCanvas"
+               onMousePressed="#onMousePressedOnCanvas"
+               onMouseDragged="#onMouseDraggedOnCanvas"
+               onMouseReleased="#onMouseReleasedOnCanvas"
+    />
+    <GridPane pickOnBounds="false">
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="45.0" minWidth="250.0"
+                           prefWidth="250.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="10.0" minWidth="10.0"
+                           prefWidth="125.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="45.0" minWidth="250.0"
+                           prefWidth="250.0"/>
+      </columnConstraints>
+      <VBox pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <HBox styleClass="buttonSpacing" pickOnBounds="false">
+          <Button onMousePressed="#onMousePressedSearch" styleClass="roundedButton" fx:id="searchButton">
+            <graphic>
+              <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@icons/search.png"/>
+              </ImageView>
+            </graphic>
+          </Button>
+          <Button onMousePressed="#onMousePressedRoute" styleClass="roundedButton" fx:id="routeButton">
+            <graphic>
+              <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@icons/route.png"/>
+              </ImageView>
+            </graphic>
+          </Button>
+          <Button onMousePressed="#onMousePressedSettings" styleClass="roundedButton" fx:id="settingsButton">
+            <graphic>
+              <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@icons/settings.png"/>
+              </ImageView>
+            </graphic>
+          </Button>
+        </HBox>
+        <VBox fx:id="searchContainer" styleClass="mainContainer">
+          <TextField fx:id="searchField" styleClass="textfield">
+            <promptText>Where would you like to go?</promptText>
+          </TextField>
+          <Text fx:id="suggestionsHeader">Suggestions:</Text>
+        </VBox>
+        <VBox fx:id="routeContainer" styleClass="mainContainer">
+          <TextField fx:id="routeFieldFrom" styleClass="textfield">
+            <promptText>Where from?</promptText>
+          </TextField>
+          <TextField fx:id="routeFieldTo" styleClass="textfield">
+            <promptText>Where to?</promptText>
+          </TextField>
+        </VBox>
+        <VBox fx:id="settingsContainer" styleClass="mainContainer">
+          <FlowPane styleClass="header-margin">
+            <Text styleClass="mainContainer-header">Settings</Text>
+          </FlowPane>
+          <ScrollPane styleClass="scroll-pane">
+            <VBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Color Modes</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <FlowPane>
+                <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode"
+                              selected="true">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="selectColorMode"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="darkColorMode" text="Dark Mode" onMousePressed="#darkColorMode">
+                  <toggleGroup>
+                    <fx:reference source="selectColorMode"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="deuteranopeColorMode" text="Red/Green Color Blind (Deuteranope)"
+                              onMousePressed="#deuteranopeColorMode">
+                  <toggleGroup>
+                    <fx:reference source="selectColorMode"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="protanopeColorMode" text="Red/Green Color Blind (Protanope)"
+                              onMousePressed="#protanopeColorMode">
+                  <toggleGroup>
+                    <fx:reference source="selectColorMode"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="tritanopeColorMode" text="Blue/Yellow Color Blind (Tritanope)"
+                              onMousePressed="#tritanopeColorMode">
+                  <toggleGroup>
+                    <fx:reference source="selectColorMode"/>
+                  </toggleGroup>
+                </ToggleButton>
+              </FlowPane>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <FlowPane>
+                <ToggleButton text="Car" selected="true">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="selectTransportType"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton text="Bike">
+                  <toggleGroup>
+                    <fx:reference source="selectTransportType"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton text="Walk">
+                  <toggleGroup>
+                    <fx:reference source="selectTransportType"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton text="Public Transport">
+                  <toggleGroup>
+                    <fx:reference source="selectTransportType"/>
+                  </toggleGroup>
+                </ToggleButton>
+              </FlowPane>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Unit</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <ComboBox>
+                <items>
+                  <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="km/h"/>
+                    <String fx:value="mph"/>
+                  </FXCollections>
+                </items>
+                <value>
+                  <String fx:value="km/h"/>
+                </value>
+              </ComboBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Favorites</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <VBox>
+                <Text>Item1</Text>
+                <Text>Item2</Text>
+                <Text>Item3</Text>
+                <Text>Item4</Text>
+                <Text>Item5</Text>
+                <Text>Item6</Text>
+                <Text>Item7</Text>
+                <Text>Item8</Text>
               </VBox>
-              <VBox pickOnBounds="false" styleClass="centerContainer"  GridPane.columnIndex="1" GridPane.rowIndex="0">
-              </VBox>
-              <VBox pickOnBounds="false" styleClass="rightContainer" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                <VBox fx:id="debugContainer" styleClass="mainContainer">
-                  <FlowPane styleClass="header-margin">
-                    <Text styleClass="mainContainer-header">Debug</Text>
-                  </FlowPane>
-                  <FlowPane styleClass="header-margin">
-                    <Text styleClass="mainContainer-subheader">Data</Text>
-                  </FlowPane>
-                  <Region styleClass="hr" />
-                  <Text fx:id="ttd">Redraw time: 00:00</Text>
-                  <Text fx:id="cpuProcess">CPU Process Load: 0.00</Text>
-                  <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
-                  <Text fx:id="memoryUse">Memory Use: 0.00</Text>
-                  <FlowPane styleClass="header-margin">
-                    <Text styleClass="mainContainer-subheader">Dev Settings</Text>
-                  </FlowPane>
-                  <Region styleClass="hr" />
-                  <CheckBox>Show KD-tree lines</CheckBox>
-                </VBox>
-              </VBox>
-            </children>
-          </GridPane>
-        </children>
-      </StackPane>
-    </root>
+            </VBox>
+          </ScrollPane>
+        </VBox>
+        <VBox fx:id="pinContainer" styleClass="mainContainer">
+            <Text fx:id="pinText">Pin</Text>
+        </VBox>
+      </VBox>
+      <VBox pickOnBounds="false" styleClass="centerContainer" GridPane.columnIndex="1" GridPane.rowIndex="0">
+      </VBox>
+      <VBox pickOnBounds="false" styleClass="rightContainer" GridPane.columnIndex="2" GridPane.rowIndex="0">
+        <VBox fx:id="debugContainer" styleClass="mainContainer">
+          <FlowPane styleClass="header-margin">
+            <Text styleClass="mainContainer-header">Debug</Text>
+          </FlowPane>
+          <FlowPane styleClass="header-margin">
+            <Text styleClass="mainContainer-subheader">Data</Text>
+          </FlowPane>
+          <Region styleClass="hr"/>
+          <Text fx:id="ttd">Redraw time: 00:00</Text>
+          <Text fx:id="cpuProcess">CPU Process Load: 0.00</Text>
+          <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
+          <Text fx:id="memoryUse">Memory Use: 0.00</Text>
+          <FlowPane styleClass="header-margin">
+            <Text styleClass="mainContainer-subheader">Dev Settings</Text>
+          </FlowPane>
+          <Region styleClass="hr"/>
+          <CheckBox>Show KD-tree lines</CheckBox>
+          <FlowPane styleClass="header-margin">
+            <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
+          </FlowPane>
+          <Region styleClass="hr" />
+          <VBox fx:id="regexContainer">
+          </VBox>
+        </VBox>
+      </VBox>
+    </GridPane>
+  </StackPane>
 </Scene>
