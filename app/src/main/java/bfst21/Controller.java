@@ -2,18 +2,18 @@ package bfst21;
 
 import bfst21.osm.Node;
 import bfst21.search.RadixNode;
-import com.sun.management.OperatingSystemMXBean;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,24 +65,24 @@ public class Controller {
     public void init(Model model) {
         canvas.init(model);
         hideAll();
-        debug = new Debug(canvas,cpuProcess,cpuSystem,ttd,memoryUse);
+        debug = new Debug(canvas, cpuProcess, cpuSystem, ttd, memoryUse);
         changeType("debug", false);
         Spelling autocorrector = new Spelling();
         Regex regex = new Regex(setupRegexView());
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             //Run Regex Matcher
             regex.run(newText);
-            addSuggestions(model,"search", null);
+            addSuggestions(model, "search", null);
         });
 
         routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
             regex.run(newText);
-            addSuggestions(model,"route", "from");
+            addSuggestions(model, "route", "from");
         });
 
         routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
             regex.run(newText);
-            addSuggestions(model,"route", "to");
+            addSuggestions(model, "route", "to");
         });
 
         if (model.getTtiMode()) {
@@ -181,7 +181,7 @@ public class Controller {
 
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
-        if(singleClick) {
+        if (singleClick) {
             pinContainer.getChildren().remove(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
@@ -193,13 +193,12 @@ public class Controller {
                 hideAll();
             });
             pinContainer.getChildren().add(removePin);
-        }
-        else{
+        } else {
             singleClick = true;
         }
     }
 
-    public void toggleDebugMode(){
+    public void toggleDebugMode() {
         if (debugContainer.isVisible()) {
             changeType("debug", false);
             enableDebugWindow.setSelected(false);
