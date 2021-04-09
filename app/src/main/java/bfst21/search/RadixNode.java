@@ -38,7 +38,9 @@ public class RadixNode {
         this.value = value;
     }
 
-    public String getFullName() { return fullName; }
+    public String getFullName() {
+        return fullName;
+    }
 
     public boolean isPlace() {
         return isPlace;

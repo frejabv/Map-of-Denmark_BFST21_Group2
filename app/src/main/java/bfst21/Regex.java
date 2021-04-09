@@ -11,7 +11,8 @@ public class Regex {
     List<String> regexList;
     List<Pattern> patterns;
     List<Text> regexVisualisers;
-    public Regex(List<Text> regexVisualisers){
+
+    public Regex(List<Text> regexVisualisers) {
         this.regexVisualisers = regexVisualisers;
         //Regular expressions
         regexList = new ArrayList<>();
@@ -20,17 +21,17 @@ public class Regex {
 
         //Creating pattern objects
         patterns = new ArrayList<>();
-        for (int i = 0;i < regexList.size(); i++) {
+        for (int i = 0; i < regexList.size(); i++) {
             Pattern temp = Pattern.compile(regexList.get(i));
             patterns.add(temp);
         }
     }
 
-    public void run(String text){
-        for (int i = 0; i<patterns.size(); i++) {
+    public void run(String text) {
+        for (int i = 0; i < patterns.size(); i++) {
             Matcher matcher = patterns.get(i).matcher(text);
             regexVisualisers.get(i).getStyleClass().clear();
-            if(matcher.find()) {
+            if (matcher.find()) {
                 regexVisualisers.get(i).getStyleClass().add("regexMatchGreen");
             } else {
                 regexVisualisers.get(i).getStyleClass().add("regexMatchRed");

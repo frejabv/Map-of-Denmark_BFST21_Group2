@@ -1,12 +1,12 @@
 package bfst21;
 
+import bfst21.osm.*;
+import bfst21.search.RadixTree;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import bfst21.osm.*;
-import bfst21.search.RadixTree;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -135,5 +135,7 @@ public class Model {
         return ttiMode;
     }
 
-    public RadixTree getStreetTree() { return streetTree; }
+    public RadixTree getStreetTree() {
+        return streetTree;
+    }
 }
