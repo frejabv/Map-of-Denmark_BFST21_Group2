@@ -115,6 +115,7 @@
 }
 .scale .scaletext{
     -fx-font-size: 15;
+    -fx-fill: #303952;
 }
 .scalebar{
     -fx-fill: transparent;
