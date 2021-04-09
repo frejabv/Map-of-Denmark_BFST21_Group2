@@ -5,7 +5,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
@@ -15,10 +14,6 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Controller {
     @FXML
@@ -58,16 +53,6 @@ public class Controller {
     private Point2D lastMouse;
     private boolean singleClick = true;
 
-    /*public void init(Model model) {
-        canvas.init(model);
-        hideAll();
-        debug = new Debug(canvas,cpuProcess,cpuSystem,ttd,memoryUse);
-        changeType("debug", false);
-
-        if (model.getTtiMode()) {
-            System.exit(0);
-        }
-    }*/
     public void init(Model model) {
         canvas.init(model);
         hideAll();
