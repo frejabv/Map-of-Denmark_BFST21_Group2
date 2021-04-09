@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import bfst21.osm.*;
+import bfst21.search.RadixTree;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -16,6 +17,7 @@ public class Model {
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
+    private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
     private boolean ttiMode;
@@ -31,13 +33,14 @@ public class Model {
         coastlines = new ArrayList<>();
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
+        streetTree = new RadixTree();
 
         this.ttiMode = ttiMode;
 
         try {
             OSMParser.readMapElements(filepath, this);
         } catch (Exception e) {
-            System.out.println("error: " + e.getClass());
+            System.out.println("error: " + e.getClass() + " " + e.getMessage());
         }
     }
 
@@ -131,4 +134,6 @@ public class Model {
     public boolean getTtiMode() {
         return ttiMode;
     }
+
+    public RadixTree getStreetTree() { return streetTree; }
 }

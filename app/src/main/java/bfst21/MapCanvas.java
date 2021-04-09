@@ -6,9 +6,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
-import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
+import bfst21.osm.*;
 
 public class MapCanvas extends Canvas {
     private Model model;
@@ -96,7 +96,6 @@ public class MapCanvas extends Canvas {
         } else {
             redrawIndex = 0;
         }
-
     }
 
     public void pan(double dx, double dy) {
