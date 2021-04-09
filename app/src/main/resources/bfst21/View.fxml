@@ -188,6 +188,9 @@
             </VBox>
           </ScrollPane>
         </VBox>
+        <VBox fx:id="pinContainer" styleClass="mainContainer">
+            <Text fx:id="pinText">Pin</Text>
+        </VBox>
       </VBox>
       <VBox pickOnBounds="false" styleClass="centerContainer" GridPane.columnIndex="1" GridPane.rowIndex="0">
       </VBox>
@@ -209,6 +212,12 @@
           </FlowPane>
           <Region styleClass="hr"/>
           <CheckBox>Show KD-tree lines</CheckBox>
+          <FlowPane styleClass="header-margin">
+            <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
+          </FlowPane>
+          <Region styleClass="hr" />
+          <VBox fx:id="regexContainer">
+          </VBox>
         </VBox>
       </VBox>
     </GridPane>

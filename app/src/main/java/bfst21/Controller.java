@@ -5,12 +5,20 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Controller {
     @FXML
@@ -21,6 +29,8 @@ public class Controller {
     private VBox routeContainer;
     @FXML
     private VBox settingsContainer;
+    @FXML
+    private VBox pinContainer;
     @FXML
     private VBox debugContainer;
     @FXML
@@ -33,8 +43,8 @@ public class Controller {
     private TextField searchField;
     @FXML
     private CheckBox enableDebugWindow;
-    @FXML
-    private Text suggestionsHeader;
+    @FXML Text suggestionsHeader;
+    @FXML Text pinText;
     @FXML
     private Text cpuProcess;
     @FXML
@@ -48,7 +58,7 @@ public class Controller {
     private Point2D lastMouse;
     private boolean singleClick = true;
 
-    public void init(Model model) {
+    /*public void init(Model model) {
         canvas.init(model);
         hideAll();
         debug = new Debug(canvas,cpuProcess,cpuSystem,ttd,memoryUse);
@@ -57,6 +67,41 @@ public class Controller {
         if (model.getTtiMode()) {
             System.exit(0);
         }
+    }*/
+    public void init(Model model) {
+        canvas.init(model);
+        hideAll();
+        debug = new Debug(canvas,cpuProcess,cpuSystem,ttd,memoryUse);
+        changeType("debug", false);
+        Spelling autocorrector = new Spelling();
+        Regex regex = new Regex(setupRegexView());
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            //Run Regex Matcher
+            regex.run(newText);
+        });
+        if (model.getTtiMode()) {
+            System.exit(0);
+        }
+    }
+
+    @FXML
+    private VBox regexContainer;
+
+    private List<Text> setupRegexView() {
+        List<Text> regexVisualisers = new ArrayList<>();
+        List<String> regexString = Arrays.asList("[Postcode] [City]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
+        for (int i = 0; i < regexString.size(); i++) {
+            HBox hbox = new HBox();
+            hbox.getStyleClass().add("regexLine");
+            Text bullet = new Text("●");
+            bullet.getStyleClass().add("regexMatch");
+            Text text = new Text(regexString.get(i));
+            hbox.getChildren().add(bullet);
+            hbox.getChildren().add(text);
+            regexVisualisers.add(bullet);
+            regexContainer.getChildren().add(hbox);
+        }
+        return regexVisualisers;
     }
 
     @FXML
@@ -89,17 +134,17 @@ public class Controller {
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if(singleClick) {
-            searchContainer.getChildren().remove(searchContainer.lookup(".button"));
+            pinContainer.getChildren().remove(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
-            changeType("search", true);
-            suggestionsHeader.textProperty().setValue(coordinates);
+            changeType("pin", true);
+            pinText.textProperty().setValue(coordinates);
             Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
                 canvas.repaint();
                 hideAll();
             });
-            searchContainer.getChildren().add(removePin);
+            pinContainer.getChildren().add(removePin);
         }
         else{
             singleClick = true;
@@ -190,6 +235,8 @@ public class Controller {
             routeContainer.setManaged(false);
             settingsContainer.setVisible(false);
             settingsContainer.setManaged(false);
+            pinContainer.setVisible(false);
+            pinContainer.setManaged(false);
         }
         switch (type){
             case "route":
@@ -211,6 +258,10 @@ public class Controller {
             case "debug":
                 debugContainer.setVisible(state);
                 debugContainer.setManaged(state);
+                break;
+            case "pin":
+                pinContainer.setVisible(state);
+                pinContainer.setManaged(state);
                 break;
             default:
                 fadeButtons();
