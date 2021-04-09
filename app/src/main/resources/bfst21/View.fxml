@@ -21,6 +21,7 @@
 <?import java.lang.String?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.BorderPane?>
 <Scene xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        fx:controller="bfst21.Controller"
@@ -221,5 +222,15 @@
         </VBox>
       </VBox>
     </GridPane>
+    <BorderPane pickOnBounds="false">
+      <bottom>
+        <HBox fx:id="scaleContainer" alignment="BOTTOM_RIGHT" pickOnBounds="false">
+          <VBox fx:id="scale"  styleClass="scale" pickOnBounds="false">
+            <Text fx:id="scaletext" styleClass="scaletext" pickOnBounds="false"></Text>
+            <Region styleClass="scalebar" pickOnBounds="false"/>
+          </VBox>
+        </HBox>
+      </bottom>
+    </BorderPane>
   </StackPane>
 </Scene>

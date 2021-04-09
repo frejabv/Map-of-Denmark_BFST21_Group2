@@ -109,3 +109,17 @@
 .regexMatchRed{
     -fx-fill: #e74c3c;
 }
+
+.scale {
+    -fx-padding: 20;
+}
+.scale .scaletext{
+    -fx-font-size: 15;
+}
+.scalebar{
+    -fx-fill: transparent;
+    -fx-max-height: 10;
+    -fx-min-height: 10;
+    -fx-border-color: #303952;
+    -fx-border-width: 0 2 2 2;
+}

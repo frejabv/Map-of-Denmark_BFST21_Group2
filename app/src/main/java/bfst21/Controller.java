@@ -57,6 +57,8 @@ public class Controller {
     private Text ttd;
     @FXML
     private Text memoryUse;
+    @FXML
+    private Text scaletext;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -64,6 +66,8 @@ public class Controller {
 
     public void init(Model model) {
         canvas.init(model);
+        canvas.setCurrentCanvasEdges();
+        updateScaleBar();
         hideAll();
         debug = new Debug(canvas, cpuProcess, cpuSystem, ttd, memoryUse);
         changeType("debug", false);
@@ -163,6 +167,7 @@ public class Controller {
     private void onScrollOnCanvas(ScrollEvent e) {
         double factor = Math.pow(1.01, e.getDeltaY());
         canvas.zoom(factor, new Point2D(e.getX(), e.getY()));
+        updateScaleBar();
     }
 
     @FXML
@@ -319,5 +324,16 @@ public class Controller {
 
     public void shutdownExecutor() {
         debug.shutdownExecutor();
+    }
+
+    @FXML
+    private HBox scaleContainer;
+    @FXML
+    private VBox scale;
+    public void updateScaleBar(){
+        double scaleWidth = (canvas.getWidth()/10) + 40;
+        scaleContainer.setPrefWidth(scaleWidth);
+        scale.setPrefWidth(scaleWidth);
+        scaletext.textProperty().setValue(String.valueOf(Math.round(canvas.getDistanceWidth()) / 10.0) + " KM");
     }
 }

@@ -169,7 +169,7 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    private void setCurrentCanvasEdges() {
+    public void setCurrentCanvasEdges() {
         currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(), 0)).getX();
         currentMinX = (float) mouseToModelCoords(new Point2D(0, 0)).getX();
         currentMaxY = (float) (mouseToModelCoords(new Point2D(0, getHeight())).getY());
