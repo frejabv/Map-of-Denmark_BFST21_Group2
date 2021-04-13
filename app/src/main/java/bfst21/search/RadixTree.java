@@ -96,10 +96,7 @@ public class RadixTree {
             result += currentNode.getValue();
 
             if (!foundChild) {
-                if (safeNode != null) {
-                    return safeNode;
-                }
-                return null;
+                return safeNode;
             }
         }
         return currentNode;
