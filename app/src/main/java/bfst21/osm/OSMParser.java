@@ -98,6 +98,7 @@ public class OSMParser {
 
                     if(k.equals("junction") || v.equals("roundabout")){
                         way.setIsOneway();
+                        break;
                     }
 
                     try {
