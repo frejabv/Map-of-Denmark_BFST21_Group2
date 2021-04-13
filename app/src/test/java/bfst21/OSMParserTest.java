@@ -55,12 +55,12 @@ public class OSMParserTest {
 
     @Test
     public void testSamsoeBuildings(){
-        assertEquals(5926,samsoeModel.getFillMap().get(Tag.BUILDING).size());
+        assertEquals(5863,samsoeModel.getFillMap().get(Tag.BUILDING).size());
     }
 
     @Test
     public void testSjaelsoeBuildings(){
-        assertEquals(2900,sjaelsoeModel.getFillMap().get(Tag.BUILDING).size());
+        assertEquals(2880,sjaelsoeModel.getFillMap().get(Tag.BUILDING).size());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class OSMParserTest {
     public void testSjaelsoePrimary(){ assertEquals(8,sjaelsoeModel.getDrawableMap().get(Tag.PRIMARY).size()); }
 
     @Test
-    public void testSamsoeResidential(){ assertEquals(492,samsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
+    public void testSamsoeResidential(){ assertEquals(490,samsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
 
     @Test
     public void testSjaelsoeResidential(){ assertEquals(164,sjaelsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
@@ -148,9 +148,9 @@ public class OSMParserTest {
     public void testSjaelsoeUnclassifiedWays(){ assertEquals(26,sjaelsoeModel.getDrawableMap().get(Tag.UNCLASSIFIED).size()); }
 
     @Test
-    public void testSamsoeInlandWater(){ assertEquals(355,samsoeModel.getFillMap().get(Tag.WATER).size()); }
+    public void testSamsoeInlandWater(){ assertEquals(347,samsoeModel.getFillMap().get(Tag.WATER).size()); }
 
     @Test
-    public void testSjaelsoeInlandWater(){ assertEquals(105,sjaelsoeModel.getFillMap().get(Tag.WATER).size()); }
+    public void testSjaelsoeInlandWater(){ assertEquals(101,sjaelsoeModel.getFillMap().get(Tag.WATER).size()); }
 
 }

@@ -1,0 +1,14 @@
+.buttonSpacing{
+    -fx-spacing: 20px;
+    /*JavaFX Margin Fix*/
+    -fx-padding: 0px 0px 20px 0px;
+    -fx-border-insets: 0 0 20px 0;
+    -fx-background-insets: 0 0 20px 0;
+}
+.roundedButton{
+    -fx-min-height: 50px;
+    -fx-min-width: 50px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-background-color: #303952;
+}
