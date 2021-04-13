@@ -32,53 +32,27 @@ public class AStar {
         List<Drawable> ways4 = model.getDrawableMap().get(Tag.UNCLASSIFIED);
         List<Drawable> ways5 = model.getDrawableMap().get(Tag.LIVING_STREET);
         List<Drawable> ways6 = model.getDrawableMap().get(Tag.SERVICE);
-        //List<Drawable> ways7 = model.getDrawableMap().get(Tag.JUNCTION);
-        List<Drawable> ways8 = model.getDrawableMap().get(Tag.PRIMARY);
+        List<Drawable> ways9 = model.getDrawableMap().get(Tag.PRIMARY);
 
-        List<Drawable> ways = Stream.of(ways2,ways3,ways4,ways5,ways6,ways8).flatMap(Collection::stream).collect(Collectors.toList());
+
+        List<Drawable> ways = Stream.of(ways2,ways3,ways4,ways5,ways6,ways9).flatMap(Collection::stream).collect(Collectors.toList());
         for (Drawable way : ways){
             Way wayButNowCasted = (Way) way;
             //TODO: Some nodes are in multiple ways and therefore set twice. plz fix
             for (int i = 0; i < wayButNowCasted.getNodes().size(); i++){
                 Node node = wayButNowCasted.getNodes().get(i);
-                if(i > 0 && !wayButNowCasted.isOneway()){
-                    Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)/wayButNowCasted.getSpeed()));
-                }
                 if(i != (wayButNowCasted.getNodes().size()-1)) {
                     Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)/wayButNowCasted.getSpeed()));
+                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)));
+                }
+                if(i > 0 && !wayButNowCasted.isOneway()){
+                    Node previousNode = wayButNowCasted.getNodes().get(i - 1);
+                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)));
                 }
                 node.setHScores(distanceToNode(node, end));
                 initialisedNodes.add(node);
-
             }
         }
-
-        System.out.println(model.getNodeIndex().getMember(32414383).getAdjecencies().size());
-
-        //Merge issue
-        initialisedNodes.sort((a, b) -> Long.compare(a.getId(), b.getId()));
-        int counter = 0;
-        int count = 0;
-        while (counter<initialisedNodes.size()-1) {
-            long valueOnCurrentVertex = initialisedNodes.get(counter).getId();
-            long valueOnNextVertex = initialisedNodes.get(counter+1).getId();
-            if(valueOnCurrentVertex == valueOnNextVertex){
-                //TODO: pls fix
-                count++;
-                for(Edge adjecentEdge: initialisedNodes.get(counter+1).getAdjecencies()){
-                    initialisedNodes.get(counter).addAdjecencies(adjecentEdge);
-                }
-                initialisedNodes.remove(counter+1);
-            }
-            else{
-                counter++;
-            }
-        }
-        System.out.println(count);
-
-        System.out.println("Jobs done.");
     }
 
     private double distanceToNode(Node current, Node destination){
