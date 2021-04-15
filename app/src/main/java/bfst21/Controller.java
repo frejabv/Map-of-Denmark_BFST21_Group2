@@ -74,7 +74,8 @@ public class Controller {
         if (model.getTtiMode()) {
             System.exit(0);
         }
-        new AStar(model, model.getNodeIndex().getMember(2571094920l), model.getNodeIndex().getMember(7198482568l));
+        model.setUpAStar();
+        model.getAStar().AStarSearch(model.getNodeIndex().getMember(2571094920l), model.getNodeIndex().getMember(32463690l));
     }
 
     OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory

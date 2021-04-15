@@ -8,23 +8,21 @@ import bfst21.osm.*;
 
 public class AStar {
     Model model;
-    public AStar(Model model, Node start, Node end){
+    List<Node> initialisedNodes;
+
+    public AStar(Model model){ //Node start, Node end
         this.model = model;
 
         //Read data
-        readData(end);
-        //Sets up the search
-        AStarSearch(start,end);
+        readData(); //end
 
         //Gets the path elements
         //List<Node> path = printPath(end);
         //System.out.println("dk");
-
-        System.out.println("Path: " + printPath(end)); //Prints the path
     }
 
-    private void readData(Node end) {
-        List<Node> initialisedNodes = new ArrayList<>();
+    private void readData() {
+        initialisedNodes = new ArrayList<>();
 
         //TODO: Combining multiple lists of drawables. Temporary solution.
         List<Drawable> ways2 = model.getDrawableMap().get(Tag.TERTIARY);
@@ -32,10 +30,9 @@ public class AStar {
         List<Drawable> ways4 = model.getDrawableMap().get(Tag.UNCLASSIFIED);
         List<Drawable> ways5 = model.getDrawableMap().get(Tag.LIVING_STREET);
         List<Drawable> ways6 = model.getDrawableMap().get(Tag.SERVICE);
-        List<Drawable> ways9 = model.getDrawableMap().get(Tag.PRIMARY);
+        List<Drawable> ways7 = model.getDrawableMap().get(Tag.PRIMARY);
 
-
-        List<Drawable> ways = Stream.of(ways2,ways3,ways4,ways5,ways6,ways9).flatMap(Collection::stream).collect(Collectors.toList());
+        List<Drawable> ways = Stream.of(ways2,ways3,ways4,ways5,ways6,ways7).flatMap(Collection::stream).collect(Collectors.toList());
         for (Drawable way : ways){
             Way wayButNowCasted = (Way) way;
             //TODO: Some nodes are in multiple ways and therefore set twice. plz fix
@@ -43,13 +40,12 @@ public class AStar {
                 Node node = wayButNowCasted.getNodes().get(i);
                 if(i != (wayButNowCasted.getNodes().size()-1)) {
                     Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)));
+                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)/wayButNowCasted.getSpeed()));
                 }
                 if(i > 0 && !wayButNowCasted.isOneway()){
                     Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)));
+                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)/wayButNowCasted.getSpeed()));
                 }
-                node.setHScores(distanceToNode(node, end));
                 initialisedNodes.add(node);
             }
         }
@@ -62,10 +58,9 @@ public class AStar {
             double deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
             distance = Math.sqrt(Math.pow(deltaX,2)+Math.pow(deltaY,2));
         }
-        return distance;
+        return distance * 111.320;
     }
 
-    //Static for now
     public String printPath(Node target){
         List<Node> path = new ArrayList<Node>();
         String result = "";
@@ -82,8 +77,10 @@ public class AStar {
         return result;
     }
 
-    //Static for now
-    public static void AStarSearch(Node start, Node end){
+    public void AStarSearch(Node start, Node end){
+        for(Node node : initialisedNodes) {
+            node.setHScores(distanceToNode(node, end));
+        }
 
         PriorityQueue<Node> pq = new PriorityQueue<Node>(20, new NodeComparator()); //Maybe set initial capacity based on educated guess?
 
@@ -131,6 +128,8 @@ public class AStar {
                 }
             }
         }
+        //todo maybe move this
+        printPath(end);
     }
 
     private static class NodeComparator implements Comparator<Node>{

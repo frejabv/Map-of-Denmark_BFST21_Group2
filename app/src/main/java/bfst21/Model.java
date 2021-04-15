@@ -20,6 +20,7 @@ public class Model {
     private ArrayList<Way> coastlines;
     private boolean ttiMode;
     private List<Node> AStarPath;
+    private AStar aStar;
 
     private float minX, minY, maxX, maxY;
 
@@ -140,7 +141,16 @@ public class Model {
     public List<Node> getAStarPath(){
         return AStarPath;
     }
+
     public void setAStarPath(List<Node> AStarPath){
         this.AStarPath = AStarPath;
+    }
+
+    public void setUpAStar() {
+        aStar = new AStar(this);
+    }
+
+    public AStar getAStar() {
+        return aStar;
     }
 }
