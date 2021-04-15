@@ -31,6 +31,10 @@ public class Way extends Member implements Drawable {
         nodes.add(node);
     }
 
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
     public static Way merge(Way first, Way second) {
         if(first == null) return second;
         if(second == null) return first;
@@ -85,7 +89,12 @@ public class Way extends Member implements Drawable {
         gc.stroke();
     }
 
-    public List<Node> getNodes() {
-        return nodes;
+    public void drawRelationPart(GraphicsContext gc) {
+        var firstNode = nodes.get(0);
+        gc.moveTo(firstNode.getX(), firstNode.getY());
+
+        for (var node : nodes) {
+            gc.lineTo(node.getX(), node.getY());
+        }
     }
 }

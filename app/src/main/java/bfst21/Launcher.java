@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.Startup.StartupScreen;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -11,8 +12,14 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        var ttiMode = getParameters().getRaw().size() > 0 && getParameters().getRaw().get(0).equals("ttiMode");
-        var model = new Model("data/bornholm.osm", ttiMode);
-        new View(model, primaryStage);
+        boolean ttiMode = getParameters().getRaw().size() > 0 && getParameters().getRaw().get(0).equals("ttiMode");
+        boolean fileSelectorMode = getParameters().getRaw().size() > 0 && getParameters().getRaw().get(0).equals("fileSelector");
+        if(fileSelectorMode){
+            new StartupScreen(primaryStage);
+        }
+        else{
+            var model = new Model("data/bornholm.osm",ttiMode);
+            new View(model, primaryStage);
+        }
     }
 }
