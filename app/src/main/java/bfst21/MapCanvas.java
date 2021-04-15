@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -8,6 +9,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
+
+import java.util.List;
 
 public class MapCanvas extends Canvas {
     private Model model;
