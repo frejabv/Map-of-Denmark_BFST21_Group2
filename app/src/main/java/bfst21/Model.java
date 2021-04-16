@@ -24,7 +24,7 @@ public class Model {
 
     private float minX, minY, maxX, maxY;
 
-    public Model(String filepath, boolean ttiMode) {
+    public Model(String filepath, boolean ttiMode) throws Exception {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
@@ -37,11 +37,7 @@ public class Model {
 
         this.ttiMode = ttiMode;
 
-        try {
-            OSMParser.readMapElements(filepath, this);
-        } catch (Exception e) {
-            System.out.println("error: " + e.getClass() + " " + e.getMessage());
-        }
+        OSMParser.readMapElements(filepath, this);
     }
 
     /*
