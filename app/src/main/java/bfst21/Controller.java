@@ -66,6 +66,7 @@ public class Controller {
     private Debug debug;
     private Point2D lastMouse;
     private boolean singleClick = true;
+    private Node nodeFrom;
 
     public void init(Model model) {
         canvas.init(model);
@@ -96,7 +97,7 @@ public class Controller {
             System.exit(0);
         }
         model.setUpAStar();
-        model.getAStar().AStarSearch(model.getNodeIndex().getMember(2571094920l), model.getNodeIndex().getMember(32463690l));
+        //model.getAStar().AStarSearch(model.getNodeIndex().getMember(2571094920l), model.getNodeIndex().getMember(32463690l));
     }
 
     @FXML
@@ -150,7 +151,13 @@ public class Controller {
                         canvas.setPin(node.getX(), node.getY());
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
-                        System.out.println(fieldType + ": " + node.getId());
+                        if(fieldType.equals("from")) {
+                            nodeFrom = node;
+                            System.out.println(fieldType + ": " + node.getId());
+                        } else if(fieldType.equals("to")) {
+                            System.out.println(fieldType + ": " + node.getId());
+                            //model.getAStar().AStarSearch(nodeFrom, node);
+                        }
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);
                     suggestionList.clear();

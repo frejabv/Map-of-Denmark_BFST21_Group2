@@ -40,11 +40,11 @@ public class AStar {
                 Node node = wayButNowCasted.getNodes().get(i);
                 if(i != (wayButNowCasted.getNodes().size()-1)) {
                     Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode)/wayButNowCasted.getSpeed()));
+                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode))); ///wayButNowCasted.getSpeed()
                 }
                 if(i > 0 && !wayButNowCasted.isOneway()){
                     Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode)/wayButNowCasted.getSpeed()));
+                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode))); ///wayButNowCasted.getSpeed()
                 }
                 initialisedNodes.add(node);
             }
