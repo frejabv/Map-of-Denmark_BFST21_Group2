@@ -1,9 +1,8 @@
-package bfst21;
+package bfst21.pathfinding;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import bfst21.Model;
 import bfst21.osm.*;
 
 public class AStar {
@@ -24,29 +23,26 @@ public class AStar {
     private void readData() {
         initialisedNodes = new ArrayList<>();
 
-        //TODO: Combining multiple lists of drawables. Temporary solution.
-        List<Drawable> ways2 = model.getDrawableMap().get(Tag.TERTIARY);
-        List<Drawable> ways3 = model.getDrawableMap().get(Tag.RESIDENTIAL);
-        List<Drawable> ways4 = model.getDrawableMap().get(Tag.UNCLASSIFIED);
-        List<Drawable> ways5 = model.getDrawableMap().get(Tag.LIVING_STREET);
-        List<Drawable> ways6 = model.getDrawableMap().get(Tag.SERVICE);
-        List<Drawable> ways7 = model.getDrawableMap().get(Tag.PRIMARY);
-
-        List<Drawable> ways = Stream.of(ways2,ways3,ways4,ways5,ways6,ways7).flatMap(Collection::stream).collect(Collectors.toList());
-        for (Drawable way : ways){
-            Way wayButNowCasted = (Way) way;
-            //TODO: Some nodes are in multiple ways and therefore set twice. plz fix
-            for (int i = 0; i < wayButNowCasted.getNodes().size(); i++){
-                Node node = wayButNowCasted.getNodes().get(i);
-                if(i != (wayButNowCasted.getNodes().size()-1)) {
-                    Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                    node.addAdjecencies(new Edge(nextNode,distanceToNode(node,nextNode))); ///wayButNowCasted.getSpeed()
+        for (Map.Entry<Tag, List<Drawable>> entry : model.getDrawableMap().entrySet()) {
+            List<Drawable> value = entry.getValue();
+            for (Drawable way : value) {
+                Way wayButNowCasted = (Way) way;
+                for (int i = 0; i < wayButNowCasted.getNodes().size(); i++) {
+                    Node node = wayButNowCasted.getNodes().get(i);
+                    if (i != (wayButNowCasted.getNodes().size() - 1)) {
+                        Node nextNode = wayButNowCasted.getNodes().get(i + 1);
+                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode)); ///wayButNowCasted.getSpeed()
+                        edge.setPathTypes(wayButNowCasted);
+                        node.addAdjecencies(edge);
+                    }
+                    if (i > 0 && !wayButNowCasted.isOneway()) {
+                        Node previousNode = wayButNowCasted.getNodes().get(i - 1);
+                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode)); ///wayButNowCasted.getSpeed()
+                        edge.setPathTypes(wayButNowCasted);
+                        node.addAdjecencies(edge);
+                    }
+                    initialisedNodes.add(node);
                 }
-                if(i > 0 && !wayButNowCasted.isOneway()){
-                    Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                    node.addAdjecencies(new Edge(previousNode,distanceToNode(node,previousNode))); ///wayButNowCasted.getSpeed()
-                }
-                initialisedNodes.add(node);
             }
         }
     }
@@ -77,7 +73,7 @@ public class AStar {
         return result;
     }
 
-    public void AStarSearch(Node start, Node end){
+    public void AStarSearch(Node start, Node end, TransportType type){
         for(Node node : initialisedNodes) {
             node.setHScores(distanceToNode(node, end));
         }
