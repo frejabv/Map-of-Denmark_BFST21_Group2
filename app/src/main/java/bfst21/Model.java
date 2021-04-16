@@ -1,6 +1,8 @@
 package bfst21;
 
 import bfst21.osm.*;
+import bfst21.pathfinding.AStar;
+import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class Model {
     private boolean ttiMode;
     private List<Node> AStarPath;
     private AStar aStar;
+    private TransportType currentTransportType = TransportType.CAR;
 
     private float minX, minY, maxX, maxY;
 
@@ -160,4 +163,8 @@ public class Model {
     public AStar getAStar() {
         return aStar;
     }
+
+    public void setCurrentTransportType(TransportType type){ this.currentTransportType = type; }
+
+    public TransportType getCurrentTransportType(){ return currentTransportType; }
 }
