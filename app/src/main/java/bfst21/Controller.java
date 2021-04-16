@@ -1,15 +1,14 @@
 package bfst21;
 
 import bfst21.osm.Node;
+import bfst21.pathfinding.TransportType;
 import com.sun.management.OperatingSystemMXBean;
 import javafx.event.ActionEvent;
 import bfst21.osm.Node;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -20,6 +19,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class Controller {
     @FXML
@@ -67,8 +67,10 @@ public class Controller {
     private Point2D lastMouse;
     private boolean singleClick = true;
     private Node nodeFrom;
+    private Model model;
 
     public void init(Model model) {
+        this.model = model;
         canvas.init(model);
         canvas.setCurrentCanvasEdges();
         updateScaleBar();
@@ -109,7 +111,7 @@ public class Controller {
         for (int i = 0; i < regexString.size(); i++) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");
-            Text bullet = new Text("●");
+            Text bullet = new Text("*");
             bullet.getStyleClass().add("regexMatch");
             Text text = new Text(regexString.get(i));
             hbox.getChildren().add(bullet);
@@ -347,5 +349,11 @@ public class Controller {
         scaleContainer.setPrefWidth(scaleWidth);
         scale.setPrefWidth(scaleWidth);
         scaletext.textProperty().setValue(String.valueOf(Math.round(canvas.getDistanceWidth()) / 10.0) + " KM");
+    }
+    @FXML
+    private ToggleGroup selectTransportType;
+    public void selectTransportType() {
+        ToggleButton currentButton = (ToggleButton) selectTransportType.getSelectedToggle();
+        model.setCurrentTransportType(TransportType.valueOf(currentButton.getText().toUpperCase()));
     }
 }

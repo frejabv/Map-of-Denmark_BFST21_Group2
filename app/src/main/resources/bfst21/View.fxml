@@ -131,22 +131,17 @@
               </FlowPane>
               <Region styleClass="hr"/>
               <FlowPane>
-                <ToggleButton text="Car" selected="true">
+                <ToggleButton onMouseClicked="#selectTransportType" text="Car" selected="true">
                   <toggleGroup>
                     <ToggleGroup fx:id="selectTransportType"/>
                   </toggleGroup>
                 </ToggleButton>
-                <ToggleButton text="Bike">
+                <ToggleButton onMouseClicked="#selectTransportType" text="Bicycle">
                   <toggleGroup>
                     <fx:reference source="selectTransportType"/>
                   </toggleGroup>
                 </ToggleButton>
-                <ToggleButton text="Walk">
-                  <toggleGroup>
-                    <fx:reference source="selectTransportType"/>
-                  </toggleGroup>
-                </ToggleButton>
-                <ToggleButton text="Public Transport">
+                <ToggleButton onMouseClicked="#selectTransportType" text="Walk">
                   <toggleGroup>
                     <fx:reference source="selectTransportType"/>
                   </toggleGroup>
