@@ -36,6 +36,6 @@ public class Edge{
     }
 
     public boolean isWalkable(){
-        return isDriveable;
+        return isWalkable;
     }
 }
