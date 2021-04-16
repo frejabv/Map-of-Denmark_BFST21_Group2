@@ -107,8 +107,13 @@ public class OSMParser {
                                 break;
                             }
 
-                            if(k.startsWith("cycleway")){
+                            if((k.startsWith("cycleway") || k.startsWith("bicycle")) && !(v.equals("no"))){
                                 tags.add(Tag.CYCLEWAY);
+                                break;
+                            }
+
+                            if((k.equals("sidewalk") || k.equals("foot")) && !v.equals("no")){
+                                tags.add(Tag.FOOTWAY);
                                 break;
                             }
 
