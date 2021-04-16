@@ -69,14 +69,8 @@ public class MapCanvas extends Canvas {
         });
 
         if(setPin){
-            gc.setFill(Color.rgb(231, 76, 60));
-            gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
-            double[] xPoints = {canvasPoint.getX()+0.00307*size,canvasPoint.getX()+0.025*size,canvasPoint.getX() + 0.04693*size}; //+0.05
-            double[] yPoints = {canvasPoint.getY()+0.037*size,canvasPoint.getY()+0.076*size,canvasPoint.getY()+0.037*size};
-            gc.fillPolygon(xPoints, yPoints, 3);
-            gc.setFill(Color.rgb(192, 57, 43));
-            gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
-        }
+            drawPin();
+            }
         gc.restore();
     }
 
@@ -94,6 +88,7 @@ public class MapCanvas extends Canvas {
         var currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(),0)).getX();
         var currentMinX = (float) mouseToModelCoords(new Point2D(0,0)).getX();
         size = (((currentMaxX-currentMinX)*111.320*0.56)/100);
+        //size = 500/Math.sqrt(trans.determinant());
         System.out.println(size);
         pinPoint = point;
         canvasPoint = mouseToModelCoords(pinPoint);
@@ -101,6 +96,21 @@ public class MapCanvas extends Canvas {
         setPin = true;
         repaint();
         return canvasPoint.getY()*-0.56f + ", " + canvasPoint.getX();
+    }
+
+    public void drawPin() {
+        var currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(),0)).getX();
+        var currentMinX = (float) mouseToModelCoords(new Point2D(0,0)).getX();
+        size = (((currentMaxX-currentMinX)*111.320*0.56)/100);
+        //size = 500/Math.sqrt(trans.determinant());
+        gc.setFill(Color.rgb(231, 76, 60));
+        gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05*size, 0.05*size, -30, 240, ArcType.OPEN);
+        double[] xPoints = {canvasPoint.getX()+0.00307*size,canvasPoint.getX()+0.025*size,canvasPoint.getX() + 0.04693*size}; //+0.05
+        double[] yPoints = {canvasPoint.getY()+0.037*size,canvasPoint.getY()+0.076*size,canvasPoint.getY()+0.037*size};
+        gc.fillPolygon(xPoints, yPoints, 3);
+        gc.setFill(Color.rgb(192, 57, 43));
+        gc.fillOval(canvasPoint.getX()+0.015*size,canvasPoint.getY()+0.015*size,0.020*size,0.020*size);
+
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
