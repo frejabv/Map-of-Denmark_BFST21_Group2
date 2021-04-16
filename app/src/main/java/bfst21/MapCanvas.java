@@ -74,7 +74,9 @@ public class MapCanvas extends Canvas {
 
         model.getRelationIndex().forEach(relation -> {
             if (relation.getTags().size() != 0) {
-                relation.draw(gc, renderingStyle);
+                if(relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
+                    relation.draw(gc, renderingStyle);
+                }
             }
         });
       
