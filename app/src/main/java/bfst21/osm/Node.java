@@ -1,5 +1,7 @@
 package bfst21.osm;
 
+import bfst21.pathfinding.Edge;
+
 import java.util.ArrayList;
 
 public class Node extends Member{
