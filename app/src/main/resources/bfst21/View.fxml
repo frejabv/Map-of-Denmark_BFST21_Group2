@@ -40,12 +40,8 @@
     />
     <GridPane pickOnBounds="false">
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="45.0" minWidth="250.0"
-                           prefWidth="250.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="10.0" minWidth="10.0"
-                           prefWidth="125.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="45.0" minWidth="250.0"
-                           prefWidth="250.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="65.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="35.0"/>
       </columnConstraints>
       <VBox pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
         <HBox styleClass="buttonSpacing" pickOnBounds="false">
@@ -191,32 +187,34 @@
           </HBox>
         </VBox>
       </VBox>
-      <VBox pickOnBounds="false" styleClass="centerContainer" GridPane.columnIndex="1" GridPane.rowIndex="0">
-      </VBox>
-      <VBox pickOnBounds="false" styleClass="rightContainer" GridPane.columnIndex="2" GridPane.rowIndex="0">
+      <VBox pickOnBounds="false" styleClass="rightContainer" GridPane.columnIndex="1" GridPane.rowIndex="0">
         <VBox fx:id="debugContainer" styleClass="mainContainer">
           <FlowPane styleClass="header-margin">
             <Text styleClass="mainContainer-header">Debug</Text>
           </FlowPane>
-          <FlowPane styleClass="header-margin">
-            <Text styleClass="mainContainer-subheader">Data</Text>
-          </FlowPane>
-          <Region styleClass="hr"/>
-          <Text fx:id="ttd">Redraw time: 00:00</Text>
-          <Text fx:id="cpuProcess">CPU Process Load: 0.00</Text>
-          <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
-          <Text fx:id="memoryUse">Memory Use: 0.00</Text>
-          <FlowPane styleClass="header-margin">
-            <Text styleClass="mainContainer-subheader">Dev Settings</Text>
-          </FlowPane>
-          <Region styleClass="hr"/>
-          <CheckBox>Show KD-tree lines</CheckBox>
-          <FlowPane styleClass="header-margin">
-            <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
-          </FlowPane>
-          <Region styleClass="hr" />
-          <VBox fx:id="regexContainer">
-          </VBox>
+          <ScrollPane styleClass="scroll-pane">
+            <VBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Data</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <Text fx:id="ttd">Redraw time: 00:00</Text>
+              <Text fx:id="cpuProcess" >CPU Process Load: 0.00</Text>
+              <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
+              <Text fx:id="memoryUse">Memory Use: 0.00</Text>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Dev Settings</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <CheckBox>Show KD-tree lines</CheckBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
+              </FlowPane>
+              <Region styleClass="hr" />
+              <VBox fx:id="regexContainer">
+              </VBox>
+            </VBox>
+          </ScrollPane>
         </VBox>
       </VBox>
     </GridPane>

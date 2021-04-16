@@ -13,10 +13,11 @@
     -fx-background-color: #ffffff;
     -fx-opacity: .5;
 }
-.leftContainer,.centerContainer,.rightContainer{
-    -fx-pref-width: 350px;
-    -fx-pref-height: 250px;
+.leftContainer,.rightContainer{
+    /*-fx-pref-width: 350px;
+    -fx-pref-height: 250px;*/
     -fx-padding: 20px;
+    -fx-min-height: 300px;
 }
 .rightContainer{
     /*JavaFX Margin Fix*/
@@ -28,8 +29,9 @@
     -fx-background-color: #ffffff;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
-    -fx-pref-height: 100px;
-    -fx-min-width: 350px;
+    -fx-min-height: 100px;
+    -fx-min-width: 150px;
+    -fx-max-width: 300px;
     -fx-padding: 20px 20px 20px 20px;
 }
 .header-margin{
@@ -43,7 +45,7 @@
 
 .mainContainer .scroll-pane {
     -fx-background-color: transparent;
-    -fx-min-height: 450px;
+    -fx-max-height: 450px;
 }
 .mainContainer .scroll-pane, .mainContainer .scroll-pane .viewport, .mainContainer .scroll-pane .content,.mainContainer .scroll-pane .scroll-bar,.mainContainer .scroll-pane .scroll-bar:vertical,.mainContainer .scroll-pane .scroll-bar:horizontal, .mainContainer .scroll-pane .increment-button:hover ,.text-area .decrement-button:hover {
     -fx-background-color:transparent;
