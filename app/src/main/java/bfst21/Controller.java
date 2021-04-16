@@ -97,7 +97,7 @@ public class Controller {
             System.exit(0);
         }
         model.setUpAStar();
-        model.getAStar().AStarSearch(model.getNodeIndex().getMember(2571094920l), model.getNodeIndex().getMember(32463690l), model.getCurrentTransportType());
+        model.getAStar().AStarSearch(model.getNodeIndex().getMember(5117580473l), model.getNodeIndex().getMember(3470322527l), model.getCurrentTransportType());
     }
 
     @FXML

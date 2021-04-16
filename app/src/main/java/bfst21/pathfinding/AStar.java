@@ -32,13 +32,13 @@ public class AStar {
                     if (i != (wayButNowCasted.getNodes().size() - 1)) {
                         Node nextNode = wayButNowCasted.getNodes().get(i + 1);
                         Edge edge = new Edge(nextNode, distanceToNode(node, nextNode)); ///wayButNowCasted.getSpeed()
-                        edge.setPathTypes(wayButNowCasted);
+                        edge.setPathTypes(wayButNowCasted, model);
                         node.addAdjecencies(edge);
                     }
                     if (i > 0 && !wayButNowCasted.isOneway()) {
                         Node previousNode = wayButNowCasted.getNodes().get(i - 1);
                         Edge edge = new Edge(previousNode, distanceToNode(node, previousNode)); ///wayButNowCasted.getSpeed()
-                        edge.setPathTypes(wayButNowCasted);
+                        edge.setPathTypes(wayButNowCasted, model);
                         node.addAdjecencies(edge);
                     }
                     initialisedNodes.add(node);
@@ -66,7 +66,7 @@ public class AStar {
         }
 
         Collections.reverse(path); //To print in the order from start to target
-        for (Node temp:  path){
+        for (Node temp : path){
             result += temp.getId() + " -> ";
         }
         model.setAStarPath(path);
@@ -100,32 +100,34 @@ public class AStar {
 
             //Checks every child of current node
             for (Edge e : current.getAdjecencies()) {
-                Node child = e.target;
-                double cost = e.weight;
-                double temp_g_scores = current.g_scores + cost;
-                double temp_f_scores = temp_g_scores + child.h_scores;
+                if(type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
+                    Node child = e.target;
+                    double cost = e.weight;
+                    double temp_g_scores = current.g_scores + cost;
+                    double temp_f_scores = temp_g_scores + child.h_scores;
 
 
-                //Checks if child node has been evaluated and the newer f_score is higher, skip
-                if((child.explored) && (temp_f_scores >= child.f_scores)){
-                    continue;
-                }
-
-                //else if child node is not in queue (add it) or newer f_score is lower (Update them)
-                else if((!pq.contains(child)) || (temp_f_scores < child.f_scores)){
-                    child.parent = current;
-                    child.g_scores = temp_g_scores;
-                    child.f_scores = temp_f_scores;
-
-                    if(pq.contains(child)){
-                        pq.remove(child);
+                    //Checks if child node has been evaluated and the newer f_score is higher, skip
+                    if ((child.explored) && (temp_f_scores >= child.f_scores)) {
+                        continue;
                     }
-                    pq.add(child);
+
+                    //else if child node is not in queue (add it) or newer f_score is lower (Update them)
+                    else if ((!pq.contains(child)) || (temp_f_scores < child.f_scores)) {
+                        child.parent = current;
+                        child.g_scores = temp_g_scores;
+                        child.f_scores = temp_f_scores;
+
+                        if (pq.contains(child)) {
+                            pq.remove(child);
+                        }
+                        pq.add(child);
+                    }
                 }
             }
         }
         //todo maybe move this
-        printPath(end);
+        System.out.println(printPath(end));
     }
 
     private static class NodeComparator implements Comparator<Node>{
