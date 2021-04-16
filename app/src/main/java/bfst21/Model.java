@@ -20,6 +20,9 @@ public class Model {
     private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
+
+    private ArrayList<POI> pointsOfInterest;
+
     private boolean ttiMode;
 
     private float minX, minY, maxX, maxY;
@@ -34,6 +37,8 @@ public class Model {
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
+
+        pointsOfInterest = new ArrayList<>();
 
         this.ttiMode = ttiMode;
 
@@ -137,5 +142,13 @@ public class Model {
 
     public RadixTree getStreetTree() {
         return streetTree;
+    }
+
+    public void addPOI(POI poi) {
+        pointsOfInterest.add(poi);
+    }
+
+    public ArrayList<POI> getPointsOfInterest() {
+        return pointsOfInterest;
     }
 }

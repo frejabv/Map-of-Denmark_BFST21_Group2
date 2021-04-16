@@ -173,24 +173,22 @@
               <Region styleClass="hr"/>
               <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
               <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Favorites</Text>
+                <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <VBox>
-                <Text>Item1</Text>
-                <Text>Item2</Text>
-                <Text>Item3</Text>
-                <Text>Item4</Text>
-                <Text>Item5</Text>
-                <Text>Item6</Text>
-                <Text>Item7</Text>
-                <Text>Item8</Text>
+              <VBox fx:id="userPOI">
               </VBox>
             </VBox>
           </ScrollPane>
         </VBox>
         <VBox fx:id="pinContainer" styleClass="mainContainer">
-            <Text fx:id="pinText">Pin</Text>
+          <HBox styleClass="pinBorderPane">
+              <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
+              <VBox>
+                <Text fx:id="pinText">Pin</Text>
+                <Button fx:id="removePin">Remove pin</Button>
+              </VBox>
+          </HBox>
         </VBox>
       </VBox>
       <VBox pickOnBounds="false" styleClass="centerContainer" GridPane.columnIndex="1" GridPane.rowIndex="0">

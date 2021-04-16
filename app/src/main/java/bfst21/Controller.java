@@ -63,8 +63,10 @@ public class Controller {
     private Debug debug;
     private Point2D lastMouse;
     private boolean singleClick = true;
+    private Model model;
 
     public void init(Model model) {
+        this.model = model;
         canvas.init(model);
         canvas.setCurrentCanvasEdges();
         updateScaleBar();
@@ -103,7 +105,7 @@ public class Controller {
         for (int i = 0; i < regexString.size(); i++) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");
-            Text bullet = new Text("●");
+            Text bullet = new Text("\u25CF");
             bullet.getStyleClass().add("regexMatch");
             Text text = new Text(regexString.get(i));
             hbox.getChildren().add(bullet);
@@ -185,19 +187,19 @@ public class Controller {
     }
 
     @FXML
+    private Button removePin;
+
+    @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
-            pinContainer.getChildren().remove(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
             pinText.textProperty().setValue(coordinates);
-            Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
                 canvas.repaint();
                 hideAll();
             });
-            pinContainer.getChildren().add(removePin);
         } else {
             singleClick = true;
         }
@@ -346,5 +348,27 @@ public class Controller {
             metric = " KM";
         }
         scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
+    }
+
+    public void onMousePressedPinHeart() {
+        //add this point to POI
+        model.addPOI(new POI("Near to #","place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
+        canvas.setPin = false;
+        canvas.repaint();
+        updateUserPOI();
+    }
+
+    @FXML
+    private VBox userPOI;
+    public void updateUserPOI(){
+        userPOI.getChildren().clear();
+        model.getPointsOfInterest().forEach(POI -> {
+            Button currentPOI = new Button(POI.getName());
+            userPOI.getChildren().add(currentPOI);
+            currentPOI.setOnAction(event -> {
+                canvas.goToPosition(POI.getX(),POI.getX() + 0.0002,POI.getY());
+                canvas.repaint();
+            });
+        });
     }
 }

@@ -4,6 +4,7 @@ import bfst21.osm.RenderingStyle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Affine;
@@ -15,6 +16,7 @@ public class MapCanvas extends Canvas {
     GraphicsContext gc;
     boolean setPin;
     Point2D canvasPoint;
+    Point2D pinPoint;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -79,15 +81,27 @@ public class MapCanvas extends Canvas {
                 }
             }
         });
+
+        model.getPointsOfInterest().forEach(POI -> {
+            gc.setFill(Color.WHITE);
+            double size = (30/Math.sqrt(trans.determinant()));
+            gc.fillOval(POI.getX()-(size/2), POI.getY()-(size/2),size,size);
+            gc.drawImage(new Image("bfst21/icons/heart.png"),POI.getX()-(size/4),POI.getY()-(size/4),size/2,size/2);
+            switch (POI.getType().toLowerCase()){
+                case "home":
+                    //draw home icon
+                    break;
+                case "work":
+                    //draw briefcase icon
+                    break;
+                default:
+                    //draw generic icon
+            }
+        });
       
         if (setPin) {
-            gc.setFill(Color.rgb(231, 76, 60));
-            gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05 * size, 0.05 * size, -30, 240, ArcType.OPEN);
-            double[] xPoints = {canvasPoint.getX() + 0.00307 * size, canvasPoint.getX() + 0.025 * size, canvasPoint.getX() + 0.04693 * size}; //+0.05
-            double[] yPoints = {canvasPoint.getY() + 0.037 * size, canvasPoint.getY() + 0.076 * size, canvasPoint.getY() + 0.037 * size};
-            gc.fillPolygon(xPoints, yPoints, 3);
-            gc.setFill(Color.rgb(192, 57, 43));
-            gc.fillOval(canvasPoint.getX() + 0.015 * size, canvasPoint.getY() + 0.015 * size, 0.020 * size, 0.020 * size);
+            double size = (30/Math.sqrt(trans.determinant()));
+            gc.drawImage(new Image("bfst21/icons/pin.png"),pinPoint.getX()-(size/2),pinPoint.getY()-size,size,size);
         }
 
         gc.restore();
@@ -124,6 +138,7 @@ public class MapCanvas extends Canvas {
     public String setPin(Point2D point) {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
+        pinPoint = canvasPoint;
         canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
@@ -182,4 +197,7 @@ public class MapCanvas extends Canvas {
         return (currentMaxX - currentMinX) * 111.320f * 0.56f;
     }
 
+    public Point2D getPinPoint() {
+        return pinPoint;
+    }
 }
