@@ -107,6 +107,11 @@ public class OSMParser {
                                 break;
                             }
 
+                            if(k.startsWith("cycleway")){
+                                tags.add(Tag.CYCLEWAY);
+                                break;
+                            }
+
                             try {
                                 var tag = Tag.valueOf(v.toUpperCase());
                                 tags.add(tag);
@@ -170,6 +175,7 @@ public class OSMParser {
                             break;
                         case "way":
                             way.checkSpeed();
+                            way.setTags(tags);
                             addWayToList(way, tags, model);
                             break;
                         case "relation":
