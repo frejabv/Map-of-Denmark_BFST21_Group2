@@ -334,6 +334,17 @@ public class Controller {
         double scaleWidth = (canvas.getWidth()/10) + 40;
         scaleContainer.setPrefWidth(scaleWidth);
         scale.setPrefWidth(scaleWidth);
-        scaletext.textProperty().setValue(String.valueOf(Math.round(canvas.getDistanceWidth()) / 10.0) + " KM");
+        double scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
+
+        String metric;
+        if (scaleValue < 1){
+            scaleValue = Math.round(canvas.getDistanceWidth() * 100);
+            metric = " M";
+        }
+        else{
+            scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
+            metric = " KM";
+        }
+        scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
     }
 }
