@@ -5,10 +5,7 @@ import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -25,7 +22,11 @@ public class Model {
     private boolean ttiMode;
     private List<Node> AStarPath;
     private AStar aStar;
-    private TransportType currentTransportType = TransportType.CAR;
+    private TransportType currentTransportType = TransportType.BICYCLE;
+
+    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.LIVING_STREET,Tag.MOTORWAY,Tag.PEDESTRIAN,Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET,Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> walkable = new ArrayList<>(Arrays.asList(Tag.FOOTWAY, Tag.LIVING_STREET,Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SERVICE, Tag.TRACK, Tag.UNCLASSIFIED));
 
     private float minX, minY, maxX, maxY;
 
@@ -167,4 +168,16 @@ public class Model {
     public void setCurrentTransportType(TransportType type){ this.currentTransportType = type; }
 
     public TransportType getCurrentTransportType(){ return currentTransportType; }
+
+    public ArrayList<Tag> getDriveableTags() {
+        return driveable;
+    }
+
+    public ArrayList<Tag> getCyclableTags() {
+        return cyclable;
+    }
+
+    public ArrayList<Tag> getWalkableTags() {
+        return walkable;
+    }
 }
