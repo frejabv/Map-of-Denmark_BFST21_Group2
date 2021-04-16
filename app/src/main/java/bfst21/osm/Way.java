@@ -3,10 +3,12 @@ package bfst21.osm;
 import java.util.ArrayList;
 import java.util.List;
 
+import bfst21.Rtree.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Way extends Member implements Drawable {
     private List<Node> nodes;
+    private Rectangle rect;
 
     public Way(long id) {
         super(id);
@@ -61,5 +63,9 @@ public class Way extends Member implements Drawable {
         for (var node : nodes) {
             gc.lineTo(node.getX(), node.getY());
         }
+    }
+
+    public void setRectangle(float minX, float minY, float maxX, float maxY) {
+        rect = new Rectangle(minX, minY, maxX, maxY);
     }
 }
