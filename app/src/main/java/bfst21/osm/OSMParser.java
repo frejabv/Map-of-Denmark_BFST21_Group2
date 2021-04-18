@@ -86,7 +86,7 @@ public class OSMParser {
                                 tags.add(Tag.BUILDING);
                                 break;
                             }
-                            if (k.equals("service")) {
+                            if (k.equals("service") || k.equals("surface")) {
                                 break;
                             }
 

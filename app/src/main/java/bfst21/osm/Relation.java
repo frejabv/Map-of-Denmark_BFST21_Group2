@@ -31,8 +31,8 @@ public class Relation extends Member {
             gc.setStroke(style.getColorByTag(tags.get(0)));
             gc.setFill(style.getColorByTag(tags.get(0)));
 
-            if(tags.contains(Tag.BUILDING) || tags.contains(Tag.MEADOW)) {
-                drawBuilding(gc);
+            if(tags.contains(Tag.BUILDING) || tags.contains(Tag.MEADOW) || tags.contains(Tag.WATER)) {
+                drawMultiPolygon(gc);
             } else {
                 for(Way way : ways) {
                     var drawStyle = style.getDrawStyleByTag(tags.get(0));
@@ -45,11 +45,10 @@ public class Relation extends Member {
         }
     }
 
-    public void drawBuilding(GraphicsContext gc) {
+    public void drawMultiPolygon(GraphicsContext gc) {
         boolean innerDrawn = false;
         gc.setFillRule(FillRule.EVEN_ODD);
         gc.beginPath();
-        //System.out.println("ID of relation: " + id);
         for(Way way : ways) {
             String value = way.getRoleMap().get(id);
             if(value.equals("inner")) {
