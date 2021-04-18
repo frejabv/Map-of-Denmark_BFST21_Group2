@@ -95,3 +95,36 @@
 .textfield:focused {
     -fx-focus-color: transparent;
 }
+.pinBorderPane{
+    -fx-spacing: 20px;
+}
+
+.regexLine{
+    -fx-spacing: 10;
+    -fx-padding: 0 0 10 0;
+}
+.regexMatch{
+    -fx-fill: #ecf0f1;
+    -fx-padding: 0 10px 0 0;
+}
+.regexMatchGreen{
+    -fx-fill: #2ecc71;
+}
+.regexMatchRed{
+    -fx-fill: #e74c3c;
+}
+
+.scale {
+    -fx-padding: 20;
+}
+.scale .scaletext{
+    -fx-font-size: 15;
+    -fx-fill: #303952;
+}
+.scalebar{
+    -fx-fill: transparent;
+    -fx-max-height: 10;
+    -fx-min-height: 10;
+    -fx-border-color: #303952;
+    -fx-border-width: 0 2 2 2;
+}
