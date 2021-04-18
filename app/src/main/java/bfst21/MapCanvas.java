@@ -64,6 +64,14 @@ public class MapCanvas extends Canvas {
             });
         });
 
+        model.getRelationIndex().forEach(relation -> {
+            if (relation.getTags().size() != 0) {
+                if(relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
+                    relation.draw(gc, renderingStyle);
+                }
+            }
+        });
+
         model.getDrawableMap().forEach((tag, drawables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
             var style = renderingStyle.getDrawStyleByTag(tag);
@@ -72,14 +80,6 @@ public class MapCanvas extends Canvas {
                     drawable.draw(gc);
                 }     
             });
-        });
-
-        model.getRelationIndex().forEach(relation -> {
-            if (relation.getTags().size() != 0) {
-                if(relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
-                    relation.draw(gc, renderingStyle);
-                }
-            }
         });
 
         model.getPointsOfInterest().forEach(POI -> {
