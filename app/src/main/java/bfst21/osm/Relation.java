@@ -80,20 +80,20 @@ public class Relation extends Member {
             //check min values
             if (w.getRect().getMinX() < minX)
                 minX = w.getRect().getMinX();
-            else if (w.getRect().getMinX() < maxX)
+            if (w.getRect().getMinX() > maxX)
                 maxX = w.getRect().getMinX();
             if (w.getRect().getMinY() < minY)
                 minY = w.getRect().getMinY();
-            else if (w.getRect().getMinY() < maxY)
+            if (w.getRect().getMinY() > maxY)
                 maxY = w.getRect().getMinY();
             //check max values
             if (w.getRect().getMaxX() < minX)
                 minX = w.getRect().getMaxX();
-            if (w.getRect().getMaxX() < maxX)
+            if (w.getRect().getMaxX() > maxX)
                 maxX = w.getRect().getMaxX();
             if (w.getRect().getMaxY() < minY)
                 minY = w.getRect().getMaxY();
-            if (w.getRect().getMaxY() < maxY)
+            if (w.getRect().getMaxY() > maxY)
                 maxY = w.getRect().getMaxY();
         }
 
