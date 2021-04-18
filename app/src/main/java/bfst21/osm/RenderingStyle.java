@@ -59,16 +59,16 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.BUILDING, Color.rgb(232, 232, 232));
         defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
 
-        defaultColorMap.put(Tag.CEMETERY, Color.rgb(149, 205, 126));
+        defaultColorMap.put(Tag.CEMETERY, Color.CRIMSON);
         //defaultColorMap.put(Tag.FARMLAND, Color.rgb(247, 255, 178));
-        defaultColorMap.put(Tag.FOREST, Color.rgb(149, 205, 126));
-        defaultColorMap.put(Tag.GRASS, Color.rgb(151, 194, 131));
-        defaultColorMap.put(Tag.GRASSLAND, Color.rgb(133, 182, 112));
-        defaultColorMap.put(Tag.GRAVE_YARD, Color.rgb(149, 205, 126));
-        defaultColorMap.put(Tag.MEADOW, Color.rgb(149, 205, 126));
-        defaultColorMap.put(Tag.ORCHARD, Color.rgb(149, 205, 126));
+        defaultColorMap.put(Tag.FOREST, Color.YELLOW);
+        defaultColorMap.put(Tag.GRASS, Color.AQUAMARINE);
+        defaultColorMap.put(Tag.GRASSLAND, Color.AQUA);
+        defaultColorMap.put(Tag.GRAVE_YARD, Color.CRIMSON);
+        defaultColorMap.put(Tag.MEADOW, Color.CORNFLOWERBLUE);
+        defaultColorMap.put(Tag.ORCHARD, Color.DARKORCHID);
         defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
-        defaultColorMap.put(Tag.SCRUB, Color.rgb(182, 220, 166));
+        defaultColorMap.put(Tag.SCRUB, Color.RED);
 
 
         defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);
