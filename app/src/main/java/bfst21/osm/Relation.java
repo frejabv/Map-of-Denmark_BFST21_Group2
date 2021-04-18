@@ -31,7 +31,7 @@ public class Relation extends Member {
             gc.setStroke(style.getColorByTag(tags.get(0)));
             gc.setFill(style.getColorByTag(tags.get(0)));
 
-            if(tags.contains(Tag.BUILDING)) {
+            if(tags.contains(Tag.BUILDING) || tags.contains(Tag.MEADOW)) {
                 drawBuilding(gc);
             } else {
                 for(Way way : ways) {

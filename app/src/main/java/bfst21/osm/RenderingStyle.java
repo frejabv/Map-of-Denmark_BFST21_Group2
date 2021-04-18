@@ -33,6 +33,7 @@ public class RenderingStyle {
         styleMap.put(Tag.GRASS, DrawStyle.FILL);
         styleMap.put(Tag.GRASSLAND, DrawStyle.FILL);
         styleMap.put(Tag.GRAVE_YARD, DrawStyle.FILL);
+        styleMap.put(Tag.HEATH, DrawStyle.FILL);
         styleMap.put(Tag.MEADOW, DrawStyle.FILL);
         styleMap.put(Tag.ORCHARD, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
@@ -65,6 +66,7 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.GRASS, Color.AQUAMARINE);
         defaultColorMap.put(Tag.GRASSLAND, Color.AQUA);
         defaultColorMap.put(Tag.GRAVE_YARD, Color.CRIMSON);
+        defaultColorMap.put(Tag.HEATH, Color.FUCHSIA);
         defaultColorMap.put(Tag.MEADOW, Color.CORNFLOWERBLUE);
         defaultColorMap.put(Tag.ORCHARD, Color.DARKORCHID);
         defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
