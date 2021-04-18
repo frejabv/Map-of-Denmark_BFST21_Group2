@@ -65,7 +65,27 @@ public class Way extends Member implements Drawable {
         }
     }
 
-    public void setRectangle(float minX, float minY, float maxX, float maxY) {
+    public void createRectangle() {
+        float minX = Float.POSITIVE_INFINITY;
+        float minY = Float.POSITIVE_INFINITY;
+        float maxX = Float.NEGATIVE_INFINITY;
+        float maxY = Float.NEGATIVE_INFINITY;
+
+        for (Node n: nodes) {
+            if (n.getX() < minX)
+                minX = n.getX();
+            else if (n.getX() < maxX)
+                maxX = n.getX();
+            if (n.getY() < minY)
+                minY = n.getY();
+            else if (n.getY() < maxY)
+                maxY = n.getY();
+        }
+
         rect = new Rectangle(minX, minY, maxX, maxY);
+    }
+
+    public Rectangle getRect() {
+        return rect;
     }
 }
