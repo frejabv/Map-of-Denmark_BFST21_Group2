@@ -60,6 +60,9 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.BUILDING, Color.rgb(232, 232, 232));
         defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
 
+        defaultColorMap.put(Tag.STREAM, Color.LIGHTBLUE);
+        defaultColorMap.put(Tag.RIVER, Color.LIGHTBLUE);
+
         defaultColorMap.put(Tag.CEMETERY, Color.CRIMSON);
         //defaultColorMap.put(Tag.FARMLAND, Color.rgb(247, 255, 178));
         defaultColorMap.put(Tag.FOREST, Color.YELLOW);
