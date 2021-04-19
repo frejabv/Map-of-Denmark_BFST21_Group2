@@ -64,7 +64,8 @@ public class Controller {
     private Point2D lastMouse;
     private boolean singleClick = true;
     private Model model;
-    ArrayList<Text> suggestionList = new ArrayList<>();
+    private ArrayList<Text> suggestionList = new ArrayList<>();
+    private long fromNodeId, toNodeId;
 
     public void init(Model model) {
         this.model = model;
@@ -77,50 +78,8 @@ public class Controller {
         Spelling autocorrector = new Spelling();
         Regex regex = new Regex(setupRegexView());
 
-        searchField.textProperty().addListener((obs, oldText, newText) -> {
-            //Run Regex Matcher
-            regex.run(newText);
-            addSuggestions(model, "search", null);
-        });
-
-        searchField.setOnAction(e -> {
-            if(!suggestionList.isEmpty()) {
-                searchField.textProperty().setValue(suggestionList.get(0).getText());
-                Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
-                canvas.setPin(node.getX(), node.getY());
-                canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
-                searchContainer.getChildren().removeAll(suggestionList);
-                suggestionList.clear();
-            }
-        });
-
-        routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
-            regex.run(newText);
-            addSuggestions(model, "route", "from");
-        });
-
-        routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
-            regex.run(newText);
-            addSuggestions(model, "route", "to");
-        });
-
-        /*routeFieldFrom.setOnAction(e -> {
-            if(toNodeID != null && routeFieldFrom.getText() != "") {
-                searchField.textProperty().setValue(suggestionList.get(0).getText());
-                routeContainer.getChildren().removeAll(suggestionList);
-                suggestionList.clear();
-                model.getAStar().AStarSearch(toNodeID, suggestionList.get(0).getText()).getId());
-            }
-        });
-
-        routeFieldTo.setOnAction(e -> {
-            if(fromNodeID != null && routeFieldTo.getText() != "") {
-                searchField.textProperty().setValue(suggestionList.get(0).getText());
-                routeContainer.getChildren().removeAll(suggestionList);
-                suggestionList.clear();
-                model.getAStar().AStarSearch(fromNodeID, suggestionList.get(0).getText()).getId());
-            }
-        });*/
+        setUpSearchField(regex);
+        setUpRouteFields(regex);
 
         if (model.getTtiMode()) {
             System.exit(0);
@@ -147,7 +106,62 @@ public class Controller {
         return regexVisualisers;
     }
 
-    //ArrayList<Text> suggestionList = new ArrayList<>();
+    public void setUpSearchField(Regex regex) {
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            //Run Regex Matcher
+            regex.run(newText);
+            addSuggestions(model, "search", null);
+        });
+
+        searchField.setOnAction(e -> {
+            if(!suggestionList.isEmpty()) {
+                searchField.textProperty().setValue(suggestionList.get(0).getText());
+                Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
+                canvas.setPin(node.getX(), node.getY());
+                canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                searchContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+    }
+
+    public void setUpRouteFields(Regex regex) {
+        routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model, "route", "from");
+        });
+
+        routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model, "route", "to");
+        });
+
+        routeFieldFrom.setOnAction(e -> {
+            if(!suggestionList.isEmpty()) {
+                routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
+                fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if(toNodeId != 0) {
+                    //model.getAStar().AStarSearch(fromNodeId, toNodeId);
+                    System.out.println("Route searched");
+                }
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+
+        routeFieldTo.setOnAction(e -> {
+            if(!suggestionList.isEmpty()) {
+                routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
+                toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if(fromNodeId != 0) {
+                    //model.getAStar().AStarSearch(fromNodeID, toNodeId);
+                    System.out.println("Route searched");
+                }
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+    }
 
     public void addSuggestions(Model model, String containerType, String fieldType) {
         VBox selectedContainer;
@@ -178,6 +192,16 @@ public class Controller {
                         canvas.setPin(node.getX(), node.getY());
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
+                        if(fieldType.equals("from")) {
+                            fromNodeId = node.getId();
+                            //potential route search here as well
+                        } else {
+                            toNodeId = node.getId();
+                            if(fromNodeId != 0) {
+                                //model.getAStar().AStarSearch(fromNodeID, toNodeId);
+                                System.out.println("Route searched");
+                            }
+                        }
                         System.out.println(fieldType + ": " + node.getId());
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);
