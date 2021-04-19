@@ -148,6 +148,7 @@ public class MapCanvas extends Canvas {
     public String setPin(double x, double y) {
         size = .3;
         canvasPoint = new Point2D(x - (0.025 * size), y - (0.076 * size));
+        pinPoint = canvasPoint;
         setPin = true;
         repaint();
         return canvasPoint.getY() * -0.56f + ", " + canvasPoint.getX();

@@ -64,6 +64,7 @@ public class Controller {
     private Point2D lastMouse;
     private boolean singleClick = true;
     private Model model;
+    ArrayList<Text> suggestionList = new ArrayList<>();
 
     public void init(Model model) {
         this.model = model;
@@ -75,10 +76,22 @@ public class Controller {
         changeType("debug", false);
         Spelling autocorrector = new Spelling();
         Regex regex = new Regex(setupRegexView());
+
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             //Run Regex Matcher
             regex.run(newText);
             addSuggestions(model, "search", null);
+        });
+
+        searchField.setOnAction(e -> {
+            if(!suggestionList.isEmpty()) {
+                searchField.textProperty().setValue(suggestionList.get(0).getText());
+                Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
+                canvas.setPin(node.getX(), node.getY());
+                canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                searchContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
         });
 
         routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
@@ -90,6 +103,24 @@ public class Controller {
             regex.run(newText);
             addSuggestions(model, "route", "to");
         });
+
+        /*routeFieldFrom.setOnAction(e -> {
+            if(toNodeID != null && routeFieldFrom.getText() != "") {
+                searchField.textProperty().setValue(suggestionList.get(0).getText());
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+                model.getAStar().AStarSearch(toNodeID, suggestionList.get(0).getText()).getId());
+            }
+        });
+
+        routeFieldTo.setOnAction(e -> {
+            if(fromNodeID != null && routeFieldTo.getText() != "") {
+                searchField.textProperty().setValue(suggestionList.get(0).getText());
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+                model.getAStar().AStarSearch(fromNodeID, suggestionList.get(0).getText()).getId());
+            }
+        });*/
 
         if (model.getTtiMode()) {
             System.exit(0);
@@ -116,7 +147,7 @@ public class Controller {
         return regexVisualisers;
     }
 
-    ArrayList<Text> suggestionList = new ArrayList<>();
+    //ArrayList<Text> suggestionList = new ArrayList<>();
 
     public void addSuggestions(Model model, String containerType, String fieldType) {
         VBox selectedContainer;
