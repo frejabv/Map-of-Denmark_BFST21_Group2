@@ -2,6 +2,7 @@ package bfst21;
 
 import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
+import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -81,6 +82,11 @@ public class MapCanvas extends Canvas {
             }
         });
 
+        if(model.existsAStarPath()){
+            debugAStarPath();
+            paintPath(model.getAStarPath());
+        }
+
         if (setPin) {
             gc.setFill(Color.rgb(231, 76, 60));
             gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05 * size, 0.05 * size, -30, 240, ArcType.OPEN);
@@ -89,9 +95,6 @@ public class MapCanvas extends Canvas {
             gc.fillPolygon(xPoints, yPoints, 3);
             gc.setFill(Color.rgb(192, 57, 43));
             gc.fillOval(canvasPoint.getX() + 0.015 * size, canvasPoint.getY() + 0.015 * size, 0.020 * size, 0.020 * size);
-        }
-        if(model.existsAStarPath()){
-            paintPath(model.getAStarPath());
         }
         gc.restore();
         long elapsedTime = System.nanoTime() - start;
@@ -122,6 +125,21 @@ public class MapCanvas extends Canvas {
                 repaint();
             }
         }
+    }
+
+    public void debugAStarPath() {
+        List<Node> nodes = model.getAStarDebugPath();
+        gc.setStroke(Color.CORNFLOWERBLUE);
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant())*2);
+        gc.beginPath();
+        for(Node n : nodes) {
+            for(Edge e : n.getAdjecencies()) {
+                Node child = e.target;
+                gc.moveTo(n.getX(), n.getY());
+                gc.lineTo(child.getX(), child.getY());
+            }
+        }
+        gc.stroke();
     }
 
     public void paintPath(List<Node> path){

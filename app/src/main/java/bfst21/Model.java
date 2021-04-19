@@ -21,6 +21,7 @@ public class Model {
     private ArrayList<Way> coastlines;
     private boolean ttiMode;
     private List<Node> AStarPath;
+    private List<Node> AStarDebugPath;
     private AStar aStar;
     private TransportType currentTransportType = TransportType.CAR;
 
@@ -145,6 +146,14 @@ public class Model {
         return streetTree;
     }
 
+    public void setUpAStar() {
+        aStar = new AStar(this);
+    }
+
+    public AStar getAStar() {
+        return aStar;
+    }
+
     public boolean existsAStarPath(){
         return AStarPath != null;
     }
@@ -157,12 +166,12 @@ public class Model {
         this.AStarPath = AStarPath;
     }
 
-    public void setUpAStar() {
-        aStar = new AStar(this);
+    public List<Node> getAStarDebugPath(){
+        return AStarDebugPath;
     }
 
-    public AStar getAStar() {
-        return aStar;
+    public void setAStarDebugPath(List<Node> AStarDebugPath){
+        this.AStarDebugPath = AStarDebugPath;
     }
 
     public void setCurrentTransportType(TransportType type){ this.currentTransportType = type; }

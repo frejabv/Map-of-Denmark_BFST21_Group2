@@ -126,6 +126,15 @@ public class AStar {
                 }
             }
         }
+
+        List<Node> path = new ArrayList<Node>();
+        for(Node node : initialisedNodes) {
+            if(node.explored) {
+                path.add(node);
+            }
+        }
+        model.setAStarDebugPath(path);
+
         //todo maybe move this
         System.out.println(printPath(end));
     }
