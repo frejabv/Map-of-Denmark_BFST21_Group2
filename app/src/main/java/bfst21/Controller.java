@@ -114,7 +114,7 @@ public class Controller {
         });
 
         searchField.setOnAction(e -> {
-            if(!suggestionList.isEmpty()) {
+            if (!suggestionList.isEmpty()) {
                 searchField.textProperty().setValue(suggestionList.get(0).getText());
                 Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
                 canvas.setPin(node.getX(), node.getY());
@@ -137,10 +137,10 @@ public class Controller {
         });
 
         routeFieldFrom.setOnAction(e -> {
-            if(!suggestionList.isEmpty()) {
+            if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
                 fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if(toNodeId != 0) {
+                if (toNodeId != 0) {
                     //model.getAStar().AStarSearch(fromNodeId, toNodeId);
                     System.out.println("Route searched");
                 }
@@ -150,10 +150,10 @@ public class Controller {
         });
 
         routeFieldTo.setOnAction(e -> {
-            if(!suggestionList.isEmpty()) {
+            if (!suggestionList.isEmpty()) {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
                 toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if(fromNodeId != 0) {
+                if (fromNodeId != 0) {
                     //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                     System.out.println("Route searched");
                 }
@@ -192,12 +192,12 @@ public class Controller {
                         canvas.setPin(node.getX(), node.getY());
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
-                        if(fieldType.equals("from")) {
+                        if (fieldType.equals("from")) {
                             fromNodeId = node.getId();
                             //potential route search here as well
                         } else {
                             toNodeId = node.getId();
-                            if(fromNodeId != 0) {
+                            if (fromNodeId != 0) {
                                 //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                                 System.out.println("Route searched");
                             }
@@ -387,18 +387,18 @@ public class Controller {
     private HBox scaleContainer;
     @FXML
     private VBox scale;
-    public void updateScaleBar(){
-        double scaleWidth = (canvas.getWidth()/10) + 40;
+
+    public void updateScaleBar() {
+        double scaleWidth = (canvas.getWidth() / 10) + 40;
         scaleContainer.setPrefWidth(scaleWidth);
         scale.setPrefWidth(scaleWidth);
         double scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
 
         String metric;
-        if (scaleValue < 1){
+        if (scaleValue < 1) {
             scaleValue = Math.round(canvas.getDistanceWidth() * 100);
             metric = " M";
-        }
-        else{
+        } else {
             scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
             metric = " KM";
         }
@@ -407,7 +407,7 @@ public class Controller {
 
     public void onMousePressedPinHeart() {
         //add this point to POI
-        model.addPOI(new POI("Near to #","place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
+        model.addPOI(new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
         canvas.setPin = false;
         canvas.repaint();
         updateUserPOI();
@@ -415,13 +415,14 @@ public class Controller {
 
     @FXML
     private VBox userPOI;
-    public void updateUserPOI(){
+
+    public void updateUserPOI() {
         userPOI.getChildren().clear();
         model.getPointsOfInterest().forEach(POI -> {
             Button currentPOI = new Button(POI.getName());
             userPOI.getChildren().add(currentPOI);
             currentPOI.setOnAction(event -> {
-                canvas.goToPosition(POI.getX(),POI.getX() + 0.0002,POI.getY());
+                canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
                 canvas.repaint();
             });
         });

@@ -6,7 +6,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -70,13 +69,13 @@ public class MapCanvas extends Canvas {
             drawables.forEach(drawable -> {
                 if (tag.zoomLimit > getDistanceWidth()) {
                     drawable.draw(gc);
-                }     
+                }
             });
         });
 
         model.getRelationIndex().forEach(relation -> {
             if (relation.getTags().size() != 0) {
-                if(relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
+                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
                     relation.draw(gc, renderingStyle);
                 }
             }
@@ -84,10 +83,10 @@ public class MapCanvas extends Canvas {
 
         model.getPointsOfInterest().forEach(POI -> {
             gc.setFill(Color.WHITE);
-            double size = (30/Math.sqrt(trans.determinant()));
-            gc.fillOval(POI.getX()-(size/2), POI.getY()-(size/2),size,size);
-            gc.drawImage(new Image("bfst21/icons/heart.png"),POI.getX()-(size/4),POI.getY()-(size/4),size/2,size/2);
-            switch (POI.getType().toLowerCase()){
+            double size = (30 / Math.sqrt(trans.determinant()));
+            gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+            gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
+            switch (POI.getType().toLowerCase()) {
                 case "home":
                     //draw home icon
                     break;
@@ -98,10 +97,10 @@ public class MapCanvas extends Canvas {
                     //draw generic icon
             }
         });
-      
+
         if (setPin) {
-            double size = (30/Math.sqrt(trans.determinant()));
-            gc.drawImage(new Image("bfst21/icons/pin.png"),pinPoint.getX()-(size/2),pinPoint.getY()-size,size,size);
+            double size = (30 / Math.sqrt(trans.determinant()));
+            gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size, size);
         }
 
         gc.restore();
