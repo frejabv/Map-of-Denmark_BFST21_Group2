@@ -102,8 +102,13 @@ public class OSMParser {
                                 }
                             }
 
+                            if(k.equals("name") && isWay){
+                                way.setName(v);
+                            }
+
+
                             if(k.equals("junction") || v.equals("roundabout")){
-                                way.setIsOneway();
+                                way.setIsJunction();
                                 break;
                             }
 
