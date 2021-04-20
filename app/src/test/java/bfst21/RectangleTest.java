@@ -4,8 +4,10 @@ import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
 import bfst21.osm.Relation;
 import bfst21.osm.Way;
+import javafx.geometry.Point2D;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RectangleTest {
     public final Model RTreeModel = new Model("data/TEST_RTREE_RECTANGLE.osm", false);
@@ -96,5 +98,51 @@ public class RectangleTest {
         assertEquals(testRect127.getMinY(), OSMRect127.getMinY());
         assertEquals(testRect127.getMaxX(), OSMRect127.getMaxX());
         assertEquals(testRect127.getMaxY(), OSMRect127.getMaxY());
+    }
+
+    @Test
+    public void testRectangleIntersects(){
+        Rectangle r1 = new Rectangle(0,0,2,2);
+        Rectangle r2 = new Rectangle(1,1,3,3);
+        Rectangle r3 = new Rectangle(5,5,10,10);
+
+        assertTrue(r1.intersects(r2));
+        assertTrue(r2.intersects(r1));
+
+        assertTrue(r1.intersects(r1));
+        assertTrue(r2.intersects(r2));
+
+        assertFalse(r1.intersects(r3));
+        assertFalse(r3.intersects(r1));
+
+        assertFalse(r2.intersects(r3));
+        assertFalse(r3.intersects(r2));
+
+        assertFalse(r1.intersects(null));
+    }
+
+    @Test
+    public void testDistanceTo(){
+        Rectangle testRect = new Rectangle(1,1,3,3);
+
+        Point2D p1 = new Point2D(0,0);
+        Point2D p2 = new Point2D(2,0);
+        Point2D p3 = new Point2D(4,0);
+        Point2D p4 = new Point2D(0,2);
+        Point2D p5 = new Point2D(2,2);
+        Point2D p6 = new Point2D(4,2);
+        Point2D p7 = new Point2D(0,4);
+        Point2D p8 = new Point2D(2,4);
+        Point2D p9 = new Point2D(4,4);
+
+        assertEquals(2, testRect.distanceSquaredTo(p1), 0.0001);
+        assertEquals(1, testRect.distanceSquaredTo(p2), 0.0001);
+        assertEquals(2, testRect.distanceSquaredTo(p3), 0.0001);
+        assertEquals(1, testRect.distanceSquaredTo(p4), 0.0001);
+        assertEquals(0, testRect.distanceSquaredTo(p5), 0.0001);
+        assertEquals(1, testRect.distanceSquaredTo(p6), 0.0001);
+        assertEquals(2, testRect.distanceSquaredTo(p7), 0.0001);
+        assertEquals(1, testRect.distanceSquaredTo(p8), 0.0001);
+        assertEquals(2, testRect.distanceSquaredTo(p9), 0.0001);
     }
 }

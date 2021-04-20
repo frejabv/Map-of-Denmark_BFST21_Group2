@@ -90,7 +90,7 @@ public class MapCanvas extends Canvas {
         }
 
         if (RTreeLines) {
-            //TODO
+            //TODO make this look nice and dandy
             System.out.println("showing RtreeLines");
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
             gc.setStroke(Color.PURPLE);

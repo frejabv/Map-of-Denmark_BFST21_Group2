@@ -71,30 +71,39 @@ public class Relation extends Member {
     }
 
     public void createRectangle(){
-        float minX = Float.POSITIVE_INFINITY;
-        float minY = Float.POSITIVE_INFINITY;
-        float maxX = Float.NEGATIVE_INFINITY;
-        float maxY = Float.NEGATIVE_INFINITY;
+        float minX = 180;
+        float minY = 90;
+        float maxX = -180;
+        float maxY = -90;
 
         for (Way w: ways) {
             //check min values
-            if (w.getRect().getMinX() < minX)
+            if (w.getRect().getMinX() < minX) {
                 minX = w.getRect().getMinX();
-            if (w.getRect().getMinX() > maxX)
+            }
+            if (w.getRect().getMinX() > maxX) {
                 maxX = w.getRect().getMinX();
-            if (w.getRect().getMinY() < minY)
+            }
+            if (w.getRect().getMinY() < minY) {
                 minY = w.getRect().getMinY();
-            if (w.getRect().getMinY() > maxY)
+            }
+            if (w.getRect().getMinY() > maxY) {
                 maxY = w.getRect().getMinY();
+            }
+
             //check max values
-            if (w.getRect().getMaxX() < minX)
+            if (w.getRect().getMaxX() < minX) {
                 minX = w.getRect().getMaxX();
-            if (w.getRect().getMaxX() > maxX)
+            }
+            if (w.getRect().getMaxX() > maxX) {
                 maxX = w.getRect().getMaxX();
-            if (w.getRect().getMaxY() < minY)
+            }
+            if (w.getRect().getMaxY() < minY) {
                 minY = w.getRect().getMaxY();
-            if (w.getRect().getMaxY() > maxY)
+            }
+            if (w.getRect().getMaxY() > maxY) {
                 maxY = w.getRect().getMaxY();
+            }
         }
 
         rect = new Rectangle(minX, minY, maxX, maxY);
