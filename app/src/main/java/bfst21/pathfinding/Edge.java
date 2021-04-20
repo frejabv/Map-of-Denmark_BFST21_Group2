@@ -7,10 +7,12 @@ public class Edge{
     public final double weight;
     public final Node target;
     private boolean isDriveable, isCyclable, isWalkable;
+    private long wayID;
 
-    public Edge(Node targetNode, double costVal){
+    public Edge(Node targetNode, double costVal, long wayID){
         target = targetNode;
         weight = costVal;
+        this.wayID = wayID;
     }
 
     public void setPathTypes(Way way, Model model){
@@ -37,5 +39,9 @@ public class Edge{
 
     public boolean isWalkable(){
         return isWalkable;
+    }
+
+    public long getWayID(){
+        return wayID;
     }
 }
