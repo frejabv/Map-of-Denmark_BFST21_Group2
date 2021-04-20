@@ -68,4 +68,8 @@ public class Way extends Member implements Drawable {
     public void setRectangle(float minX, float minY, float maxX, float maxY) {
         rect = new Rectangle(minX, minY, maxX, maxY);
     }
+
+    public Rectangle getRectangle() {
+        return rect;
+    }
 }
