@@ -1,6 +1,7 @@
 package bfst21;
 
 import bfst21.osm.RenderingStyle;
+import bfst21.osm.Tag;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,6 +27,7 @@ public class MapCanvas extends Canvas {
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
+        setCurrentCanvasEdges();
         moveToInitialPosition();
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
@@ -46,7 +48,7 @@ public class MapCanvas extends Canvas {
         gc.fill();
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
 
-        gc.setFill(renderingStyle.island);
+        gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
         for (var island : model.getIslands()) {
             island.draw(gc);
             gc.fill();
@@ -64,22 +66,27 @@ public class MapCanvas extends Canvas {
             });
         });
 
-        model.getDrawableMap().forEach((tag, drawables) -> {
-            gc.setStroke(renderingStyle.getColorByTag(tag));
-            var style = renderingStyle.getDrawStyleByTag(tag);
-            drawables.forEach(drawable -> {
-                if (tag.zoomLimit > getDistanceWidth()) {
-                    drawable.draw(gc);
-                }     
-            });
-        });
-
         model.getRelationIndex().forEach(relation -> {
             if (relation.getTags().size() != 0) {
                 if(relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
                     relation.draw(gc, renderingStyle);
                 }
             }
+        });
+
+        model.getDrawableMap().forEach((tag, drawables) -> {
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+            var style = renderingStyle.getDrawStyleByTag(tag);
+            drawables.forEach(drawable -> {
+                if (tag.zoomLimit > getDistanceWidth()) {
+                    drawable.draw(gc);
+                }
+                if (tag.zoomLimit/100 > getDistanceWidth() && tag.equals(Tag.MOTORWAY)){
+                    System.out.println("Fixed width");
+                    gc.setLineWidth(.00015);
+                }
+            });
         });
 
         model.getPointsOfInterest().forEach(POI -> {
@@ -120,7 +127,6 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoom(double factor, Point2D center) {
-        setCurrentCanvasEdges();
         if (factor > 1) {
             if (getDistanceWidth() > 0.1) {
                 trans.prependScale(factor, factor, center);
@@ -133,6 +139,7 @@ public class MapCanvas extends Canvas {
                 repaint();
             }
         }
+        setCurrentCanvasEdges();
     }
 
     public String setPin(Point2D point) {

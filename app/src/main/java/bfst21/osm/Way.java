@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class Way extends Member implements Drawable {
     private List<Node> nodes;
