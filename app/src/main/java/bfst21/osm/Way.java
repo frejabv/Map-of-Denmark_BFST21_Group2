@@ -9,6 +9,8 @@ public class Way extends Member implements Drawable {
     private List<Node> nodes;
     int maxSpeed = -1;
     boolean isOneway;
+    boolean isJunction;
+    String name = "";
 
     public Way(long id) {
         super(id);
@@ -56,6 +58,10 @@ public class Way extends Member implements Drawable {
         this.maxSpeed = maxSpeed;
     }
 
+    public String getName(){ return name; }
+
+    public void setName(String name){ this.name = name; }
+
     public void checkSpeed() {
         if(maxSpeed == -1){
             //Maybe check if way has areatype declared????? like urban
@@ -75,6 +81,13 @@ public class Way extends Member implements Drawable {
 
     public boolean isOneway(){
         return isOneway;
+    }
+
+    public boolean isJunction(){ return isJunction; }
+
+    public void setIsJunction(){
+        this.isJunction = true;
+        setIsOneway();
     }
 
     @Override
