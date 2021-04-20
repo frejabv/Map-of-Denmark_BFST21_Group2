@@ -1,6 +1,10 @@
 package bfst21.Rtree;
 
+import bfst21.MapCanvas;
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class Rectangle {
     float minX, minY, maxX, maxY;
@@ -41,5 +45,15 @@ public class Rectangle {
         if (p.getY() < minY) dy = p.getY() - minY;
         else if (p.getY() > maxY) dy = p.getY() - maxY;
         return dx * dx + dy * dy;
+    }
+
+    public void draw(GraphicsContext gc) {
+        gc.beginPath();
+        gc.moveTo(minX, minY);
+        gc.lineTo(minX, maxY);
+        gc.lineTo(maxX, maxY);
+        gc.lineTo(maxX, minY);
+        gc.lineTo(minX, minY);
+        gc.stroke();
     }
 }

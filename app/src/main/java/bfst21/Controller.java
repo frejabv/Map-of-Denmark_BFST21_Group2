@@ -336,4 +336,9 @@ public class Controller {
         scale.setPrefWidth(scaleWidth);
         scaletext.textProperty().setValue(String.valueOf(Math.round(canvas.getDistanceWidth()) / 10.0) + " KM");
     }
+
+    public void toggleRTreeLines(MouseEvent mouseEvent) {
+        canvas.RTreeLines = !canvas.RTreeLines;
+        canvas.repaint();
+    }
 }

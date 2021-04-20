@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bfst21.Rtree.Rectangle;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Way extends Member implements Drawable {
@@ -65,7 +66,36 @@ public class Way extends Member implements Drawable {
         }
     }
 
-    public void setRectangle(float minX, float minY, float maxX, float maxY) {
+    public void createRectangle() {
+        float minX = 180;
+        float minY = 90;
+        float maxX = -180;
+        float maxY = -90;
+
+        for (Node n: nodes) {
+            if (n.getX() < minX) {
+                minX = n.getX();
+            }
+            if (n.getX() > maxX) {
+                maxX = n.getX();
+            }
+            if (n.getY() < minY) {
+                minY = n.getY();
+            }
+            if (n.getY() > maxY) {
+                maxY = n.getY();
+            }
+        }
+
         rect = new Rectangle(minX, minY, maxX, maxY);
+    }
+
+    public Rectangle getRect() {
+        return rect;
+    }
+
+    public Point2D nearestPointOnWay(Point2D p) {
+        //TODO find the nearest point in the way to a given point, and return it. used for finding nearest way.
+        return null;
     }
 }
