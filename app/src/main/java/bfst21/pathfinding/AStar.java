@@ -8,16 +8,11 @@ import bfst21.osm.*;
 public class AStar {
     Model model;
     List<Node> initialisedNodes;
+    boolean isRoundabout;
 
-    public AStar(Model model){ //Node start, Node end
+    public AStar(Model model){
         this.model = model;
-
-        //Read data
-        readData(); //end
-
-        //Gets the path elements
-        //List<Node> path = printPath(end);
-        //System.out.println("dk");
+        readData();
     }
 
     private void readData() {
@@ -31,13 +26,13 @@ public class AStar {
                     Node node = wayButNowCasted.getNodes().get(i);
                     if (i != (wayButNowCasted.getNodes().size() - 1)) {
                         Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode)); ///wayButNowCasted.getSpeed()
+                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode),wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
                         edge.setPathTypes(wayButNowCasted, model);
                         node.addAdjecencies(edge);
                     }
                     if (i > 0 && !wayButNowCasted.isOneway()) {
                         Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode)); ///wayButNowCasted.getSpeed()
+                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode),wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
                         edge.setPathTypes(wayButNowCasted, model);
                         node.addAdjecencies(edge);
                     }
@@ -54,45 +49,65 @@ public class AStar {
             double deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
             distance = Math.sqrt(Math.pow(deltaX,2)+Math.pow(deltaY,2));
         }
-        return distance * 111.320;
+        return distance * 111.320 * 0.56;
     }
 
-    public String printPath(Node target){
+    public ArrayList<String> printPath(Node target){
+        ArrayList<String> routeDescription = new ArrayList<>();
         List<Node> path = new ArrayList<Node>();
-        String result = "";
+        double totalDistance = 0;
+        double currentDistance = 0;
 
         for(Node node = target; node!=null; node = node.parent){//Starts on the target and work back to start
             path.add(node);
         }
 
-        Collections.reverse(path); //To print in the order from start to target
-        for (Node temp : path){
-            result += temp.getId() + " -> ";
-        }
+        Collections.reverse(path);
 
-        //starting it from 1 and ending 2 before size so we can always have three nodes to compare
-        for(int i = 1; i < path.size()-1; i++) {
-            Node currentNode = path.get(i);
-            //if there is reason to look for a turn (1 or 2?)
-            //if(currentNode.getAdjecencies().size() > 1) {
-                Node prevNode = path.get(i-1);
-                Node nextNode = path.get(i+1);
-                if(i == 1) System.out.println("Go " + (distanceToNode(prevNode, currentNode)*1000) + "m");
-                String direction = getDirection(currentNode, prevNode, nextNode);
-            //}
+        for (int i = 1; i < path.size()-1; i++) {
+            Node node = path.get(i);
+            Node nextNode = path.get(i+1);
+            Node previousNode = path.get(i-1);
+            currentDistance += distanceToNode(previousNode,node);
+
+            long firstId = 0;
+            long secondId = 0;
+
+            for (Edge e: previousNode.getAdjecencies()){
+                if(e.target == node){
+                    firstId = e.getWayID();
+                }
+            }
+            for (Edge e: node.getAdjecencies()){
+                if(e.target == nextNode){
+                    secondId = e.getWayID();
+                }
+            }
+            if(firstId != secondId){
+                totalDistance += currentDistance;
+                routeDescription.add("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
+                routeDescription.add(getDirection(node,previousNode,nextNode) + model.getWayIndex().getMember(secondId).getName());
+                System.out.println("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
+                System.out.println(getDirection(node,previousNode,nextNode) + model.getWayIndex().getMember(secondId).getName());
+                currentDistance = 0;
+            }
+            if(i == path.size()-2){
+                routeDescription.add("Follow " + model.getWayIndex().getMember(secondId).getName() + " for " + getMetric(currentDistance) + " until you arrive at your destination");
+                System.out.println("Follow " + model.getWayIndex().getMember(secondId).getName() + " for " + getMetric(currentDistance) + " until you arrive at your destination");
+            }
         }
+        routeDescription.add("The routeDescription was in total: " + getMetric(totalDistance));
+        System.out.println("The routeDescription was in total: " + getMetric(totalDistance));
+
 
         model.setAStarPath(path);
-        return result;
+        return routeDescription;
     }
 
     private String getDirection(Node A, Node B, Node C) {
-        System.out.println();
-        System.out.println("New cross: " + A.getId());
+        String direction = "";
         double theta = Math.atan2(C.getY() - A.getY(), C.getX() - A.getX()) -
                 Math.atan2(B.getY() - A.getY(), B.getX() - A.getX());
-
-        System.out.println(theta);
 
         double result = Math.toDegrees(theta); //the same as multiplying theta by 180/pi
 
@@ -101,15 +116,23 @@ public class AStar {
         result = Math.abs(result);
 
         if(result > 190) {
-            System.out.println("Turning left");
+            direction = "Turn left at ";
         } else if(result < 170) {
-            System.out.println("Turning right");
-        } else {
-            System.out.println("Going straight");
+            for(Edge e: A.getAdjecencies()){
+                if(e.target == C){
+                    if(model.getWayIndex().getMember(e.getWayID()).isJunction()){
+                        isRoundabout = true;
+                    }
+                    else{
+                        direction = "Turn right at ";
+                    }
+                }
+            }
+        } else{
+            direction = "Continue at ";
         }
-        System.out.println(result);
 
-        return "";
+        return direction;
     }
 
     public void AStarSearch(Node start, Node end, TransportType type){
@@ -175,7 +198,16 @@ public class AStar {
         model.setAStarDebugPath(path);
 
         //todo maybe move this
-        System.out.println(printPath(end));
+        printPath(end);
+    }
+
+    public String getMetric(double currentDistance){
+        String metric = " km";
+        if(currentDistance<1){
+            currentDistance = currentDistance*1000;
+            metric = " m";
+        }
+        return Math.round(currentDistance) + metric;
     }
 
     private static class NodeComparator implements Comparator<Node>{
