@@ -5,17 +5,16 @@ import bfst21.osm.Node;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import bfst21.pathfinding.AStar;
+import bfst21.pathfinding.TransportType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class AStarTest {
     private Model model;
-    private final Model samsoeModel = new Model("data/TEST_MAP_SAMSOE.osm",false);
 
     @BeforeEach
     public void setUp() {
-        model = new Model("data/dk-simple.osm",false);
-        //System.out.println(model.getDrawableMap());
+        model = new Model("data/dk-AstarTest.osm",false);
         model.setUpAStar();
     }
     
@@ -24,18 +23,21 @@ public class AStarTest {
         Node testNode = model.getNodeIndex().getMember(11);
         assertEquals(2,testNode.getAdjecencies().size());
         testNode = model.getNodeIndex().getMember(2);
-        assertEquals(3,testNode.getAdjecencies().size()); //dunno yet
+        assertEquals(3,testNode.getAdjecencies().size());
     }
 
     @Test
     public void testAdjecencies() {
-        //not done, test the expected adjecencies
+        //for Odense, has Korsør and Vejle as adjecencies
         Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(model.getNodeIndex().getMember(11),testNode.getAdjecencies().get(0).target);
+        assertEquals(2,testNode.getAdjecencies().size());
+        assertEquals(model.getNodeIndex().getMember(12),testNode.getAdjecencies().get(0).target);
+        assertEquals(model.getNodeIndex().getMember(8),testNode.getAdjecencies().get(1).target);
     }
 
     @Test
     public void testPrintPath() {
+        //route from Skagen to Randers
         AStar astar = model.getAStar();
         astar.AStarSearch(model.getNodeIndex().getMember(1),model.getNodeIndex().getMember(5), model.getCurrentTransportType());
         assertEquals("1 -> 2 -> 5 -> ", astar.printPath(model.getNodeIndex().getMember(5)));
@@ -43,16 +45,36 @@ public class AStarTest {
 
     @Test
     public void testDriveable() {
+        //Odense to Korsør is a primary highway
         Node testNode = model.getNodeIndex().getMember(11);
         assertEquals(true,testNode.getAdjecencies().get(0).isDriveable());
         assertEquals(false,testNode.getAdjecencies().get(0).isWalkable());
     }
 
-    //test path that avoids the direct route because we are driving
+    @Test
+    public void testCycleRoute() {
+        //from Århus to Viborg there is a direct cycleway
+        AStar astar = model.getAStar();
 
-    //test change transport type which changes the path
+        astar.AStarSearch(model.getNodeIndex().getMember(7),model.getNodeIndex().getMember(4), model.getCurrentTransportType());
+        assertEquals("7 -> 5 -> 4 -> ", astar.printPath(model.getNodeIndex().getMember(4)));
 
-    //test costvalue for edges and total costvalue
+        model.setCurrentTransportType(TransportType.BICYCLE);
+        astar.AStarSearch(model.getNodeIndex().getMember(7),model.getNodeIndex().getMember(4), model.getCurrentTransportType());
+        assertEquals("7 -> 4 -> ", astar.printPath(model.getNodeIndex().getMember(4)));
+    }
 
-    //maybe test speed
+    @Test
+    public void testDistance() {
+        //distance from Odense to Korsør
+        AStar astar = model.getAStar();
+        Node testNode = model.getNodeIndex().getMember(11);
+        Node destination = model.getNodeIndex().getMember(12);
+
+        double deltaX = Math.abs(testNode.getX() - destination.getX());
+        double deltaY = Math.abs(testNode.getY() - destination.getY());
+        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320;
+
+        assertEquals(distance, testNode.getAdjecencies().get(0).weight);
+    }
 }
