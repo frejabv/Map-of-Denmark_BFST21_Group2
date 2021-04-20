@@ -95,6 +95,10 @@
 .textfield:focused {
     -fx-focus-color: transparent;
 }
+.pinBorderPane{
+    -fx-spacing: 20px;
+}
+
 .regexLine{
     -fx-spacing: 10;
     -fx-padding: 0 0 10 0;
