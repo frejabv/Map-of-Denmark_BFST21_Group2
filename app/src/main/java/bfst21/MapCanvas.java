@@ -93,14 +93,17 @@ public class MapCanvas extends Canvas {
             //TODO make this look nice and dandy
             System.out.println("showing RtreeLines");
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+
             gc.setStroke(Color.PURPLE);
             model.getWayIndex().forEach(way -> {
                 way.getRect().draw(gc);
             });
+
             gc.setStroke(Color.GREEN);
             model.getRelationIndex().forEach(relation -> {
                 relation.getRect().draw(gc);
             });
+
         }
 
         gc.restore();

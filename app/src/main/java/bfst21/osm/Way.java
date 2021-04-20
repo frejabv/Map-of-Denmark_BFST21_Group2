@@ -67,10 +67,10 @@ public class Way extends Member implements Drawable {
     }
 
     public void createRectangle() {
-        float minX = 180;
-        float minY = 90;
-        float maxX = -180;
-        float maxY = -90;
+        float minX = 181;
+        float minY = 181;
+        float maxX = -181;
+        float maxY = -181;
 
         for (Node n: nodes) {
             if (n.getX() < minX) {
