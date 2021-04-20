@@ -69,8 +69,47 @@ public class AStar {
         for (Node temp : path){
             result += temp.getId() + " -> ";
         }
+
+        //starting it from 1 and ending 2 before size so we can always have three nodes to compare
+        for(int i = 1; i < path.size()-1; i++) {
+            Node currentNode = path.get(i);
+            //if there is reason to look for a turn (1 or 2?)
+            //if(currentNode.getAdjecencies().size() > 1) {
+                Node prevNode = path.get(i-1);
+                Node nextNode = path.get(i+1);
+                if(i == 1) System.out.println("Go " + (distanceToNode(prevNode, currentNode)*1000) + "m");
+                String direction = getDirection(currentNode, prevNode, nextNode);
+            //}
+        }
+
         model.setAStarPath(path);
         return result;
+    }
+
+    private String getDirection(Node A, Node B, Node C) {
+        System.out.println();
+        System.out.println("New cross: " + A.getId());
+        double theta = Math.atan2(C.getY() - A.getY(), C.getX() - A.getX()) -
+                Math.atan2(B.getY() - A.getY(), B.getX() - A.getX());
+
+        System.out.println(theta);
+
+        double result = Math.toDegrees(theta); //the same as multiplying theta by 180/pi
+
+        //todo find better solution
+        if(result > 0) result = 360-result;
+        result = Math.abs(result);
+
+        if(result > 190) {
+            System.out.println("Turning left");
+        } else if(result < 170) {
+            System.out.println("Turning right");
+        } else {
+            System.out.println("Going straight");
+        }
+        System.out.println(result);
+
+        return "";
     }
 
     public void AStarSearch(Node start, Node end, TransportType type){
