@@ -2,9 +2,6 @@ package bfst21;
 
 import bfst21.osm.Node;
 import bfst21.pathfinding.TransportType;
-import com.sun.management.OperatingSystemMXBean;
-import javafx.event.ActionEvent;
-import bfst21.osm.Node;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -19,7 +16,6 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class Controller {
     @FXML
@@ -99,7 +95,7 @@ public class Controller {
             System.exit(0);
         }
         model.setUpAStar();
-        model.getAStar().AStarSearch(model.getNodeIndex().getMember(5117580473l), model.getNodeIndex().getMember(3470322527l), model.getCurrentTransportType());
+        model.getAStar().AStarSearch(model.getNodeIndex().getMember(4208794244l), model.getNodeIndex().getMember(1965542086l), model.getCurrentTransportType());
     }
 
     @FXML
@@ -355,5 +351,17 @@ public class Controller {
     public void selectTransportType() {
         ToggleButton currentButton = (ToggleButton) selectTransportType.getSelectedToggle();
         model.setCurrentTransportType(TransportType.valueOf(currentButton.getText().toUpperCase()));
+    }
+
+    @FXML
+    private CheckBox showAStarPath;
+    public void toggleAStarDebugPath() {
+        if(showAStarPath.isSelected()) {
+            canvas.debugAStar = true;
+            canvas.repaint();
+        } else {
+            canvas.debugAStar = false;
+            canvas.repaint();
+        }
     }
 }

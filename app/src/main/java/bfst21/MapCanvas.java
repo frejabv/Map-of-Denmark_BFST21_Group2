@@ -23,6 +23,7 @@ public class MapCanvas extends Canvas {
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
+    public boolean debugAStar;
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
 
     public void init(Model model) {
@@ -83,7 +84,9 @@ public class MapCanvas extends Canvas {
         });
 
         if(model.existsAStarPath()){
-            debugAStarPath();
+            if(debugAStar) {
+                drawDebugAStarPath();
+            }
             paintPath(model.getAStarPath());
         }
 
@@ -127,7 +130,7 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    public void debugAStarPath() {
+    public void drawDebugAStarPath() {
         List<Node> nodes = model.getAStarDebugPath();
         gc.setStroke(Color.CORNFLOWERBLUE);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant())*2);

@@ -208,6 +208,7 @@
           </FlowPane>
           <Region styleClass="hr"/>
           <CheckBox>Show KD-tree lines</CheckBox>
+          <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
           <FlowPane styleClass="header-margin">
             <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
           </FlowPane>
