@@ -1,10 +1,8 @@
 package bfst21.Rtree;
 
-import bfst21.MapCanvas;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+
 
 public class Rectangle {
     float minX, minY, maxX, maxY;
