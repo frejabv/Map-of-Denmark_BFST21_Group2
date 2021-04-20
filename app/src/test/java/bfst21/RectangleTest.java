@@ -102,22 +102,41 @@ public class RectangleTest {
 
     @Test
     public void testRectangleIntersects(){
-        Rectangle r1 = new Rectangle(0,0,2,2);
-        Rectangle r2 = new Rectangle(1,1,3,3);
-        Rectangle r3 = new Rectangle(5,5,10,10);
+        Rectangle testBigRect = new Rectangle(-3,-3,3,3);
+        Rectangle testSmallRect = new Rectangle(-1,-1,1,1);
 
-        assertTrue(r1.intersects(r2));
-        assertTrue(r2.intersects(r1));
+        Rectangle r1 = new Rectangle(-4,-4,-2,-2);
+        Rectangle r2 = new Rectangle(-1,-4, 1,-2);
+        Rectangle r3 = new Rectangle(2,-4,4,-2);
+        Rectangle r4 = new Rectangle(-4,-1,-2,1);
+        Rectangle r5 = new Rectangle(2,-1,4,1);
+        Rectangle r6 = new Rectangle(-4,2,-2,4);
+        Rectangle r7 = new Rectangle(-1,2,1,4);
+        Rectangle r8 = new Rectangle(2,2,4,4);
 
-        assertTrue(r1.intersects(r1));
-        assertTrue(r2.intersects(r2));
 
-        assertFalse(r1.intersects(r3));
-        assertFalse(r3.intersects(r1));
+        assertTrue(testBigRect.intersects(r1));
+        assertTrue(testBigRect.intersects(r2));
+        assertTrue(testBigRect.intersects(r3));
+        assertTrue(testBigRect.intersects(r4));
+        assertTrue(testBigRect.intersects(r5));
+        assertTrue(testBigRect.intersects(r6));
+        assertTrue(testBigRect.intersects(r7));
+        assertTrue(testBigRect.intersects(r8));
 
-        assertFalse(r2.intersects(r3));
-        assertFalse(r3.intersects(r2));
+        assertFalse(testSmallRect.intersects(r1));
+        assertFalse(testSmallRect.intersects(r2));
+        assertFalse(testSmallRect.intersects(r3));
+        assertFalse(testSmallRect.intersects(r4));
+        assertFalse(testSmallRect.intersects(r5));
+        assertFalse(testSmallRect.intersects(r6));
+        assertFalse(testSmallRect.intersects(r7));
+        assertFalse(testSmallRect.intersects(r8));
 
+        assertTrue(testBigRect.intersects(testSmallRect));
+        assertTrue(testSmallRect.intersects(testBigRect));
+
+        assertTrue(testBigRect.intersects(testBigRect));
         assertFalse(r1.intersects(null));
     }
 
