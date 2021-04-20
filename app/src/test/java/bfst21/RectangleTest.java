@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
 import bfst21.osm.Relation;
 import bfst21.osm.Way;
@@ -75,6 +76,25 @@ public class RectangleTest {
 
     @Test
     public void testRectangleFromOSM() {
+        Rectangle testRect1234 = new Rectangle(1, 9/-0.56f, 6, 3/-0.56f);
+        Rectangle OSMRect1234 = RTreeModel.getWayIndex().getMember(1234).getRect();
+        assertEquals(testRect1234.getMinX(), OSMRect1234.getMinX());
+        assertEquals(testRect1234.getMinY(), OSMRect1234.getMinY());
+        assertEquals(testRect1234.getMaxX(), OSMRect1234.getMaxX());
+        assertEquals(testRect1234.getMaxY(), OSMRect1234.getMaxY());
 
+        Rectangle testRect567 = new Rectangle(3, 10/-0.56f, 9, 1/-0.56f);
+        Rectangle OSMRect567 = RTreeModel.getWayIndex().getMember(567).getRect();
+        assertEquals(testRect567.getMinX(), OSMRect567.getMinX());
+        assertEquals(testRect567.getMinY(), OSMRect567.getMinY());
+        assertEquals(testRect567.getMaxX(), OSMRect567.getMaxX());
+        assertEquals(testRect567.getMaxY(), OSMRect567.getMaxY());
+
+        Rectangle testRect127 = new Rectangle(1, 10/-0.56f, 9, 1/-0.56f);
+        Rectangle OSMRect127 = RTreeModel.getRelationIndex().getMember(127).getRect();
+        assertEquals(testRect127.getMinX(), OSMRect127.getMinX());
+        assertEquals(testRect127.getMinY(), OSMRect127.getMinY());
+        assertEquals(testRect127.getMaxX(), OSMRect127.getMaxX());
+        assertEquals(testRect127.getMaxY(), OSMRect127.getMaxY());
     }
 }
