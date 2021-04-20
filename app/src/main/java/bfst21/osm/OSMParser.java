@@ -22,13 +22,10 @@ public class OSMParser {
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
-            InputStream in = OSMParser.class.getResourceAsStream("../" + filepath);
-
-            System.out.println(in);
-
+            InputStream in = OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath);
             loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
-            loadZIP(new FileInputStream(filepath), model);
+            loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
         } else if (filepath.endsWith(".obj")) {
             // TODO
             System.out.println("missing object loader");
