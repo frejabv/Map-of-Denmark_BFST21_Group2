@@ -142,7 +142,7 @@ public class Controller {
                 fromwayId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
                 if (toWayId != 0) {
                     //model.getAStar().AStarSearch(fromWayId, toWayId);
-                    System.out.println("Route searched");
+                    System.out.println("Route searched from: " + fromwayId + " to: " + toWayId);
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
@@ -155,7 +155,7 @@ public class Controller {
                 toWayId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
                 if (fromwayId != 0) {
                     //model.getAStar().AStarSearch(fromNodeID, toNodeId);
-                    System.out.println("Route searched");
+                    System.out.println("Route searched from: " + fromwayId + " to: " + toWayId);
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
