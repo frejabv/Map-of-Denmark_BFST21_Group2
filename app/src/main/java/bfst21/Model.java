@@ -26,6 +26,7 @@ public class Model {
     private boolean ttiMode;
 
     private float minX, minY, maxX, maxY;
+    private List<City> cityIndex;
 
     public Model(String filepath, boolean ttiMode) {
         drawableMap = new HashMap<>();
@@ -37,6 +38,7 @@ public class Model {
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
+        cityIndex = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -151,4 +153,9 @@ public class Model {
     public ArrayList<POI> getPointsOfInterest() {
         return pointsOfInterest;
     }
+
+    public void addToCityIndex(City city) {
+        cityIndex.add(city);
+    }
+    public List<City> getCityIndex(){return cityIndex;}
 }

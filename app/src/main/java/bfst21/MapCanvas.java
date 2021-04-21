@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -23,6 +24,7 @@ public class MapCanvas extends Canvas {
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
+    boolean showNames = true;
 
     public void init(Model model) {
         this.model = model;
@@ -89,6 +91,13 @@ public class MapCanvas extends Canvas {
             });
         });
 
+        if (showNames){
+            gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
+            model.getCityIndex().forEach((city) -> {
+                city.drawType(gc, getDistanceWidth());
+            });
+        }
+
         model.getPointsOfInterest().forEach(POI -> {
             gc.setFill(Color.WHITE);
             double size = (30/Math.sqrt(trans.determinant()));
@@ -130,16 +139,15 @@ public class MapCanvas extends Canvas {
         if (factor > 1) {
             if (getDistanceWidth() > 0.1) {
                 trans.prependScale(factor, factor, center);
-                repaint();
             }
         } else {
             //TODO: make the boundry go to inital zoom position
             if (getDistanceWidth() < 1000) {
                 trans.prependScale(factor, factor, center);
-                repaint();
             }
         }
         setCurrentCanvasEdges();
+        repaint();
     }
 
     public String setPin(Point2D point) {

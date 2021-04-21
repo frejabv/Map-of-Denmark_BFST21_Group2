@@ -39,7 +39,7 @@ public class RenderingStyle {
     }
 
     public Color getIslandColor(float distanceWidth){
-        if(distanceWidth > 5){
+        if(distanceWidth >= 7.0){
             return islandFar;
         }
         else{
