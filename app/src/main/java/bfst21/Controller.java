@@ -60,6 +60,10 @@ public class Controller {
     private Text memoryUse;
     @FXML
     private Text scaletext;
+    @FXML
+    private VBox leftContainer;
+    @FXML
+    private HBox rightContainer;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -95,6 +99,9 @@ public class Controller {
         if (model.getTtiMode()) {
             System.exit(0);
         }
+
+        leftContainer.setMaxWidth(canvas.getWidth()/100*33);
+        rightContainer.setMaxWidth(canvas.getWidth()/100*40);
     }
 
     @FXML
@@ -251,21 +258,6 @@ public class Controller {
 
     public void darkColorMode() {
         canvas.renderingStyle.darkMode();
-        canvas.repaint();
-    }
-
-    public void deuteranopeColorMode() {
-        canvas.renderingStyle.deuteranopeColorMode();
-        canvas.repaint();
-    }
-
-    public void protanopeColorMode() {
-        canvas.renderingStyle.protanopeColorMode();
-        canvas.repaint();
-    }
-
-    public void tritanopeColorMode() {
-        canvas.renderingStyle.tritanopeColorMode();
         canvas.repaint();
     }
 
