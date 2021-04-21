@@ -36,6 +36,12 @@ public class Rectangle {
                 && that.maxX >= this.minX && that.maxY >= this.minY;
     }
 
+    public boolean contains(Point2D p) {
+        if (p == null) return false;
+        return this.minX <= p.getX() && this.maxX >= p.getX()
+                && this.minY <= p.getY() && this.maxY >= p.getY();
+    }
+
     public double distanceSquaredTo(Point2D p) {
         double dx = 0.0, dy = 0.0;
         if (p.getX() < minX) dx = p.getX() - minX;
