@@ -57,8 +57,9 @@ public class AStar {
         List<Node> path = new ArrayList<Node>();
         double totalDistance = 0;
         double currentDistance = 0;
+        int exits = 0;
 
-        for(Node node = target; node!=null; node = node.parent){//Starts on the target and work back to start
+        for(Node node = target; node!=null; node = node.parent){ //Starts on the target and work back to start
             path.add(node);
         }
 
@@ -83,22 +84,47 @@ public class AStar {
                     secondId = e.getWayID();
                 }
             }
-            if(firstId != secondId){
+
+            String roadName;
+            if(model.getWayIndex().getMember(secondId).getName().equals("")) {
+                roadName = "no name";
+            } else {
+                roadName = model.getWayIndex().getMember(secondId).getName();
+            }
+
+            //count exits in roundabout
+            if(isRoundabout && node.getAdjecencies().size() > 2) {
+                exits++;
+            }
+
+            //the next way is different than the current
+            if(firstId != secondId && !model.getWayIndex().getMember(firstId).getName().equals(roadName)){
                 totalDistance += currentDistance;
-                routeDescription.add("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
-                routeDescription.add(getDirection(node,previousNode,nextNode) + model.getWayIndex().getMember(secondId).getName());
-                System.out.println("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
-                System.out.println(getDirection(node,previousNode,nextNode) + model.getWayIndex().getMember(secondId).getName());
+
+                if(isRoundabout) {
+                    //we don't print distance traveled in roundabout
+                    routeDescription.add(getDirection(node,previousNode,nextNode) + exits + " onto " + roadName);
+                    exits = 0;
+                } else {
+                    routeDescription.add("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
+                    routeDescription.add(getDirection(node,previousNode,nextNode) + roadName);
+                }
+
                 currentDistance = 0;
             }
+
+            //we handle the last piece of road
             if(i == path.size()-2){
-                routeDescription.add("Follow " + model.getWayIndex().getMember(secondId).getName() + " for " + getMetric(currentDistance) + " until you arrive at your destination");
-                System.out.println("Follow " + model.getWayIndex().getMember(secondId).getName() + " for " + getMetric(currentDistance) + " until you arrive at your destination");
+                routeDescription.add("Follow " + roadName + " for " + getMetric(currentDistance) + " until you arrive at your destination");
             }
         }
-        routeDescription.add("The routeDescription was in total: " + getMetric(totalDistance));
-        System.out.println("The routeDescription was in total: " + getMetric(totalDistance));
 
+        routeDescription.add("The route was in total: " + getMetric(totalDistance));
+
+        //temporary
+        for(String s : routeDescription) {
+            System.out.println(s);
+        }
 
         model.setAStarPath(path);
         return routeDescription;
@@ -117,18 +143,24 @@ public class AStar {
 
         if(result > 190) {
             direction = "Turn left at ";
-        } else if(result < 170) {
+        } else if(result < 165) {
             for(Edge e: A.getAdjecencies()){
                 if(e.target == C){
                     if(model.getWayIndex().getMember(e.getWayID()).isJunction()){
                         isRoundabout = true;
-                    }
-                    else{
+                        direction = "Turn into the roundabout at ";
+                        break;
+                    } else if (isRoundabout){
+                        isRoundabout = false;
+                        direction = "Take exit number ";
+                        break;
+                    } else {
                         direction = "Turn right at ";
+                        break;
                     }
                 }
             }
-        } else{
+        } else {
             direction = "Continue at ";
         }
 
