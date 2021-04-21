@@ -1,12 +1,11 @@
 package bfst21;
 
-import bfst21.osm.Node;
+import bfst21.osm.Way;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -66,7 +65,7 @@ public class Controller {
     private boolean singleClick = true;
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
-    private long fromNodeId, toNodeId;
+    private long fromwayId, toWayId;
 
     public void init(Model model) {
         this.model = model;
@@ -117,9 +116,9 @@ public class Controller {
         searchField.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 searchField.textProperty().setValue(suggestionList.get(0).getText());
-                Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
-                canvas.setPin(node.getX(), node.getY());
-                canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                Way way = model.getWayIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
+                canvas.setPin(way.first().getX(), way.first().getY());
+                canvas.goToPosition(way.first().getX(), way.first().getX() + 0.0002, way.first().getY());
                 searchContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
             }
@@ -140,9 +139,9 @@ public class Controller {
         routeFieldFrom.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
-                fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if (toNodeId != 0) {
-                    //model.getAStar().AStarSearch(fromNodeId, toNodeId);
+                fromwayId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if (toWayId != 0) {
+                    //model.getAStar().AStarSearch(fromWayId, toWayId);
                     System.out.println("Route searched");
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
@@ -153,8 +152,8 @@ public class Controller {
         routeFieldTo.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
-                toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if (fromNodeId != 0) {
+                toWayId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if (fromwayId != 0) {
                     //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                     System.out.println("Route searched");
                 }
@@ -188,22 +187,22 @@ public class Controller {
                 newSuggestion.getStyleClass().add("suggestion");
                 newSuggestion.setOnMouseClicked(e -> {
                     selectedField.textProperty().setValue(suggestion.getFullName());
-                    Node node = model.getNodeIndex().getMember(suggestion.getId());
+                    Way way = model.getWayIndex().getMember(suggestion.getId());
                     if (containerType.equals("search")) {
-                        canvas.setPin(node.getX(), node.getY());
-                        canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                        canvas.setPin(way.first().getX(), way.first().getY());
+                        canvas.goToPosition(way.first().getX(), way.first().getX() + 0.0002, way.first().getY());
                     } else {
                         if (fieldType.equals("from")) {
-                            fromNodeId = node.getId();
+                            fromwayId = way.getId();
                             //potential route search here as well
                         } else {
-                            toNodeId = node.getId();
-                            if (fromNodeId != 0) {
+                            toWayId = way.getId();
+                            if (fromwayId != 0) {
                                 //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                                 System.out.println("Route searched");
                             }
                         }
-                        System.out.println(fieldType + ": " + node.getId());
+                        System.out.println(fieldType + ": " + way.getId());
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);
                     suggestionList.clear();

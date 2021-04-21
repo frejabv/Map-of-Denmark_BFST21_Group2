@@ -108,8 +108,13 @@ public class OSMParser {
                                 //Example from samsoe.osm of an addr tag:
                                 //<tag k="addr:street" v="Havnevej"/>
                                 if (k.equals("addr:street")) {
-                                    model.getStreetTree().insert(v, node.getId());
+                                    //model.getStreetTree().insert(v, node.getId());
                                 }
+                            }
+
+                            //todo takes too many names
+                            if(k.equals("name") && isWay){
+                                model.getStreetTree().insert(v, way.getId());
                             }
 
                             break;
