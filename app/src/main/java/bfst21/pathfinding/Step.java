@@ -1,12 +1,10 @@
 package bfst21.pathfinding;
 
-import bfst21.osm.Drawable;
-
 public class Step {
     Direction direction;
     String roadName;
     double distance;
-    int exit;
+    int exits;
 
     public Step(Direction direction, String roadName, double distance) {
         this.direction = direction;
@@ -14,7 +12,9 @@ public class Step {
         this.distance = distance;
     }
 
-    public void setExit(int exits){ this.exit = exits; }
+    public void setExits(int exits) {
+        this.exits = exits;
+    }
 
     public Direction getDirection() {
         return direction;
@@ -40,46 +40,38 @@ public class Step {
         this.distance = distance;
     }
 
-    public String toString(){
+    public String toString() {
         String result = "";
-        if(direction.equals(Direction.RIGHT)){
+        if (direction.equals(Direction.RIGHT)) {
             result = "Turn right and follow ";
-        }
-        else if(direction.equals(Direction.LEFT)){
+        } else if (direction.equals(Direction.LEFT)) {
             result = "Turn left and follow ";
-        }
-        else if(direction.equals(Direction.CONTINUE)){
+        } else if (direction.equals(Direction.CONTINUE)) {
             result = "Continue ahead on ";
-        }
-        else if(direction.equals(Direction.ROUNDABOUT_OTHER_EXIT)){
-            String ending = "";
-            if(exit == 3){
-                ending = exit + "rd";
-            }
-            else{
-                ending = exit + "th";
+        } else if (direction.equals(Direction.ROUNDABOUT_OTHER_EXIT)) {
+            String ending;
+            if (exits == 3) {
+                ending = exits + "rd";
+            } else {
+                ending = exits + "th";
             }
             result = "Take the " + ending + " exit in the roundabout and follow ";
-        }
-        else if(direction.equals(Direction.ROUNDABOUT_SECOND_EXIT)){
+        } else if (direction.equals(Direction.ROUNDABOUT_SECOND_EXIT)) {
             result = "Take the 2nd exit in the roundabout and follow ";
-        }
-        else if(direction.equals(Direction.ROUNDABOUT_FIRST_EXIT)){
+        } else if (direction.equals(Direction.ROUNDABOUT_FIRST_EXIT)) {
             result = "Take the 1st exit in the roundabout and follow ";
-        }
-        else if(direction.equals(Direction.FOLLOW)){
+        } else if (direction.equals(Direction.FOLLOW)) {
             result = "Follow ";
-        }
-        else if(direction.equals(Direction.ARRIVAL)){
+        } else if (direction.equals(Direction.ARRIVAL)) {
             return "Arrived at " + roadName;
         }
         result += roadName + " for " + getMetric();
         return result;
     }
 
-    private String getMetric(){
+    private String getMetric() {
         String metric = "km";
-        if(distance < 1){
+        if (distance < 1) {
             distance = distance * 1000;
             metric = "m";
         }
