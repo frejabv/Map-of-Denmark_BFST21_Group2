@@ -78,7 +78,7 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.JUNCTION, Color.WHITE);
         defaultColorMap.put(Tag.TERTIARY, Color.WHITE);
         defaultColorMap.put(Tag.SECONDARY, Color.WHITE);
-        defaultColorMap.put(Tag.PRIMARY, Color.BLUE);
+        defaultColorMap.put(Tag.PRIMARY, Color.rgb(253, 218, 118));
         defaultColorMap.put(Tag.TRUNK, Color.WHITE);
         defaultColorMap.put(Tag.TRACK, Color.BROWN);
     }
