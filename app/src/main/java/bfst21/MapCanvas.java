@@ -141,7 +141,7 @@ public class MapCanvas extends Canvas {
         canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
-        return canvasPoint.getY() * -0.56f + ", " + canvasPoint.getX();
+        return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
     }
 
     public String setPin(double x, double y) {
@@ -150,7 +150,7 @@ public class MapCanvas extends Canvas {
         pinPoint = canvasPoint;
         setPin = true;
         repaint();
-        return canvasPoint.getY() * -0.56f + ", " + canvasPoint.getX();
+        return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
@@ -194,7 +194,7 @@ public class MapCanvas extends Canvas {
     }
 
     public float getDistanceWidth() {
-        return (currentMaxX - currentMinX) * 111.320f * 0.56f;
+        return (currentMaxX - currentMinX) * 111.320f * Model.scalingConstant;
     }
 
     public Point2D getPinPoint() {
