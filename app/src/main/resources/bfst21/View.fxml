@@ -43,7 +43,7 @@
     />
     <GridPane pickOnBounds="false">
       <columnConstraints>
-        <ColumnConstraints hgrow="ALWAYS" halignment="LEFT" />
+        <ColumnConstraints hgrow="ALWAYS" halignment="LEFT"/>
         <ColumnConstraints hgrow="ALWAYS" halignment="RIGHT"/>
       </columnConstraints>
       <VBox fx:id="leftContainer" alignment="TOP_LEFT" pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
@@ -233,7 +233,7 @@
           </ScrollPane>
         </VBox>
         <VBox fx:id="pinContainer" styleClass="mainContainer">
-          <HBox styleClass="pinBorderSPane">
+          <HBox styleClass="pinBorderPane">
               <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
               <VBox>
                 <Text fx:id="pinText">Pin</Text>
