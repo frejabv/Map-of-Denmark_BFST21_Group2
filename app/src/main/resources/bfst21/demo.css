@@ -16,7 +16,6 @@
 .leftContainer{
     -fx-padding: 20px;
     -fx-min-height: 300px;
-    -fx-background-color: red;
 }
 .rightContainer{
     /*JavaFX Margin Fix*/
@@ -24,7 +23,6 @@
     -fx-border-insets: 20px 0 20px 0;
     -fx-background-insets: 20px 0 20px 0;
     -fx-min-height: 280px;
-    -fx-background-color: blue;
 }
 .mainContainer{
     -fx-background-color: #ffffff;
