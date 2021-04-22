@@ -87,7 +87,7 @@
             <HBox>
               <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
                 <toggleGroup>
-                  <ToggleGroup fx:id="selectTransportType"/>
+                  <ToggleGroup fx:id="selectTransportTypeRoute"/>
                 </toggleGroup>
                 <graphic>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -97,7 +97,7 @@
               </ToggleButton>
               <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                 <toggleGroup>
-                  <fx:reference source="selectTransportType"/>
+                  <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
                 <graphic>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -107,7 +107,7 @@
               </ToggleButton>
               <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                 <toggleGroup>
-                  <fx:reference source="selectTransportType"/>
+                  <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
                 <graphic>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
