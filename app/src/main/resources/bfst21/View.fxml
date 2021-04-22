@@ -128,8 +128,8 @@
               </VBox>
             </ScrollPane>
             <Region styleClass="hr" />
-            <Text styleClass="arrivalText">33 min. (2,7km)</Text>
-            <Text styleClass="arrivalSmallText">Arrives 13:58</Text>
+            <Text styleClass="arrivalText">0 min. (0,0km)</Text>
+            <Text styleClass="arrivalSmallText">Arrives 00:00</Text>
           </VBox>
         </VBox>
         <VBox fx:id="settingsContainer" styleClass="mainContainer">
@@ -158,7 +158,7 @@
                 <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
               </FlowPane>
               <HBox>
-                  <ToggleButton maxWidth="100000000000" HBox.hgrow="ALWAYS" selected="true">
+                  <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
                     <toggleGroup>
                       <ToggleGroup fx:id="selectTransportType"/>
                     </toggleGroup>
@@ -168,7 +168,7 @@
                       </ImageView>
                     </graphic>
                   </ToggleButton>
-                  <ToggleButton maxWidth="100000000000" HBox.hgrow="ALWAYS">
+                  <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                     <toggleGroup>
                       <fx:reference source="selectTransportType"/>
                     </toggleGroup>
@@ -178,7 +178,7 @@
                       </ImageView>
                     </graphic>
                   </ToggleButton>
-                  <ToggleButton maxWidth="100000000000" HBox.hgrow="ALWAYS">
+                  <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                     <toggleGroup>
                       <fx:reference source="selectTransportType"/>
                     </toggleGroup>
