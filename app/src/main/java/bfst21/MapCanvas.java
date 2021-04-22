@@ -14,6 +14,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    boolean RTreeLines;
     Point2D canvasPoint;
     double size;
     RenderingStyle renderingStyle;
@@ -86,6 +87,23 @@ public class MapCanvas extends Canvas {
             gc.fillPolygon(xPoints, yPoints, 3);
             gc.setFill(Color.rgb(192, 57, 43));
             gc.fillOval(canvasPoint.getX() + 0.015 * size, canvasPoint.getY() + 0.015 * size, 0.020 * size, 0.020 * size);
+        }
+
+        if (RTreeLines) {
+            //TODO make this look nice and dandy
+            System.out.println("showing RtreeLines");
+            gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+
+            gc.setStroke(Color.PURPLE);
+            model.getWayIndex().forEach(way -> {
+                way.getRect().draw(gc);
+            });
+
+            gc.setStroke(Color.GREEN);
+            model.getRelationIndex().forEach(relation -> {
+                relation.getRect().draw(gc);
+            });
+
         }
 
         gc.restore();

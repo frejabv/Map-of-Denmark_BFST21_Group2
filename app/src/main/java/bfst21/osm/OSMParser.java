@@ -152,10 +152,12 @@ public class OSMParser {
                             isNode = false;
                             break;
                         case "way":
+                            way.createRectangle();
                             addWayToList(way, tags, model);
                             break;
                         case "relation":
                             relation.setTags(tags);
+                            relation.createRectangle();
                             relation = null;
                             break;
                     }

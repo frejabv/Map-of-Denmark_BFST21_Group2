@@ -212,7 +212,7 @@
             <Text styleClass="mainContainer-subheader">Dev Settings</Text>
           </FlowPane>
           <Region styleClass="hr"/>
-          <CheckBox>Show KD-tree lines</CheckBox>
+          <CheckBox onMouseClicked="#toggleRTreeLines">Show R-tree rectangles</CheckBox>
           <FlowPane styleClass="header-margin">
             <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
           </FlowPane>

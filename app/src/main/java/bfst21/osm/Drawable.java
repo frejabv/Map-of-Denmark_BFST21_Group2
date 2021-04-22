@@ -7,5 +7,5 @@ public interface Drawable {
     void draw(GraphicsContext gc);
 
     void setRectangle(float minX, float minY, float maxX, float maxY);
-    Rectangle getRectangle();
+    Rectangle getRect();
 }
