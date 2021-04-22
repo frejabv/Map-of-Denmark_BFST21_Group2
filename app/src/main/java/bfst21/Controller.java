@@ -8,9 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -363,5 +366,38 @@ public class Controller {
                 canvas.repaint();
             });
         });
+        hideRoute();
+    }
+
+
+    @FXML
+    private VBox routeDescription;
+    @FXML
+    private VBox routeStepsContainer;
+    public void showRoute(ArrayList<String> routeSteps){
+        routeDescription.setVisible(true);
+        routeDescription.setManaged(true);
+        routeStepsContainer.getChildren().clear();
+        /*for (Step temp : routeSteps){
+            FlowPane stepContainer = new FlowPane();
+            Image stepIcon = new Image(temp.getDirection().toString() + ".png");
+            ImageView stepIconContainer = new ImageView(stepIcon);
+            Text stepDescription = new Text("Drej til højre af " + temp.getRoadName() + " (" + temp.getDistance() + " meter)");
+            stepContainer.getChildren().add(stepIconContainer);
+            stepContainer.getChildren().add(stepDescription);
+            routeStepsContainer.getChildren().add(stepContainer);
+        }*/
+    }
+
+    /*
+    * ArrayList<String> testA = new ArrayList<>();
+    * testA.add("Jacob");
+    *
+    * showRoute(testA);
+    * */
+
+    public void hideRoute(){
+        routeDescription.setVisible(false);
+        routeDescription.setManaged(false);
     }
 }

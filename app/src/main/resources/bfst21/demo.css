@@ -127,3 +127,15 @@
     -fx-border-color: #303952;
     -fx-border-width: 0 2 2 2;
 }
+.arrivalText{
+    -fx-font-size: 20px;
+}
+.arrivalSmallText{
+    -fx-font: 16px;
+}
+.selectTransportTypeButton{
+    -fx-background-color: transparent;
+}
+.selectTransportTypeButton:selected{
+    -fx-background-color: rgba(0, 0, 0, .25);
+}

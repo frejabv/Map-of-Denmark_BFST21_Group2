@@ -28,6 +28,8 @@
        fx:id="scene"
        stylesheets="@demo.css"
        onKeyPressed="#onKeyPressed"
+       width="800"
+       height="500"
 >
   <StackPane>
     <MapCanvas fx:id="canvas"
@@ -80,44 +82,55 @@
           <TextField fx:id="routeFieldTo" styleClass="textfield">
             <promptText>Where to?</promptText>
           </TextField>
-          <Region styleClass="hr" />
-          <HBox>
-            <ToggleButton maxWidth="100000000000" HBox.hgrow="ALWAYS" selected="true">
-              <toggleGroup>
-                <ToggleGroup fx:id="selectTransportType"/>
-              </toggleGroup>
-              <graphic>
-                <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@icons/search.png"/>
-                </ImageView>
-              </graphic>
-            </ToggleButton>
-            <ToggleButton maxWidth="100000000000" HBox.hgrow="ALWAYS">
-              <toggleGroup>
-                <fx:reference source="selectTransportType"/>
-              </toggleGroup>
-              <graphic>
-                <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@icons/search.png"/>
-                </ImageView>
-              </graphic>
-            </ToggleButton>
-            <ToggleButton maxWidth="100000000000" HBox.hgrow="ALWAYS">
-              <toggleGroup>
-                <fx:reference source="selectTransportType"/>
-              </toggleGroup>
-              <graphic>
-                <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                  <Image url="@icons/search.png"/>
-                </ImageView>
-              </graphic>
-            </ToggleButton>
-          </HBox>
-          <Region styleClass="hr" />
-          <Text>Directions here</Text>
-          <Region styleClass="hr" />
-          <Text>33 min. (2,7km)</Text>
-          <Text>Arrives 13:58</Text>
+          <VBox fx:id="routeDescription" styleClass="routeDescription">
+            <Region styleClass="hr" />
+            <HBox>
+              <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
+                <toggleGroup>
+                  <ToggleGroup fx:id="selectTransportType"/>
+                </toggleGroup>
+                <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/search.png"/>
+                  </ImageView>
+                </graphic>
+              </ToggleButton>
+              <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                <toggleGroup>
+                  <fx:reference source="selectTransportType"/>
+                </toggleGroup>
+                <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/search.png"/>
+                  </ImageView>
+                </graphic>
+              </ToggleButton>
+              <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                <toggleGroup>
+                  <fx:reference source="selectTransportType"/>
+                </toggleGroup>
+                <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/search.png"/>
+                  </ImageView>
+                </graphic>
+              </ToggleButton>
+            </HBox>
+            <Region styleClass="hr" />
+            <ScrollPane fitToWidth="true">
+              <VBox fx:id="routeStepsContainer">
+                <FlowPane>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/search.png"/>
+                  </ImageView>
+                  <Text>Description</Text>
+                </FlowPane>
+              </VBox>
+            </ScrollPane>
+            <Region styleClass="hr" />
+            <Text styleClass="arrivalText">33 min. (2,7km)</Text>
+            <Text styleClass="arrivalSmallText">Arrives 13:58</Text>
+          </VBox>
         </VBox>
         <VBox fx:id="settingsContainer" styleClass="mainContainer">
           <FlowPane styleClass="header-margin">
