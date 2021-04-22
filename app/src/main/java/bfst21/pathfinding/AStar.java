@@ -52,11 +52,11 @@ public class AStar {
         return distance * 111.320 * 0.56;
     }
 
-    public ArrayList<String> printPath(Node target){
-        ArrayList<String> routeDescription = new ArrayList<>();
+    public ArrayList<Step> printPath(Node target){
+        ArrayList<Step> routeDescription = new ArrayList<>();
         List<Node> path = new ArrayList<Node>();
-        double totalDistance = 0;
-        double currentDistance = 0;
+        float totalDistance = 0;
+        float currentDistance = 0;
         int exits = 0;
 
         for(Node node = target; node!=null; node = node.parent){ //Starts on the target and work back to start
@@ -70,6 +70,8 @@ public class AStar {
             Node nextNode = path.get(i+1);
             Node previousNode = path.get(i-1);
             currentDistance += distanceToNode(previousNode,node);
+
+            //Step step = new Step();
 
             long firstId = 0;
             long secondId = 0;
@@ -87,7 +89,7 @@ public class AStar {
 
             String roadName;
             if(model.getWayIndex().getMember(secondId).getName().equals("")) {
-                roadName = "no name";
+                roadName = "unknown road";
             } else {
                 roadName = model.getWayIndex().getMember(secondId).getName();
             }
@@ -103,11 +105,15 @@ public class AStar {
 
                 if(isRoundabout) {
                     //we don't print distance traveled in roundabout
-                    routeDescription.add(getDirection(node,previousNode,nextNode) + exits + " onto " + roadName);
+                    routeDescription.add(new Step(getDirection(node,previousNode,nextNode), roadName, currentDistance));
+                    // ummm EXITS???
+                    //routeDescription.add(getDirection(node,previousNode,nextNode) + " " + exits + " onto " + roadName);
                     exits = 0;
                 } else {
-                    routeDescription.add("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
-                    routeDescription.add(getDirection(node,previousNode,nextNode) + roadName);
+                    routeDescription.add(new Step(Direction.FOLLOW, model.getWayIndex().getMember(firstId).getName(), currentDistance));
+                    routeDescription.add(new Step(getDirection(node,previousNode,nextNode), roadName, 0));
+                    //routeDescription.add("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
+                    //routeDescription.add(getDirection(node,previousNode,nextNode) + " " + roadName);
                 }
 
                 currentDistance = 0;
@@ -115,23 +121,24 @@ public class AStar {
 
             //we handle the last piece of road
             if(i == path.size()-2){
-                routeDescription.add("Follow " + roadName + " for " + getMetric(currentDistance) + " until you arrive at your destination");
+                routeDescription.add(new Step(Direction.FOLLOW, model.getWayIndex().getMember(firstId).getName(), currentDistance));
+                //routeDescription.add("Follow " + roadName + " for " + getMetric(currentDistance) + " until you arrive at your destination");
             }
         }
 
-        routeDescription.add("The route was in total: " + getMetric(totalDistance));
+        //routeDescription.add("The route was in total: " + getMetric(totalDistance));
 
         //temporary
-        for(String s : routeDescription) {
-            System.out.println(s);
+        for(Step s : routeDescription) {
+            System.out.println(s.getDirection() + " " + s.getRoadName() + " " + s.getDistance() + "km");
         }
 
         model.setAStarPath(path);
         return routeDescription;
     }
 
-    private String getDirection(Node A, Node B, Node C) {
-        String direction = "";
+    private Direction getDirection(Node A, Node B, Node C) {
+        Direction direction = null;
         double theta = Math.atan2(C.getY() - A.getY(), C.getX() - A.getX()) -
                 Math.atan2(B.getY() - A.getY(), B.getX() - A.getX());
 
@@ -142,26 +149,31 @@ public class AStar {
         result = Math.abs(result);
 
         if(result > 190) {
-            direction = "Turn left at ";
+            //direction = "Turn left at";
+            direction = Direction.TURN_LEFT;
         } else if(result < 165) {
             for(Edge e: A.getAdjecencies()){
                 if(e.target == C){
                     if(model.getWayIndex().getMember(e.getWayID()).isJunction()){
                         isRoundabout = true;
-                        direction = "Turn into the roundabout at ";
+                        //direction = "Turn into the roundabout at";
+                        direction = Direction.TURN_INTO_ROUNDABOUT;
                         break;
                     } else if (isRoundabout){
                         isRoundabout = false;
-                        direction = "Take exit number ";
+                        //direction = "Take exit number";
+                        direction = Direction.TAKE_EXIT_ROUNDABOUT;
                         break;
                     } else {
-                        direction = "Turn right at ";
+                        //direction = "Turn right at";
+                        direction = Direction.TURN_RIGHT;
                         break;
                     }
                 }
             }
         } else {
-            direction = "Continue at ";
+            //direction = "Continue at";
+            direction = Direction.CONTINUE_AHEAD;
         }
 
         return direction;
