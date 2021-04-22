@@ -87,14 +87,26 @@ public class AStar {
 
             String roadName;
             if(model.getWayIndex().getMember(secondId).getName().equals("")) {
-                roadName = "no name";
+                roadName = "unknown road";
             } else {
                 roadName = model.getWayIndex().getMember(secondId).getName();
             }
 
             //count exits in roundabout
-            if(isRoundabout && node.getAdjecencies().size() > 2) {
-                exits++;
+            if(isRoundabout && node.getAdjecencies().size() > 1) {
+                int count = 0;
+                int limit = 0;
+                for(Edge e : node.getAdjecencies()) {
+                    if(e.isDriveable() && e.isCyclable() && e.isWalkable()) {
+                        limit = 3;
+                    } else if (e.isDriveable() && e.isCyclable() || e.isDriveable() && e.isWalkable()) {
+                        limit = 2;
+                    } else {
+                        limit = 1;
+                    }
+                    count++;
+                }
+                if(count > limit ) exits++;
             }
 
             //the next way is different than the current
