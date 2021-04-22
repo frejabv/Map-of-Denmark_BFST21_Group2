@@ -16,6 +16,7 @@
 .leftContainer{
     -fx-padding: 20px;
     -fx-min-height: 300px;
+    -fx-background-color: red;
 }
 .rightContainer{
     /*JavaFX Margin Fix*/
@@ -23,6 +24,7 @@
     -fx-border-insets: 20px 0 20px 0;
     -fx-background-insets: 20px 0 20px 0;
     -fx-min-height: 280px;
+    -fx-background-color: blue;
 }
 .mainContainer{
     -fx-background-color: #ffffff;
@@ -131,11 +133,31 @@
     -fx-font-size: 20px;
 }
 .arrivalSmallText{
-    -fx-font: 16px;
+    -fx-font-size: 16px;
 }
 .selectTransportTypeButton{
     -fx-background-color: transparent;
 }
 .selectTransportTypeButton:selected{
     -fx-background-color: rgba(0, 0, 0, .25);
+}
+
+.stepContainer{
+    /*JavaFX Margin Fix*/
+    -fx-padding: 10px 0 10px 10px;
+    -fx-border-insets: 10px 0 10px 10px;
+    -fx-background-insets: 10px 0 10px 10px;
+}
+.stepIcon{
+    /*JavaFX Margin Fix*/
+    -fx-padding: 0 20px 0 10px;
+    -fx-border-insets: 0 20px 0 10px;
+    -fx-background-insets: 0 20px 0 10px;
+}
+
+.labelTest{
+    -fx-word-wrap: break-word;
+    -fx-padding: 0 0 0 10px;
+    -fx-border-insets: 0 0 0 10px;
+    -fx-background-insets: 0 0 0 10px;
 }

@@ -22,6 +22,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
 <Scene xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        fx:controller="bfst21.Controller"
@@ -42,7 +43,7 @@
     />
     <GridPane pickOnBounds="false">
       <columnConstraints>
-        <ColumnConstraints hgrow="ALWAYS" halignment="LEFT"/>
+        <ColumnConstraints hgrow="ALWAYS" halignment="LEFT" />
         <ColumnConstraints hgrow="ALWAYS" halignment="RIGHT"/>
       </columnConstraints>
       <VBox fx:id="leftContainer" alignment="TOP_LEFT" pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
@@ -91,7 +92,7 @@
                 </toggleGroup>
                 <graphic>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/search.png"/>
+                    <Image url="@icons/car.png"/>
                   </ImageView>
                 </graphic>
               </ToggleButton>
@@ -101,7 +102,7 @@
                 </toggleGroup>
                 <graphic>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/search.png"/>
+                    <Image url="@icons/bicycle.png"/>
                   </ImageView>
                 </graphic>
               </ToggleButton>
@@ -111,7 +112,7 @@
                 </toggleGroup>
                 <graphic>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/search.png"/>
+                    <Image url="@icons/walk.png"/>
                   </ImageView>
                 </graphic>
               </ToggleButton>
@@ -119,12 +120,42 @@
             <Region styleClass="hr" />
             <ScrollPane fitToWidth="true">
               <VBox fx:id="routeStepsContainer">
-                <FlowPane>
-                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/search.png"/>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/follow.png"/>
+                    </ImageView>
+                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/left.png"/>
                   </ImageView>
-                  <Text>Description</Text>
-                </FlowPane>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/right.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/roundaboutfirstexit.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/roundaboutsecondexit.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/pin.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
               </VBox>
             </ScrollPane>
             <Region styleClass="hr" />
@@ -158,51 +189,37 @@
                 <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
               </FlowPane>
               <HBox>
-                  <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
-                    <toggleGroup>
-                      <ToggleGroup fx:id="selectTransportType"/>
-                    </toggleGroup>
-                    <graphic>
-                      <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@icons/search.png"/>
-                      </ImageView>
-                    </graphic>
-                  </ToggleButton>
-                  <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                    <toggleGroup>
-                      <fx:reference source="selectTransportType"/>
-                    </toggleGroup>
-                    <graphic>
-                      <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@icons/search.png"/>
-                      </ImageView>
-                    </graphic>
-                  </ToggleButton>
-                  <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                    <toggleGroup>
-                      <fx:reference source="selectTransportType"/>
-                    </toggleGroup>
-                    <graphic>
-                      <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@icons/search.png"/>
-                      </ImageView>
-                    </graphic>
-                  </ToggleButton>
+                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="selectTransportType"/>
+                  </toggleGroup>
+                  <graphic>
+                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/car.png"/>
+                    </ImageView>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                  <toggleGroup>
+                    <fx:reference source="selectTransportType"/>
+                  </toggleGroup>
+                  <graphic>
+                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/bicycle.png"/>
+                    </ImageView>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                  <toggleGroup>
+                    <fx:reference source="selectTransportType"/>
+                  </toggleGroup>
+                  <graphic>
+                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/walk.png"/>
+                    </ImageView>
+                  </graphic>
+                </ToggleButton>
               </HBox>
-              <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Unit</Text>
-              </FlowPane>
-              <ComboBox>
-                <items>
-                  <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="km/h"/>
-                    <String fx:value="mph"/>
-                  </FXCollections>
-                </items>
-                <value>
-                  <String fx:value="km/h"/>
-                </value>
-              </ComboBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
               </FlowPane>
