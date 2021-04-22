@@ -9,8 +9,8 @@ public class AStar {
     Model model;
     List<Node> initialisedNodes;
     boolean isRoundabout;
-    float totalDistance = 0;
-    float totalTime = 0;
+    double totalDistance = 0;
+    double totalTime = 0;
     int exits = 0;
 
     public AStar(Model model){
@@ -58,7 +58,7 @@ public class AStar {
     public ArrayList<Step> printPath(Node target){
         ArrayList<Step> routeDescription = new ArrayList<>();
         List<Node> path = new ArrayList<Node>();
-        float currentDistance = 0;
+        double currentDistance = 0;
         Direction direction = Direction.FOLLOW;
 
         for(Node node = target; node!=null; node = node.parent){ //Starts on the target and work back to start
@@ -95,35 +95,53 @@ public class AStar {
             } else {
                 lastRoadName = model.getWayIndex().getMember(firstId).getName();
             }
-            System.out.println(lastRoadName);
 
             //count exits in roundabout
-            if(isRoundabout && node.getAdjecencies().size() > 2) {
-                exits++;
-            }
+                if(isRoundabout && node.getAdjecencies().size() > 1) {
+                    int count = 0;
+                    int limit = 0;
+                    for(Edge e : node.getAdjecencies()) {
+                        if(e.isDriveable() && e.isCyclable() && e.isWalkable()) {
+                            limit = 3;
+                        } else if (e.isDriveable() && e.isCyclable() && e.isDriveable() && e.isWalkable()) {
+                            limit = 2;
+                        } else {
+                            limit = 1;
+                        }
+                        count++;
+                    }
+                    if(count > limit ) exits++;
+                }
 
             //the next way is different than the current
-            if(firstId != secondId && !model.getWayIndex().getMember(firstId).getName().equals(lastRoadName)){
-                totalDistance += currentDistance;
-                if(isRoundabout){
-                    break;
+            if(firstId != secondId && !lastRoadName.equals(model.getWayIndex().getMember(secondId).getName())){
+                if(!isRoundabout){
+                    Step step = new Step(direction, lastRoadName, currentDistance);
+                    if(exits > 0) {
+                        step.setExit(exits);
+                    }
+                    routeDescription.add(step);
                 }
-                routeDescription.add(new Step(direction, lastRoadName, currentDistance));
+                totalDistance += currentDistance;
                 currentDistance = 0;
                 direction = getDirection(node,previousNode,nextNode);
             }
+
             //we handle the last piece of road
             if(i == path.size()-2){
-                routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, currentDistance));
+                currentDistance += distanceToNode(node, nextNode);
+                totalDistance += currentDistance;
+                routeDescription.add(new Step(direction, lastRoadName, currentDistance));
+                routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
             }
         }
-
-        //routeDescription.add("The route was in total: " + getMetric(totalDistance));
 
         //temporary
         for(Step s : routeDescription) {
             System.out.println(s.toString());
         }
+        System.out.println("Total distance: " + getTotalDistance() + "km");
+        System.out.println("Total time in decimal: " + getTotalTime());
 
         model.setAStarPath(path);
         return routeDescription;
@@ -144,7 +162,7 @@ public class AStar {
             direction = Direction.LEFT;
         } else if(result < 165) {
             for(Edge e: currentNode.getAdjecencies()){
-                if(e.target == previousNode){
+                if(e.target == nextNode){
                     if(model.getWayIndex().getMember(e.getWayID()).isJunction()){
                         isRoundabout = true;
                         exits = 0;
@@ -170,8 +188,6 @@ public class AStar {
         } else {
             direction = Direction.CONTINUE;
         }
-        System.out.println(direction);
-
         return direction;
     }
 
@@ -256,5 +272,13 @@ public class AStar {
                 return 0;
             }
         }
+    }
+
+    public double getTotalDistance() {
+        return Math.round(totalDistance * 10.0) / 10.0;
+    }
+
+    public double getTotalTime() {
+        return ((getTotalDistance()/50.0)/100.0)*60.0;
     }
 }

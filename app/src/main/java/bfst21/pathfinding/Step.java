@@ -5,10 +5,10 @@ import bfst21.osm.Drawable;
 public class Step {
     Direction direction;
     String roadName;
-    float distance;
+    double distance;
     int exit;
 
-    public Step(Direction direction, String roadName, float distance) {
+    public Step(Direction direction, String roadName, double distance) {
         this.direction = direction;
         this.roadName = roadName;
         this.distance = distance;
@@ -32,11 +32,11 @@ public class Step {
         this.roadName = roadName;
     }
 
-    public float getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    public void setDistance(float distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
@@ -59,13 +59,13 @@ public class Step {
             else{
                 ending = exit + "th";
             }
-            result = "Take the " + ending + " exit and follow ";
+            result = "Take the " + ending + " exit in the roundabout and follow ";
         }
         else if(direction.equals(Direction.ROUNDABOUT_SECOND_EXIT)){
-            result = "Take the 2nd exit and follow ";
+            result = "Take the 2nd exit in the roundabout and follow ";
         }
         else if(direction.equals(Direction.ROUNDABOUT_FIRST_EXIT)){
-            result = "Take the 1st exit and follow ";
+            result = "Take the 1st exit in the roundabout and follow ";
         }
         else if(direction.equals(Direction.FOLLOW)){
             result = "Follow ";
