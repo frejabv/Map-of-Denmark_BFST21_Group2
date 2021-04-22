@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.search.RadixTree;
 
@@ -42,6 +43,9 @@ public class Model {
         } catch (Exception e) {
             System.out.println("error: " + e.getClass() + " " + e.getMessage());
         }
+
+        Rtree rTree = new Rtree(this, drawableMap.get(Tag.TERTIARY));
+        System.out.println("here");
     }
 
     /*
