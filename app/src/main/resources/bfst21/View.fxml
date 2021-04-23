@@ -295,7 +295,7 @@
     </BorderPane>
     <BorderPane pickOnBounds="false">
       <bottom>
-        <BorderPane styleClass="nearestRoad">
+        <BorderPane styleClass="nearestRoad" pickOnBounds="false">
           <center>
             <Text>Closest Road (0m)</Text>
           </center>
