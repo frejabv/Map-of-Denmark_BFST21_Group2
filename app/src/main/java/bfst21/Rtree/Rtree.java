@@ -5,7 +5,9 @@ import bfst21.osm.Way;
 
 import javafx.geometry.Point2D;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Rtree {
@@ -32,6 +34,32 @@ public class Rtree {
         return null;
     }
 
+    public List<Drawable> query(Rectangle queryRect) {
+        ArrayList<Drawable> result = new ArrayList<>();
+
+        LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
+        explorationQueue.add(root);
+
+        while (!explorationQueue.isEmpty()) {
+            var current = explorationQueue.removeFirst();
+
+            if (current.children != null) {
+                for (var child : current.children) {
+                    if (queryRect.intersects(child.getRect())) {
+                        explorationQueue.add(child);
+                    }
+                }
+            }
+
+            if(current instanceof RtreeLeaf) {
+                if (queryRect.intersects(current.getRect())) {
+                    result.addAll(((RtreeLeaf) current).getDrawables());
+                }
+            }
+        }
+
+        return result;
+    }
 
     private double log(double num)  {
         return Math.log(Rtree.maxChildren) / Math.log(num);

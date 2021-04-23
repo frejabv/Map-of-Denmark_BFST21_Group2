@@ -22,6 +22,7 @@ public class Model {
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
     private boolean ttiMode;
+    private Rtree rtree;
 
     private float minX, minY, maxX, maxY;
 
@@ -44,8 +45,13 @@ public class Model {
             System.out.println("error: " + e.getClass() + " " + e.getMessage());
         }
 
-        Rtree rTree = new Rtree(this, drawableMap.get(Tag.TERTIARY));
+        rtree = new Rtree(this, drawableMap.get(Tag.TERTIARY));
         System.out.println("here");
+    }
+
+
+    public Rtree getRtree() {
+        return rtree;
     }
 
     /*
