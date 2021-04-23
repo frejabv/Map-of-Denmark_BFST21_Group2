@@ -4,13 +4,7 @@ import bfst21.pathfinding.Edge;
 
 import java.util.ArrayList;
 
-public class Node extends Member{
-    public double g_scores;
-    public double h_scores;
-    public double f_scores = 0;
-    private ArrayList<Edge> adjacencies;
-    public Node parent;
-    public boolean explored = false;
+
 
 
 import java.io.Serializable;
@@ -19,6 +13,12 @@ import bfst21.Model;
 public class Node extends Member implements Serializable {
     private float x;
     private float y;
+    public double g_scores;
+    public double h_scores;
+    public double f_scores = 0;
+    private ArrayList<Edge> adjacencies;
+    public Node parent;
+    public boolean explored = false;
 
     public Node(float x, float y, long id) {
         super(id);
