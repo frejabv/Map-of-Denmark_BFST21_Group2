@@ -1,7 +1,9 @@
 package bfst21.pathfinding;
 
 import bfst21.Model;
-import bfst21.osm.*;
+import bfst21.osm.Node;
+import bfst21.osm.Tag;
+import bfst21.osm.Way;
 
 public class Edge{
     public final double weight;
