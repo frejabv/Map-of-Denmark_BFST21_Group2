@@ -3,10 +3,13 @@ package bfst21;
 import bfst21.osm.*;
 import bfst21.search.RadixTree;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -45,7 +48,11 @@ public class Model {
 
         this.ttiMode = ttiMode;
 
-        OSMParser.readMapElements(filepath, this);
+        try {
+            OSMParser.readMapElements(filepath, this);
+        } catch (IOException | XMLStreamException e) {
+            e.printStackTrace();
+        }
     }
 
     /*
