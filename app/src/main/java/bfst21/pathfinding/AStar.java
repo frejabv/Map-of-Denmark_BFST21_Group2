@@ -1,16 +1,19 @@
 package bfst21.pathfinding;
 
-import java.util.*;
-
 import bfst21.Model;
-import bfst21.osm.*;
+import bfst21.osm.Drawable;
+import bfst21.osm.Node;
+import bfst21.osm.Tag;
+import bfst21.osm.Way;
+
+import java.util.*;
 
 public class AStar {
     Model model;
     List<Node> initialisedNodes;
     boolean isRoundabout;
 
-    public AStar(Model model){
+    public AStar(Model model) {
         this.model = model;
         readData();
     }
@@ -26,13 +29,13 @@ public class AStar {
                     Node node = wayButNowCasted.getNodes().get(i);
                     if (i != (wayButNowCasted.getNodes().size() - 1)) {
                         Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode),wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
+                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
                         edge.setPathTypes(wayButNowCasted, model);
                         node.addAdjecencies(edge);
                     }
                     if (i > 0 && !wayButNowCasted.isOneway()) {
                         Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode),wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
+                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
                         edge.setPathTypes(wayButNowCasted, model);
                         node.addAdjecencies(edge);
                     }
@@ -42,62 +45,62 @@ public class AStar {
         }
     }
 
-    private double distanceToNode(Node current, Node destination){
+    private double distanceToNode(Node current, Node destination) {
         double distance = 0;
-        if(current!=destination) {
+        if (current != destination) {
             double deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
             double deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
-            distance = Math.sqrt(Math.pow(deltaX,2)+Math.pow(deltaY,2));
+            distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         }
         return distance * 111.320 * 0.56;
     }
 
-    public ArrayList<String> printPath(Node target){
+    public ArrayList<String> printPath(Node target) {
         ArrayList<String> routeDescription = new ArrayList<>();
         List<Node> path = new ArrayList<Node>();
         double totalDistance = 0;
         double currentDistance = 0;
         int exits = 0;
 
-        for(Node node = target; node!=null; node = node.parent){ //Starts on the target and work back to start
+        for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
             path.add(node);
         }
 
         Collections.reverse(path);
 
-        for (int i = 1; i < path.size()-1; i++) {
+        for (int i = 1; i < path.size() - 1; i++) {
             Node node = path.get(i);
-            Node nextNode = path.get(i+1);
-            Node previousNode = path.get(i-1);
-            currentDistance += distanceToNode(previousNode,node);
+            Node nextNode = path.get(i + 1);
+            Node previousNode = path.get(i - 1);
+            currentDistance += distanceToNode(previousNode, node);
 
             long firstId = 0;
             long secondId = 0;
 
-            for (Edge e: previousNode.getAdjecencies()){
-                if(e.target == node){
+            for (Edge e : previousNode.getAdjecencies()) {
+                if (e.target == node) {
                     firstId = e.getWayID();
                 }
             }
-            for (Edge e: node.getAdjecencies()){
-                if(e.target == nextNode){
+            for (Edge e : node.getAdjecencies()) {
+                if (e.target == nextNode) {
                     secondId = e.getWayID();
                 }
             }
 
             String roadName;
-            if(model.getWayIndex().getMember(secondId).getName().equals("")) {
+            if (model.getWayIndex().getMember(secondId).getName().equals("")) {
                 roadName = "unknown road";
             } else {
                 roadName = model.getWayIndex().getMember(secondId).getName();
             }
 
             //count exits in roundabout
-            if(isRoundabout && node.getAdjecencies().size() > 1) {
+            if (isRoundabout && node.getAdjecencies().size() > 1) {
                 int count = 0;
                 int limit = 0;
-                for(Edge e : node.getAdjecencies()) {
-                    if(e.isDriveable() && e.isCyclable() && e.isWalkable()) {
+                for (Edge e : node.getAdjecencies()) {
+                    if (e.isDriveable() && e.isCyclable() && e.isWalkable()) {
                         limit = 3;
                     } else if (e.isDriveable() && e.isCyclable() || e.isDriveable() && e.isWalkable()) {
                         limit = 2;
@@ -106,27 +109,27 @@ public class AStar {
                     }
                     count++;
                 }
-                if(count > limit ) exits++;
+                if (count > limit) exits++;
             }
 
             //the next way is different than the current
-            if(firstId != secondId && !model.getWayIndex().getMember(firstId).getName().equals(roadName)){
+            if (firstId != secondId && !model.getWayIndex().getMember(firstId).getName().equals(roadName)) {
                 totalDistance += currentDistance;
 
-                if(isRoundabout) {
+                if (isRoundabout) {
                     //we don't print distance traveled in roundabout
-                    routeDescription.add(getDirection(node,previousNode,nextNode) + exits + " onto " + roadName);
+                    routeDescription.add(getDirection(node, previousNode, nextNode) + exits + " onto " + roadName);
                     exits = 0;
                 } else {
                     routeDescription.add("Follow " + model.getWayIndex().getMember(firstId).getName() + " for " + getMetric(currentDistance));
-                    routeDescription.add(getDirection(node,previousNode,nextNode) + roadName);
+                    routeDescription.add(getDirection(node, previousNode, nextNode) + roadName);
                 }
 
                 currentDistance = 0;
             }
 
             //we handle the last piece of road
-            if(i == path.size()-2){
+            if (i == path.size() - 2) {
                 routeDescription.add("Follow " + roadName + " for " + getMetric(currentDistance) + " until you arrive at your destination");
             }
         }
@@ -134,7 +137,7 @@ public class AStar {
         routeDescription.add("The route was in total: " + getMetric(totalDistance));
 
         //temporary
-        for(String s : routeDescription) {
+        for (String s : routeDescription) {
             System.out.println(s);
         }
 
@@ -150,19 +153,19 @@ public class AStar {
         double result = Math.toDegrees(theta); //the same as multiplying theta by 180/pi
 
         //todo find better solution
-        if(result > 0) result = 360-result;
+        if (result > 0) result = 360 - result;
         result = Math.abs(result);
 
-        if(result > 190) {
+        if (result > 190) {
             direction = "Turn left at ";
-        } else if(result < 165) {
-            for(Edge e: A.getAdjecencies()){
-                if(e.target == C){
-                    if(model.getWayIndex().getMember(e.getWayID()).isJunction()){
+        } else if (result < 165) {
+            for (Edge e : A.getAdjecencies()) {
+                if (e.target == C) {
+                    if (model.getWayIndex().getMember(e.getWayID()).isJunction()) {
                         isRoundabout = true;
                         direction = "Turn into the roundabout at ";
                         break;
-                    } else if (isRoundabout){
+                    } else if (isRoundabout) {
                         isRoundabout = false;
                         direction = "Take exit number ";
                         break;
@@ -179,8 +182,8 @@ public class AStar {
         return direction;
     }
 
-    public void AStarSearch(Node start, Node end, TransportType type){
-        for(Node node : initialisedNodes) {
+    public void AStarSearch(Node start, Node end, TransportType type) {
+        for (Node node : initialisedNodes) {
             node.setHScores(distanceToNode(node, end));
         }
 
@@ -193,7 +196,7 @@ public class AStar {
 
         boolean found = false;
 
-        while((!pq.isEmpty())&&(!found)) { //While content in PQ and goal not found
+        while ((!pq.isEmpty()) && (!found)) { //While content in PQ and goal not found
             //the node in having the lowest f_score value
             Node current = pq.poll(); //Gets the first element in the PQ
 
@@ -206,7 +209,7 @@ public class AStar {
 
             //Checks every child of current node
             for (Edge e : current.getAdjecencies()) {
-                if(type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
+                if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
                     double cost = e.weight;
                     double temp_g_scores = current.g_scores + cost;
@@ -234,8 +237,8 @@ public class AStar {
         }
 
         List<Node> path = new ArrayList<Node>();
-        for(Node node : initialisedNodes) {
-            if(node.explored) {
+        for (Node node : initialisedNodes) {
+            if (node.explored) {
                 path.add(node);
             }
         }
@@ -245,27 +248,23 @@ public class AStar {
         printPath(end);
     }
 
-    public String getMetric(double currentDistance){
+    public String getMetric(double currentDistance) {
         String metric = " km";
-        if(currentDistance<1){
-            currentDistance = currentDistance*1000;
+        if (currentDistance < 1) {
+            currentDistance = currentDistance * 1000;
             metric = " m";
         }
         return Math.round(currentDistance) + metric;
     }
 
-    private static class NodeComparator implements Comparator<Node>{
+    private static class NodeComparator implements Comparator<Node> {
         //override compare method
-        public int compare(Node i, Node j){
-            if(i.f_scores > j.f_scores){
+        public int compare(Node i, Node j) {
+            if (i.f_scores > j.f_scores) {
                 return 1;
-            }
-
-            else if (i.f_scores < j.f_scores){
+            } else if (i.f_scores < j.f_scores) {
                 return -1;
-            }
-
-            else{
+            } else {
                 return 0;
             }
         }
