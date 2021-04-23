@@ -5,9 +5,12 @@ import bfst21.osm.Node;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import bfst21.pathfinding.AStar;
+import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 public class AStarTest {
     private Model model;
@@ -38,6 +41,25 @@ public class AStarTest {
     @Test
     public void testPrintPath() {
         //route from Skagen to Randers
+        AStar astar = model.getAStar();
+        Node skagen = model.getNodeIndex().getMember(1);
+        Node aalborg = model.getNodeIndex().getMember(2);
+        Node randers = model.getNodeIndex().getMember(5);
+        astar.AStarSearch(skagen, randers, model.getCurrentTransportType());
+        ArrayList<Step> steps = astar.createPathDescription(randers);
+
+        double deltaX = Math.abs(skagen.getX() - aalborg.getX());
+        double deltaY = Math.abs(skagen.getY() - aalborg.getY());
+        double distance1 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * 0.56; //model.getScalingConstant()
+
+        deltaX = Math.abs(aalborg.getX() - randers.getX());
+        deltaY = Math.abs(aalborg.getY() - randers.getY());
+        double distance2 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * 0.56; //model.getScalingConstant()
+
+        double totalDistance = Math.round((distance1 + distance2) * 10.0) / 10.0;
+
+        assertEquals("Arrived at Skagenvej", steps.get(1).toString());
+        assertEquals(totalDistance, astar.getTotalDistance());
     }
 
     @Test
@@ -52,17 +74,34 @@ public class AStarTest {
     public void testCycleRoute() {
         //from Århus to Viborg there is a direct cycleway
         AStar astar = model.getAStar();
+        Node århus = model.getNodeIndex().getMember(7);
+        Node viborg = model.getNodeIndex().getMember(4);
 
-        astar.AStarSearch(model.getNodeIndex().getMember(7),model.getNodeIndex().getMember(4), model.getCurrentTransportType());
-        //test right path
+        astar.AStarSearch(århus,viborg, model.getCurrentTransportType());
+        ArrayList<Step> steps = astar.createPathDescription(viborg);
+        assertEquals(3, steps.size());
 
         model.setCurrentTransportType(TransportType.BICYCLE);
         astar.AStarSearch(model.getNodeIndex().getMember(7),model.getNodeIndex().getMember(4), model.getCurrentTransportType());
-        //test right path
+        steps = astar.createPathDescription(viborg);
+        assertEquals(2, steps.size());
     }
 
     @Test
     public void testDistance() {
+        //distance from Odense to Korsør
+        Node testNode = model.getNodeIndex().getMember(11);
+        Node destination = model.getNodeIndex().getMember(12);
+
+        double deltaX = Math.abs(testNode.getX() - destination.getX());
+        double deltaY = Math.abs(testNode.getY() - destination.getY());
+        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320 * 0.56; //model.getScalingConstant()
+
+        assertEquals(distance, testNode.getAdjecencies().get(0).weight);
+    }
+
+    @Test
+    public void testTotalDistance() {
         //distance from Odense to Korsør
         AStar astar = model.getAStar();
         Node testNode = model.getNodeIndex().getMember(11);
@@ -70,8 +109,10 @@ public class AStarTest {
 
         double deltaX = Math.abs(testNode.getX() - destination.getX());
         double deltaY = Math.abs(testNode.getY() - destination.getY());
-        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320;
+        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * 0.56; //model.getScalingConstant()
+        double totalDistance = Math.round(distance * 10.0) / 10.0;
 
-        assertEquals(distance, testNode.getAdjecencies().get(0).weight);
+        astar.AStarSearch(testNode, destination, TransportType.CAR);
+        assertEquals(totalDistance, astar.getTotalDistance());
     }
 }
