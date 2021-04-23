@@ -6,6 +6,7 @@ import java.util.List;
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import org.jetbrains.annotations.NotNull;
 
 public class Way extends Member implements Drawable {
     private List<Node> nodes;
