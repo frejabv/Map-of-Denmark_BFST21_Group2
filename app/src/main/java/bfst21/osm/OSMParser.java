@@ -2,6 +2,7 @@ package bfst21.osm;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
+import bfst21.search.RadixTree;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -22,15 +23,53 @@ public class OSMParser {
             InputStream in = OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath);
             loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
-            loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
+            loadZIP(new FileInputStream(filepath), model);
+            saveOBJ(filepath+".obj", model);
         } else if (filepath.endsWith(".obj")) {
-            // TODO
-            System.out.println("missing object loader");
+            try {
+                loadOBJ(filepath, model);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         } else {
             String[] splitFileName = filepath.split("\\.");
             if (splitFileName.length > 0) {
                 throw new UnsupportedFileTypeException("." + splitFileName[splitFileName.length - 1]);
             }
+        }
+    }
+
+    public static void loadOBJ(String filename, Model model) throws IOException, ClassNotFoundException {
+        try (var input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+            model.setFillMap((Map<Tag, List<Drawable>>) input.readObject());
+            model.setNodeIndex((MemberIndex<Node>) input.readObject());
+            model.setWayIndex((MemberIndex<Way>) input.readObject());
+            model.setRelationIndex((MemberIndex<Relation>) input.readObject());
+            model.setStreetTree((RadixTree) input.readObject());
+            model.setIslands((ArrayList<Drawable>) input.readObject());
+            model.setCoastlines((ArrayList<Way>) input.readObject());
+            model.setMinX(input.readFloat());
+            model.setMinY(input.readFloat());
+            model.setMaxX(input.readFloat());
+            model.setMaxY(input.readFloat());
+            model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
+        }
+    }
+
+    public static void saveOBJ(String filename, Model model) throws IOException {
+        try (var output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+            output.writeObject(model.getFillMap());
+            output.writeObject(model.getNodeIndex());
+            output.writeObject(model.getWayIndex());
+            output.writeObject(model.getRelationIndex());
+            output.writeObject(model.getStreetTree());
+            output.writeObject(model.getIslands());
+            output.writeObject(model.getCoastlines());
+            output.writeFloat(model.getMinX());
+            output.writeFloat(model.getMinY());
+            output.writeFloat(model.getMaxX());
+            output.writeFloat(model.getMaxY());
+            output.writeObject(model.getDrawableMap());
         }
     }
 

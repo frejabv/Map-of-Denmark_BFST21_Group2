@@ -25,6 +25,7 @@ public class MapCanvas extends Canvas {
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
+        setCurrentCanvasEdges();
         moveToInitialPosition();
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
@@ -66,11 +67,13 @@ public class MapCanvas extends Canvas {
         model.getDrawableMap().forEach((tag, drawables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
             var style = renderingStyle.getDrawStyleByTag(tag);
-            drawables.forEach(drawable -> {
-                if (tag.zoomLimit > getDistanceWidth()) {
-                    drawable.draw(gc);
-                }
-            });
+            if(drawables != null) {
+                drawables.forEach(drawable -> {
+                    if (tag.zoomLimit > getDistanceWidth()) {
+                        drawable.draw(gc);
+                    }
+                });
+            }
         });
 
         model.getRelationIndex().forEach(relation -> {
@@ -119,7 +122,6 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoom(double factor, Point2D center) {
-        setCurrentCanvasEdges();
         if (factor > 1) {
             if (getDistanceWidth() > 0.1) {
                 trans.prependScale(factor, factor, center);
@@ -132,6 +134,7 @@ public class MapCanvas extends Canvas {
                 repaint();
             }
         }
+        setCurrentCanvasEdges();
     }
 
     public String setPin(Point2D point) {

@@ -93,13 +93,13 @@ public class RenderingStyle {
 
     public Color getColorByTag(Tag tag) {
         switch (theme) {
-        case DARK:
-            var darkColor = darkModeColorMap.get(tag);
-            return darkColor == null ? Color.RED : darkColor;
-        case DEFAULT:
-        default:
-            var color = defaultColorMap.get(tag);
-            return color == null ? Color.RED : color;
+            case DARK:
+                var darkColor = darkModeColorMap.get(tag);
+                return darkColor == null ? Color.RED : darkColor;
+            case DEFAULT:
+            default:
+                var color = defaultColorMap.get(tag);
+                return color == null ? Color.RED : color;
         }
     }
 

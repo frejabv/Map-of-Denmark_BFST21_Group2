@@ -1,8 +1,9 @@
 package bfst21.osm;
 
+import java.io.Serializable;
 import bfst21.Model;
 
-public class Node extends Member{
+public class Node extends Member implements Serializable {
     private float x;
     private float y;
 
