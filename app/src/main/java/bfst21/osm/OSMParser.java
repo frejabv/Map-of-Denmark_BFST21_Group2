@@ -184,8 +184,8 @@ public class OSMParser {
                             isNode = false;
                             break;
                         case "way":
-                            way.checkSpeed();
                             way.setTags(tags);
+                            way.checkSpeed();
                             addWayToList(way, tags, model);
                             break;
                         case "relation":
