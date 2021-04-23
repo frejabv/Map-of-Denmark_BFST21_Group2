@@ -29,8 +29,6 @@
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
     -fx-min-height: 100px;
-    -fx-min-width: 150px;
-    -fx-max-width: 300px;
     -fx-padding: 20px 20px 20px 20px;
 }
 .header-margin{
@@ -128,4 +126,36 @@
     -fx-min-height: 10;
     -fx-border-color: #303952;
     -fx-border-width: 0 2 2 2;
+}
+.arrivalText{
+    -fx-font-size: 20px;
+}
+.arrivalSmallText{
+    -fx-font-size: 16px;
+}
+.selectTransportTypeButton{
+    -fx-background-color: transparent;
+}
+.selectTransportTypeButton:selected{
+    -fx-background-color: rgba(0, 0, 0, .25);
+}
+
+.stepContainer{
+    /*JavaFX Margin Fix*/
+    -fx-padding: 10px 0 10px 10px;
+    -fx-border-insets: 10px 0 10px 10px;
+    -fx-background-insets: 10px 0 10px 10px;
+}
+.stepIcon{
+    /*JavaFX Margin Fix*/
+    -fx-padding: 0 20px 0 10px;
+    -fx-border-insets: 0 20px 0 10px;
+    -fx-background-insets: 0 20px 0 10px;
+}
+
+.labelTest{
+    -fx-word-wrap: break-word;
+    -fx-padding: 0 0 0 10px;
+    -fx-border-insets: 0 0 0 10px;
+    -fx-background-insets: 0 0 0 10px;
 }

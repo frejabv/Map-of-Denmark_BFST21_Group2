@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -60,6 +59,10 @@ public class Controller {
     private Text memoryUse;
     @FXML
     private Text scaletext;
+    @FXML
+    private VBox leftContainer;
+    @FXML
+    private HBox rightContainer;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -306,21 +309,6 @@ public class Controller {
 
     public void darkColorMode() {
         canvas.renderingStyle.darkMode();
-        canvas.repaint();
-    }
-
-    public void deuteranopeColorMode() {
-        canvas.renderingStyle.deuteranopeColorMode();
-        canvas.repaint();
-    }
-
-    public void protanopeColorMode() {
-        canvas.renderingStyle.protanopeColorMode();
-        canvas.repaint();
-    }
-
-    public void tritanopeColorMode() {
-        canvas.renderingStyle.tritanopeColorMode();
         canvas.repaint();
     }
 
