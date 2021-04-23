@@ -12,46 +12,62 @@ public class RenderingStyle {
     private Map<Tag, Color> defaultColorMap;
     private Map<Tag, Color> darkModeColorMap;
     private Map<Tag, DrawStyle> styleMap;
-    private Map<Tag, Integer> widthMap;
+    private Map<Tag, Double> widthMap;
     private Theme theme;
 
     public Color sea;
-    public Color island;
+    public Color islandFar;
+    public Color islandClose;
 
     public RenderingStyle() {
         defaultColorMap = new HashMap<>();
         darkModeColorMap = new HashMap<>();
         styleMap = new HashMap<>();
+        widthMap = new HashMap<>();
         theme = theme.DEFAULT;
 
         styleMap.put(Tag.BUILDING, DrawStyle.FILL);
         styleMap.put(Tag.WATER, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
 
+        widthMap.put(Tag.MOTORWAY,3.0);
+        widthMap.put(Tag.PRIMARY,2.0);
+        widthMap.put(Tag.SECONDARY,1.5);
+
         genDefaultMode();
         genDarkMode();
         defaultMode();
     }
 
+    public Color getIslandColor(float distanceWidth){
+        if(distanceWidth >= 7.0){
+            return islandFar;
+        }
+        else{
+            return islandClose;
+        }
+    }
+
     public void defaultMode() {
         sea = Color.rgb(170, 218, 255);
-        island = Color.rgb(255, 241, 178);
+        islandFar = Color.rgb(187, 226, 198);
+        islandClose = Color.rgb(250,250,250);
         theme = theme.DEFAULT;
     }
 
     public void darkMode() {
         sea = Color.rgb(47, 53, 66);
-        island = Color.rgb(87, 96, 111);
+        islandFar = Color.rgb(87, 96, 111);
         theme = theme.DARK;
     }
 
     private void genDefaultMode() {
-        defaultColorMap.put(Tag.BUILDING, Color.rgb(232, 232, 232));
-        defaultColorMap.put(Tag.PARK, Color.rgb(195, 236, 178));
+        defaultColorMap.put(Tag.BUILDING, Color.rgb(241, 241, 241));
+        defaultColorMap.put(Tag.PARK, Color.rgb(168, 218, 181));
         defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
         defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);
         defaultColorMap.put(Tag.PATH, Color.GREEN);
-
+        defaultColorMap.put(Tag.MOTORWAY, Color.rgb(	255, 181, 20));
         defaultColorMap.put(Tag.CYCLEWAY, Color.TURQUOISE);
 
         defaultColorMap.put(Tag.PEDESTRIAN, Color.WHITE);
@@ -62,8 +78,8 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.SERVICE, Color.WHITE);
         defaultColorMap.put(Tag.JUNCTION, Color.WHITE);
         defaultColorMap.put(Tag.TERTIARY, Color.WHITE);
-        defaultColorMap.put(Tag.SECONDARY, Color.WHITE);
-        defaultColorMap.put(Tag.PRIMARY, Color.WHITE);
+        defaultColorMap.put(Tag.SECONDARY, Color.rgb(189, 195, 199));
+        defaultColorMap.put(Tag.PRIMARY, Color.rgb(253, 218, 118));
         defaultColorMap.put(Tag.TRUNK, Color.WHITE);
         defaultColorMap.put(Tag.TRACK, Color.BROWN);
     }
@@ -101,6 +117,11 @@ public class RenderingStyle {
                 var color = defaultColorMap.get(tag);
                 return color == null ? Color.RED : color;
         }
+    }
+
+    public double getWidthByTag(Tag tag) {
+        var width = widthMap.get(tag);
+        return width == null ? 1.0 : width;
     }
 
     public DrawStyle getDrawStyleByTag(Tag tag) {

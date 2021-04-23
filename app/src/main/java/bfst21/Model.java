@@ -27,6 +27,7 @@ public class Model {
     private boolean ttiMode;
 
     private float minX, minY, maxX, maxY;
+    private List<City> cities;
 
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
@@ -40,6 +41,7 @@ public class Model {
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
+        cities = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -178,4 +180,9 @@ public class Model {
     public ArrayList<POI> getPointsOfInterest() {
         return pointsOfInterest;
     }
+
+    public void addToCityIndex(City city) {
+        cities.add(city);
+    }
+    public List<City> getCities(){return cities;}
 }

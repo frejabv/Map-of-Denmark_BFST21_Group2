@@ -416,4 +416,9 @@ public class Controller {
             });
         });
     }
+
+    public void toggleShowNames() {
+        canvas.showNames = !canvas.showNames;
+        canvas.repaint();
+    }
 }

@@ -24,7 +24,7 @@ public class OSMParser {
             loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
             loadZIP(new FileInputStream(filepath), model);
-            saveOBJ(filepath+".obj", model);
+            saveOBJ(filepath + ".obj", model);
         } else if (filepath.endsWith(".obj")) {
             try {
                 loadOBJ(filepath, model);
@@ -84,6 +84,7 @@ public class OSMParser {
 
         boolean isWay = false;
         boolean isNode = false;
+        String name = "";
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -104,7 +105,6 @@ public class OSMParser {
                     node = new Node(lon, lat, id);
                     model.addToNodeIndex(node);
                     isNode = true;
-                    break;
                 case "way":
                     isWay = true;
                     var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -128,6 +128,24 @@ public class OSMParser {
                     if (k.equals("service")) {
                         break;
                     }
+                    if (k.equals("name")) {
+                        name = v;
+                    }
+                    if (k.equals("place")) {
+                        if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
+                                || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
+                                || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
+                            CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
+                            if (isNode) {
+                                model.addToCityIndex(new City(name, cityType, node.getX(), node.getY()));
+                            } else if (isWay && relation == null) {
+                                model.addToCityIndex(new City(name, cityType, way.first().getX(), way.first().getY()));
+                            } else if (isWay && relation != null) {
+                                model.addToCityIndex(new City(name, cityType, relation.ways.get(0).first().getX(),
+                                        relation.ways.get(0).first().getY()));
+                            }
+                        }
+                    }
 
                     try {
                         var tag = Tag.valueOf(v.toUpperCase());
@@ -143,9 +161,16 @@ public class OSMParser {
                         // We don't care about tags not in our Tag enum
                     }
 
+                    try {
+                        var tag = Tag.valueOf(v.toUpperCase());
+                        tags.add(tag);
+                    } catch (IllegalArgumentException e) {
+                        // We don't care about tags not in our Tag enum
+                    }
+
                     if (isNode) {
-                        // Example from samsoe.osm of an addr tag:
-                        // <tag k="addr:street" v="Havnevej"/>
+                        // example from samsoe.osm of an addr tag:
+                        // <tag k="addr:street" v="havnevej"/>
                         if (k.equals("addr:street")) {
                             model.getStreetTree().insert(v, node.getId());
                         }
@@ -158,6 +183,7 @@ public class OSMParser {
                     model.addToRelationIndex(relation);
                     tags = new ArrayList<>();
                     break;
+
                 case "member":
                     var type = xmlReader.getAttributeValue(null, "type");
                     var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
@@ -181,6 +207,7 @@ public class OSMParser {
                         relation.addMember(memberRef);
                         memberRef.addRole(relation.getId(), role);
                     }
+
                     break;
 
                 }

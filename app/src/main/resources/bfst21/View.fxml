@@ -220,6 +220,15 @@
                 </ToggleButton>
               </HBox>
               <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Map Settings</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <CheckBox selected="true" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Unit</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
               </FlowPane>
               <Region styleClass="hr"/>
