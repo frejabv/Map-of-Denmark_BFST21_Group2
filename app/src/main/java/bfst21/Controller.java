@@ -431,7 +431,6 @@ public class Controller {
                 canvas.repaint();
             });
         });
-        hideRoute();
     }
 
     public void toggleShowNames() {
