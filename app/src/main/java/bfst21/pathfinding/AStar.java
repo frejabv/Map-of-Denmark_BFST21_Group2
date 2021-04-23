@@ -128,7 +128,7 @@ public class AStar {
                     routeDescription.add(step);
                 }
                 totalDistance += currentDistance;
-                totalTime += currentDistance/currentMaxSpeed;
+                totalTime += currentDistance / currentMaxSpeed;
                 currentDistance = 0;
                 direction = getDirection(node, previousNode, nextNode);
             }
@@ -138,7 +138,7 @@ public class AStar {
                 currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
                 currentDistance += distanceToNode(node, nextNode);
                 totalDistance += currentDistance;
-                totalTime += currentDistance/currentMaxSpeed;
+                totalTime += currentDistance / currentMaxSpeed;
                 Step step = new Step(direction, lastRoadName, currentDistance);
                 if (exits > 0) {
                     step.setExits(exits);
@@ -314,14 +314,13 @@ public class AStar {
         String result;
         double time = totalTime * 60;
 
-        if(time<1){
+        if (time < 1) {
             result = "0:01";
-        }
-        else {
+        } else {
             int timeInMinutes = (int) time;
             int minutes = timeInMinutes % 60;
-            int hours = timeInMinutes/60;
-            result =  hours + ":" + (minutes < 10 ? "0" + minutes : minutes);
+            int hours = timeInMinutes / 60;
+            result = hours + ":" + (minutes < 10 ? "0" + minutes : minutes);
         }
 
         return result;
