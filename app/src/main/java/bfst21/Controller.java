@@ -101,9 +101,11 @@ public class Controller {
 
         leftContainer.setMaxWidth(canvas.getWidth()/100*33);
         rightContainer.setMaxWidth(canvas.getWidth()/100*50);
+
         model.setUpAStar();
         model.getAStar().AStarSearch(model.getNodeIndex().getMember(4208794244l), model.getNodeIndex().getMember(1678705487l), model.getCurrentTransportType());
         showRoute();
+        canvas.repaint(); //To show the route after it has been calculated
     }
 
     @FXML
