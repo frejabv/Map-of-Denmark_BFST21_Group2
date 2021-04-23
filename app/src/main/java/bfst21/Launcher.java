@@ -18,7 +18,7 @@ public class Launcher extends Application {
             new StartupScreen(primaryStage);
         }
         else{
-            var model = new Model("data/samsoe.osm",ttiMode);
+            var model = new Model("data/bornholm.osm.zip.obj",ttiMode);
             new View(model, primaryStage);
         }
     }
