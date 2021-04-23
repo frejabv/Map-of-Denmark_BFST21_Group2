@@ -62,6 +62,7 @@ public class AStar {
         ArrayList<Step> routeDescription = new ArrayList<>();
         List<Node> path = new ArrayList<Node>();
         double currentDistance = 0;
+        totalDistance = 0;
         Direction direction = Direction.FOLLOW;
 
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
@@ -147,12 +148,38 @@ public class AStar {
             }
         }
 
+        if (2 == path.size()) {
+            currentDistance += distanceToNode(path.get(0), path.get(1));
+            totalDistance += currentDistance;
+
+            long firstId = 0;
+            for (Edge e : path.get(0).getAdjecencies()) {
+                if (e.target == path.get(1)) {
+                    firstId = e.getWayID();
+                }
+            }
+
+            String lastRoadName;
+            if (model.getWayIndex().getMember(firstId).getName().equals("")) {
+                lastRoadName = "unknown road";
+            } else {
+                lastRoadName = model.getWayIndex().getMember(firstId).getName();
+            }
+
+            Step step = new Step(direction, lastRoadName, currentDistance);
+            if (exits > 0) {
+                step.setExits(exits);
+            }
+            routeDescription.add(step);
+            routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
+        }
+
         //temporary
-        for (Step s : routeDescription) {
+        /*for (Step s : routeDescription) {
             System.out.println(s.toString());
         }
         System.out.println("Total distance: " + getTotalDistance() + "km");
-        System.out.println("Total time in decimal: " + getTotalTime());
+        System.out.println("Total time in decimal: " + getTotalTime());*/
 
         model.setAStarPath(path);
         return routeDescription;
