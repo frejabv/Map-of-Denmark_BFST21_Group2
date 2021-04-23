@@ -25,6 +25,7 @@ public class Model {
     private ArrayList<Way> coastlines;
 
     private ArrayList<POI> pointsOfInterest;
+    private ArrayList<POI> systemPointsOfInterest;
 
     private boolean ttiMode;
 
@@ -45,6 +46,7 @@ public class Model {
         streetTree = new RadixTree();
 
         pointsOfInterest = new ArrayList<>();
+        systemPointsOfInterest = new ArrayList<>();
 
         this.ttiMode = ttiMode;
 
@@ -157,4 +159,8 @@ public class Model {
     public ArrayList<POI> getPointsOfInterest() {
         return pointsOfInterest;
     }
+
+    public void addSystemPOI(POI poi) {systemPointsOfInterest.add(poi);}
+
+    public ArrayList<POI> getSystemPointsOfInterest() {return systemPointsOfInterest;}
 }

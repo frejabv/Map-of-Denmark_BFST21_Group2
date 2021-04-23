@@ -6,6 +6,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -79,6 +81,17 @@ public class MapCanvas extends Canvas {
                     relation.draw(gc, renderingStyle);
                 }
             }
+        });
+
+        model.getSystemPointsOfInterest().forEach(POI -> {
+            gc.setFill(Color.WHITE);
+            double size = (30 / Math.sqrt(trans.determinant()));
+            gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+            gc.drawImage(new Image("bfst21/icons/car.png"), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
+
+            gc.setFill(Color.BLACK);
+            gc.setFont(Font.font("Arial", FontWeight.BOLD,10 / Math.sqrt(trans.determinant())));
+            gc.fillText(POI.getName(),POI.getX()+size,POI.getY());
         });
 
         model.getPointsOfInterest().forEach(POI -> {

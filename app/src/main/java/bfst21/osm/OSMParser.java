@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import bfst21.Model;
+import bfst21.POI;
 import bfst21.exceptions.UnsupportedFileTypeException;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -8,10 +9,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 public class OSMParser {
@@ -42,9 +40,12 @@ public class OSMParser {
         Node node = null;
         Way way = null;
         Relation relation = null;
+        String systemPOIName = "";
 
         boolean isWay = false;
         boolean isNode = false;
+
+        POI currentSystemPOI = null;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -82,12 +83,27 @@ public class OSMParser {
                 case "tag":
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
+                    if (k.equals("name")){
+                        systemPOIName = v;
+                    }
                     if (k.equals("building")) {
                         tags.add(Tag.BUILDING);
                         break;
                     }
                     if (k.equals("service")) {
                         break;
+                    }
+                    if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic")){
+                        List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall"));
+                        if (systemPoi.contains(v)){
+                            if (isNode){
+                                currentSystemPOI = new POI("", v, node.getX(), node.getY());
+                            }
+                            else if(isWay) {
+                                currentSystemPOI = new POI("", v, way.first().getX(), way.first().getY());
+                            }
+                            model.addSystemPOI(currentSystemPOI);
+                        }
                     }
 
                     try {
@@ -148,16 +164,31 @@ public class OSMParser {
                 break;
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
-                case "node":
-                    isNode = false;
-                    break;
-                case "way":
-                    addWayToList(way, tags, model);
-                    break;
-                case "relation":
-                    relation.setTags(tags);
-                    relation = null;
-                    break;
+                    case "node":
+                        if (currentSystemPOI != null){
+                            setSystemPOIName(currentSystemPOI,systemPOIName);
+                        }
+                        isNode = false;
+                        systemPOIName = "";
+                        currentSystemPOI = null;
+                        break;
+                    case "way":
+                        if (currentSystemPOI != null){
+                            setSystemPOIName(currentSystemPOI,systemPOIName);
+                        }
+                        addWayToList(way, tags, model);
+                        systemPOIName = "";
+                        currentSystemPOI = null;
+                        break;
+                    case "relation":
+                        if (currentSystemPOI != null){
+                            setSystemPOIName(currentSystemPOI,systemPOIName);
+                        }
+                        relation.setTags(tags);
+                        relation = null;
+                        systemPOIName = "";
+                        currentSystemPOI = null;
+                        break;
                 }
                 break;
             }
@@ -168,6 +199,15 @@ public class OSMParser {
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("you fool, you think it is that simple? hahahahah");
         }
+    }
+
+    private static void setSystemPOIName(POI currentSystemPOI, String systemPOIName) {
+        if (systemPOIName.equals("")){
+            systemPOIName = "Unspecified " + currentSystemPOI.getType();
+        }
+        currentSystemPOI.changeName(systemPOIName);
+        currentSystemPOI = null;
+        systemPOIName = "";
     }
 
     public static void addWayToList(Way way, List<Tag> tags, Model model) {
