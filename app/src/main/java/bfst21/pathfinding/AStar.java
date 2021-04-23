@@ -90,6 +90,7 @@ public class AStar {
                     secondId = e.getWayID();
                 }
             }
+            int currentMaxSpeed = 1;
 
             String lastRoadName;
             if (model.getWayIndex().getMember(firstId).getName().equals("")) {
@@ -117,6 +118,7 @@ public class AStar {
 
             //the next way is different than the current
             if (firstId != secondId && !lastRoadName.equals(model.getWayIndex().getMember(secondId).getName())) {
+                currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
                 if (!isRoundabout) {
                     Step step = new Step(direction, lastRoadName, currentDistance);
                     if (exits > 0) {
@@ -125,15 +127,17 @@ public class AStar {
                     routeDescription.add(step);
                 }
                 totalDistance += currentDistance;
+                totalTime += currentDistance/currentMaxSpeed;
                 currentDistance = 0;
                 direction = getDirection(node, previousNode, nextNode);
             }
 
             //we handle the last piece of road
             if (i == path.size() - 2) {
+                currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
                 currentDistance += distanceToNode(node, nextNode);
                 totalDistance += currentDistance;
-
+                totalTime += currentDistance/currentMaxSpeed;
                 Step step = new Step(direction, lastRoadName, currentDistance);
                 if (exits > 0) {
                     step.setExits(exits);
@@ -279,8 +283,20 @@ public class AStar {
         return Math.round(totalDistance * 10.0) / 10.0;
     }
 
-    //todo actually implement different speeds and convert to hours, minutes and seconds
-    public double getTotalTime() {
-        return ((getTotalDistance() / 50.0) / 100.0) * 60.0;
+    public String getTotalTime() {
+        String result;
+        double time = totalTime * 60;
+
+        if(time<1){
+            result = "0:01";
+        }
+        else {
+            int timeInMinutes = (int) time;
+            int minutes = timeInMinutes % 60;
+            int hours = timeInMinutes/60;
+            result =  hours + ":" + (minutes < 10 ? "0" + minutes : minutes);
+        }
+
+        return result;
     }
 }
