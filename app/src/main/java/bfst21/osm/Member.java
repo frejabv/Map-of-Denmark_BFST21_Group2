@@ -1,9 +1,10 @@
 package bfst21.osm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Member {
+public class Member implements Serializable {
     long id;
     HashMap<Long, String> roleMap;
     ArrayList<Tag> tags;

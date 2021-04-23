@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 public class View {
     public View(Model model, Stage stage) throws IOException {
-        var loader = new FXMLLoader(View.class.getResource("View.fxml"));
+        var loader = new FXMLLoader(bfst21.View.class.getResource("View.fxml"));
         Scene scene = loader.load();
         stage.setScene(scene);
         stage.setTitle("Initial window");
@@ -16,8 +16,6 @@ public class View {
         Controller controller = loader.getController();
         stage.show();
         controller.init(model);
-        stage.setOnCloseRequest(
-                event -> controller.shutdownExecutor()
-        );
+        stage.setOnCloseRequest(event -> controller.shutdownExecutor());
     }
 }

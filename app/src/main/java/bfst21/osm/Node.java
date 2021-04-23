@@ -13,15 +13,17 @@ public class Node extends Member{
     public boolean explored = false;
 
 
+import java.io.Serializable;
+import bfst21.Model;
+
+public class Node extends Member implements Serializable {
     private float x;
     private float y;
-    // Scale nodes lattitude to account for the curvature of the earth
-    private static float scalingConstant = 0.56f;
 
     public Node(float x, float y, long id) {
         super(id);
         this.x = x;
-        this.y = -y / scalingConstant;
+        this.y = y / -Model.scalingConstant;
     }
     public Node(long id, double hVal){
         super(id);

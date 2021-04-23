@@ -10,30 +10,36 @@ import java.io.IOException;
 
 public class StartupController {
     Stage stage;
-    public void init(Stage stage){
+
+    public void init(Stage stage) {
         this.stage = stage;
     }
 
     FileChooser fileChooser = new FileChooser();
 
-    public void openFile(){
+    public void openFile() {
         File selectedFile = fileChooser.showOpenDialog(stage);
-        //Sanity check of filetype here
-        if(selectedFile != null){
+        // Sanity check of filetype here
+        if (selectedFile != null) {
             startMapView(selectedFile.getAbsolutePath());
         }
     }
-    public void defaultFile(){
+
+    public void defaultFile() {
         startMapView("data/samsoe.osm");
     }
+
     public void startMapView(String filePath) {
-        var model = new Model(filePath,false);
         try {
+            var model = new Model(filePath, false);
             View view = new View(model, stage);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
     public void exit() {
         System.exit(0);
     }

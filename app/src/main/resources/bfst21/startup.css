@@ -1,3 +1,20 @@
+.testborder{
+    -fx-padding: 20px;
+    -fx-background-color: white;
+}
+.testvbox{
+    -fx-padding: 20px;
+    -fx-border-insets: 20px;
+    -fx-background-insets: 20px;
+}
+.introText{
+    -fx-padding: 20px 0 20px 0;
+    -fx-border-insets: 20px 0 20px 0;
+    -fx-background-insets: 20px 0 20px 0;
+}
+.iconText{
+    -fx-text-alignment: center;
+}
 .buttonSpacing{
     -fx-spacing: 20px;
     /*JavaFX Margin Fix*/

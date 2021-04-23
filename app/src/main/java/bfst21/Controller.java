@@ -5,6 +5,11 @@ import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -58,12 +63,18 @@ public class Controller {
     private Text memoryUse;
     @FXML
     private Text scaletext;
+    @FXML
+    private VBox leftContainer;
+    @FXML
+    private HBox rightContainer;
 
     private Debug debug;
     private Point2D lastMouse;
     private boolean singleClick = true;
     private Node nodeFrom;
     private Model model;
+    private ArrayList<Text> suggestionList = new ArrayList<>();
+    private long fromNodeId, toNodeId;
 
     public void init(Model model) {
         this.model = model;
@@ -75,25 +86,16 @@ public class Controller {
         changeType("debug", false);
         Spelling autocorrector = new Spelling();
         Regex regex = new Regex(setupRegexView());
-        searchField.textProperty().addListener((obs, oldText, newText) -> {
-            //Run Regex Matcher
-            regex.run(newText);
-            addSuggestions(model, "search", null);
-        });
 
-        routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
-            regex.run(newText);
-            addSuggestions(model, "route", "from");
-        });
-
-        routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
-            regex.run(newText);
-            addSuggestions(model, "route", "to");
-        });
+        setUpSearchField(regex);
+        setUpRouteFields(regex);
 
         if (model.getTtiMode()) {
             System.exit(0);
         }
+
+        leftContainer.setMaxWidth(canvas.getWidth()/100*33);
+        rightContainer.setMaxWidth(canvas.getWidth()/100*50);
         model.setUpAStar();
         model.getAStar().AStarSearch(model.getNodeIndex().getMember(4208794244l), model.getNodeIndex().getMember(1965542086l), model.getCurrentTransportType());
     }
@@ -107,7 +109,7 @@ public class Controller {
         for (int i = 0; i < regexString.size(); i++) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");
-            Text bullet = new Text("*");
+            Text bullet = new Text("\u25CF");
             bullet.getStyleClass().add("regexMatch");
             Text text = new Text(regexString.get(i));
             hbox.getChildren().add(bullet);
@@ -118,7 +120,62 @@ public class Controller {
         return regexVisualisers;
     }
 
-    ArrayList<Text> suggestionList = new ArrayList<>();
+    public void setUpSearchField(Regex regex) {
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            //Run Regex Matcher
+            regex.run(newText);
+            addSuggestions(model, "search", null);
+        });
+
+        searchField.setOnAction(e -> {
+            if (!suggestionList.isEmpty()) {
+                searchField.textProperty().setValue(suggestionList.get(0).getText());
+                Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
+                canvas.setPin(node.getX(), node.getY());
+                canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                searchContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+    }
+
+    public void setUpRouteFields(Regex regex) {
+        routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model, "route", "from");
+        });
+
+        routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model, "route", "to");
+        });
+
+        routeFieldFrom.setOnAction(e -> {
+            if (!suggestionList.isEmpty()) {
+                routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
+                fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if (toNodeId != 0) {
+                    //model.getAStar().AStarSearch(fromNodeId, toNodeId);
+                    System.out.println("Route searched");
+                }
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+
+        routeFieldTo.setOnAction(e -> {
+            if (!suggestionList.isEmpty()) {
+                routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
+                toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if (fromNodeId != 0) {
+                    //model.getAStar().AStarSearch(fromNodeID, toNodeId);
+                    System.out.println("Route searched");
+                }
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+    }
 
     public void addSuggestions(Model model, String containerType, String fieldType) {
         VBox selectedContainer;
@@ -149,13 +206,17 @@ public class Controller {
                         canvas.setPin(node.getX(), node.getY());
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
-                        if(fieldType.equals("from")) {
-                            nodeFrom = node;
-                            System.out.println(fieldType + ": " + node.getId());
-                        } else if(fieldType.equals("to")) {
-                            System.out.println(fieldType + ": " + node.getId());
-                            //model.getAStar().AStarSearch(nodeFrom, node);
+                        if (fieldType.equals("from")) {
+                            fromNodeId = node.getId();
+                            //potential route search here as well
+                        } else {
+                            toNodeId = node.getId();
+                            if (fromNodeId != 0) {
+                                //model.getAStar().AStarSearch(fromNodeID, toNodeId);
+                                System.out.println("Route searched");
+                            }
                         }
+                        System.out.println(fieldType + ": " + node.getId());
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);
                     suggestionList.clear();
@@ -195,19 +256,19 @@ public class Controller {
     }
 
     @FXML
+    private Button removePin;
+
+    @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
-            pinContainer.getChildren().remove(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
             pinText.textProperty().setValue(coordinates);
-            Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
                 canvas.repaint();
                 hideAll();
             });
-            pinContainer.getChildren().add(removePin);
         } else {
             singleClick = true;
         }
@@ -258,21 +319,6 @@ public class Controller {
 
     public void darkColorMode() {
         canvas.renderingStyle.darkMode();
-        canvas.repaint();
-    }
-
-    public void deuteranopeColorMode() {
-        canvas.renderingStyle.deuteranopeColorMode();
-        canvas.repaint();
-    }
-
-    public void protanopeColorMode() {
-        canvas.renderingStyle.protanopeColorMode();
-        canvas.repaint();
-    }
-
-    public void tritanopeColorMode() {
-        canvas.renderingStyle.tritanopeColorMode();
         canvas.repaint();
     }
 
@@ -340,11 +386,75 @@ public class Controller {
     private HBox scaleContainer;
     @FXML
     private VBox scale;
-    public void updateScaleBar(){
-        double scaleWidth = (canvas.getWidth()/10) + 40;
+
+    public void updateScaleBar() {
+        double scaleWidth = (canvas.getWidth() / 10) + 40;
         scaleContainer.setPrefWidth(scaleWidth);
         scale.setPrefWidth(scaleWidth);
-        scaletext.textProperty().setValue(String.valueOf(Math.round(canvas.getDistanceWidth()) / 10.0) + " KM");
+        double scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
+
+        String metric;
+        if (scaleValue < 1) {
+            scaleValue = Math.round(canvas.getDistanceWidth() * 100);
+            metric = " M";
+        } else {
+            scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
+            metric = " KM";
+        }
+        scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
+    }
+
+    public void onMousePressedPinHeart() {
+        //add this point to POI
+        model.addPOI(new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
+        canvas.setPin = false;
+        canvas.repaint();
+        updateUserPOI();
+    }
+
+    @FXML
+    private VBox userPOI;
+
+    public void updateUserPOI() {
+        userPOI.getChildren().clear();
+        model.getPointsOfInterest().forEach(POI -> {
+            Button currentPOI = new Button(POI.getName());
+            userPOI.getChildren().add(currentPOI);
+            currentPOI.setOnAction(event -> {
+                canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
+                canvas.repaint();
+            });
+        });
+        hideRoute();
+    }
+
+    public void toggleShowNames() {
+        canvas.showNames = !canvas.showNames;
+        canvas.repaint();
+    }
+
+    @FXML
+    private VBox routeDescription;
+    @FXML
+    private VBox routeStepsContainer;
+    public void showRoute(ArrayList<String> routeSteps){
+        routeDescription.setVisible(true);
+        routeDescription.setManaged(true);
+        routeStepsContainer.getChildren().clear();
+        /*for (Step temp : routeSteps){
+            FlowPane stepContainer = new FlowPane();
+            Image stepIcon = new Image(temp.getDirection().toString() + ".png");
+            ImageView stepIconContainer = new ImageView(stepIcon);
+            Text stepDescription = new Text("Drej til højre af " + temp.getRoadName() + " (" + temp.getDistance() + " meter)");
+            stepContainer.getChildren().add(stepIconContainer);
+            stepContainer.getChildren().add(stepDescription);
+            routeStepsContainer.getChildren().add(stepContainer);
+        }*/
+    }
+
+    public void hideRoute(){
+        routeDescription.setVisible(false);
+        routeDescription.setManaged(false);
     }
     @FXML
     private ToggleGroup selectTransportType;
