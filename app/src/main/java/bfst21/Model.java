@@ -45,11 +45,7 @@ public class Model {
 
         this.ttiMode = ttiMode;
 
-        try {
-            OSMParser.readMapElements(filepath, this);
-        } catch (Exception e) {
-            System.out.println("error: " + e.getClass() + " " + e.getMessage());
-        }
+        OSMParser.readMapElements(filepath, this);
     }
 
     /*

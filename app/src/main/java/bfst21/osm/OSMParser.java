@@ -19,9 +19,10 @@ public class OSMParser {
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
-            loadOSM(new FileInputStream(filepath), model);
+            InputStream in = OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath);
+            loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
-            loadZIP(new FileInputStream(filepath), model);
+            loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
         } else if (filepath.endsWith(".obj")) {
             // TODO
             System.out.println("missing object loader");
@@ -141,22 +142,62 @@ public class OSMParser {
                             }
                             break;
 
+                    if (isNode) {
+                        // Example from samsoe.osm of an addr tag:
+                        // <tag k="addr:street" v="Havnevej"/>
+                        if (k.equals("addr:street")) {
+                            model.getStreetTree().insert(v, node.getId());
+                        }
+                    }
+
+                    break;
+                case "relation":
+                    var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                    relation = new Relation(relationId);
+                    model.addToRelationIndex(relation);
+                    tags = new ArrayList<>();
+                    break;
+                case "member":
+                    var type = xmlReader.getAttributeValue(null, "type");
+                    var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                    var role = xmlReader.getAttributeValue(null, "role");
+                    Member memberRef = null;
+                    switch (type) {
+                    case "node":
+                        memberRef = model.getNodeIndex().getMember(ref);
+                        break;
+                    case "way":
+                        memberRef = model.getWayIndex().getMember(ref);
+                        if (memberRef != null) {
+                            relation.addWay((Way) memberRef);
+                        }
+                        break;
+                    case "relation":
+                        memberRef = model.getRelationIndex().getMember(ref);
+                        break;
+                    }
+                    if (memberRef != null) {
+                        relation.addMember(memberRef);
+                        memberRef.addRole(relation.getId(), role);
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
-                    switch (xmlReader.getLocalName()) {
-                        case "node":
-                            isNode = false;
-                            break;
-                        case "way":
-                            addWayToList(way, tags, model);
-                            break;
-                        case "relation":
-                            relation.setTags(tags);
-                            relation = null;
-                            break;
-                    }
+
+                }
+                break;
+            case XMLStreamReader.END_ELEMENT:
+                switch (xmlReader.getLocalName()) {
+                case "node":
+                    isNode = false;
                     break;
+                case "way":
+                    addWayToList(way, tags, model);
+                    break;
+                case "relation":
+                    relation.setTags(tags);
+                    relation = null;
+                    break;
+                }
+                break;
             }
         }
         // TODO: Please fix (kinda fixed)
