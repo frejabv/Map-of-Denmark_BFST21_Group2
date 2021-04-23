@@ -16,6 +16,9 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.BorderPane?>
@@ -219,10 +222,12 @@
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <VBox fx:id="userPOI">
               </VBox>
             </VBox>

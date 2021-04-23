@@ -7,10 +7,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,8 +52,8 @@ public class OSMParser {
                         case "bounds":
                             model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                             model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
-                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
+                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
+                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
                             break;
                         case "node":
                             var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
