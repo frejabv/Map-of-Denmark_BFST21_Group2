@@ -161,13 +161,6 @@ public class OSMParser {
                         // We don't care about tags not in our Tag enum
                     }
 
-                    try {
-                        var tag = Tag.valueOf(v.toUpperCase());
-                        tags.add(tag);
-                    } catch (IllegalArgumentException e) {
-                        // We don't care about tags not in our Tag enum
-                    }
-
                     if (isNode) {
                         // example from samsoe.osm of an addr tag:
                         // <tag k="addr:street" v="havnevej"/>
