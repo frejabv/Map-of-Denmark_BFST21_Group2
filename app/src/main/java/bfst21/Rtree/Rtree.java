@@ -24,7 +24,7 @@ public class Rtree {
 
         rootSlices = (int) Math.floor(Math.sqrt(Math.ceil(height / subtreeHeight)));
 
-        root = new RtreeNode(drawables, true, rootSlices);
+        root = new RtreeNode(drawables, vertical, rootSlices);
     }
 
     public Way nearestRoad(Point2D p){
