@@ -293,5 +293,14 @@
         </HBox>
       </bottom>
     </BorderPane>
+    <BorderPane pickOnBounds="false">
+      <bottom>
+        <BorderPane styleClass="nearestRoad">
+          <center>
+            <Text>Closest Road (0m)</Text>
+          </center>
+        </BorderPane>
+      </bottom>
+    </BorderPane>
   </StackPane>
 </Scene>
