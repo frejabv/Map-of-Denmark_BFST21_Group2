@@ -104,6 +104,13 @@ public class MapCanvas extends Canvas {
             }
         });
 
+        if(model.existsAStarPath()){
+            if(debugAStar) {
+                drawDebugAStarPath();
+            }
+            paintPath(model.getAStarPath());
+        }
+
         if (showNames) {
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
             model.getCities().forEach((city) -> {
@@ -129,12 +136,6 @@ public class MapCanvas extends Canvas {
             }
         });
 
-        if(model.existsAStarPath()){
-            if(debugAStar) {
-                drawDebugAStarPath();
-            }
-            paintPath(model.getAStarPath());
-        }
 
         if (setPin) {
             double size = (30 / Math.sqrt(trans.determinant()));
