@@ -4,6 +4,8 @@ import bfst21.osm.Node;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -88,6 +90,9 @@ public class Controller {
         if (model.getTtiMode()) {
             System.exit(0);
         }
+
+        leftContainer.setMaxWidth(canvas.getWidth()/100*33);
+        rightContainer.setMaxWidth(canvas.getWidth()/100*50);
     }
 
     @FXML
@@ -415,10 +420,35 @@ public class Controller {
                 canvas.repaint();
             });
         });
+        hideRoute();
     }
 
     public void toggleShowNames() {
         canvas.showNames = !canvas.showNames;
         canvas.repaint();
+    }
+
+    @FXML
+    private VBox routeDescription;
+    @FXML
+    private VBox routeStepsContainer;
+    public void showRoute(ArrayList<String> routeSteps){
+        routeDescription.setVisible(true);
+        routeDescription.setManaged(true);
+        routeStepsContainer.getChildren().clear();
+        /*for (Step temp : routeSteps){
+            FlowPane stepContainer = new FlowPane();
+            Image stepIcon = new Image(temp.getDirection().toString() + ".png");
+            ImageView stepIconContainer = new ImageView(stepIcon);
+            Text stepDescription = new Text("Drej til højre af " + temp.getRoadName() + " (" + temp.getDistance() + " meter)");
+            stepContainer.getChildren().add(stepIconContainer);
+            stepContainer.getChildren().add(stepDescription);
+            routeStepsContainer.getChildren().add(stepContainer);
+        }*/
+    }
+
+    public void hideRoute(){
+        routeDescription.setVisible(false);
+        routeDescription.setManaged(false);
     }
 }
