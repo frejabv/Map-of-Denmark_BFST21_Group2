@@ -22,16 +22,16 @@ public class OSMParserTest {
     public void testLatLonBoundsSamsoe(){
         assertEquals(10.8105f, samsoeModel.getMaxX());
         assertEquals(10.3828f, samsoeModel.getMinX());
-        assertEquals(56.0099f/-0.56f, samsoeModel.getMaxY());
-        assertEquals(55.7518f/-0.56f, samsoeModel.getMinY());
+        assertEquals(56.0099f/-Model.scalingConstant, samsoeModel.getMaxY());
+        assertEquals(55.7518f/-Model.scalingConstant, samsoeModel.getMinY());
     }
 
     @Test
     public void testLatLonBoundsSjaelsoe(){
         assertEquals(12.5055f, sjaelsoeModel.getMaxX());
         assertEquals(12.4173f, sjaelsoeModel.getMinX());
-        assertEquals(55.8840f/-0.56f, sjaelsoeModel.getMaxY());
-        assertEquals(55.8584f/-0.56f, sjaelsoeModel.getMinY());
+        assertEquals(55.8840f/-Model.scalingConstant, sjaelsoeModel.getMaxY());
+        assertEquals(55.8584f/-Model.scalingConstant, sjaelsoeModel.getMinY());
     }
 
     @Test

@@ -27,7 +27,10 @@ public class Model {
 
     private float minX, minY, maxX, maxY;
 
-    public Model(String filepath, boolean ttiMode) throws Exception {
+    // Scale nodes latitude to account for the curvature of the earth
+    public final static float scalingConstant = 0.56f;
+
+    public Model(String filepath, boolean ttiMode) {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
