@@ -103,6 +103,7 @@ public class Controller {
         rightContainer.setMaxWidth(canvas.getWidth()/100*50);
         model.setUpAStar();
         model.getAStar().AStarSearch(model.getNodeIndex().getMember(4208794244l), model.getNodeIndex().getMember(1678705487l), model.getCurrentTransportType());
+        showRoute();
     }
 
     @FXML
@@ -236,12 +237,6 @@ public class Controller {
     public void onKeyPressed(KeyEvent e) {
         if (e.getText().equals("d")) {
             toggleDebugMode();
-        }
-        if (e.getText().equals("s")) {
-            showRoute();
-        }
-        if (e.getText().equals("h")) {
-            hideRoute();
         }
     }
 
