@@ -16,7 +16,7 @@ public class App extends Application {
         if (fileSelectorMode) {
             new StartupScreen(primaryStage);
         } else {
-            var model = new Model("samsoe.osm", ttiMode);
+            var model = new Model("bornholm.osm", ttiMode);
             new View(model, primaryStage);
         }
     }

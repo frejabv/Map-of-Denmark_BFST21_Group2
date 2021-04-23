@@ -15,6 +15,7 @@ public class AStar {
     double totalDistance = 0;
     double totalTime = 0;
     int exits = 0;
+    List<Node> path;
 
     public AStar(Model model) {
         this.model = model;
@@ -57,19 +58,22 @@ public class AStar {
         }
         return distance * 111.320 * 0.56;
     }
-
-    public ArrayList<Step> createPathDescription(Node target) {
-        ArrayList<Step> routeDescription = new ArrayList<>();
-        List<Node> path = new ArrayList<Node>();
-        double currentDistance = 0;
-        totalDistance = 0;
-        Direction direction = Direction.FOLLOW;
-
+    public void createPath(Node target){
+        path = new ArrayList<Node>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
             path.add(node);
         }
 
         Collections.reverse(path);
+
+        model.setAStarPath(path);
+    }
+    public ArrayList<Step> getPathDescription() {
+        ArrayList<Step> routeDescription = new ArrayList<>();
+        double currentDistance = 0;
+        totalDistance = 0;
+        Direction direction = Direction.FOLLOW;
+
 
         for (int i = 1; i < path.size() - 1; i++) {
             Node node = path.get(i);
@@ -181,7 +185,6 @@ public class AStar {
         System.out.println("Total distance: " + getTotalDistance() + "km");
         System.out.println("Total time in decimal: " + getTotalTime());*/
 
-        model.setAStarPath(path);
         return routeDescription;
     }
 
@@ -290,7 +293,7 @@ public class AStar {
         model.setAStarDebugPath(path);
 
         //todo maybe move this
-        createPathDescription(end);
+        createPath(end);
     }
 
     private static class NodeComparator implements Comparator<Node> {
@@ -306,21 +309,38 @@ public class AStar {
         }
     }
 
-    public double getTotalDistance() {
-        return Math.round(totalDistance * 10.0) / 10.0;
+    public String getTotalDistance() {
+        String result = "Distance: ";
+        double distance = Math.round(totalDistance * 10.0) / 10.0;
+        if (distance < 1){
+            result += distance*1000 + " m";
+        }
+        else{
+            result += distance + " km";
+        }
+        return result;
     }
 
     public String getTotalTime() {
-        String result;
+        String result = "Estimated Time: ";
         double time = totalTime * 60;
 
         if (time < 1) {
-            result = "0:01";
+            result += "1 min";
         } else {
             int timeInMinutes = (int) time;
             int minutes = timeInMinutes % 60;
             int hours = timeInMinutes / 60;
-            result = hours + ":" + (minutes < 10 ? "0" + minutes : minutes);
+
+            if (hours >= 1){
+                result += hours + " hours";
+            }
+            if (hours >= 1 && minutes != 0){
+                result += " and ";
+            }
+            if (minutes != 0){
+                result += minutes + " min";
+            }
         }
 
         return result;

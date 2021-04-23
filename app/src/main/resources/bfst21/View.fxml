@@ -139,13 +139,13 @@
                 </HBox>
                 <HBox alignment="CENTER" styleClass="stepContainer">
                   <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/roundaboutfirstexit.png"/>
+                    <Image url="@icons/roundabout_first_exit.png"/>
                   </ImageView>
                   <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                 </HBox>
                 <HBox alignment="CENTER" styleClass="stepContainer">
                   <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/roundaboutsecondexit.png"/>
+                    <Image url="@icons/roundabout_second_exit.png"/>
                   </ImageView>
                   <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                 </HBox>
@@ -158,8 +158,8 @@
               </VBox>
             </ScrollPane>
             <Region styleClass="hr" />
-            <Text styleClass="arrivalText">0 min. (0,0km)</Text>
-            <Text styleClass="arrivalSmallText">Arrives 00:00</Text>
+            <Text fx:id="arrivalText" styleClass="arrivalText">0 min. (0,0km)</Text>
+            <Text fx:id="arrivalSmallText" styleClass="arrivalSmallText">Arrives 00:00</Text>
           </VBox>
         </VBox>
         <VBox fx:id="settingsContainer" styleClass="mainContainer">

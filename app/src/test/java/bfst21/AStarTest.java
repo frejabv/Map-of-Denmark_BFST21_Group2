@@ -46,7 +46,8 @@ public class AStarTest {
         Node aalborg = model.getNodeIndex().getMember(2);
         Node randers = model.getNodeIndex().getMember(5);
         astar.AStarSearch(skagen, randers, model.getCurrentTransportType());
-        ArrayList<Step> steps = astar.createPathDescription(randers);
+        astar.createPath(randers);
+        ArrayList<Step> steps = astar.getPathDescription();
 
         double deltaX = Math.abs(skagen.getX() - aalborg.getX());
         double deltaY = Math.abs(skagen.getY() - aalborg.getY());
@@ -78,12 +79,14 @@ public class AStarTest {
         Node viborg = model.getNodeIndex().getMember(4);
 
         astar.AStarSearch(århus,viborg, model.getCurrentTransportType());
-        ArrayList<Step> steps = astar.createPathDescription(viborg);
+        astar.createPath(viborg);
+        ArrayList<Step> steps = astar.getPathDescription();
         assertEquals(3, steps.size());
 
         model.setCurrentTransportType(TransportType.BICYCLE);
         astar.AStarSearch(model.getNodeIndex().getMember(7),model.getNodeIndex().getMember(4), model.getCurrentTransportType());
-        steps = astar.createPathDescription(viborg);
+        astar.createPath(viborg);
+        steps = astar.getPathDescription();
         assertEquals(2, steps.size());
     }
 

@@ -1,10 +1,12 @@
 package bfst21;
 
 import bfst21.osm.Node;
+import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
@@ -21,6 +23,9 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
+import static javafx.scene.layout.Priority.SOMETIMES;
 
 public class Controller {
     @FXML
@@ -97,7 +102,7 @@ public class Controller {
         leftContainer.setMaxWidth(canvas.getWidth()/100*33);
         rightContainer.setMaxWidth(canvas.getWidth()/100*50);
         model.setUpAStar();
-        model.getAStar().AStarSearch(model.getNodeIndex().getMember(4208794244l), model.getNodeIndex().getMember(1965542086l), model.getCurrentTransportType());
+        model.getAStar().AStarSearch(model.getNodeIndex().getMember(4208794244l), model.getNodeIndex().getMember(1678705487l), model.getCurrentTransportType());
     }
 
     @FXML
@@ -231,6 +236,12 @@ public class Controller {
     public void onKeyPressed(KeyEvent e) {
         if (e.getText().equals("d")) {
             toggleDebugMode();
+        }
+        if (e.getText().equals("s")) {
+            showRoute();
+        }
+        if (e.getText().equals("h")) {
+            hideRoute();
         }
     }
 
@@ -437,19 +448,44 @@ public class Controller {
     private VBox routeDescription;
     @FXML
     private VBox routeStepsContainer;
-    public void showRoute(ArrayList<String> routeSteps){
+    @FXML
+    private Text arrivalText;
+    @FXML
+    private Text arrivalSmallText;
+    public void showRoute(){
         routeDescription.setVisible(true);
         routeDescription.setManaged(true);
         routeStepsContainer.getChildren().clear();
-        /*for (Step temp : routeSteps){
-            FlowPane stepContainer = new FlowPane();
-            Image stepIcon = new Image(temp.getDirection().toString() + ".png");
+        List<Step> routeSteps = model.getAStar().getPathDescription();
+        for (Step temp : routeSteps){
+            HBox stepContainer = new HBox();
+            stepContainer.setAlignment(Pos.CENTER_LEFT);
+            stepContainer.getStyleClass().add("stepContainer");
+            String imagePath = temp.getDirection().toString().toLowerCase();
+            if (imagePath.equals("continue")){
+                imagePath = "follow";
+            } else if (imagePath.equals("arrival")){
+                imagePath = "pin";
+            }
+            Image stepIcon = new Image("bfst21/icons/" + imagePath + ".png");
             ImageView stepIconContainer = new ImageView(stepIcon);
-            Text stepDescription = new Text("Drej til højre af " + temp.getRoadName() + " (" + temp.getDistance() + " meter)");
+            Label stepDescription = new Label(temp.toString());
+            stepContainer.setHgrow(stepIconContainer,SOMETIMES);
+            stepContainer.setHgrow(stepDescription,SOMETIMES);
+            stepIconContainer.getStyleClass().add("stepIcon");
+            stepIconContainer.setFitWidth(22.0);
+            stepIconContainer.setFitHeight(22.0);
+            stepIconContainer.setPickOnBounds(true);
+            stepIconContainer.setPreserveRatio(true);
             stepContainer.getChildren().add(stepIconContainer);
             stepContainer.getChildren().add(stepDescription);
+            stepDescription.maxWidth(Double.POSITIVE_INFINITY);
+            stepDescription.getStyleClass().add("labelTest");
+            stepDescription.setWrapText(true);
             routeStepsContainer.getChildren().add(stepContainer);
-        }*/
+            arrivalText.setText(String.valueOf(model.getAStar().getTotalDistance()));
+            arrivalSmallText.setText(model.getAStar().getTotalTime());
+        }
     }
 
     public void hideRoute(){
