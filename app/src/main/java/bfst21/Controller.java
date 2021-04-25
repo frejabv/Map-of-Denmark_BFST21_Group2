@@ -242,6 +242,12 @@ public class Controller {
         if (e.getText().equals("d")) {
             toggleDebugMode();
         }
+        if (e.getText().equals("s")) {
+            canvas.showRoute();
+        }
+        if (e.getText().equals("h")) {
+            canvas.hideRoute();
+        }
     }
 
     @FXML

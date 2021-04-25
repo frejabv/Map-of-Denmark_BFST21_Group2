@@ -29,6 +29,7 @@ public class MapCanvas extends Canvas {
     public boolean debugAStar;
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     boolean showNames = true;
+    private boolean showRoute;
 
     public void init(Model model) {
         this.model = model;
@@ -104,7 +105,7 @@ public class MapCanvas extends Canvas {
             }
         });
 
-        if(model.existsAStarPath()){
+        if(model.existsAStarPath() && showRoute){
             if(debugAStar) {
                 drawDebugAStarPath();
             }
@@ -265,5 +266,14 @@ public class MapCanvas extends Canvas {
 
     public Point2D getPinPoint() {
         return pinPoint;
+    }
+
+    public void showRoute(){
+        showRoute = true;
+        repaint();
+    }
+    public void hideRoute(){
+        showRoute = false;
+        repaint();
     }
 }
