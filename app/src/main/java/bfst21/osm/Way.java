@@ -95,8 +95,48 @@ public class Way extends Member implements Drawable {
         return rect;
     }
 
-    public Point2D nearestPointOnWay(Point2D p) {
-        //TODO find the nearest point in the way to a given point, and return it. used for finding nearest way.
-        return null;
+    public double minimumDistanceToSquared(Point2D p) {
+        double smallestDistance = Double.POSITIVE_INFINITY;
+        for (int i = 1; i < nodes.size(); i++) {
+            double currentSegmentDist = minimumDistanceToSegment(nodes.get(i-1), nodes.get(i), p);
+            if (currentSegmentDist < smallestDistance) {
+                smallestDistance = currentSegmentDist;
+            }
+        }
+        return smallestDistance;
+    }
+
+    private Double minimumDistanceToSegment(Node n1, Node n2, Point2D p) {
+        //jeg synes det her er så grimt... jeg vil gerne gøre det mindre, men det er også svært at gøre læsbart.
+        float A = (float) (p.getX() - n1.getX());
+        float B = (float) (p.getY() - n1.getY());
+        float C = n2.getX() - n1.getX();
+        float D = n2.getY() - n1.getY();
+
+        float dot = A * C + B * D;
+        float len_sq = C * C + D * D;
+        double param = -1;
+        if (len_sq != 0) //in case of 0 length
+            param = dot / len_sq;
+
+        float xx;
+        float yy;
+
+        if (param < 0) {
+            xx = n1.getX();
+            yy = n1.getY();
+        }
+        else if (param > 1) {
+            xx = n2.getX();
+            yy = n2.getY();
+        }
+        else {
+            xx = (float) (n1.getX() + param * C);
+            yy = (float) (n1.getY() + param * D);
+        }
+
+        var dx = p.getX() - xx;
+        var dy = p.getY() - yy;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 }
