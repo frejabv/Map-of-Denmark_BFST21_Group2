@@ -17,7 +17,7 @@ public class AStarTest {
 
     @BeforeEach
     public void setUp() {
-        model = new Model("data/dk-AstarTest.osm",false);
+        model = new Model("dk-AstarTest.osm",false);
         model.setUpAStar();
     }
     
@@ -39,7 +39,7 @@ public class AStarTest {
     }
 
     @Test
-    public void testPrintPath() {
+    public void testPathDescription() {
         //route from Skagen to Randers
         AStar astar = model.getAStar();
         Node skagen = model.getNodeIndex().getMember(1);
@@ -51,16 +51,16 @@ public class AStarTest {
 
         double deltaX = Math.abs(skagen.getX() - aalborg.getX());
         double deltaY = Math.abs(skagen.getY() - aalborg.getY());
-        double distance1 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * 0.56; //model.getScalingConstant()
+        double distance1 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
 
         deltaX = Math.abs(aalborg.getX() - randers.getX());
         deltaY = Math.abs(aalborg.getY() - randers.getY());
-        double distance2 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * 0.56; //model.getScalingConstant()
+        double distance2 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
 
         double totalDistance = Math.round((distance1 + distance2) * 10.0) / 10.0;
 
         assertEquals("Arrived at Skagenvej", steps.get(1).toString());
-        assertEquals(totalDistance, astar.getTotalDistance());
+        assertEquals("Distance: " + totalDistance + " km", astar.getTotalDistance());
     }
 
     @Test
@@ -98,7 +98,7 @@ public class AStarTest {
 
         double deltaX = Math.abs(testNode.getX() - destination.getX());
         double deltaY = Math.abs(testNode.getY() - destination.getY());
-        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320 * 0.56; //model.getScalingConstant()
+        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320 * Model.scalingConstant;
 
         assertEquals(distance, testNode.getAdjecencies().get(0).weight);
     }
@@ -112,10 +112,11 @@ public class AStarTest {
 
         double deltaX = Math.abs(testNode.getX() - destination.getX());
         double deltaY = Math.abs(testNode.getY() - destination.getY());
-        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * 0.56; //model.getScalingConstant()
+        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
         double totalDistance = Math.round(distance * 10.0) / 10.0;
 
         astar.AStarSearch(testNode, destination, TransportType.CAR);
-        assertEquals(totalDistance, astar.getTotalDistance());
+        astar.getPathDescription();
+        assertEquals("Distance: " + totalDistance + " km", astar.getTotalDistance());
     }
 }
