@@ -16,6 +16,7 @@ public class AStar {
     double totalTime = 0;
     int exits = 0;
     List<Node> path;
+    TransportType type;
 
     public AStar(Model model) {
         this.model = model;
@@ -70,6 +71,7 @@ public class AStar {
     public ArrayList<Step> getPathDescription() {
         ArrayList<Step> routeDescription = new ArrayList<>();
         double currentDistance = 0;
+        totalTime = 0;
         totalDistance = 0;
         Direction direction = Direction.FOLLOW;
 
@@ -123,6 +125,11 @@ public class AStar {
             //the next way is different than the current
             if (firstId != secondId && !lastRoadName.equals(model.getWayIndex().getMember(secondId).getName())) {
                 currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
+                if (type.equals(TransportType.WALK)){
+                    currentMaxSpeed = 5;
+                } else if (type.equals(TransportType.BICYCLE)){
+                    currentMaxSpeed = 15;
+                }
                 if (!isRoundabout) {
                     Step step = new Step(direction, lastRoadName, currentDistance);
                     if (exits > 0) {
@@ -230,6 +237,7 @@ public class AStar {
     }
 
     public void AStarSearch(Node start, Node end, TransportType type) {
+        this.type = type;
         for (Node node : initialisedNodes) {
             node.setHScores(distanceToNode(node, end));
         }
@@ -323,6 +331,7 @@ public class AStar {
 
     public String getTotalTime() {
         String result = "Estimated Time: ";
+        System.out.println(totalTime);
         double time = totalTime * 60;
 
         if (time < 1) {

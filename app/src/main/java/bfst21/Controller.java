@@ -481,9 +481,9 @@ public class Controller {
             stepDescription.getStyleClass().add("labelTest");
             stepDescription.setWrapText(true);
             routeStepsContainer.getChildren().add(stepContainer);
-            arrivalText.setText(String.valueOf(model.getAStar().getTotalDistance()));
-            arrivalSmallText.setText(model.getAStar().getTotalTime());
         }
+        arrivalText.setText(String.valueOf(model.getAStar().getTotalDistance()));
+        arrivalSmallText.setText(model.getAStar().getTotalTime());
     }
 
     public void hideRoute(){
