@@ -153,11 +153,17 @@ public class Controller {
         routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
             regex.run(newText);
             addSuggestions(model, "route", "from");
+            if (newText.length() < oldText.length()){
+                canvas.hideRoute();
+            }
         });
 
         routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
             regex.run(newText);
             addSuggestions(model, "route", "to");
+            if (newText.length() < oldText.length()){
+                canvas.hideRoute();
+            }
         });
 
         routeFieldFrom.setOnAction(e -> {
@@ -244,6 +250,7 @@ public class Controller {
         }
         if (e.getText().equals("s")) {
             canvas.showRoute();
+            canvas.goToPosition(model.aStarMinX, model.aStarMaxX, model.aStarMaxY);
         }
         if (e.getText().equals("h")) {
             canvas.hideRoute();
@@ -277,6 +284,7 @@ public class Controller {
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
+            hideAll();
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
             pinText.textProperty().setValue(coordinates);
@@ -315,8 +323,10 @@ public class Controller {
     public void onMousePressedRoute() {
         if (routeContainer.isVisible()) {
             hideAll();
+            canvas.hideRoute();
         } else {
             changeType("route", true);
+            canvas.showRoute();
         }
     }
 
@@ -349,6 +359,14 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
+        if (canvas.setPin && type != "pin" && type != "debug"){
+            canvas.setPin = false;
+            canvas.repaint();
+        }
+        if (type != "route" || type != "debug"){
+            canvas.hideRoute();
+            canvas.repaint();
+        }
         if (!type.equals("debug")) {
             searchContainer.setVisible(false);
             searchContainer.setManaged(false);

@@ -61,13 +61,30 @@ public class AStar {
     }
 
     public void createPath(Node target){
+        float minX = 100;
+        float maxX = -100;
+        float minY = 100;
+        float maxY = -100;
         path = new ArrayList<Node>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
+            if (node.getX() < minX){
+                minX = node.getX();
+            }
+            if (node.getX() > maxX){
+                maxX = node.getX();
+            }
+            if (node.getY() < minY){
+                minY = node.getY();
+            }
+            if (node.getY() > maxY){
+                maxY = node.getY();
+            }
             path.add(node);
         }
 
         Collections.reverse(path);
         model.setAStarPath(path);
+        model.setAStarBounds(minX, minY, maxX, maxY);
     }
 
     public ArrayList<Step> getPathDescription() {

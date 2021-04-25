@@ -24,6 +24,7 @@ public class Model {
     private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
+    float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private ArrayList<POI> pointsOfInterest;
 
@@ -242,4 +243,11 @@ public class Model {
         cities.add(city);
     }
     public List<City> getCities(){return cities;}
+
+    public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
+        this.aStarMinX = minX;
+        this.aStarMinY = minY;
+        this.aStarMaxX = maxX;
+        this.aStarMaxY = maxY;
+    }
 }
