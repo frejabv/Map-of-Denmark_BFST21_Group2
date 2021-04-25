@@ -14,6 +14,9 @@ import java.util.zip.ZipInputStream;
 
 public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
+    private static List<String> systemPOITags;
+    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall"));
+
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
@@ -37,6 +40,7 @@ public class OSMParser {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
         ArrayList<Tag> tags = new ArrayList<>();
+        systemPOITags = new ArrayList<>();
         Node node = null;
         Way way = null;
         Relation relation = null;
@@ -44,8 +48,6 @@ public class OSMParser {
 
         boolean isWay = false;
         boolean isNode = false;
-
-        POI currentSystemPOI = null;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -94,15 +96,8 @@ public class OSMParser {
                         break;
                     }
                     if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic")){
-                        List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall"));
-                        if (systemPoi.contains(v)){
-                            if (isNode){
-                                currentSystemPOI = new POI("", v, node.getX(), node.getY());
-                            }
-                            else if(isWay) {
-                                currentSystemPOI = new POI("", v, way.first().getX(), way.first().getY());
-                            }
-                            model.addSystemPOI(currentSystemPOI);
+                        if (systemPoi.contains(v)) {
+                            systemPOITags.add(v);
                         }
                     }
 
@@ -165,29 +160,39 @@ public class OSMParser {
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
                     case "node":
-                        if (currentSystemPOI != null){
-                            setSystemPOIName(currentSystemPOI,systemPOIName);
+                        if (systemPOITags.size() > 0 && systemPOIName != ""){
+                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags,node.getX(),node.getY()));
+                            System.out.println(systemPOITags.size());
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
                         }
                         isNode = false;
                         systemPOIName = "";
-                        currentSystemPOI = null;
+                        systemPOITags = new ArrayList<>();
                         break;
                     case "way":
-                        if (currentSystemPOI != null){
-                            setSystemPOIName(currentSystemPOI,systemPOIName);
+                        if (systemPOITags.size() > 0 && systemPOIName != ""){
+                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags, way.first().getX(),way.first().getY()));
+                            System.out.println(systemPOITags.size());
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
                         }
                         addWayToList(way, tags, model);
                         systemPOIName = "";
-                        currentSystemPOI = null;
+                        systemPOITags = new ArrayList<>();
                         break;
                     case "relation":
-                        if (currentSystemPOI != null){
-                            setSystemPOIName(currentSystemPOI,systemPOIName);
+                        if (systemPOITags.size() > 0 && systemPOIName != ""){
+                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags, relation.ways.get(0).first().getX(),relation.ways.get(0).first().getY()));
+                            System.out.println(systemPOITags.size());
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
                         }
+
                         relation.setTags(tags);
                         relation = null;
                         systemPOIName = "";
-                        currentSystemPOI = null;
+                        systemPOITags = new ArrayList<>();
                         break;
                 }
                 break;
@@ -201,13 +206,52 @@ public class OSMParser {
         }
     }
 
-    private static void setSystemPOIName(POI currentSystemPOI, String systemPOIName) {
-        if (systemPOIName.equals("")){
-            systemPOIName = "Unspecified " + currentSystemPOI.getType();
+    private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
+        String type = "museum";
+        String imageType = "museum";
+        /*int priority = 10;
+        //List<String> systemPoi = new ArrayList<>(Arrays.asList("attraction", "viewpoint", "artwork", "building"));
+        //From specific tags to more general
+        for(String tag :systemPOITags) {
+            if (imageType.equals("")) {
+                switch (tag) {
+                    case "bust":
+                    case "statue":
+                    case "sculpture":
+                        imageType = "statue";
+                        priority = 10;
+                        break;
+                    case "theme_park":
+                        imageType = "theme_park";
+                        priority = 10;
+                        break;
+                    case "attraction":
+                        if (priority < 10){
+                            imageType = "attraction";
+                            priority = 5;
+                        }
+                        break;
+                }
+            }
         }
-        currentSystemPOI.changeName(systemPOIName);
-        currentSystemPOI = null;
-        systemPOIName = "";
+        else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")){
+            imageType = "cinema";
+        } else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")){
+            imageType = "museum";
+        } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")){
+            imageType = "castle";
+        } else if (systemPOITags.contains("aerodrome")){
+            imageType = "aerodrome";
+        } else if (systemPOITags.contains("zoo")){
+            imageType = "zoo";
+        } else if (systemPOITags.contains("aquarium")){
+            imageType = "aquarium";
+        } else if (systemPOITags.contains("theme_park")){
+            imageType = "theme_park";
+        }*/
+        //sanitise type
+        POI result = new POI(systemPOIName,type, imageType,x,y);
+        return result;
     }
 
     public static void addWayToList(Way way, List<Tag> tags, Model model) {
