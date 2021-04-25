@@ -35,7 +35,7 @@ public class Model {
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.LIVING_STREET,Tag.MOTORWAY,Tag.PEDESTRIAN,Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
     private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET,Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
-    private final ArrayList<Tag> walkable = new ArrayList<>(Arrays.asList(Tag.FOOTWAY, Tag.LIVING_STREET,Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SERVICE, Tag.TRACK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> walkable = new ArrayList<>(Arrays.asList(Tag.FOOTWAY, Tag.LIVING_STREET,Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
 
     private float minX, minY, maxX, maxY;
     private List<City> cities;
@@ -208,7 +208,9 @@ public class Model {
         this.AStarDebugPath = AStarDebugPath;
     }
 
-    public void setCurrentTransportType(TransportType type){ this.currentTransportType = type; }
+    public void setCurrentTransportType(TransportType type){
+        this.currentTransportType = type;
+    }
 
     public TransportType getCurrentTransportType(){ return currentTransportType; }
 

@@ -101,9 +101,11 @@ public class Controller {
 
         leftContainer.setMaxWidth(canvas.getWidth()/100*33);
         rightContainer.setMaxWidth(canvas.getWidth()/100*50);
+        fromNodeId = 32463915;
+        toNodeId = 2247019210l;
 
         model.setUpAStar();
-        model.getAStar().AStarSearch(model.getNodeIndex().getMember(4208794244l), model.getNodeIndex().getMember(1678705487l), model.getCurrentTransportType());
+        model.getAStar().AStarSearch(model.getNodeIndex().getMember(fromNodeId), model.getNodeIndex().getMember(toNodeId), model.getCurrentTransportType());
         showRoute();
         canvas.repaint(); //To show the route after it has been calculated
     }
@@ -489,9 +491,9 @@ public class Controller {
         routeDescription.setManaged(false);
     }
     @FXML
-    private ToggleGroup selectTransportType;
+    private ToggleGroup selectTransportTypeSettings;
     public void selectTransportType() {
-        ToggleButton currentButton = (ToggleButton) selectTransportType.getSelectedToggle();
+        ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
         model.setCurrentTransportType(TransportType.valueOf(currentButton.getText().toUpperCase()));
     }
 
@@ -504,6 +506,18 @@ public class Controller {
         } else {
             canvas.debugAStar = false;
             canvas.repaint();
+        }
+    }
+
+    @FXML
+    private ToggleGroup selectTransportTypeRoute;
+    public void selectTransportTypeRoute() {
+        ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
+        if(currentButton != null){
+            model.setCurrentTransportType(TransportType.valueOf(currentButton.getId().split("-")[0].toUpperCase()));
+            model.getAStar().AStarSearch(model.getNodeIndex().getMember((long) fromNodeId), model.getNodeIndex().getMember((long) toNodeId), model.getCurrentTransportType());
+            showRoute();
+            canvas.repaint(); //To show the route after it has been calculated
         }
     }
 }

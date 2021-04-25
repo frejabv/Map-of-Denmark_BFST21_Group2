@@ -65,7 +65,6 @@ public class AStar {
         }
 
         Collections.reverse(path);
-
         model.setAStarPath(path);
     }
     public ArrayList<Step> getPathDescription() {
@@ -288,6 +287,7 @@ public class AStar {
         for (Node node : initialisedNodes) {
             if (node.explored) {
                 path.add(node);
+                node.explored = false;
             }
         }
         model.setAStarDebugPath(path);
