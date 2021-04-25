@@ -56,8 +56,9 @@ public class AStar {
             double deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
             distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         }
-        return distance * 111.320 * 0.56;
+        return distance * 111.320 * Model.scalingConstant;
     }
+
     public void createPath(Node target){
         path = new ArrayList<Node>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
@@ -68,6 +69,7 @@ public class AStar {
 
         model.setAStarPath(path);
     }
+
     public ArrayList<Step> getPathDescription() {
         ArrayList<Step> routeDescription = new ArrayList<>();
         double currentDistance = 0;
@@ -177,14 +179,6 @@ public class AStar {
             routeDescription.add(step);
             routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
         }
-
-        //temporary
-        /*for (Step s : routeDescription) {
-            System.out.println(s.toString());
-        }
-        System.out.println("Total distance: " + getTotalDistance() + "km");
-        System.out.println("Total time in decimal: " + getTotalTime());*/
-
         return routeDescription;
     }
 
@@ -292,7 +286,6 @@ public class AStar {
         }
         model.setAStarDebugPath(path);
 
-        //todo maybe move this
         createPath(end);
     }
 
