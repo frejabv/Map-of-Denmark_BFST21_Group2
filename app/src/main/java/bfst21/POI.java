@@ -50,4 +50,8 @@ public class POI {
     public float getY() {
         return y;
     }
+
+    public String getImageType() {
+        return imageType;
+    }
 }
