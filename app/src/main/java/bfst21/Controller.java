@@ -15,7 +15,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -258,6 +257,10 @@ public class Controller {
         if (singleClick) {
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
+            if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()){
+                currentPOI = null;
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            }
             pinText.textProperty().setValue(coordinates);
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
@@ -328,6 +331,10 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
+        if (canvas.setPin && type != "pin"){
+            canvas.setPin = false;
+            canvas.repaint();
+        }
         if (!type.equals("debug")) {
             searchContainer.setVisible(false);
             searchContainer.setManaged(false);
@@ -360,6 +367,7 @@ public class Controller {
                 debugContainer.setManaged(state);
                 break;
             case "pin":
+                fadeButtons();
                 pinContainer.setVisible(state);
                 pinContainer.setManaged(state);
                 break;
@@ -427,10 +435,12 @@ public class Controller {
     public void updateUserPOI() {
         userPOI.getChildren().clear();
         model.getPointsOfInterest().forEach(POI -> {
-            Button currentPOI = new Button(POI.getName());
-            userPOI.getChildren().add(currentPOI);
-            currentPOI.setOnAction(event -> {
+            Button currentPOILine = new Button(POI.getName());
+            userPOI.getChildren().add(currentPOILine);
+            currentPOILine.setOnAction(event -> {
                 changeType("pin",true);
+                currentPOI = POI;
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
                 canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
                 canvas.repaint();
             });
