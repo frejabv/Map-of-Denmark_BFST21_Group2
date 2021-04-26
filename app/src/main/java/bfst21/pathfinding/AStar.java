@@ -250,9 +250,6 @@ public class AStar {
 
     public void AStarSearch(Node start, Node end, TransportType type) {
         this.type = type;
-        /*for (Node node : initialisedNodes) {
-            node.setHScores(distanceToNode(node, end) / 130); // /type.maxSpeed
-        }*/
 
         PriorityQueue<Node> pq = new PriorityQueue<Node>(20, new NodeComparator()); //Maybe set initial capacity based on educated guess?
 
@@ -278,10 +275,10 @@ public class AStar {
             for (Edge e : current.getAdjecencies()) {
                 if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
-                    child.setHScores(distanceToNode(child,end)/130);
-                    float cost = e.getWeight(type,model); // e.getWeight(type,model)
-                    float temp_g_scores = current.g_scores + cost;
-                    float temp_f_scores = temp_g_scores + child.h_scores;
+                    child.setHScores(distanceToNode(child,end)/ type.maxSpeed);
+                    double cost = e.getWeight(type,model);
+                    double temp_g_scores = current.g_scores + cost;
+                    double temp_f_scores = temp_g_scores + child.h_scores;
 
 
                     //Checks if child node has been evaluated and the newer f_score is higher, skip
