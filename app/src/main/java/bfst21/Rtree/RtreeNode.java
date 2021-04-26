@@ -50,10 +50,6 @@ public class RtreeNode {
         return children;
     }
 
-    public void setChildren(){
-
-    }
-
     /**
      * Sorts the provided drawable list using either their x or y coordinate dictated by the vertical boolean
      * THIS METHOD MUTATES THE PROVIDED LIST
