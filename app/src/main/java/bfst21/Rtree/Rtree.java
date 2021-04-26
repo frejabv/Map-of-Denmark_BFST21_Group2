@@ -34,7 +34,7 @@ public class Rtree {
 
     public Way NearestWay(Point2D p) {
         Way nearest = null;
-        double currentNearestDist = 10000;
+        double currentNearestDist = 100000000;
 
         LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
         explorationQueue.add(root);
@@ -55,7 +55,7 @@ public class Rtree {
                     for (Drawable way: ((RtreeLeaf) current).getDrawables()) {
                         if (way instanceof Way) {
                             double wayDistance = ((Way) way).minimumDistanceToSquared(p);
-                            if (currentNearestDist < wayDistance) {
+                            if (currentNearestDist > wayDistance) {
                                 currentNearestDist = wayDistance;
                                 nearest = (Way) way;
                             }

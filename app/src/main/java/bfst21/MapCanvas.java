@@ -203,10 +203,8 @@ public class MapCanvas extends Canvas {
     public void drawNearest() {
         gc.setStroke(Color.GREENYELLOW);
         Way nearest = model.getRtree().NearestWay(canvasPoint);
-        System.out.println(nearest);
-        if (nearest != null) {
-            nearest.getRect().draw(gc);
-            nearest.draw(gc);
-        }
+        System.out.println(nearest.getId());
+        nearest.getRect().draw(gc);
+        nearest.draw(gc);
     }
 }
