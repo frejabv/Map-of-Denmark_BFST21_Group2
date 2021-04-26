@@ -177,6 +177,10 @@ public class Model {
         pointsOfInterest.add(poi);
     }
 
+    public void removePOI(POI poi) {
+        pointsOfInterest.remove(poi);
+    }
+
     public ArrayList<POI> getPointsOfInterest() {
         return pointsOfInterest;
     }
@@ -185,4 +189,5 @@ public class Model {
         cities.add(city);
     }
     public List<City> getCities(){return cities;}
+
 }

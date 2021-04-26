@@ -244,7 +244,13 @@
         </VBox>
         <VBox fx:id="pinContainer" styleClass="mainContainer">
           <HBox styleClass="pinBorderPane">
-              <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
+              <Button onMousePressed="#onMousePressedPinHeart" styleClass="heartIcon">
+                <graphic>
+                  <ImageView fx:id="heartIcon" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/heart-border.png"/>
+                  </ImageView>
+                </graphic>
+              </Button>
               <VBox>
                 <Text fx:id="pinText">Pin</Text>
                 <Button fx:id="removePin">Remove pin</Button>

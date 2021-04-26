@@ -399,9 +399,23 @@ public class Controller {
         scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
     }
 
+    @FXML
+    private ImageView heartIcon;
+    POI currentPOI = null;
     public void onMousePressedPinHeart() {
-        //add this point to POI
-        model.addPOI(new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
+        String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
+        if (heartIconFilePath[heartIconFilePath.length-1].equals("heart-border.png")){
+            if (currentPOI == null){
+                currentPOI = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+            }
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
+            model.addPOI(currentPOI);
+        }
+        else{
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            model.removePOI(currentPOI);
+            currentPOI = null;
+        }
         canvas.setPin = false;
         canvas.repaint();
         updateUserPOI();
@@ -416,6 +430,7 @@ public class Controller {
             Button currentPOI = new Button(POI.getName());
             userPOI.getChildren().add(currentPOI);
             currentPOI.setOnAction(event -> {
+                changeType("pin",true);
                 canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
                 canvas.repaint();
             });
