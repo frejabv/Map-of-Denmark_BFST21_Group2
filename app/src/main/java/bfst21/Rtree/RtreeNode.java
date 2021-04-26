@@ -58,10 +58,9 @@ public class RtreeNode {
      */
     protected void sortDrawables(List<Drawable> toSort, boolean vertical) {
         toSort.sort((a, b) -> {
-            float aVal = vertical ? a.getRect().minY :  a.getRect().minX;
-            float bVal = vertical ? b.getRect().minY : b.getRect().minX;
-
-            return Math.round(bVal - aVal);
+            float aVal = vertical ? a.getRect().minX : a.getRect().minY;
+            float bVal = vertical ? b.getRect().minX : b.getRect().minY;
+            return Float.compare(aVal, bVal);
         });
     }
     
@@ -72,9 +71,18 @@ public class RtreeNode {
             Rectangle descendantBoundingBox = descendant.getRect();
             
             if (minX > descendantBoundingBox.minX) minX = descendantBoundingBox.minX;
+            if (maxX < descendantBoundingBox.minX) maxX = descendantBoundingBox.minX;
+
             if (minY > descendantBoundingBox.minY) minY = descendantBoundingBox.minY;
+            if (maxY < descendantBoundingBox.minY) maxY = descendantBoundingBox.minY;
+
             if (maxX < descendantBoundingBox.maxX) maxX = descendantBoundingBox.maxX;
+            if (minX > descendantBoundingBox.maxX) minX = descendantBoundingBox.maxX;
+
             if (maxY < descendantBoundingBox.maxY) maxY = descendantBoundingBox.maxY;
+            if (minY > descendantBoundingBox.maxY) minY = descendantBoundingBox.maxY;
+
+
         }
 
         return new Rectangle(minX, minY, maxX, maxY);
