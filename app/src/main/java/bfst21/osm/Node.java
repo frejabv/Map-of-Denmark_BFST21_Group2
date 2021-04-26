@@ -13,9 +13,9 @@ import bfst21.Model;
 public class Node extends Member implements Serializable {
     private float x;
     private float y;
-    public double g_scores;
-    public double h_scores;
-    public double f_scores = 0;
+    public float g_scores;
+    public float h_scores;
+    public float f_scores = 0;
     private ArrayList<Edge> adjacencies;
     public Node parent;
     public boolean explored = false;
@@ -25,7 +25,7 @@ public class Node extends Member implements Serializable {
         this.x = x;
         this.y = y / -Model.scalingConstant;
     }
-    public Node(long id, double hVal){
+    public Node(long id, float hVal){
         super(id);
         h_scores = hVal;
     }
@@ -38,7 +38,7 @@ public class Node extends Member implements Serializable {
         return y;
     }
 
-    public void setHScores(double h_scores){
+    public void setHScores(float h_scores){
         this.h_scores = h_scores;
     }
 

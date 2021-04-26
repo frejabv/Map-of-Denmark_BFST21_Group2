@@ -71,7 +71,7 @@ public class Way extends Member implements Drawable, Serializable {
     public void checkSpeed() {
         if (maxSpeed == -1) {
             //Maybe check if way has areatype declared????? like urban
-            if (tags.contains(Tag.MOTORWAY)) {
+            if (tags.contains(Tag.MOTORWAY) || tags.contains(Tag.MOTORWAY_LINK)) {
                 maxSpeed = 130;
             } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.PRIMARY)) {
                 maxSpeed = 80;

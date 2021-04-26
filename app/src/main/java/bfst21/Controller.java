@@ -97,8 +97,8 @@ public class Controller {
 
         leftContainer.setMaxWidth(canvas.getWidth() / 100 * 33);
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
-        fromNodeId = 32463915;
-        toNodeId = 2247019210l;
+        fromNodeId = 34058377;
+        toNodeId = 5581362417l;
 
         model.setUpAStar();
         model.getAStar().AStarSearch(model.getNodeIndex().getMember(fromNodeId), model.getNodeIndex().getMember(toNodeId), model.getCurrentTransportType());
@@ -475,7 +475,8 @@ public class Controller {
             HBox stepContainer = new HBox();
             stepContainer.setAlignment(Pos.CENTER_LEFT);
             stepContainer.getStyleClass().add("stepContainer");
-            String imagePath = temp.getDirection().toString().toLowerCase();
+            String imagePath;
+            imagePath = temp.getDirection().toString().toLowerCase();
             if (imagePath.equals("continue")) {
                 imagePath = "follow";
             } else if (imagePath.equals("arrival")) {

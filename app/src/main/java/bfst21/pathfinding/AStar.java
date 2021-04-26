@@ -50,14 +50,14 @@ public class AStar {
         }
     }
 
-    private double distanceToNode(Node current, Node destination) {
-        double distance = 0;
+    private float distanceToNode(Node current, Node destination) {
+        float distance = 0;
         if (current != destination) {
-            double deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
-            double deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
-            distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+            float deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
+            float deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
+            distance = (float) Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         }
-        return distance * 111.320 * Model.scalingConstant;
+        return distance * 111.320f * Model.scalingConstant;
     }
 
     public void createPath(Node target) {
@@ -67,7 +67,7 @@ public class AStar {
         float maxY = -100;
         path = new ArrayList<Node>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
-            if (node.getX() < minX) {
+            /*if (node.getX() < minX) {
                 minX = node.getX();
             }
             if (node.getX() > maxX) {
@@ -78,7 +78,7 @@ public class AStar {
             }
             if (node.getY() > maxY) {
                 maxY = node.getY();
-            }
+            }*/
             path.add(node);
         }
 
@@ -145,9 +145,9 @@ public class AStar {
             if (firstId != secondId && !lastRoadName.equals(model.getWayIndex().getMember(secondId).getName())) {
                 currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
                 if (type.equals(TransportType.WALK)) {
-                    currentMaxSpeed = 5;
+                    currentMaxSpeed = TransportType.WALK.maxSpeed;
                 } else if (type.equals(TransportType.BICYCLE)) {
-                    currentMaxSpeed = 15;
+                    currentMaxSpeed = TransportType.BICYCLE.maxSpeed;
                 }
                 if (!isRoundabout) {
                     Step step = new Step(direction, lastRoadName, currentDistance);
@@ -250,9 +250,9 @@ public class AStar {
 
     public void AStarSearch(Node start, Node end, TransportType type) {
         this.type = type;
-        for (Node node : initialisedNodes) {
-            node.setHScores(distanceToNode(node, end));
-        }
+        /*for (Node node : initialisedNodes) {
+            node.setHScores(distanceToNode(node, end) / 130); // /type.maxSpeed
+        }*/
 
         PriorityQueue<Node> pq = new PriorityQueue<Node>(20, new NodeComparator()); //Maybe set initial capacity based on educated guess?
 
@@ -278,9 +278,10 @@ public class AStar {
             for (Edge e : current.getAdjecencies()) {
                 if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
-                    double cost = e.weight;
-                    double temp_g_scores = current.g_scores + cost;
-                    double temp_f_scores = temp_g_scores + child.h_scores;
+                    child.setHScores(distanceToNode(child,end)/130);
+                    float cost = e.getWeight(type,model); // e.getWeight(type,model)
+                    float temp_g_scores = current.g_scores + cost;
+                    float temp_f_scores = temp_g_scores + child.h_scores;
 
 
                     //Checks if child node has been evaluated and the newer f_score is higher, skip
@@ -303,14 +304,14 @@ public class AStar {
             }
         }
 
-        List<Node> path = new ArrayList<Node>();
+        List<Node> debugPath = new ArrayList<Node>();
         for (Node node : initialisedNodes) {
             if (node.explored) {
-                path.add(node);
+                debugPath.add(node);
                 node.explored = false;
             }
         }
-        model.setAStarDebugPath(path);
+        model.setAStarDebugPath(debugPath);
 
         createPath(end);
     }
@@ -341,7 +342,6 @@ public class AStar {
 
     public String getTotalTime() {
         String result = "Estimated Time: ";
-        System.out.println(totalTime);
         double time = totalTime * 60;
 
         if (time < 1) {

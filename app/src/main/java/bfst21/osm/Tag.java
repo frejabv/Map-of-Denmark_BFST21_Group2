@@ -21,7 +21,8 @@ public enum Tag {
     TRACK(7),
     TRUNK(400),
     UNCLASSIFIED(7),
-    WATER(100000000);
+    WATER(100000000),
+    MOTORWAY_LINK(700);
 
     public float zoomLimit;
 

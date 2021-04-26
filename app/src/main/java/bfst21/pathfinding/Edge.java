@@ -6,12 +6,12 @@ import bfst21.osm.Tag;
 import bfst21.osm.Way;
 
 public class Edge {
-    public final double weight;
+    public final float weight;
     public final Node target;
     private boolean isDriveable, isCyclable, isWalkable;
     private long wayID;
 
-    public Edge(Node targetNode, double costVal, long wayID) {
+    public Edge(Node targetNode, float costVal, long wayID) {
         target = targetNode;
         weight = costVal;
         this.wayID = wayID;
@@ -28,6 +28,18 @@ public class Edge {
             if (model.getWalkableTags().contains(tag)) {
                 isWalkable = true;
             }
+        }
+    }
+
+    public float getWeight(TransportType type, Model model){
+        if(type == TransportType.BICYCLE){
+            return weight/15;
+        }
+        else if(type == TransportType.WALK){
+            return weight/5;
+        }
+        else{
+            return weight/model.getWayIndex().getMember(wayID).getSpeed();
         }
     }
 
