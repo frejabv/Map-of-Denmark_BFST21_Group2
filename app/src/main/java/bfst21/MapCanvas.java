@@ -1,6 +1,8 @@
 package bfst21;
 
+import bfst21.Rtree.Rectangle;
 import bfst21.osm.RenderingStyle;
+import bfst21.osm.Way;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -90,20 +92,20 @@ public class MapCanvas extends Canvas {
         }
 
         if (RTreeLines) {
-            //TODO make this look nice and dandy
-            System.out.println("showing RtreeLines");
+            //display window
+            Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
+            System.out.println(maxPoint.getX() + " " + maxPoint.getY());
+            maxPoint = mouseToModelCoords(maxPoint);
+            System.out.println(maxPoint.getX() + " " + maxPoint.getY());
+
+            Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
+            System.out.println(minPoint.getX() + " " + minPoint.getY());
+            minPoint = mouseToModelCoords(minPoint);
+            System.out.println(minPoint.getX() + " " + minPoint.getY());
+
+            Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-
-            gc.setStroke(Color.PURPLE);
-            model.getWayIndex().forEach(way -> {
-                way.getRect().draw(gc);
-            });
-
-            gc.setStroke(Color.GREEN);
-            model.getRelationIndex().forEach(relation -> {
-                relation.getRect().draw(gc);
-            });
-
+            model.getRtree().drawRTree(window, gc);
         }
 
         gc.restore();
@@ -198,4 +200,13 @@ public class MapCanvas extends Canvas {
         return (currentMaxX - currentMinX) * 111.320f * 0.56f;
     }
 
+    public void drawNearest() {
+        gc.setStroke(Color.GREENYELLOW);
+        Way nearest = model.getRtree().NearestWay(canvasPoint);
+        System.out.println(nearest);
+        if (nearest != null) {
+            nearest.getRect().draw(gc);
+            nearest.draw(gc);
+        }
+    }
 }
