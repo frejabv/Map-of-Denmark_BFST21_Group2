@@ -21,7 +21,6 @@ public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
-        System.out.println("Readmap: " + filepath);
         if (filepath.endsWith(".osm")) {
             InputStream in = OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath);
             loadOSM(in, model);
