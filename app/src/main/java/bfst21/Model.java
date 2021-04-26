@@ -79,7 +79,7 @@ public class Model {
 
 
     public Rtree getRtree() {
-        return rtree;
+        return roadTree;
     }
 
     /*
