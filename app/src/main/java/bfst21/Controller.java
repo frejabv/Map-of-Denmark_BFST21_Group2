@@ -78,7 +78,7 @@ public class Controller {
     private Node nodeFrom;
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
-    private long fromNodeId, toNodeId;
+    private Node fromNode, toNode;
 
     public void init(Model model) {
         this.model = model;
@@ -100,13 +100,8 @@ public class Controller {
 
         leftContainer.setMaxWidth(canvas.getWidth() / 100 * 33);
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
-        fromNodeId = 491469749l;
-        toNodeId = 491471631l;
 
         model.setUpAStar();
-        model.getAStar().AStarSearch(model.getNodeIndex().getMember(fromNodeId), model.getNodeIndex().getMember(toNodeId), model.getCurrentTransportType());
-        showRoute();
-        canvas.repaint(); //To show the route after it has been calculated
     }
 
     @FXML
@@ -168,11 +163,15 @@ public class Controller {
         routeFieldFrom.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
-                fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                //Node node = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                //fromNodeId = Rtree.nearest(node.getX(), node.getY());
-                if (toNodeId != 0) {
-                    //model.getAStar().AStarSearch(fromNodeId, toNodeId);
+                Node nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
+                Point2D p = new Point2D(nodeFrom.getX(), nodeFrom.getY());
+                fromNode = model.getRtree().NearestWay(p).nearestNode(p);
+
+                if (toNode != null) {
+                    model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+                    showRouteDescription();
+                    canvas.showRoute();
+                    canvas.repaint(); //To show the route after it has been calculated
                     System.out.println("Route searched");
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
@@ -183,11 +182,14 @@ public class Controller {
         routeFieldTo.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
-                toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                //Node node = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                //toNodeId = Rtree.nearest(node.getX(), node.getY());
-                if (fromNodeId != 0) {
-                    //model.getAStar().AStarSearch(fromNodeID, toNodeId);
+                Node nodeTo = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldTo.getText()).getId());
+                Point2D p = new Point2D(nodeTo.getX(), nodeTo.getY());
+                toNode = model.getRtree().NearestWay(p).nearestNode(p);
+                if (fromNode != null) {
+                    model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+                    showRouteDescription();
+                    canvas.repaint(); //To show the route after it has been calculated
+                    canvas.showRoute();
                     System.out.println("Route searched");
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
@@ -226,19 +228,23 @@ public class Controller {
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
                         if (fieldType.equals("from")) {
-                            fromNodeId = node.getId();
-                            //fromNodeId = Rtree.nearest(node.getX(), node.getY());
-                            //potential route search here as well
+                            Node nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
+                            Point2D p = new Point2D(nodeFrom.getX(), nodeFrom.getY());
+                            fromNode = model.getRtree().NearestWay(p).nearestNode(p);
                         } else {
-                            toNodeId = node.getId();
-                            //toNodeId = Rtree.nearest(node.getX(), node.getY());
-                            if (fromNodeId != 0) {
-                                //model.getAStar().AStarSearch(fromNodeID, toNodeId);
-                                System.out.println("Route searched");
-                            }
+                            Node nodeTo = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldTo.getText()).getId());
+                            Point2D p = new Point2D(nodeTo.getX(), nodeTo.getY());
+                            toNode = model.getRtree().NearestWay(p).nearestNode(p);
                         }
-                        System.out.println(fieldType + ": " + node.getId());
+                        if (fromNode != null && toNode != null) {
+                            model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+                            showRouteDescription();
+                            canvas.showRoute();
+                            canvas.repaint(); //To show the route after it has been calculated
+                            System.out.println("Route searched");
+                        }
                     }
+
                     selectedContainer.getChildren().removeAll(suggestionList);
                     suggestionList.clear();
                 });
@@ -395,6 +401,9 @@ public class Controller {
             pinContainer.setVisible(false);
             pinContainer.setManaged(false);
         }
+        searchContainer.getChildren().removeAll(suggestionList);
+        routeContainer.getChildren().removeAll(suggestionList);
+        suggestionList.clear();
         switch (type) {
             case "route":
                 fadeButtons();
@@ -493,7 +502,8 @@ public class Controller {
     private Text arrivalText;
     @FXML
     private Text arrivalSmallText;
-    public void showRoute() {
+
+    public void showRouteDescription() {
         routeDescription.setVisible(true);
         routeDescription.setManaged(true);
         routeStepsContainer.getChildren().clear();
@@ -560,8 +570,8 @@ public class Controller {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
         if (currentButton != null) {
             model.setCurrentTransportType(TransportType.valueOf(currentButton.getId().split("-")[0].toUpperCase()));
-            model.getAStar().AStarSearch(model.getNodeIndex().getMember((long) fromNodeId), model.getNodeIndex().getMember((long) toNodeId), model.getCurrentTransportType());
-            showRoute();
+            model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+            showRouteDescription();
             canvas.repaint(); //To show the route after it has been calculated
         }
     }
