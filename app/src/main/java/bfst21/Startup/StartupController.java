@@ -26,7 +26,7 @@ public class StartupController {
     }
 
     public void defaultFile() {
-        startMapView("data/samsoe.osm");
+        startMapView("bornholm.osm.zip.obj");
     }
 
     public void startMapView(String filePath) {

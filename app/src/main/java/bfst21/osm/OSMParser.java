@@ -9,6 +9,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +21,12 @@ public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
+        System.out.println("Readmap: " + filepath);
         if (filepath.endsWith(".osm")) {
             InputStream in = OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath);
             loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
-            loadZIP(new FileInputStream(filepath), model);
+            loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
             saveOBJ(filepath + ".obj", model);
         } else if (filepath.endsWith(".obj")) {
             try {
@@ -40,7 +43,7 @@ public class OSMParser {
     }
 
     public static void loadOBJ(String filename, Model model) throws IOException, ClassNotFoundException {
-        try (var input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+        try (var input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(OSMParser.class.getResource("/bfst21/data/" + filename).getFile())))) {
             model.setFillMap((Map<Tag, List<Drawable>>) input.readObject());
             model.setNodeIndex((MemberIndex<Node>) input.readObject());
             model.setWayIndex((MemberIndex<Way>) input.readObject());
@@ -53,11 +56,19 @@ public class OSMParser {
             model.setMaxX(input.readFloat());
             model.setMaxY(input.readFloat());
             model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public static void saveOBJ(String filename, Model model) throws IOException {
-        try (var output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+        File file = null;
+        try {
+            file = Paths.get(OSMParser.class.getResource("/bfst21/data/" + filename).toURI()).toFile();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        try (var output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())))) {
             output.writeObject(model.getFillMap());
             output.writeObject(model.getNodeIndex());
             output.writeObject(model.getWayIndex());
@@ -70,6 +81,8 @@ public class OSMParser {
             output.writeFloat(model.getMaxX());
             output.writeFloat(model.getMaxY());
             output.writeObject(model.getDrawableMap());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
