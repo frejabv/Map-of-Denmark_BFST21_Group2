@@ -10,9 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -308,7 +305,7 @@ public class Controller {
             });
 
             //TODO add to fxml and make it look good
-            if (pinContainer.lookup("#nearest") != null){
+            if (pinContainer.lookup("#nearest") != null) {
                 pinContainer.getChildren().remove(pinContainer.lookup("#nearest"));
             }
             Button nearestWay = new Button("Find nearest way");
@@ -547,6 +544,7 @@ public class Controller {
 
     @FXML
     private ToggleGroup selectTransportTypeSettings;
+
     public void selectTransportType() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
         model.setCurrentTransportType(TransportType.valueOf(currentButton.getText().toUpperCase()));
@@ -554,6 +552,7 @@ public class Controller {
 
     @FXML
     private CheckBox showAStarPath;
+
     public void toggleAStarDebugPath() {
         if (showAStarPath.isSelected()) {
             canvas.debugAStar = true;
@@ -566,6 +565,7 @@ public class Controller {
 
     @FXML
     private ToggleGroup selectTransportTypeRoute;
+
     public void selectTransportTypeRoute() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
         if (currentButton != null) {
