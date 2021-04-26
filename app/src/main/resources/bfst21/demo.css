@@ -165,3 +165,12 @@
 .nearbyPOI{
     -fx-spacing: 20px;
 }
+
+.nearbyPOIImage{
+    -fx-padding: 0 10px 0 0;
+    -fx-border-insets: 0 10px 0 0;
+    -fx-background-insets: 0 10px 0 0;
+}
+.attractionType{
+    -fx-font-size: 10px;
+}

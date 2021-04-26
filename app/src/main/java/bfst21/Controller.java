@@ -465,9 +465,11 @@ public class Controller {
                     ImageView imageview = new ImageView(new Image(getClass().getResource("/bfst21/icons/car.png").toString()));
                     imageview.setFitHeight(22.0);
                     imageview.setFitWidth(22.0);
+                    imageview.getStyleClass().add("nearbyPOIImage");
                     VBox textlines = new VBox();
                     Text attractionName = new Text("Attraction Name");
                     Text attractionType = new Text("Attraction type");
+                    attractionType.getStyleClass().add("attractionType");
                     textlines.getChildren().add(attractionName);
                     textlines.getChildren().add(attractionType);
                     nearbyContainer.getChildren().add(imageview);
