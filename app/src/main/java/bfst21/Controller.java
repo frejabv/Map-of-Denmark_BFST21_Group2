@@ -1,38 +1,24 @@
 package bfst21;
 
 import bfst21.osm.Node;
-
-import com.sun.management.OperatingSystemMXBean;
+import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
-import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
+import java.util.List;
 
 public class Controller {
-    boolean singleClick = true;
-    @FXML
-    Text suggestionsHeader;
-    ScheduledExecutorService executor;
-    OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
-            .getOperatingSystemMXBean();
-    Runtime runtime = Runtime.getRuntime();
-    long processMemory = runtime.totalMemory() - runtime.freeMemory();
-    ArrayList<Text> suggestionList = new ArrayList<>();
-    private Model model;
-    private Point2D lastMouse;
     @FXML
     private MapCanvas canvas;
     @FXML
@@ -40,7 +26,13 @@ public class Controller {
     @FXML
     private VBox routeContainer;
     @FXML
+    private TextField routeFieldFrom;
+    @FXML
+    private TextField routeFieldTo;
+    @FXML
     private VBox settingsContainer;
+    @FXML
+    private VBox pinContainer;
     @FXML
     private VBox debugContainer;
     @FXML
@@ -54,6 +46,10 @@ public class Controller {
     @FXML
     private CheckBox enableDebugWindow;
     @FXML
+    private Text suggestionsHeader;
+    @FXML
+    private Text pinText;
+    @FXML
     private Text cpuProcess;
     @FXML
     private Text cpuSystem;
@@ -61,71 +57,170 @@ public class Controller {
     private Text ttd;
     @FXML
     private Text memoryUse;
-    Runnable updateStats = new Runnable() {
-        public void run() {
-            cpuProcess.textProperty().setValue("CPU Process Load: " + bean.getProcessCpuLoad());
-            cpuSystem.textProperty().setValue("CPU System Load: " + bean.getSystemCpuLoad() + "( " + bean.getSystemLoadAverage() + " average)");
-            memoryUse.textProperty().setValue("Memory Use (Experimental): " + processMemory);
-            long total = 0;
-            for (long temp : canvas.redrawAverage) {
-                total += temp;
-            }
-            ttd.textProperty().set("Redraw time (Rolling Average): ~" + TimeUnit.NANOSECONDS.toMillis(total / canvas.redrawAverage.length) + "ms (" + total / canvas.redrawAverage.length + "ns)");
-        }
-    };
+    @FXML
+    private Text scaletext;
+    @FXML
+    private VBox leftContainer;
+    @FXML
+    private HBox rightContainer;
 
-    public void init(Model model, Stage stage) {
+    private Debug debug;
+    private Point2D lastMouse;
+    private boolean singleClick = true;
+    private Model model;
+    private ArrayList<Text> suggestionList = new ArrayList<>();
+    private long fromNodeId, toNodeId;
+
+    public void init(Model model) {
         this.model = model;
         canvas.init(model);
+        canvas.setCurrentCanvasEdges();
+        updateScaleBar();
         hideAll();
+        debug = new Debug(canvas, cpuProcess, cpuSystem, ttd, memoryUse);
         changeType("debug", false);
         Spelling autocorrector = new Spelling();
+        Regex regex = new Regex(setupRegexView());
 
-        searchField.textProperty().addListener((obs, oldText, newText) -> {
-            String searchStringCorrected = "";
-            String[] result = autocorrector.correction(newText);
-            for (String temp : result) {
-                searchStringCorrected = temp + " ";
-            }
-            addSuggestions();
-        });
-        executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(updateStats, 0, 3, TimeUnit.SECONDS);
+        setUpSearchField(regex);
+        setUpRouteFields(regex);
+
         if (model.getTtiMode()) {
             System.exit(0);
         }
     }
 
-    public void addSuggestions() {
-        searchContainer.getChildren().removeAll(suggestionList);
+    @FXML
+    private VBox regexContainer;
+
+    private List<Text> setupRegexView() {
+        List<Text> regexVisualisers = new ArrayList<>();
+        List<String> regexString = Arrays.asList("[Postcode] [City]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
+        for (int i = 0; i < regexString.size(); i++) {
+            HBox hbox = new HBox();
+            hbox.getStyleClass().add("regexLine");
+            Text bullet = new Text("\u25CF");
+            bullet.getStyleClass().add("regexMatch");
+            Text text = new Text(regexString.get(i));
+            hbox.getChildren().add(bullet);
+            hbox.getChildren().add(text);
+            regexVisualisers.add(bullet);
+            regexContainer.getChildren().add(hbox);
+        }
+        return regexVisualisers;
+    }
+
+    public void setUpSearchField(Regex regex) {
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            //Run Regex Matcher
+            regex.run(newText);
+            addSuggestions(model, "search", null);
+        });
+
+        searchField.setOnAction(e -> {
+            if (!suggestionList.isEmpty()) {
+                searchField.textProperty().setValue(suggestionList.get(0).getText());
+                Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
+                canvas.setPin(node.getX(), node.getY());
+                canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                searchContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+    }
+
+    public void setUpRouteFields(Regex regex) {
+        routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model, "route", "from");
+        });
+
+        routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
+            regex.run(newText);
+            addSuggestions(model, "route", "to");
+        });
+
+        routeFieldFrom.setOnAction(e -> {
+            if (!suggestionList.isEmpty()) {
+                routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
+                fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if (toNodeId != 0) {
+                    //model.getAStar().AStarSearch(fromNodeId, toNodeId);
+                    System.out.println("Route searched");
+                }
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+
+        routeFieldTo.setOnAction(e -> {
+            if (!suggestionList.isEmpty()) {
+                routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
+                toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                if (fromNodeId != 0) {
+                    //model.getAStar().AStarSearch(fromNodeID, toNodeId);
+                    System.out.println("Route searched");
+                }
+                routeContainer.getChildren().removeAll(suggestionList);
+                suggestionList.clear();
+            }
+        });
+    }
+
+    public void addSuggestions(Model model, String containerType, String fieldType) {
+        VBox selectedContainer;
+        TextField selectedField;
+        if (containerType.equals("search")) {
+            selectedContainer = searchContainer;
+            selectedField = searchField;
+        } else {
+            selectedContainer = routeContainer;
+            if (fieldType.equals("from")) {
+                selectedField = routeFieldFrom;
+            } else {
+                selectedField = routeFieldTo;
+            }
+        }
+        selectedContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
-        if (searchField.textProperty().getValue().length() > 2) {
-            // for(Member temp : possibleMatches)
-            for (int i = 0; i < 8; i++) {
-                Text newSuggestion = new Text("Suggestion!" + i);
+        if (selectedField.textProperty().getValue().length() > 2) {
+            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
+            for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
+                RadixNode suggestion = suggestions.get(i);
+                Text newSuggestion = new Text(suggestion.getFullName());
                 newSuggestion.getStyleClass().add("suggestion");
+                newSuggestion.setOnMouseClicked(e -> {
+                    selectedField.textProperty().setValue(suggestion.getFullName());
+                    Node node = model.getNodeIndex().getMember(suggestion.getId());
+                    if (containerType.equals("search")) {
+                        canvas.setPin(node.getX(), node.getY());
+                        canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                    } else {
+                        if (fieldType.equals("from")) {
+                            fromNodeId = node.getId();
+                            //potential route search here as well
+                        } else {
+                            toNodeId = node.getId();
+                            if (fromNodeId != 0) {
+                                //model.getAStar().AStarSearch(fromNodeID, toNodeId);
+                                System.out.println("Route searched");
+                            }
+                        }
+                        System.out.println(fieldType + ": " + node.getId());
+                    }
+                    selectedContainer.getChildren().removeAll(suggestionList);
+                    suggestionList.clear();
+                });
                 suggestionList.add(newSuggestion);
             }
         }
-        searchContainer.getChildren().addAll(suggestionList);
+        selectedContainer.getChildren().addAll(suggestionList);
     }
 
     @FXML
     public void onKeyPressed(KeyEvent e) {
-
         if (e.getText().equals("d")) {
             toggleDebugMode();
-        }
-    }
-
-
-    public void toggleDebugMode() {
-        if (debugContainer.isVisible()) {
-            changeType("debug", false);
-            enableDebugWindow.setSelected(false);
-        } else {
-            changeType("debug", true);
-            enableDebugWindow.setSelected(true);
         }
     }
 
@@ -133,6 +228,7 @@ public class Controller {
     private void onScrollOnCanvas(ScrollEvent e) {
         double factor = Math.pow(1.01, e.getDeltaY());
         canvas.zoom(factor, new Point2D(e.getX(), e.getY()));
+        updateScaleBar();
     }
 
     @FXML
@@ -150,32 +246,35 @@ public class Controller {
     }
 
     @FXML
+    private Button removePin;
+
+    @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
-            //TODO make this look good
-            Point2D lastMouseCoords = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
-            Node tester = model.getKdTree().nearest(lastMouseCoords);
-            System.out.println(tester == null ?
-                    "You clicked outside the map! We can't find anything in the void"
-                    : "Nearest node ID: " + tester.getId() + " with the coordinates (" + tester.getX() + ", " + tester.getY() * -0.56f + ")");
-
-            searchContainer.getChildren().remove(searchContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
-            changeType("search", true);
-            suggestionsHeader.textProperty().setValue(coordinates);
-            Button removePin = new Button("Remove pin");
+            changeType("pin", true);
+            pinText.textProperty().setValue(coordinates);
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
                 canvas.repaint();
                 hideAll();
             });
-            searchContainer.getChildren().add(removePin);
         } else {
             singleClick = true;
         }
     }
 
-    public void onMousePressedSearch(MouseEvent mouseEvent) {
+    public void toggleDebugMode() {
+        if (debugContainer.isVisible()) {
+            changeType("debug", false);
+            enableDebugWindow.setSelected(false);
+        } else {
+            changeType("debug", true);
+            enableDebugWindow.setSelected(true);
+        }
+    }
+
+    public void onMousePressedSearch() {
         if (searchContainer.isVisible()) {
             hideAll();
             if (canvas.setPin) {
@@ -187,7 +286,7 @@ public class Controller {
         }
     }
 
-    public void onMousePressedRoute(MouseEvent mouseEvent) {
+    public void onMousePressedRoute() {
         if (routeContainer.isVisible()) {
             hideAll();
         } else {
@@ -195,7 +294,7 @@ public class Controller {
         }
     }
 
-    public void onMousePressedSettings(MouseEvent mouseEvent) {
+    public void onMousePressedSettings() {
         if (settingsContainer.isVisible()) {
             hideAll();
         } else {
@@ -203,28 +302,13 @@ public class Controller {
         }
     }
 
-    public void defaultColorMode(MouseEvent mouseEvent) {
+    public void defaultColorMode() {
         canvas.renderingStyle.defaultMode();
         canvas.repaint();
     }
 
-    public void darkColorMode(MouseEvent mouseEvent) {
+    public void darkColorMode() {
         canvas.renderingStyle.darkMode();
-        canvas.repaint();
-    }
-
-    public void deuteranopeColorMode(MouseEvent mouseEvent) {
-        canvas.renderingStyle.deuteranopeColorMode();
-        canvas.repaint();
-    }
-
-    public void protanopeColorMode(MouseEvent mouseEvent) {
-        canvas.renderingStyle.protanopeColorMode();
-        canvas.repaint();
-    }
-
-    public void tritanopeColorMode(MouseEvent mouseEvent) {
-        canvas.renderingStyle.tritanopeColorMode();
         canvas.repaint();
     }
 
@@ -246,6 +330,8 @@ public class Controller {
             routeContainer.setManaged(false);
             settingsContainer.setVisible(false);
             settingsContainer.setManaged(false);
+            pinContainer.setVisible(false);
+            pinContainer.setManaged(false);
         }
         switch (type) {
             case "route":
@@ -268,6 +354,10 @@ public class Controller {
                 debugContainer.setVisible(state);
                 debugContainer.setManaged(state);
                 break;
+            case "pin":
+                pinContainer.setVisible(state);
+                pinContainer.setManaged(state);
+                break;
             default:
                 fadeButtons();
                 searchContainer.setVisible(state);
@@ -278,15 +368,52 @@ public class Controller {
         }
     }
 
-    @FXML
-    public void ToggleKDLines() {
-        canvas.kdLines = !canvas.kdLines;
-        canvas.repaint();
+    public void shutdownExecutor() {
+        debug.shutdownExecutor();
     }
 
     @FXML
-    public void ToggleRedrawWindow(){
-        canvas.redrawWindow = !canvas.redrawWindow;
+    private HBox scaleContainer;
+    @FXML
+    private VBox scale;
+
+    public void updateScaleBar() {
+        double scaleWidth = (canvas.getWidth() / 10) + 40;
+        scaleContainer.setPrefWidth(scaleWidth);
+        scale.setPrefWidth(scaleWidth);
+        double scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
+
+        String metric;
+        if (scaleValue < 1) {
+            scaleValue = Math.round(canvas.getDistanceWidth() * 100);
+            metric = " M";
+        } else {
+            scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
+            metric = " KM";
+        }
+        scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
+    }
+
+    public void onMousePressedPinHeart() {
+        //add this point to POI
+        model.addPOI(new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
+        canvas.setPin = false;
         canvas.repaint();
+        updateUserPOI();
+    }
+
+    @FXML
+    private VBox userPOI;
+
+    public void updateUserPOI() {
+        userPOI.getChildren().clear();
+        model.getPointsOfInterest().forEach(POI -> {
+            Button currentPOI = new Button(POI.getName());
+            userPOI.getChildren().add(currentPOI);
+            currentPOI.setOnAction(event -> {
+                canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
+                canvas.repaint();
+            });
+        });
     }
 }

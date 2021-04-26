@@ -166,13 +166,4 @@ public class OSMObjectsTest {
         assertEquals(DrawStyle.STROKE, testStyle.getDrawStyleByTag(Tag.PRIMARY));
     }
 
-    @Test
-    public void testColorModes() {
-        RenderingStyle testStyle = new RenderingStyle();
-        testStyle.deuteranopeColorMode();
-        testStyle.tritanopeColorMode();
-        testStyle.protanopeColorMode();
-        assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
-    }
-
 }

@@ -1,11 +1,15 @@
 package bfst21;
 
+import bfst21.osm.*;
+import bfst21.search.RadixTree;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bfst21.osm.*;
+import javax.xml.stream.XMLStreamException;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -17,11 +21,19 @@ public class Model {
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
+    private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
+
+    private ArrayList<POI> pointsOfInterest;
+    private ArrayList<POI> systemPointsOfInterest;
+
     private boolean ttiMode;
 
     private float minX, minY, maxX, maxY;
+
+    // Scale nodes latitude to account for the curvature of the earth
+    public final static float scalingConstant = 0.56f;
 
     public Model(String filepath, boolean ttiMode) {
         drawableMap = new HashMap<>();
@@ -34,13 +46,17 @@ public class Model {
         coastlines = new ArrayList<>();
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
+        streetTree = new RadixTree();
+
+        pointsOfInterest = new ArrayList<>();
+        systemPointsOfInterest = new ArrayList<>();
 
         this.ttiMode = ttiMode;
 
         try {
             OSMParser.readMapElements(filepath, this);
-        } catch (Exception e) {
-            System.out.println("error: " + e.getClass());
+        } catch (IOException | XMLStreamException e) {
+            e.printStackTrace();
         }
     }
 
@@ -138,4 +154,20 @@ public class Model {
     public boolean getTtiMode() {
         return ttiMode;
     }
+
+    public RadixTree getStreetTree() {
+        return streetTree;
+    }
+
+    public void addPOI(POI poi) {
+        pointsOfInterest.add(poi);
+    }
+
+    public ArrayList<POI> getPointsOfInterest() {
+        return pointsOfInterest;
+    }
+
+    public void addSystemPOI(POI poi) {systemPointsOfInterest.add(poi);}
+
+    public ArrayList<POI> getSystemPointsOfInterest() {return systemPointsOfInterest;}
 }

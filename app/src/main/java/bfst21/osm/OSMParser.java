@@ -1,12 +1,16 @@
 package bfst21.osm;
 
-import java.io.*;
-import java.util.zip.ZipInputStream;
+import bfst21.Model;
+import bfst21.POI;
+import bfst21.exceptions.UnsupportedFileTypeException;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.*;
+import java.util.*;
+import java.util.zip.ZipInputStream;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
@@ -17,11 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OSMParser {
+    private static HashMap<String, List<String>> addresses = new HashMap<>();
+    private static List<String> systemPOITags;
+    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall"));
+
+
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
         if (filepath.endsWith(".osm")) {
-            loadOSM(new FileInputStream(filepath), model);
+            InputStream in = OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath);
+            loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
-            loadZIP(new FileInputStream(filepath), model);
+            loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
         } else if (filepath.endsWith(".obj")) {
             // TODO
             System.out.println("missing object loader");
@@ -38,10 +48,14 @@ public class OSMParser {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
         ArrayList<Tag> tags = new ArrayList<>();
+        systemPOITags = new ArrayList<>();
+        Node node = null;
         Way way = null;
         Relation relation = null;
+        String systemPOIName = "";
 
         boolean isWay = false;
+        boolean isNode = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -50,17 +64,19 @@ public class OSMParser {
                 case "bounds":
                     model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                     model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                    model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -0.56f);
-                    model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -0.56f);
+                    model.setMaxY(
+                            Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
+                    model.setMinY(
+                            Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
                     model.getKdTree().setBounds();
                     break;
                 case "node":
                     var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                     var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
                     var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                    Node n = new Node(lon, lat, id);
-                    model.getKdTree().insert(n);
-                    model.addToNodeIndex(n);
+                    node = new Node(lon, lat, id);
+                    model.addToNodeIndex(node);
+                    isNode = true;
                     break;
                 case "way":
                     isWay = true;
@@ -78,12 +94,20 @@ public class OSMParser {
                 case "tag":
                     var k = xmlReader.getAttributeValue(null, "k");
                     var v = xmlReader.getAttributeValue(null, "v");
-                    if(k.equals("building")){
+                    if (k.equals("name")){
+                        systemPOIName = v;
+                    }
+                    if (k.equals("building")) {
                         tags.add(Tag.BUILDING);
                         break;
                     }
-                    if(k.equals("service")){
+                    if (k.equals("service")) {
                         break;
+                    }
+                    if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic")){
+                        if (systemPoi.contains(v)) {
+                            systemPOITags.add(v);
+                        }
                     }
 
                     try {
@@ -99,6 +123,15 @@ public class OSMParser {
                     } catch (IllegalArgumentException e) {
                         // We don't care about tags not in our Tag enum
                     }
+
+                    if (isNode) {
+                        // Example from samsoe.osm of an addr tag:
+                        // <tag k="addr:street" v="Havnevej"/>
+                        if (k.equals("addr:street")) {
+                            model.getStreetTree().insert(v, node.getId());
+                        }
+                    }
+
                     break;
                 case "relation":
                     var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -117,7 +150,7 @@ public class OSMParser {
                         break;
                     case "way":
                         memberRef = model.getWayIndex().getMember(ref);
-                        if(memberRef != null) {
+                        if (memberRef != null) {
                             relation.addWay((Way) memberRef);
                         }
                         break;
@@ -135,13 +168,43 @@ public class OSMParser {
                 break;
             case XMLStreamReader.END_ELEMENT:
                 switch (xmlReader.getLocalName()) {
-                case "way":
-                    addWayToList(way, tags, model);
-                    break;
-                case "relation":
-                    relation.setTags(tags);
-                    relation = null;
-                    break;
+                    case "node":
+                        if (systemPOITags.size() > 0 && systemPOIName != ""){
+                            //POI list can be kd-tree only
+                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags,node.getX(),node.getY()));
+                            model.getKdTree().insert(node);
+                            System.out.println(systemPOITags.size());
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
+                        }
+                        isNode = false;
+                        systemPOIName = "";
+                        systemPOITags = new ArrayList<>();
+                        break;
+                    case "way":
+                        if (systemPOITags.size() > 0 && systemPOIName != ""){
+                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags, way.first().getX(),way.first().getY()));
+                            System.out.println(systemPOITags.size());
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
+                        }
+                        addWayToList(way, tags, model);
+                        systemPOIName = "";
+                        systemPOITags = new ArrayList<>();
+                        break;
+                    case "relation":
+                        if (systemPOITags.size() > 0 && systemPOIName != ""){
+                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags, relation.ways.get(0).first().getX(),relation.ways.get(0).first().getY()));
+                            System.out.println(systemPOITags.size());
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
+                        }
+
+                        relation.setTags(tags);
+                        relation = null;
+                        systemPOIName = "";
+                        systemPOITags = new ArrayList<>();
+                        break;
                 }
                 break;
             }
@@ -151,6 +214,54 @@ public class OSMParser {
         System.out.println("coastlines: " + model.getCoastlines());
         System.out.println("Illegal Argument Exceptions: T3:" + KDTree.IAE3Counter + " T4:"+KDTree.IAE4Counter);
         System.out.println("Nodes out of bounds = " + KDTree.outOfBoundsCounter);
+    }
+
+    private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
+        String type = "museum";
+        String imageType = "museum";
+        /*int priority = 10;
+        //List<String> systemPoi = new ArrayList<>(Arrays.asList("attraction", "viewpoint", "artwork", "building"));
+        //From specific tags to more general
+        for(String tag :systemPOITags) {
+            if (imageType.equals("")) {
+                switch (tag) {
+                    case "bust":
+                    case "statue":
+                    case "sculpture":
+                        imageType = "statue";
+                        priority = 10;
+                        break;
+                    case "theme_park":
+                        imageType = "theme_park";
+                        priority = 10;
+                        break;
+                    case "attraction":
+                        if (priority < 10){
+                            imageType = "attraction";
+                            priority = 5;
+                        }
+                        break;
+                }
+            }
+        }
+        else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")){
+            imageType = "cinema";
+        } else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")){
+            imageType = "museum";
+        } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")){
+            imageType = "castle";
+        } else if (systemPOITags.contains("aerodrome")){
+            imageType = "aerodrome";
+        } else if (systemPOITags.contains("zoo")){
+            imageType = "zoo";
+        } else if (systemPOITags.contains("aquarium")){
+            imageType = "aquarium";
+        } else if (systemPOITags.contains("theme_park")){
+            imageType = "theme_park";
+        }*/
+        //sanitise type
+        POI result = new POI(systemPOIName,type, imageType,x,y);
+        return result;
     }
 
     public static void addWayToList(Way way, List<Tag> tags, Model model) {
@@ -204,10 +315,10 @@ public class OSMParser {
         loadOSM(zip, model);
     }
 
-    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map){
+    private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map) {
         List listToCheck = map.get(tag);
         boolean isDublet = true;
-        if(listToCheck.size()==0 || listToCheck.get(listToCheck.size()-1) != drawable) {
+        if (listToCheck.size() == 0 || listToCheck.get(listToCheck.size() - 1) != drawable) {
             isDublet = false;
         }
         return isDublet;

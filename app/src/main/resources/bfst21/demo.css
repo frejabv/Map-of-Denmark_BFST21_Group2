@@ -13,23 +13,22 @@
     -fx-background-color: #ffffff;
     -fx-opacity: .5;
 }
-.leftContainer,.centerContainer,.rightContainer{
-    -fx-pref-width: 350px;
-    -fx-pref-height: 250px;
+.leftContainer{
     -fx-padding: 20px;
+    -fx-min-height: 300px;
 }
 .rightContainer{
     /*JavaFX Margin Fix*/
-    -fx-padding: 90px 20px 0px 0px;
-    -fx-border-insets: 90px 0 0 0;
-    -fx-background-insets: 90px 0 0 0;
+    -fx-padding: 20px 20px 20px 0px;
+    -fx-border-insets: 20px 0 20px 0;
+    -fx-background-insets: 20px 0 20px 0;
+    -fx-min-height: 280px;
 }
 .mainContainer{
     -fx-background-color: #ffffff;
     -fx-border-radius: 5px;
     -fx-background-radius: 5px;
-    -fx-pref-height: 100px;
-    -fx-min-width: 350px;
+    -fx-min-height: 100px;
     -fx-padding: 20px 20px 20px 20px;
 }
 .header-margin{
@@ -43,7 +42,7 @@
 
 .mainContainer .scroll-pane {
     -fx-background-color: transparent;
-    -fx-min-height: 450px;
+    -fx-max-height: 450px;
 }
 .mainContainer .scroll-pane, .mainContainer .scroll-pane .viewport, .mainContainer .scroll-pane .content,.mainContainer .scroll-pane .scroll-bar,.mainContainer .scroll-pane .scroll-bar:vertical,.mainContainer .scroll-pane .scroll-bar:horizontal, .mainContainer .scroll-pane .increment-button:hover ,.text-area .decrement-button:hover {
     -fx-background-color:transparent;
@@ -94,4 +93,69 @@
 }
 .textfield:focused {
     -fx-focus-color: transparent;
+}
+.pinBorderPane{
+    -fx-spacing: 20px;
+}
+
+.regexLine{
+    -fx-spacing: 10;
+    -fx-padding: 0 0 10 0;
+}
+.regexMatch{
+    -fx-fill: #ecf0f1;
+    -fx-padding: 0 10px 0 0;
+}
+.regexMatchGreen{
+    -fx-fill: #2ecc71;
+}
+.regexMatchRed{
+    -fx-fill: #e74c3c;
+}
+
+.scale {
+    -fx-padding: 20;
+}
+.scale .scaletext{
+    -fx-font-size: 15;
+    -fx-fill: #303952;
+}
+.scalebar{
+    -fx-fill: transparent;
+    -fx-max-height: 10;
+    -fx-min-height: 10;
+    -fx-border-color: #303952;
+    -fx-border-width: 0 2 2 2;
+}
+.arrivalText{
+    -fx-font-size: 20px;
+}
+.arrivalSmallText{
+    -fx-font-size: 16px;
+}
+.selectTransportTypeButton{
+    -fx-background-color: transparent;
+}
+.selectTransportTypeButton:selected{
+    -fx-background-color: rgba(0, 0, 0, .25);
+}
+
+.stepContainer{
+    /*JavaFX Margin Fix*/
+    -fx-padding: 10px 0 10px 10px;
+    -fx-border-insets: 10px 0 10px 10px;
+    -fx-background-insets: 10px 0 10px 10px;
+}
+.stepIcon{
+    /*JavaFX Margin Fix*/
+    -fx-padding: 0 20px 0 10px;
+    -fx-border-insets: 0 20px 0 10px;
+    -fx-background-insets: 0 20px 0 10px;
+}
+
+.labelTest{
+    -fx-word-wrap: break-word;
+    -fx-padding: 0 0 0 10px;
+    -fx-border-insets: 0 0 0 10px;
+    -fx-background-insets: 0 0 0 10px;
 }

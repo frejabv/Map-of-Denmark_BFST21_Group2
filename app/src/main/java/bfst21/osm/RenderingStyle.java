@@ -91,17 +91,6 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.TRACK, Color.BROWN);
     }
 
-    public void deuteranopeColorMode() {
-
-    }
-
-    public void protanopeColorMode() {
-
-    }
-
-    public void tritanopeColorMode() {
-    }
-
     public Color getColorByTag(Tag tag) {
         switch (theme) {
         case DARK:

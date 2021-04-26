@@ -1,16 +1,15 @@
 package bfst21;
 
+import bfst21.osm.RenderingStyle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import bfst21.osm.*;
-
-import java.time.Duration;
-import java.time.Instant;
 
 public class MapCanvas extends Canvas {
     private Model model;
@@ -18,13 +17,14 @@ public class MapCanvas extends Canvas {
     GraphicsContext gc;
     boolean setPin;
     Point2D canvasPoint;
+    Point2D pinPoint;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
+    private float currentMaxX, currentMaxY, currentMinX, currentMinY;
 
     public boolean kdLines = false;
-    public boolean redrawWindow = false;
 
     public void init(Model model) {
         this.model = model;
@@ -55,97 +55,81 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
-        //TODO
-        if (redrawWindow) {
-            model.getFillMap().forEach((tag, fillables) -> {
-                gc.setStroke(renderingStyle.getColorByTag(tag));
-                gc.setFill(renderingStyle.getColorByTag(tag));
+        model.getFillMap().forEach((tag, fillables) -> {
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            gc.setFill(renderingStyle.getColorByTag(tag));
 
-                fillables.forEach(fillable -> {
+            fillables.forEach(fillable -> {
+                if (tag.zoomLimit > getDistanceWidth()) {
                     fillable.draw(gc);
                     gc.fill();
-                });
-
-            });
-
-            model.getDrawableMap().forEach((tag, drawables) -> {
-                gc.setStroke(renderingStyle.getColorByTag(tag));
-                var style = renderingStyle.getDrawStyleByTag(tag);
-                drawables.forEach(drawable -> {
-                    drawable.draw(gc);
-                });
-            });
-
-            model.getRelationIndex().forEach(relation -> {
-                if (relation.getTags().size() != 0) {
-                    relation.draw(gc, renderingStyle);
                 }
             });
+        });
 
-            if (kdLines) {
-                model.getKdTree().drawLines(gc);
+        model.getDrawableMap().forEach((tag, drawables) -> {
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            var style = renderingStyle.getDrawStyleByTag(tag);
+            drawables.forEach(drawable -> {
+                if (tag.zoomLimit > getDistanceWidth()) {
+                    drawable.draw(gc);
+                }
+            });
+        });
+
+        model.getRelationIndex().forEach(relation -> {
+            if (relation.getTags().size() != 0) {
+                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
+                    relation.draw(gc, renderingStyle);
+                }
             }
+        });
 
-            gc.setStroke(Color.RED);
-            gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
-            gc.beginPath();
-            var minCoords = mouseToModelCoords(new Point2D(getWidth() / 3, getHeight() / 3));
-            var maxCoords = mouseToModelCoords(new Point2D(getWidth() * 2 / 3, getHeight() * 2 / 3));
-            gc.moveTo(minCoords.getX(), minCoords.getY());
-            gc.lineTo(minCoords.getX(), maxCoords.getY());
-            gc.lineTo(maxCoords.getX(), maxCoords.getY());
-            gc.lineTo(maxCoords.getX(), minCoords.getY());
-            gc.lineTo(minCoords.getX(), minCoords.getY());
-            gc.stroke();
+        model.getSystemPointsOfInterest().forEach(POI -> {
+            gc.setFill(Color.rgb(52,152,219));
+            double size = (30 / Math.sqrt(trans.determinant()));
+            gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+            String image = POI.getType();
+            gc.drawImage(new Image("bfst21/icons/" + image + ".png"), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
+
+            gc.setFill(Color.BLACK);
+            gc.setFont(Font.font("Arial", FontWeight.BOLD,10 / Math.sqrt(trans.determinant())));
+            gc.fillText(POI.getName(),POI.getX()+size,POI.getY());
+        });
+
+        model.getPointsOfInterest().forEach(POI -> {
+            gc.setFill(Color.WHITE);
+            double size = (30 / Math.sqrt(trans.determinant()));
+            gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+            gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
+            switch (POI.getType().toLowerCase()) {
+                case "home":
+                    //draw home icon
+                    break;
+                case "work":
+                    //draw briefcase icon
+                    break;
+                default:
+                    //draw generic icon
+            }
+        });
+
+        if (kdLines) {
+            model.getKdTree().drawLines(gc);
+        }
+
+        if (setPin) {
+            double size = (30 / Math.sqrt(trans.determinant()));
+            gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size, size);
+        }
+
+        gc.restore();
+        long elapsedTime = System.nanoTime() - start;
+        if (redrawIndex < 20) {
+            redrawAverage[redrawIndex] = elapsedTime;
+            redrawIndex++;
         } else {
-
-            model.getFillMap().forEach((tag, fillables) -> {
-                gc.setStroke(renderingStyle.getColorByTag(tag));
-                gc.setFill(renderingStyle.getColorByTag(tag));
-
-                fillables.forEach(fillable -> {
-                    fillable.draw(gc);
-                    gc.fill();
-                });
-
-            });
-
-            model.getDrawableMap().forEach((tag, drawables) -> {
-                gc.setStroke(renderingStyle.getColorByTag(tag));
-                var style = renderingStyle.getDrawStyleByTag(tag);
-                drawables.forEach(drawable -> {
-                    drawable.draw(gc);
-                });
-            });
-
-            model.getRelationIndex().forEach(relation -> {
-                if (relation.getTags().size() != 0) {
-                    relation.draw(gc, renderingStyle);
-                }
-            });
-
-            if (kdLines) {
-                model.getKdTree().drawLines(gc);
-            }
-
-            if (setPin) {
-                gc.setFill(Color.rgb(231, 76, 60));
-                gc.fillArc(canvasPoint.getX(), canvasPoint.getY(), 0.05 * size, 0.05 * size, -30, 240, ArcType.OPEN);
-                double[] xPoints = {canvasPoint.getX() + 0.00307 * size, canvasPoint.getX() + 0.025 * size, canvasPoint.getX() + 0.04693 * size}; //+0.05
-                double[] yPoints = {canvasPoint.getY() + 0.037 * size, canvasPoint.getY() + 0.076 * size, canvasPoint.getY() + 0.037 * size};
-                gc.fillPolygon(xPoints, yPoints, 3);
-                gc.setFill(Color.rgb(192, 57, 43));
-                gc.fillOval(canvasPoint.getX() + 0.015 * size, canvasPoint.getY() + 0.015 * size, 0.020 * size, 0.020 * size);
-            }
-
-            gc.restore();
-            long elapsedTime = System.nanoTime() - start;
-            if (redrawIndex < 20) {
-                redrawAverage[redrawIndex] = elapsedTime;
-                redrawIndex++;
-            } else {
-                redrawIndex = 0;
-            }
+            redrawIndex = 0;
         }
     }
 
@@ -155,17 +139,38 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoom(double factor, Point2D center) {
-        trans.prependScale(factor, factor, center);
-        repaint();
+        setCurrentCanvasEdges();
+        if (factor > 1) {
+            if (getDistanceWidth() > 0.1) {
+                trans.prependScale(factor, factor, center);
+                repaint();
+            }
+        } else {
+            //TODO: make the boundry go to inital zoom position
+            if (getDistanceWidth() < 1000) {
+                trans.prependScale(factor, factor, center);
+                repaint();
+            }
+        }
     }
 
-    public String setPin(Point2D point){
+    public String setPin(Point2D point) {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
-        canvasPoint = new Point2D(canvasPoint.getX()-(0.025*size),canvasPoint.getY()-(0.076*size));
+        pinPoint = canvasPoint;
+        canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
-        return canvasPoint.getY()*-0.56f + ", " + canvasPoint.getX();
+        return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
+    }
+
+    public String setPin(double x, double y) {
+        size = .3;
+        canvasPoint = new Point2D(x - (0.025 * size), y - (0.076 * size));
+        pinPoint = canvasPoint;
+        setPin = true;
+        repaint();
+        return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
@@ -176,13 +181,14 @@ public class MapCanvas extends Canvas {
             return null;
         }
     }
-    public void goToPosition(double minX, double maxX, double maxY){
-            trans.setToIdentity();
-            pan(-minX, -maxY);
-            zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(0, 0));
-            if(maxX-minX < 0.1){
-                zoom(0.01, new Point2D(getWidth()/2, getHeight()/2));
-            }
+
+    public void goToPosition(double minX, double maxX, double maxY) {
+        trans.setToIdentity();
+        pan(-minX, -maxY);
+        zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(0, 0));
+        if (maxX - minX < 0.1) {
+            zoom(0.01, new Point2D(getWidth() / 2, getHeight() / 2));
+        }
     }
 
     private void moveToInitialPosition() {
@@ -200,4 +206,18 @@ public class MapCanvas extends Canvas {
         }
     }
 
+    public void setCurrentCanvasEdges() {
+        currentMaxX = (float) mouseToModelCoords(new Point2D(getWidth(), 0)).getX();
+        currentMinX = (float) mouseToModelCoords(new Point2D(0, 0)).getX();
+        currentMaxY = (float) (mouseToModelCoords(new Point2D(0, getHeight())).getY());
+        currentMinY = (float) (mouseToModelCoords(new Point2D(0, 0)).getY());
+    }
+
+    public float getDistanceWidth() {
+        return (currentMaxX - currentMinX) * 111.320f * Model.scalingConstant;
+    }
+
+    public Point2D getPinPoint() {
+        return pinPoint;
+    }
 }
