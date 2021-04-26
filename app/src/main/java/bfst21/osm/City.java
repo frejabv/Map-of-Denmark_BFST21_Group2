@@ -1,5 +1,6 @@
 package bfst21.osm;
 
+import bfst21.Model;
 import bfst21.Rtree.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -32,11 +33,29 @@ public class City implements Drawable{
     CityTypes type;
     float lat;
     float lon;
-    public City(String name,CityTypes type, float lat, float lon){
+    Relation relation;
+    Way way;
+
+
+    public City(String name,CityTypes type, Node node){
+        setNameAndType(name, type);
+        this.lat = node.getX();
+        this.lon = node.getY();
+    }
+
+    public City(String name, CityTypes type, Way way) {
+        setNameAndType(name, type);
+        this.way = way;
+    }
+
+    public City(String name, CityTypes type, Relation relation) {
+        setNameAndType(name, type);
+        this.relation = relation;
+    }
+
+    public void setNameAndType(String name, CityTypes type) {
         this.name = name;
         this.type = type;
-        this.lat = lat;
-        this.lon = lon;
     }
 
     public void drawType(GraphicsContext gc, float distanceWidth){
@@ -47,6 +66,18 @@ public class City implements Drawable{
 
     @Override
     public void draw(GraphicsContext gc) {
+        if (lon == 0.0 && lat == 0.0) {
+            if (relation != null) {
+                lat = (relation.getRect().getMaxX() + relation.getRect().getMinX())/2;
+                lon = ((relation.getRect().getMaxY() + relation.getRect().getMinY())/2);
+                relation = null;
+            } else {
+                lat = (way.getRect().getMaxX() + way.getRect().getMinX())/2;
+                lon = ((way.getRect().getMaxY() + way.getRect().getMinY())/2);
+                way = null;
+            }
+        }
+
         gc.setStroke(Color.rgb(236, 240, 241));
         gc.setFill(Color.rgb(45, 52, 54));
         if (type.equals(CityTypes.ISLAND)){

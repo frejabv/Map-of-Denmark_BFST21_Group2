@@ -149,12 +149,11 @@ public class OSMParser {
                                 || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
                             CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
                             if (isNode) {
-                                model.addToCityIndex(new City(name, cityType, node.getX(), node.getY()));
+                                model.addToCityIndex(new City(name, cityType, node));
                             } else if (isWay && relation == null) {
-                                model.addToCityIndex(new City(name, cityType, way.first().getX(), way.first().getY()));
+                                model.addToCityIndex(new City(name, cityType, way));
                             } else if (isWay && relation != null) {
-                                model.addToCityIndex(new City(name, cityType, relation.ways.get(0).first().getX(),
-                                        relation.ways.get(0).first().getY()));
+                                model.addToCityIndex(new City(name, cityType, relation));
                             }
                         }
                     }
