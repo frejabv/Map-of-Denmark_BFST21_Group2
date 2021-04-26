@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import bfst21.Model;
+import bfst21.POI;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -8,7 +9,7 @@ import javafx.scene.paint.Color;
 public class KDTree {
     Model model;
     private RectHV bounds;
-    private Node root;
+    private POI root;
     private int size;
 
     //fields for debugging and testing
@@ -37,7 +38,7 @@ public class KDTree {
     /**
      * insert query Node into the tree, if it is not null and does not exist in the tree already.
      */
-    public void insert(Node qNode) {
+    public void insert(POI qNode) {
         if (qNode == null) {
             throw new NullPointerException("Query Node is null upon insertion into KDTree");
         }
@@ -62,7 +63,7 @@ public class KDTree {
      * @param orientation flips every recursion
      * @returns           the Node at with its correct parent and left/right rectangle/domain
      */
-    private Node insert(Node currentNode, Node parent, Node qNode, boolean orientation) {
+    private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
         if (currentNode == null) {
             RectHV r = null;
 
@@ -107,7 +108,7 @@ public class KDTree {
     }
 
 
-    public boolean contains(Node qNode) {
+    public boolean contains(POI qNode) {
         if (qNode == null) {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
@@ -118,12 +119,12 @@ public class KDTree {
         return contains(root, qNode, true);
     }
 
-    private boolean contains(Node currentNode, Node qNode, boolean orientation) {
+    private boolean contains(POI currentNode, POI qNode, boolean orientation) {
         if (currentNode == null) {
             return false;
         }
 
-        if (currentNode.getId() == qNode.getId()) {
+        if (currentNode.getName().equals(qNode.getName())) {
             return true;
         }
 
@@ -146,7 +147,7 @@ public class KDTree {
      * @param p the point we are querying about
      * @return the nearest Node
      */
-    public Node nearest(Point2D p) {
+    public POI nearest(Point2D p) {
         if (isEmpty()) {
             return null;
         }
@@ -155,7 +156,7 @@ public class KDTree {
             return null;
         }
 
-        Node closest = root;
+        POI closest = root;
         return nearest(root, closest, p, true);
     }
 
@@ -166,8 +167,8 @@ public class KDTree {
      * @param p       the point we are querying about.
      * @return returns the closest node when there are no other candidates.
      */
-    private Node nearest(Node currentNode, Node closest, Point2D p, boolean orientation) {
-        Node c = closest;
+    private POI nearest(POI currentNode, POI closest, Point2D p, boolean orientation) {
+        POI c = closest;
 
         if (currentNode == null) {
             return c;
@@ -226,7 +227,7 @@ public class KDTree {
         }
     }
 
-    private void drawLines(Node currentNode, GraphicsContext gc, boolean orientation) {
+    private void drawLines(POI currentNode, GraphicsContext gc, boolean orientation) {
         //draw lines
         currentNode.drawKDTLine(orientation, gc);
         if (currentNode.getRight() != null) {

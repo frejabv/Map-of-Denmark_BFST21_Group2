@@ -171,8 +171,9 @@ public class OSMParser {
                     case "node":
                         if (systemPOITags.size() > 0 && systemPOIName != ""){
                             //POI list can be kd-tree only
-                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags,node.getX(),node.getY()));
-                            model.getKdTree().insert(node);
+                            POI poi = createSystemPOI(systemPOIName,systemPOITags,node.getX(),node.getY());
+                            model.addSystemPOI(poi);
+                            model.getKdTree().insert(poi);
                             System.out.println(systemPOITags.size());
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
@@ -217,8 +218,8 @@ public class OSMParser {
     }
 
     private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
-        String type = "museum";
-        String imageType = "museum";
+        String type = "car";
+        String imageType = "car";
         /*int priority = 10;
         //List<String> systemPoi = new ArrayList<>(Arrays.asList("attraction", "viewpoint", "artwork", "building"));
         //From specific tags to more general
