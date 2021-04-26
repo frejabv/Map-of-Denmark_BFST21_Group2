@@ -58,8 +58,8 @@ public class RtreeNode {
      */
     protected void sortDrawables(List<Drawable> toSort, boolean vertical) {
         toSort.sort((a, b) -> {
-            float aVal = vertical ? a.getRect().minX : a.getRect().minY;
-            float bVal = vertical ? b.getRect().minX : b.getRect().minY;
+            float aVal = vertical ? a.getRect().minY : a.getRect().minX;
+            float bVal = vertical ? b.getRect().minY : b.getRect().minX;
             return Float.compare(aVal, bVal);
         });
     }
