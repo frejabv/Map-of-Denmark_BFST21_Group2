@@ -1,10 +1,11 @@
 package bfst21.osm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MemberIndex<T extends Member> implements Iterable<T>{
+public class MemberIndex<T extends Member> implements Iterable<T>, Serializable {
         private List<T> members;
         private boolean isSorted;
 

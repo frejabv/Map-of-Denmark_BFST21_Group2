@@ -5,10 +5,13 @@ import bfst21.osm.*;
 import bfst21.search.RadixTree;
 
 import java.lang.reflect.Array;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -22,28 +25,38 @@ public class Model {
     private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
-    private boolean ttiMode;
+
+    private ArrayList<POI> pointsOfInterest;
     private Rtree rtree;
 
+    private boolean ttiMode;
+
+
     private float minX, minY, maxX, maxY;
+    private List<City> cities;
+
+    // Scale nodes latitude to account for the curvature of the earth
+    public final static float scalingConstant = 0.56f;
 
     public Model(String filepath, boolean ttiMode) {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
-        drawables = new ArrayList<>();
         nodeIndex = new MemberIndex<>();
         coastlines = new ArrayList<>();
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
+        cities = new ArrayList<>();
+
+        pointsOfInterest = new ArrayList<>();
 
         this.ttiMode = ttiMode;
 
         try {
             OSMParser.readMapElements(filepath, this);
-        } catch (Exception e) {
-            System.out.println("error: " + e.getClass() + " " + e.getMessage());
+        } catch (IOException | XMLStreamException e) {
+            e.printStackTrace();
         }
 
         List<Drawable> testList= new ArrayList<>();
@@ -105,16 +118,20 @@ public class Model {
         return nodeIndex;
     }
 
+    public void setNodeIndex(MemberIndex<Node> nodeIndex) {
+        this.nodeIndex = nodeIndex;
+    }
+
     public void addToNodeIndex(Node node) {
         nodeIndex.addMember(node);
     }
 
-    public List<Drawable> getDrawables() {
-        return drawables;
-    }
-
     public MemberIndex<Way> getWayIndex() {
         return wayIndex;
+    }
+
+    public void setWayIndex(MemberIndex<Way> wayIndex) {
+        this.wayIndex = wayIndex;
     }
 
     public void addToWayIndex(Way way) {
@@ -125,12 +142,20 @@ public class Model {
         return relationIndex;
     }
 
+    public void setRelationIndex(MemberIndex<Relation> relationIndex) {
+        this.relationIndex = relationIndex;
+    }
+
     public void addToRelationIndex(Relation relation) {
         relationIndex.addMember(relation);
     }
 
     public ArrayList<Way> getCoastlines() {
         return coastlines;
+    }
+
+    public void setCoastlines(ArrayList<Way> coastlines) {
+        this.coastlines = coastlines;
     }
 
     public void addCoastline(Way way) {
@@ -149,8 +174,16 @@ public class Model {
         return drawableMap;
     }
 
+    public void setDrawableMap(Map<Tag, List<Drawable>> drawableMap) {
+        this.drawableMap = drawableMap;
+    }
+
     public Map<Tag, List<Drawable>> getFillMap() {
         return fillMap;
+    }
+
+    public void setFillMap(Map<Tag, List<Drawable>> fillMap) {
+        this.fillMap = fillMap;
     }
 
     public boolean getTtiMode() {
@@ -160,4 +193,21 @@ public class Model {
     public RadixTree getStreetTree() {
         return streetTree;
     }
+
+    public void setStreetTree(RadixTree streetTree) {
+        this.streetTree = streetTree;
+    }
+
+    public void addPOI(POI poi) {
+        pointsOfInterest.add(poi);
+    }
+
+    public ArrayList<POI> getPointsOfInterest() {
+        return pointsOfInterest;
+    }
+
+    public void addToCityIndex(City city) {
+        cities.add(city);
+    }
+    public List<City> getCities(){return cities;}
 }

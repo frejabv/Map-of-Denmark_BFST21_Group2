@@ -155,7 +155,7 @@ public class OSMObjectsTest {
             assertEquals(Color.rgb(128, 142, 155), testStyle.getColorByTag(Tag.PRIMARY));
             testStyle.defaultMode();
             assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
-            assertEquals(Color.WHITE, testStyle.getColorByTag(Tag.PRIMARY));
+            assertEquals(Color.rgb(253, 218, 118), testStyle.getColorByTag(Tag.PRIMARY));
     }
 
     @Test
@@ -163,15 +163,6 @@ public class OSMObjectsTest {
         RenderingStyle testStyle = new RenderingStyle();
         assertEquals(DrawStyle.FILL, testStyle.getDrawStyleByTag(Tag.BUILDING));
         assertEquals(DrawStyle.STROKE, testStyle.getDrawStyleByTag(Tag.PRIMARY));
-    }
-
-    @Test
-    public void testColorModes() {
-        RenderingStyle testStyle = new RenderingStyle();
-        testStyle.deuteranopeColorMode();
-        testStyle.tritanopeColorMode();
-        testStyle.protanopeColorMode();
-        assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
     }
 
 }
