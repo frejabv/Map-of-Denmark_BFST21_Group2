@@ -165,6 +165,8 @@ public class Controller {
             if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
                 fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                //Node node = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                //fromNodeId = Rtree.nearest(node.getX(), node.getY());
                 if (toNodeId != 0) {
                     //model.getAStar().AStarSearch(fromNodeId, toNodeId);
                     System.out.println("Route searched");
@@ -178,6 +180,8 @@ public class Controller {
             if (!suggestionList.isEmpty()) {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
                 toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                //Node node = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
+                //toNodeId = Rtree.nearest(node.getX(), node.getY());
                 if (fromNodeId != 0) {
                     //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                     System.out.println("Route searched");
@@ -219,9 +223,11 @@ public class Controller {
                     } else {
                         if (fieldType.equals("from")) {
                             fromNodeId = node.getId();
+                            //fromNodeId = Rtree.nearest(node.getX(), node.getY());
                             //potential route search here as well
                         } else {
                             toNodeId = node.getId();
+                            //toNodeId = Rtree.nearest(node.getX(), node.getY());
                             if (fromNodeId != 0) {
                                 //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                                 System.out.println("Route searched");

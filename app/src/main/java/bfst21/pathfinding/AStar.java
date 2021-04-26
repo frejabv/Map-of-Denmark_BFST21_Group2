@@ -179,6 +179,7 @@ public class AStar {
 
         // we handle very short paths
         if (2 == path.size()) { //|| direction == Direction.FOLLOW
+            //missing currentmaxspeed
             currentDistance += distanceToNode(path.get(0), path.get(1));
             totalDistance += currentDistance;
 
