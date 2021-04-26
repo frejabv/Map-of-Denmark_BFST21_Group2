@@ -256,7 +256,7 @@ public class Controller {
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
-            pinContainer.getChildren().remove(pinContainer.lookup(".button"));
+            pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
             pinText.textProperty().setValue(coordinates);
@@ -268,7 +268,11 @@ public class Controller {
             });
 
             //TODO add to fxml and make it look good
+            if (pinContainer.lookup("#nearest") != null){
+                pinContainer.getChildren().remove(pinContainer.lookup("#nearest"));
+            }
             Button nearestWay = new Button("Find nearest way");
+            nearestWay.setId("nearest");
             nearestWay.setOnAction(event -> {
                 canvas.drawNearest();
             });
