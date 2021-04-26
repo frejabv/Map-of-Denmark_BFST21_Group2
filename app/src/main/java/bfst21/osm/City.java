@@ -1,5 +1,6 @@
 package bfst21.osm;
 
+import bfst21.Rtree.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -61,5 +62,10 @@ public class City implements Drawable{
             gc.strokeText(name,lat,lon);
             gc.fillText(name,lat,lon);
         }
+    }
+
+    @Override
+    public Rectangle getRect() {
+        return null;
     }
 }

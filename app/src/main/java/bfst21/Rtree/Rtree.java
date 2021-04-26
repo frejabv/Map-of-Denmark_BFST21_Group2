@@ -105,6 +105,8 @@ public class Rtree {
         for (Drawable d: query(window)) {
             d.getRect().draw(gc);
         }
+
+
         gc.setStroke(Color.BLACK);
         window.draw(gc);
     }
