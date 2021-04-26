@@ -4,6 +4,7 @@ import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.search.RadixTree;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,18 @@ public class Model {
             System.out.println("error: " + e.getClass() + " " + e.getMessage());
         }
 
-        rtree = new Rtree(this, drawableMap.get(Tag.TERTIARY));
+        List<Drawable> testList= new ArrayList<>();
+        testList.addAll(drawableMap.get(Tag.CYCLEWAY));
+        testList.addAll(drawableMap.get(Tag.FOOTWAY));
+        testList.addAll(drawableMap.get(Tag.LIVING_STREET));
+        testList.addAll(drawableMap.get(Tag.PATH));
+        testList.addAll(drawableMap.get(Tag.RESIDENTIAL));
+        testList.addAll(drawableMap.get(Tag.TERTIARY));
+        testList.addAll(drawableMap.get(Tag.SERVICE));
+        testList.addAll(drawableMap.get(Tag.UNCLASSIFIED));
+        testList.addAll(drawableMap.get(Tag.TRACK));
+
+        rtree = new Rtree(this, testList);
         System.out.println("here");
     }
 
