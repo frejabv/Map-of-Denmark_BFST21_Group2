@@ -67,7 +67,7 @@ public class AStar {
         float maxY = -100;
         path = new ArrayList<Node>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
-            /*if (node.getX() < minX) {
+            if (node.getX() < minX) {
                 minX = node.getX();
             }
             if (node.getX() > maxX) {
@@ -78,7 +78,7 @@ public class AStar {
             }
             if (node.getY() > maxY) {
                 maxY = node.getY();
-            }*/
+            }
             path.add(node);
         }
 
