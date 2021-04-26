@@ -246,8 +246,8 @@ public class MapCanvas extends Canvas {
         gc.setStroke(Color.GREENYELLOW);
         gc.setLineWidth(3 / Math.sqrt(trans.determinant()));
         Way nearest = model.getRtree().NearestWay(pinPoint);
-        System.out.println(nearest.getId());
-        System.out.println(nearest.nearestNode(pinPoint).getX() + " " + nearest.nearestNode(canvasPoint).getY() * -0.56f);
+        System.out.println("way ID: " + nearest.getId());
+        System.out.println("Node ID: " + nearest.nearestNode(pinPoint).getId() + " coordinate: "+ nearest.nearestNode(pinPoint).getY() + " " + nearest.nearestNode(canvasPoint).getX() * -0.56f);
         nearest.getRect().draw(gc);
         nearest.draw(gc);
     }

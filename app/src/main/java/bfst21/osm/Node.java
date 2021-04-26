@@ -23,6 +23,6 @@ public class Node extends Member implements Serializable {
     }
 
     public double distanceToSquared(Point2D p) {
-        return (x - p.getX() * x - p.getX()) + (y - p.getY() * y - p.getY());
+        return (x - p.getX()) * (x - p.getX()) + (y - p.getY()) * (y - p.getY());
     }
 }
