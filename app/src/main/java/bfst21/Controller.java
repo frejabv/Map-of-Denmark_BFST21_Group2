@@ -367,6 +367,8 @@ public class Controller {
                 debugContainer.setManaged(state);
                 break;
             case "pin":
+                removePin.setVisible(true);
+                removePin.setManaged(true);
                 fadeButtons();
                 pinContainer.setVisible(state);
                 pinContainer.setManaged(state);
@@ -439,6 +441,8 @@ public class Controller {
             userPOI.getChildren().add(currentPOILine);
             currentPOILine.setOnAction(event -> {
                 changeType("pin",true);
+                removePin.setVisible(false);
+                removePin.setManaged(false);
                 currentPOI = POI;
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
                 canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
