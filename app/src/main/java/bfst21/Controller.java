@@ -198,6 +198,12 @@ public class Controller {
                 hideAll();
             });
             pinContainer.getChildren().add(removePin);
+
+            Button nearestWay = new Button("Find nearest way");
+            nearestWay.setOnAction(event -> {
+                canvas.drawNearest();
+            });
+            pinContainer.getChildren().add(nearestWay);
         } else {
             singleClick = true;
         }
