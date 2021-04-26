@@ -9,7 +9,7 @@ import java.util.List;
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
     String name = "";
-    int maxSpeed = -1;
+    int maxSpeed = 1;
     boolean isOneway;
     boolean isJunction;
 
@@ -69,13 +69,13 @@ public class Way extends Member implements Drawable, Serializable {
     }
 
     public void checkSpeed() {
-        if (maxSpeed == -1) {
+        if (maxSpeed == 1) {
             //Maybe check if way has areatype declared????? like urban
             if (tags.contains(Tag.MOTORWAY) || tags.contains(Tag.MOTORWAY_LINK)) {
                 maxSpeed = 130;
-            } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.PRIMARY)) {
+            } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.PRIMARY)) {
                 maxSpeed = 80;
-            } else if (tags.contains(Tag.JUNCTION) || tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
+            } else if (tags.contains(Tag.JUNCTION) || tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
                 maxSpeed = 50;
             }
         }
