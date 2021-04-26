@@ -1,5 +1,7 @@
 package bfst21.osm;
 
+import javafx.geometry.Point2D;
+
 public class Node extends Member{
     private float x;
     private float y;
@@ -18,5 +20,9 @@ public class Node extends Member{
 
     public float getY() {
         return y;
+    }
+
+    public double distanceToSquared(Point2D p) {
+        return (x - p.getX() * x - p.getX()) + (y - p.getY() * y - p.getY());
     }
 }

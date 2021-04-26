@@ -139,4 +139,19 @@ public class Way extends Member implements Drawable {
         var dy = p.getY() - yy;
         return Math.sqrt(dx * dx + dy * dy);
     }
+
+    public Node nearestNode(Point2D p) {
+        Node closest = nodes.get(0);
+        double closestDist = closest.distanceToSquared(p);
+
+        for (int i = 1; i < nodes.size(); i++) {
+            double currentDist = nodes.get(i).distanceToSquared(p);
+            if ( currentDist < closestDist) {
+                closest = nodes.get(i);
+                closestDist = currentDist;
+            }
+        }
+
+        return closest;
+    }
 }
