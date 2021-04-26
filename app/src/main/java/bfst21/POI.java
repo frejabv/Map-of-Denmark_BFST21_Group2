@@ -1,8 +1,6 @@
 package bfst21;
 
-import bfst21.osm.Drawable;
-import bfst21.osm.KDTree;
-import bfst21.osm.Node;
+import bfst21.osm.POI_KDTree;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -17,8 +15,8 @@ public class POI implements Comparable<POI> {
 
     private POI left;
     private POI right;
-    private KDTree.RectHV rect;
-    public double distTo;
+    private POI_KDTree.RECTANGLE_PLACEHOLDER rect;
+    private double distTo;
 
     public POI(String name, String type, float x, float y) {
         this.name = name;
@@ -62,10 +60,10 @@ public class POI implements Comparable<POI> {
     public POI getLeft() { return left; }
     public POI getRight() { return right; }
 
-    public KDTree.RectHV getRect() {
+    public POI_KDTree.RECTANGLE_PLACEHOLDER getRect() {
         return rect;
     }
-    public void setRect(KDTree.RectHV rect) {
+    public void setRect(POI_KDTree.RECTANGLE_PLACEHOLDER rect) {
         this.rect = rect;
     }
 
@@ -93,5 +91,9 @@ public class POI implements Comparable<POI> {
 
     public void setDistTo(Point2D p) {
         distTo = (x-p.getX()) * (x-p.getX()) + (y-p.getY()) * (y-p.getY());
+    }
+
+    public double getDistTo() {
+        return distTo;
     }
 }

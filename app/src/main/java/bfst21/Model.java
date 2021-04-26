@@ -17,7 +17,7 @@ public class Model {
 
     //drawables are all ways that are not in any other list
     private List<Drawable> drawables;
-    private KDTree kdTree;
+    private POI_KDTree POITree;
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
@@ -39,7 +39,7 @@ public class Model {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
-        kdTree = new KDTree(this);
+        POITree = new POI_KDTree(this);
 
         drawables = new ArrayList<>();
         nodeIndex = new MemberIndex<>();
@@ -95,8 +95,8 @@ public class Model {
         this.maxY = maxY;
     }
 
-    public KDTree getKdTree(){
-        return kdTree;
+    public POI_KDTree getPOITree(){
+        return POITree;
     }
 
     public MemberIndex<Node> getNodeIndex() {

@@ -115,7 +115,7 @@ public class MapCanvas extends Canvas {
         });
 
         if (kdLines) {
-            model.getKdTree().drawLines(gc);
+            model.getPOITree().drawLines(gc);
         }
 
         if (setPin) {

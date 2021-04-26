@@ -225,7 +225,7 @@ public class Controller {
         if (e.getText().equals("k")) {
             if (canvas.setPin) {
                 System.out.println();
-                ArrayList<POI> poiArrayList = model.getKdTree().nearestK(canvas.pinPoint, 5);
+                ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
                 for (POI poi : poiArrayList) {
                     System.out.println(poi.getName());
                 }
@@ -407,7 +407,7 @@ public class Controller {
         //add this point to POI
         POI poi = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
         model.addPOI(poi);
-        model.getKdTree().insert(poi);
+        model.getPOITree().insert(poi);
         canvas.setPin = false;
         canvas.repaint();
         updateUserPOI();

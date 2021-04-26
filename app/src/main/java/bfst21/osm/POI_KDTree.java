@@ -11,24 +11,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class KDTree {
+public class POI_KDTree {
     Model model;
-    private RectHV bounds;
+    private RECTANGLE_PLACEHOLDER bounds;
     private POI root;
     private int size;
 
-    //fields for debugging and testing
-    public static int IAE3Counter = 0;
-    public static int IAE4Counter = 0;
-    public static int outOfBoundsCounter = 0;
-
-    public KDTree(Model model) {
+    public POI_KDTree(Model model) {
         this.model = model;
         this.root = null;
         size = 0;
-        IAE3Counter = 0;
-        IAE4Counter = 0;
-        outOfBoundsCounter = 0;
     }
 
     public boolean isEmpty() {
@@ -37,7 +29,7 @@ public class KDTree {
 
     public void setBounds(){
         //note: maxY and minY are swapped, such that the negative scaling constant has no effect on the tree
-        bounds = new RectHV(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
+        bounds = new RECTANGLE_PLACEHOLDER(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
     }
 
     /**
@@ -47,11 +39,8 @@ public class KDTree {
         if (qNode == null) {
             throw new NullPointerException("Query Node is null upon insertion into KDTree");
         }
-        //check if the node is outside the border
-        if (!bounds.contains(new Point2D(qNode.getX(), qNode.getY())))
-            outOfBoundsCounter++;
         //create root if tree is empty
-        else if (isEmpty()) {
+        if (isEmpty()) {
             root = qNode;
             root.setRect(bounds);
             size++;
@@ -69,8 +58,9 @@ public class KDTree {
      * @returns           the Node at with its correct parent and left/right rectangle/domain
      */
     private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
+        //if space is available, fill space
         if (currentNode == null) {
-            RectHV r = null;
+            RECTANGLE_PLACEHOLDER r = null;
 
             float minX = parent.getRect().getMinX();
             float minY = parent.getRect().getMinY();
@@ -90,12 +80,13 @@ public class KDTree {
                     minX = parent.getX();
                 }
             }
-            r = new RectHV(minX, minY, maxX, maxY);
+            r = new RECTANGLE_PLACEHOLDER(minX, minY, maxX, maxY);
             size++;
             qNode.setRect(r);
             return qNode;
         }
-
+        
+        //if space is taken, look for another
         boolean areCoordinatesLessThan = false;
         if (orientation) {
             areCoordinatesLessThan = qNode.getX() < currentNode.getX();
@@ -108,7 +99,7 @@ public class KDTree {
         } else {
             currentNode.setRight(insert(currentNode.getRight(), currentNode, qNode, !orientation));
         }
-
+        
         return currentNode;
     }
 
@@ -148,10 +139,11 @@ public class KDTree {
 
     /**
      * begins the recursive call to nearest.
-     * @param p the point we are querying about
-     * @return the nearest Node
+     * @param p         the point we are querying about
+     * @param listSize  size of the created list of POI's  
+     * @return          the nearest Node
      */
-    public ArrayList<POI> nearestK(Point2D p, int amount) {
+    public ArrayList<POI> nearestK(Point2D p, int listSize) {
         if (isEmpty()) {
             return null;
         }
@@ -161,42 +153,42 @@ public class KDTree {
         }
 
         ArrayList<POI> closestList = new ArrayList<>();
-        closestList.add(root);
-        root.setDistTo(p);
-        return nearest(root, closestList, p, true, amount);
+        return nearest(root, closestList, p, true, listSize);
     }
 
     /**
      * The recursive part of the nearest function.
      * @param currentNode       the current root.
-     * @param closest our current closest node.
-     * @param p       the point we are querying about.
-     * @return returns the closest node when there are no other candidates.
+     * @param currentList       our current list of closest nodes.
+     * @param p                 the point we are querying about.
+     * @return                  returns the closestList when there are no other candidates in this branch.
      */
-    private ArrayList<POI> nearest(POI currentNode, ArrayList<POI> closest, Point2D p, boolean orientation, int amount) {
-        ArrayList<POI> clist = closest;
-        POI c = clist.get(clist.size()-1);
-
+    private ArrayList<POI> nearest(POI currentNode, ArrayList<POI> currentList, Point2D p, boolean orientation, int listSize) {
+        ArrayList<POI> closestList = currentList;
+        POI worstClosest = closestList.get(closestList.size()-1);
+        double worstDistance = worstClosest.getDistTo();
+        
+        //does the currentNode exist?
         if (currentNode == null) {
-            return clist;
+            return closestList;
+        }
+        //is currentNode's rectangle close enough?
+        if (currentNode.getRect().distanceSquaredTo(p) >= worstDistance) {
+            return closestList;
         }
 
-        double minDistance = c.distTo;
-
-        if (currentNode.getRect().distanceSquaredTo(p) >= minDistance) {
-            return clist;
-        }
-
+        //is currentNode closer than worstClosest?
         currentNode.setDistTo(p);
-        if (clist.size() < amount && !clist.contains(currentNode)) {
-            clist.add(currentNode);
-            Collections.sort(clist);
-        } else if (currentNode.distTo < minDistance) {
-            clist.remove(c);
-            clist.add(currentNode);
-            Collections.sort(clist);
+        if (closestList.size() < listSize && !closestList.contains(currentNode)) {
+            closestList.add(currentNode);
+            Collections.sort(closestList);
+        } else if (currentNode.getDistTo() < worstDistance) {
+            closestList.remove(worstClosest);
+            closestList.add(currentNode);
+            Collections.sort(closestList);
         }
 
+        //move further down the tree
         boolean areCoordinatesLessThan = false;
         if (orientation) {
             areCoordinatesLessThan = p.getX() < currentNode.getX();
@@ -205,14 +197,14 @@ public class KDTree {
         }
 
         if (areCoordinatesLessThan) {
-            clist = nearest(currentNode.getLeft(), clist, p, !orientation, amount);
-            clist = nearest(currentNode.getRight(), clist, p, !orientation, amount);
+            closestList = nearest(currentNode.getLeft(), closestList, p, !orientation, listSize);
+            closestList = nearest(currentNode.getRight(), closestList, p, !orientation, listSize);
         } else {
-            clist = nearest(currentNode.getRight(), clist, p, !orientation, amount);
-            clist = nearest(currentNode.getLeft(), clist, p, !orientation, amount);
+            closestList = nearest(currentNode.getRight(), closestList, p, !orientation, listSize);
+            closestList = nearest(currentNode.getLeft(), closestList, p, !orientation, listSize);
         }
 
-        return clist;
+        return closestList;
     }
 
     public void drawLines(GraphicsContext gc) {
@@ -253,42 +245,15 @@ public class KDTree {
         return size;
     }
 
-    public RectHV getBounds(){
-        return bounds;
-    }
-
-    //taken from Sedgewick and Wayne
-    public static class RectHV {
+    public static class RECTANGLE_PLACEHOLDER {
         private final float minX, minY;
         private final float maxX, maxY;
 
-        public RectHV(float minX, float minY, float maxX, float maxY) {
+        public RECTANGLE_PLACEHOLDER(float minX, float minY, float maxX, float maxY) {
             this.minX = minX;
             this.maxY = maxY;
             this.maxX = maxX;
             this.minY = minY;
-            if (Float.isNaN(minX) || Float.isNaN(maxX)) {
-                System.out.println("if 1 returned true: x coordinate NaN");
-                throw new IllegalArgumentException("x-coordinate is NaN: " + toString());
-            }
-            if (Float.isNaN(minY) || Float.isNaN(maxY)) {
-                System.out.println("if 2 returned true: y coordinate is NaN");
-                throw new IllegalArgumentException("y-coordinate is NaN: " + toString());
-            }
-            if (maxX < minX) {
-                IAE3Counter++;
-                System.out.println("if 3 returned true");
-                System.out.println(maxX + " < " + minX + " is " + (maxX < minX));
-                System.out.println("ILLEGAL ARGUMENT EXCEPTION");
-                //throw new IllegalArgumentException("maxX < minX: " + toString());
-            }
-            if (maxY < minY) {
-                IAE4Counter++;
-                System.out.println("if 4 returned true");
-                System.out.println(maxY + " < " + minY + " is " + (maxY < minY));
-                System.out.println("ILLEGAL ARGUMENT EXCEPTION");
-                //throw new IllegalArgumentException("maxY < minY: " + toString());
-            }
         }
 
         public float getMinX() {
@@ -307,7 +272,7 @@ public class KDTree {
             return maxY;
         }
 
-        public boolean intersects(RectHV that) {
+        public boolean intersects(RECTANGLE_PLACEHOLDER that) {
             return this.maxX >= that.minX && this.maxY >= that.minY
                     && that.maxX >= this.minX && that.maxY >= this.minY;
         }

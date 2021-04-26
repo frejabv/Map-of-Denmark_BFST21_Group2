@@ -1,14 +1,5 @@
 package bfst21;
 
-import javafx.geometry.Point2D;
-import org.junit.jupiter.api.Test;
-
-import bfst21.osm.Node;
-import bfst21.osm.KDTree;
-import bfst21.osm.KDTree.RectHV;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class KDTreeTest {/*
     private final Model model = new Model("data/kdTreeTest.osm", false);
 

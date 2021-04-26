@@ -12,9 +12,6 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
-import bfst21.Model;
-import bfst21.exceptions.UnsupportedFileTypeException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -68,7 +65,7 @@ public class OSMParser {
                             Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
                     model.setMinY(
                             Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
-                    model.getKdTree().setBounds();
+                    model.getPOITree().setBounds();
                     break;
                 case "node":
                     var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -173,7 +170,7 @@ public class OSMParser {
                             //POI list can be kd-tree only
                             POI poi = createSystemPOI(systemPOIName,systemPOITags,node.getX(),node.getY());
                             model.addSystemPOI(poi);
-                            model.getKdTree().insert(poi);
+                            model.getPOITree().insert(poi);
                             System.out.println(systemPOITags.size());
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
@@ -186,7 +183,7 @@ public class OSMParser {
                         if (systemPOITags.size() > 0 && systemPOIName != ""){
                             POI poi = createSystemPOI(systemPOIName,systemPOITags, way.first().getX(),way.first().getY());
                             model.addSystemPOI(poi);
-                            model.getKdTree().insert(poi);
+                            model.getPOITree().insert(poi);
                             System.out.println(systemPOITags.size());
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
@@ -199,7 +196,7 @@ public class OSMParser {
                         if (systemPOITags.size() > 0 && systemPOIName != ""){
                             POI poi = createSystemPOI(systemPOIName,systemPOITags, relation.ways.get(0).first().getX(),relation.ways.get(0).first().getY());
                             model.addSystemPOI(poi);
-                            model.getKdTree().insert(poi);
+                            model.getPOITree().insert(poi);
                             System.out.println(systemPOITags.size());
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
@@ -217,9 +214,7 @@ public class OSMParser {
         // TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
         System.out.println("coastlines: " + model.getCoastlines());
-        System.out.println("Illegal Argument Exceptions: T3:" + KDTree.IAE3Counter + " T4:"+KDTree.IAE4Counter);
-        System.out.println("Nodes out of bounds = " + KDTree.outOfBoundsCounter);
-    }
+        }
 
     private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
         String type = "car";
