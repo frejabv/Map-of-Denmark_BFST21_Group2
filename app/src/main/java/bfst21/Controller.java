@@ -10,6 +10,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -108,6 +111,7 @@ public class Controller {
 
     @FXML
     private VBox regexContainer;
+
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
         List<String> regexString = Arrays.asList("[Postcode] [City]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
@@ -281,18 +285,32 @@ public class Controller {
 
     @FXML
     private Button removePin;
+
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
             hideAll();
+            pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
             pinText.textProperty().setValue(coordinates);
+            Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
                 canvas.repaint();
                 hideAll();
             });
+
+            //TODO add to fxml and make it look good
+            if (pinContainer.lookup("#nearest") != null){
+                pinContainer.getChildren().remove(pinContainer.lookup("#nearest"));
+            }
+            Button nearestWay = new Button("Find nearest way");
+            nearestWay.setId("nearest");
+            nearestWay.setOnAction(event -> {
+                canvas.drawNearest();
+            });
+            pinContainer.getChildren().add(nearestWay);
         } else {
             singleClick = true;
         }
@@ -420,6 +438,7 @@ public class Controller {
     private HBox scaleContainer;
     @FXML
     private VBox scale;
+
     public void updateScaleBar() {
         double scaleWidth = (canvas.getWidth() / 10) + 40;
         scaleContainer.setPrefWidth(scaleWidth);
@@ -447,6 +466,7 @@ public class Controller {
 
     @FXML
     private VBox userPOI;
+
     public void updateUserPOI() {
         userPOI.getChildren().clear();
         model.getPointsOfInterest().forEach(POI -> {
@@ -457,6 +477,7 @@ public class Controller {
                 canvas.repaint();
             });
         });
+        hideRoute();
     }
 
     public void toggleShowNames() {
@@ -543,5 +564,10 @@ public class Controller {
             showRoute();
             canvas.repaint(); //To show the route after it has been calculated
         }
+    }
+
+    public void toggleRTreeLines(MouseEvent mouseEvent) {
+        canvas.RTreeLines = !canvas.RTreeLines;
+        canvas.repaint();
     }
 }

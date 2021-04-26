@@ -1,9 +1,17 @@
 package bfst21;
 
+import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
+
+import java.lang.reflect.Array;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -12,7 +20,6 @@ import java.util.*;
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
-
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
@@ -22,6 +29,7 @@ public class Model {
     float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private ArrayList<POI> pointsOfInterest;
+    private Rtree roadTree;
 
     private boolean ttiMode;
     private List<Node> AStarPath;
@@ -59,6 +67,19 @@ public class Model {
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
+
+        List<Drawable> testRoadList= new ArrayList<>();
+        for (Tag tag: drawableMap.keySet()) {
+            testRoadList.addAll(drawableMap.get(tag));
+        }
+        roadTree = new Rtree(this, testRoadList);
+
+        System.out.println("here");
+    }
+
+
+    public Rtree getRtree() {
+        return rtree;
     }
 
     /*

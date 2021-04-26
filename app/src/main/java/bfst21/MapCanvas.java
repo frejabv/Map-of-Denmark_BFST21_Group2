@@ -1,7 +1,9 @@
 package bfst21;
 
 import bfst21.osm.Node;
+import bfst21.Rtree.Rectangle;
 import bfst21.osm.RenderingStyle;
+import bfst21.osm.Way;
 import bfst21.osm.Tag;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
@@ -20,6 +22,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    boolean RTreeLines;
     Point2D canvasPoint;
     Point2D pinPoint;
     double size;
@@ -137,12 +140,25 @@ public class MapCanvas extends Canvas {
             }
         });
 
-
         if (setPin) {
             double size = (30 / Math.sqrt(trans.determinant()));
             gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size,
                     size);
         }
+
+        if (RTreeLines) {
+            //display window
+            Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
+            maxPoint = mouseToModelCoords(maxPoint);
+
+            Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
+            minPoint = mouseToModelCoords(minPoint);
+
+            Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
+            gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+            model.getRtree().drawRTree(window, gc);
+        }
+
         gc.restore();
         long elapsedTime = System.nanoTime() - start;
         if (redrawIndex < 20) {
@@ -266,6 +282,15 @@ public class MapCanvas extends Canvas {
 
     public Point2D getPinPoint() {
         return pinPoint;
+    }
+    public void drawNearest() {
+        gc.setStroke(Color.GREENYELLOW);
+        gc.setLineWidth(3 / Math.sqrt(trans.determinant()));
+        Way nearest = model.getRtree().NearestWay(pinPoint);
+        System.out.println("way ID: " + nearest.getId());
+        System.out.println("Node ID: " + nearest.nearestNode(pinPoint).getId() + " coordinate: "+ nearest.nearestNode(pinPoint).getY() + " " + nearest.nearestNode(canvasPoint).getX() * -0.56f);
+        nearest.getRect().draw(gc);
+        nearest.draw(gc);
     }
 
     public void showRoute(){
