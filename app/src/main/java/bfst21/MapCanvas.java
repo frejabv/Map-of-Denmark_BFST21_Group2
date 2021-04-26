@@ -202,8 +202,10 @@ public class MapCanvas extends Canvas {
 
     public void drawNearest() {
         gc.setStroke(Color.GREENYELLOW);
+        gc.setLineWidth(3 / Math.sqrt(trans.determinant()));
         Way nearest = model.getRtree().NearestWay(canvasPoint);
         System.out.println(nearest.getId());
+        System.out.println(nearest.first().getX() + " " + nearest.first().getY() * -0.56f);
         nearest.getRect().draw(gc);
         nearest.draw(gc);
     }
