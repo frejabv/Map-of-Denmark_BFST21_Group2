@@ -6,12 +6,12 @@ import bfst21.osm.Tag;
 import bfst21.osm.Way;
 
 public class Edge {
-    public final float weight;
+    public final double weight;
     public final Node target;
     private boolean isDriveable, isCyclable, isWalkable;
     private long wayID;
 
-    public Edge(Node targetNode, float costVal, long wayID) {
+    public Edge(Node targetNode, double costVal, long wayID) {
         target = targetNode;
         weight = costVal;
         this.wayID = wayID;
@@ -31,7 +31,7 @@ public class Edge {
         }
     }
 
-    public float getWeight(TransportType type, Model model){
+    public double getWeight(TransportType type, Model model){
         if(type == TransportType.BICYCLE){
             return weight/15;
         }
