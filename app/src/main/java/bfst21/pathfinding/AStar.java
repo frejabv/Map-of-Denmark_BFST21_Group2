@@ -168,16 +168,17 @@ public class AStar {
                 currentDistance += distanceToNode(node, nextNode);
                 totalDistance += currentDistance;
                 totalTime += currentDistance / currentMaxSpeed;
-                Step step = new Step(direction, lastRoadName, currentDistance);
+                Step step = new Step(direction, model.getWayIndex().getMember(secondId).getName(), currentDistance);
                 if (exits > 0) {
                     step.setExits(exits);
                 }
                 routeDescription.add(step);
-                routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
+                routeDescription.add(new Step(Direction.ARRIVAL, model.getWayIndex().getMember(secondId).getName(), 0));
             }
         }
 
-        if (2 == path.size()) {
+        // we handle very short paths
+        if (2 == path.size()) { //|| direction == Direction.FOLLOW
             currentDistance += distanceToNode(path.get(0), path.get(1));
             totalDistance += currentDistance;
 
