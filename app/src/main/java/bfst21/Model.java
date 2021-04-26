@@ -60,6 +60,7 @@ public class Model {
         }
 
         List<Drawable> testList= new ArrayList<>();
+        //testList.addAll(drawableMap.get(Tag.MOTORWAY));
         testList.addAll(drawableMap.get(Tag.CYCLEWAY));
         testList.addAll(drawableMap.get(Tag.FOOTWAY));
         testList.addAll(drawableMap.get(Tag.LIVING_STREET));
