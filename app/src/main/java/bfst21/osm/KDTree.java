@@ -6,6 +6,11 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 public class KDTree {
     Model model;
     private RectHV bounds;
@@ -107,7 +112,6 @@ public class KDTree {
         return currentNode;
     }
 
-
     public boolean contains(POI qNode) {
         if (qNode == null) {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
@@ -147,7 +151,7 @@ public class KDTree {
      * @param p the point we are querying about
      * @return the nearest Node
      */
-    public POI nearest(Point2D p) {
+    public ArrayList<POI> nearestK(Point2D p, int amount) {
         if (isEmpty()) {
             return null;
         }
@@ -156,8 +160,10 @@ public class KDTree {
             return null;
         }
 
-        POI closest = root;
-        return nearest(root, closest, p, true);
+        ArrayList<POI> closestList = new ArrayList<>();
+        closestList.add(root);
+        root.setDistTo(p);
+        return nearest(root, closestList, p, true, amount);
     }
 
     /**
@@ -167,23 +173,28 @@ public class KDTree {
      * @param p       the point we are querying about.
      * @return returns the closest node when there are no other candidates.
      */
-    private POI nearest(POI currentNode, POI closest, Point2D p, boolean orientation) {
-        POI c = closest;
+    private ArrayList<POI> nearest(POI currentNode, ArrayList<POI> closest, Point2D p, boolean orientation, int amount) {
+        ArrayList<POI> clist = closest;
+        POI c = clist.get(clist.size()-1);
 
         if (currentNode == null) {
-            return c;
+            return clist;
         }
 
-        double minDistance = Math.sqrt(p.distance(c.getX(), c.getY()));
+        double minDistance = c.distTo;
 
         if (currentNode.getRect().distanceSquaredTo(p) >= minDistance) {
-            return c;
+            return clist;
         }
 
-        double thisDistance = Math.sqrt(p.distance(currentNode.getX(), currentNode.getY()));
-
-        if (thisDistance < minDistance) {
-            c = currentNode;
+        currentNode.setDistTo(p);
+        if (clist.size() < amount && !clist.contains(currentNode)) {
+            clist.add(currentNode);
+            Collections.sort(clist);
+        } else if (currentNode.distTo < minDistance) {
+            clist.remove(c);
+            clist.add(currentNode);
+            Collections.sort(clist);
         }
 
         boolean areCoordinatesLessThan = false;
@@ -194,14 +205,14 @@ public class KDTree {
         }
 
         if (areCoordinatesLessThan) {
-            c = nearest(currentNode.getLeft(), c, p, !orientation);
-            c = nearest(currentNode.getRight(), c, p, !orientation);
+            clist = nearest(currentNode.getLeft(), clist, p, !orientation, amount);
+            clist = nearest(currentNode.getRight(), clist, p, !orientation, amount);
         } else {
-            c = nearest(currentNode.getRight(), c, p, !orientation);
-            c = nearest(currentNode.getLeft(), c, p, !orientation);
+            clist = nearest(currentNode.getRight(), clist, p, !orientation, amount);
+            clist = nearest(currentNode.getLeft(), clist, p, !orientation, amount);
         }
 
-        return c;
+        return clist;
     }
 
     public void drawLines(GraphicsContext gc) {

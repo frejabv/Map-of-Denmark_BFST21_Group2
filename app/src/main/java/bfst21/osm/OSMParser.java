@@ -184,7 +184,9 @@ public class OSMParser {
                         break;
                     case "way":
                         if (systemPOITags.size() > 0 && systemPOIName != ""){
-                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags, way.first().getX(),way.first().getY()));
+                            POI poi = createSystemPOI(systemPOIName,systemPOITags, way.first().getX(),way.first().getY());
+                            model.addSystemPOI(poi);
+                            model.getKdTree().insert(poi);
                             System.out.println(systemPOITags.size());
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
@@ -195,7 +197,9 @@ public class OSMParser {
                         break;
                     case "relation":
                         if (systemPOITags.size() > 0 && systemPOIName != ""){
-                            model.addSystemPOI(createSystemPOI(systemPOIName,systemPOITags, relation.ways.get(0).first().getX(),relation.ways.get(0).first().getY()));
+                            POI poi = createSystemPOI(systemPOIName,systemPOITags, relation.ways.get(0).first().getX(),relation.ways.get(0).first().getY());
+                            model.addSystemPOI(poi);
+                            model.getKdTree().insert(poi);
                             System.out.println(systemPOITags.size());
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();

@@ -3,11 +3,12 @@ package bfst21;
 import bfst21.osm.Drawable;
 import bfst21.osm.KDTree;
 import bfst21.osm.Node;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 
-public class POI {
+public class POI implements Comparable<POI> {
 
     private String name;
     private String type;
@@ -17,7 +18,7 @@ public class POI {
     private POI left;
     private POI right;
     private KDTree.RectHV rect;
-
+    public double distTo;
 
     public POI(String name, String type, float x, float y) {
         this.name = name;
@@ -83,5 +84,14 @@ public class POI {
             gc.lineTo(rect.getMaxX(), y);
         }
         gc.stroke();
+    }
+
+    @Override
+    public int compareTo(POI that) {
+        return Double.compare(this.distTo, that.distTo);
+    }
+
+    public void setDistTo(Point2D p) {
+        distTo = (x-p.getX()) * (x-p.getX()) + (y-p.getY()) * (y-p.getY());
     }
 }

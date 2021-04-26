@@ -222,6 +222,15 @@ public class Controller {
         if (e.getText().equals("d")) {
             toggleDebugMode();
         }
+        if (e.getText().equals("k")) {
+            if (canvas.setPin) {
+                System.out.println();
+                ArrayList<POI> poiArrayList = model.getKdTree().nearestK(canvas.pinPoint, 5);
+                for (POI poi : poiArrayList) {
+                    System.out.println(poi.getName());
+                }
+            }
+        }
     }
 
     @FXML
@@ -396,7 +405,9 @@ public class Controller {
 
     public void onMousePressedPinHeart() {
         //add this point to POI
-        model.addPOI(new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
+        POI poi = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+        model.addPOI(poi);
+        model.getKdTree().insert(poi);
         canvas.setPin = false;
         canvas.repaint();
         updateUserPOI();
@@ -415,5 +426,10 @@ public class Controller {
                 canvas.repaint();
             });
         });
+    }
+
+    public void toggleKDLines(MouseEvent mouseEvent) {
+        canvas.kdLines = !canvas.kdLines;
+        canvas.repaint();
     }
 }
