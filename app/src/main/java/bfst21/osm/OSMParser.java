@@ -25,7 +25,7 @@ import java.util.zip.ZipInputStream;
 public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
     private static List<String> systemPOITags;
-    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall"));
+    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall", "windmill", "lighthouse", "bust", "statue", "sculpture"));
 
 
     public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
@@ -155,7 +155,7 @@ public class OSMParser {
                     if (k.equals("service")) {
                         break;
                     }
-                    if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic")){
+                    if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic") || k.equals("man_made")){
                         if (systemPoi.contains(v)) {
                             systemPOITags.add(v);
                         }
@@ -194,8 +194,8 @@ public class OSMParser {
                     }
 
                     if (isNode) {
-                        // example from samsoe.osm of an addr tag:
-                        // <tag k="addr:street" v="havnevej"/>
+                        // Example from samsoe.osm of an addr tag:
+                        // <tag k="addr:street" v="Havnevej"/>
                         if (k.equals("addr:street")) {
                             model.getStreetTree().insert(v, node.getId());
                         }
@@ -291,48 +291,52 @@ public class OSMParser {
         }
 
     private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
-        String type = "car";
-        String imageType = "car";
-        /*int priority = 10;
+        String type = "default";
+        String imageType = "default";
+        int priority = 0;
         //List<String> systemPoi = new ArrayList<>(Arrays.asList("attraction", "viewpoint", "artwork", "building"));
         //From specific tags to more general
         for(String tag :systemPOITags) {
-            if (imageType.equals("")) {
-                switch (tag) {
-                    case "bust":
-                    case "statue":
-                    case "sculpture":
-                        imageType = "statue";
-                        priority = 10;
-                        break;
-                    case "theme_park":
-                        imageType = "theme_park";
-                        priority = 10;
-                        break;
-                    case "attraction":
-                        if (priority < 10){
-                            imageType = "attraction";
-                            priority = 5;
-                        }
-                        break;
+            if (priority != 10){
+                if (systemPOITags.contains("windmill")){
+                    imageType = "mill";
+                    priority = 10;
+                }else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")){
+                    imageType = "museum";
+                    priority = 10;
+                } else if (systemPOITags.contains("theme_park")){
+                    imageType = "theme_park";
+                    priority = 10;
+                } else if (systemPOITags.contains("aerodrome")){
+                    imageType = "aerodrome";
+                    priority = 10;
+                } else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")){
+                    imageType = "cinema";
+                    priority = 10;
+                } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")){
+                    imageType = "castle";
+                    priority = 10;
+                } else if (systemPOITags.contains("lighthouse")){
+                    imageType = "viewpoint";
+                    priority = 10;
+                } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust") || systemPOITags.contains("sculpture")){
+                    imageType = "statue";
+                    priority = 10;
+                }else if (systemPOITags.contains("zoo")){
+                    imageType = "zoo";
+                    priority = 10;
+                } /*else if (systemPOITags.contains("aquarium")){
+                    imageType = "aquarium";
+                    priority = 10;
+                }*/ else if (systemPOITags.contains("attraction")){
+                    imageType = "suitcase";
+                    priority = 5;
+                } else if (systemPOITags.contains("viewpoint")){
+                    imageType = "viewpoint";
+                    priority = 5;
                 }
             }
         }
-        else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")){
-            imageType = "cinema";
-        } else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")){
-            imageType = "museum";
-        } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")){
-            imageType = "castle";
-        } else if (systemPOITags.contains("aerodrome")){
-            imageType = "aerodrome";
-        } else if (systemPOITags.contains("zoo")){
-            imageType = "zoo";
-        } else if (systemPOITags.contains("aquarium")){
-            imageType = "aquarium";
-        } else if (systemPOITags.contains("theme_park")){
-            imageType = "theme_park";
-        }*/
         //sanitise type
         POI result = new POI(systemPOIName,type, imageType,x,y);
         return result;

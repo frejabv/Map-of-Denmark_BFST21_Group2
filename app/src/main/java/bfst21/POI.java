@@ -96,4 +96,8 @@ public class POI implements Comparable<POI> {
     public double getDistTo() {
         return distTo;
     }
+
+    public String getImageType() {
+        return imageType;
+    }
 }
