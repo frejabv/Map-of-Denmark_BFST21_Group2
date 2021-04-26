@@ -140,6 +140,10 @@ public class MapCanvas extends Canvas {
             }
         });
 
+        if (kdLines) {
+            model.getPOITree().drawLines(gc);
+        }
+
         if (setPin) {
             double size = (30 / Math.sqrt(trans.determinant()));
             gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size,

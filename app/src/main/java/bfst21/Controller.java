@@ -229,15 +229,6 @@ public class Controller {
         if (e.getText().equals("d")) {
             toggleDebugMode();
         }
-        if (e.getText().equals("k")) {
-            if (canvas.setPin) {
-                System.out.println();
-                ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
-                for (POI poi : poiArrayList) {
-                    System.out.println(poi.getName());
-                }
-            }
-        }
     }
 
     @FXML
@@ -279,8 +270,41 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
+
+            NearbyPOI.setVisible(true);
+            NearbyPOI.setManaged(true);
+            updateNearbyPOI();
         } else {
             singleClick = true;
+        }
+    }
+
+    private void updateNearbyPOI() {
+        NearbyPOI.setVisible(true);
+        NearbyPOI.setManaged(true);
+        Text nearbyAttractionsText = new Text("Nearby Attractions");
+        Region region = new Region();
+        region.getStyleClass().add("hr");
+        NearbyPOI.getChildren().clear();
+        NearbyPOI.getChildren().add(nearbyAttractionsText);
+        NearbyPOI.getChildren().add(region);
+        ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
+        for (POI poi : poiArrayList) {
+            HBox nearbyContainer = new HBox();
+            nearbyContainer.getStyleClass().add("nearbyPOIContainer");
+            ImageView imageview = new ImageView(new Image(getClass().getResource("/bfst21/icons/car.png").toString()));
+            imageview.setFitHeight(22.0);
+            imageview.setFitWidth(22.0);
+            imageview.getStyleClass().add("nearbyPOIImage");
+            VBox textlines = new VBox();
+            Text attractionName = new Text(poi.getName());
+            Text attractionType = new Text(poi.getType());
+            attractionType.getStyleClass().add("attractionType");
+            textlines.getChildren().add(attractionName);
+            textlines.getChildren().add(attractionType);
+            nearbyContainer.getChildren().add(imageview);
+            nearbyContainer.getChildren().add(textlines);
+            NearbyPOI.getChildren().add(nearbyContainer);
         }
     }
 
@@ -465,31 +489,6 @@ public class Controller {
                 changeType("pin",true);
                 removePin.setVisible(false);
                 removePin.setManaged(false);
-                NearbyPOI.setVisible(true);
-                NearbyPOI.setManaged(true);
-                Text nearbyAttractionsText = new Text("Nearby Attractions");
-                Region region = new Region();
-                region.getStyleClass().add("hr");
-                NearbyPOI.getChildren().clear();
-                NearbyPOI.getChildren().add(nearbyAttractionsText);
-                NearbyPOI.getChildren().add(region);
-                for (int i = 0; i < 5; i++) {
-                    HBox nearbyContainer = new HBox();
-                    nearbyContainer.getStyleClass().add("nearbyPOIContainer");
-                    ImageView imageview = new ImageView(new Image(getClass().getResource("/bfst21/icons/car.png").toString()));
-                    imageview.setFitHeight(22.0);
-                    imageview.setFitWidth(22.0);
-                    imageview.getStyleClass().add("nearbyPOIImage");
-                    VBox textlines = new VBox();
-                    Text attractionName = new Text("Attraction Name");
-                    Text attractionType = new Text("Attraction type");
-                    attractionType.getStyleClass().add("attractionType");
-                    textlines.getChildren().add(attractionName);
-                    textlines.getChildren().add(attractionType);
-                    nearbyContainer.getChildren().add(imageview);
-                    nearbyContainer.getChildren().add(textlines);
-                    NearbyPOI.getChildren().add(nearbyContainer);
-                }
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
                 canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
                 canvas.repaint();
@@ -497,7 +496,7 @@ public class Controller {
         });
     }
 
-    public void toggleKDLines(MouseEvent mouseEvent) {
+    public void toggleKDLines() {
         canvas.kdLines = !canvas.kdLines;
         canvas.repaint();
         hideRoute();
