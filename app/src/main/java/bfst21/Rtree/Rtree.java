@@ -5,6 +5,8 @@ import bfst21.osm.Drawable;
 import bfst21.osm.Way;
 
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,10 +32,9 @@ public class Rtree {
         root = new RtreeNode(drawables, vertical, rootSlices);
     }
 
-    public Way NearestWay(Point2D p){
+    public Way NearestWay(Point2D p) {
         Way nearest = null;
-        double currentNearestDist = Double.POSITIVE_INFINITY;
-        p = canvas.mouseToModelCoords(p);
+        double currentNearestDist = 10000;
 
         LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
         explorationQueue.add(root);
@@ -77,7 +78,10 @@ public class Rtree {
 
             if (current.children != null) {
                 for (var child : current.children) {
-                    if (queryRect.intersects(child.getRect())) {
+                    if (queryRect.contains(child.getRect())){
+                        result.addAll(getAllDrawables(child));
+                    }
+                    else if (queryRect.intersects(child.getRect())) {
                         explorationQueue.add(child);
                     }
                 }
@@ -95,5 +99,32 @@ public class Rtree {
 
     private double log(double num)  {
         return Math.log(Rtree.maxChildren) / Math.log(num);
+    }
+
+    public void drawRTree(Rectangle window, GraphicsContext gc) {
+        for (Drawable d: query(window)) {
+            d.getRect().draw(gc);
+        }
+        gc.setStroke(Color.BLACK);
+        window.draw(gc);
+    }
+
+    public List<Drawable> getAllDrawables(RtreeNode startNode) {
+        List<Drawable> AllDrawables = new ArrayList<>();
+
+        LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
+        explorationQueue.add(startNode);
+        while (!explorationQueue.isEmpty()) {
+            RtreeNode current = explorationQueue.removeFirst();
+
+            if (current.getChildren() != null) {
+                explorationQueue.addAll(current.getChildren());
+            }
+
+            else if (current instanceof RtreeLeaf) {
+                AllDrawables.addAll(((RtreeLeaf) current).getDrawables());
+            }
+        }
+        return AllDrawables;
     }
 }
