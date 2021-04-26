@@ -357,7 +357,7 @@ public class Controller {
             canvas.setPin = false;
             canvas.repaint();
         }
-        if (type != "route" || type != "debug") {
+        if (type != "route" && type != "debug") {
             canvas.hideRoute();
             canvas.repaint();
         }
