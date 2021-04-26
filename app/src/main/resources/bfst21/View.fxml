@@ -256,6 +256,8 @@
                 <Button fx:id="removePin">Remove pin</Button>
               </VBox>
           </HBox>
+          <VBox fx:id="NearbyPOI" styleClass="nearbyPOI">
+          </VBox>
         </VBox>
       </VBox>
       <HBox fx:id="rightContainer" styleClass="rightContainer" alignment="TOP_RIGHT" pickOnBounds="false" GridPane.columnIndex="1" GridPane.rowIndex="0">

@@ -13,6 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import java.util.ArrayList;
@@ -64,6 +65,8 @@ public class Controller {
     private VBox leftContainer;
     @FXML
     private HBox rightContainer;
+    @FXML
+    private VBox NearbyPOI;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -329,7 +332,6 @@ public class Controller {
         routeButton.setStyle("-fx-opacity: .5");
         settingsButton.setStyle("-fx-opacity: .5");
     }
-
     public void changeType(String type, boolean state) {
         if (canvas.setPin && type != "pin"){
             canvas.setPin = false;
@@ -369,6 +371,8 @@ public class Controller {
             case "pin":
                 removePin.setVisible(true);
                 removePin.setManaged(true);
+                NearbyPOI.setVisible(false);
+                NearbyPOI.setManaged(false);
                 fadeButtons();
                 pinContainer.setVisible(state);
                 pinContainer.setManaged(state);
@@ -419,11 +423,14 @@ public class Controller {
                 currentPOI = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
             }
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
+            removePin.setVisible(false);
+            removePin.setManaged(false);
             model.addPOI(currentPOI);
         }
         else{
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             model.removePOI(currentPOI);
+            changeType("pin", false);
             currentPOI = null;
         }
         canvas.setPin = false;
@@ -440,10 +447,33 @@ public class Controller {
             Button currentPOILine = new Button(POI.getName());
             userPOI.getChildren().add(currentPOILine);
             currentPOILine.setOnAction(event -> {
+                currentPOI = POI;
                 changeType("pin",true);
                 removePin.setVisible(false);
                 removePin.setManaged(false);
-                currentPOI = POI;
+                NearbyPOI.setVisible(true);
+                NearbyPOI.setManaged(true);
+                Text nearbyAttractionsText = new Text("Nearby Attractions");
+                Region region = new Region();
+                region.getStyleClass().add("hr");
+                NearbyPOI.getChildren().clear();
+                NearbyPOI.getChildren().add(nearbyAttractionsText);
+                NearbyPOI.getChildren().add(region);
+                for (int i = 0; i < 5; i++) {
+                    HBox nearbyContainer = new HBox();
+                    nearbyContainer.getStyleClass().add("nearbyPOIContainer");
+                    ImageView imageview = new ImageView(new Image(getClass().getResource("/bfst21/icons/car.png").toString()));
+                    imageview.setFitHeight(22.0);
+                    imageview.setFitWidth(22.0);
+                    VBox textlines = new VBox();
+                    Text attractionName = new Text("Attraction Name");
+                    Text attractionType = new Text("Attraction type");
+                    textlines.getChildren().add(attractionName);
+                    textlines.getChildren().add(attractionType);
+                    nearbyContainer.getChildren().add(imageview);
+                    nearbyContainer.getChildren().add(textlines);
+                    NearbyPOI.getChildren().add(nearbyContainer);
+                }
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
                 canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
                 canvas.repaint();

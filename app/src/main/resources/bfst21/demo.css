@@ -162,3 +162,6 @@
 .heartIcon{
     -fx-background-color: transparent;
 }
+.nearbyPOI{
+    -fx-spacing: 20px;
+}
