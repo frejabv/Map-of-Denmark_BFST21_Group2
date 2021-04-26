@@ -1,6 +1,9 @@
 package bfst21;
 
+import bfst21.Rtree.Rectangle;
+import bfst21.osm.DrawStyle;
 import bfst21.osm.RenderingStyle;
+import bfst21.osm.Tag;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -44,13 +47,48 @@ public class MapCanvas extends Canvas {
         gc.setTransform(trans);
         gc.fill();
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-
-        gc.setFill(renderingStyle.island);
-        for (var island : model.getIslands()) {
+gc.setFill(renderingStyle.island); for (var island : model.getIslands()) {
             island.draw(gc);
             gc.fill();
         }
+        Point2D maxInsetPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
+        maxInsetPoint = mouseToModelCoords(maxInsetPoint);
 
+        Point2D minInsetPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
+        minInsetPoint = mouseToModelCoords(minInsetPoint);
+
+
+
+        Rectangle window = new Rectangle((float) minInsetPoint.getX(),(float) minInsetPoint.getY(), (float) maxInsetPoint.getX(), (float) maxInsetPoint.getY());
+
+        window.draw(gc);
+        Point2D maxPoint = new Point2D(getWidth(), getHeight());
+        maxPoint = mouseToModelCoords(maxPoint);
+
+        Point2D minPoint = new Point2D(getWidth() * 0, getHeight() * 0);
+        minPoint = mouseToModelCoords(minPoint);
+
+        var rTreeQueryRect = new Rectangle((float) minPoint.getX(), (float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
+        var toDraw = model.getRtree().query(window);
+
+        toDraw.forEach(drawable -> {
+            if (drawable.getTags().size() != 0) {
+                Tag currentTag = drawable.getTags().get(0);
+
+                if(currentTag.zoomLimit > getDistanceWidth()) {
+                    gc.setStroke(renderingStyle.getColorByTag(currentTag));
+                    gc.setFill(renderingStyle.getColorByTag(currentTag));
+                    DrawStyle drawStyle = renderingStyle.getDrawStyleByTag(currentTag);
+
+                    drawable.draw(gc);
+                    if (drawStyle == DrawStyle.FILL) {
+                        gc.fill();
+                    }
+                }
+            }
+        });
+
+        /*
         model.getFillMap().forEach((tag, fillables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
             gc.setFill(renderingStyle.getColorByTag(tag));
@@ -71,7 +109,7 @@ public class MapCanvas extends Canvas {
                     drawable.draw(gc);
                 }     
             });
-        });
+        }); */
 
         model.getRelationIndex().forEach(relation -> {
             if (relation.getTags().size() != 0) {

@@ -12,6 +12,8 @@ import java.util.Map;
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
+    private List<Drawable> drawableList;
+    private List<Drawable> fillableList;
 
     // drawables are all ways that not in any other list
     private List<Drawable> drawables;
@@ -29,6 +31,8 @@ public class Model {
     public Model(String filepath, boolean ttiMode) {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
+        drawableList = new ArrayList<>();
+        fillableList = new ArrayList<>();
 
         drawables = new ArrayList<>();
         nodeIndex = new MemberIndex<>();
@@ -43,9 +47,15 @@ public class Model {
             OSMParser.readMapElements(filepath, this);
         } catch (Exception e) {
             System.out.println("error: " + e.getClass() + " " + e.getMessage());
+            e.printStackTrace();
         }
 
-        rtree = new Rtree(this, drawableMap.get(Tag.TERTIARY));
+        List<Drawable> toRtree = new ArrayList<>();
+        toRtree.addAll(fillableList);
+        toRtree.addAll(drawableList);
+
+        rtree = new Rtree(this, toRtree);
+
         System.out.println("here");
     }
 
@@ -147,5 +157,13 @@ public class Model {
 
     public RadixTree getStreetTree() {
         return streetTree;
+    }
+
+    public List<Drawable> getDrawableList() {
+        return drawableList;
+    }
+
+    public List<Drawable> getFillableList() {
+        return fillableList;
     }
 }

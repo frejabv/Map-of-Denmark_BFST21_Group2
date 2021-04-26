@@ -2,6 +2,7 @@ package bfst21.osm;
 
 import bfst21.Model;
 import bfst21.exceptions.UnsupportedFileTypeException;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -47,6 +48,7 @@ public class OSMParser {
 
         boolean isWay = false;
         boolean isNode = false;
+        String name = "";
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -150,50 +152,44 @@ public class OSMParser {
                     switch (xmlReader.getLocalName()) {
                         case "node":
                             isNode = false;
+                            tags = new ArrayList<>();
                             break;
                         case "way":
                             way.createRectangle();
                             addWayToList(way, tags, model);
+                            tags = new ArrayList<>();
                             break;
                         case "relation":
                             relation.setTags(tags);
                             relation.createRectangle();
                             relation = null;
+                            tags = new ArrayList<>();
                             break;
                     }
                     break;
             }
         }
-        // TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
-        System.out.println(model.getCoastlines());
-        if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
-            System.out.println("you fool, you think it is that simple? hahahahah");
-        }
     }
 
-    public static void addWayToList(Way way, List<Tag> tags, Model model) {
-        var drawableMap = model.getDrawableMap();
-        var fillMap = model.getFillMap();
+    public static void addWayToList(Way way, ArrayList<Tag> tags, Model model) {
+        var drawableList = model.getDrawableList();
+        var fillableList = model.getFillableList();
         RenderingStyle renderingStyle = new RenderingStyle();
 
-        for (var tag : tags) {
-            if (tag == Tag.COASTLINE) {
-                model.addCoastline(way);
-            } else {
-                var drawStyle = renderingStyle.getDrawStyleByTag(tag);
+        if (tags.contains(Tag.COASTLINE)) {
+            model.addCoastline(way);
+        } else {
+            // naively determine whether or not the way is fillable by the first tagRenderingStyle
+            if (tags.size() <= 0) return;
 
-                if (drawStyle == DrawStyle.FILL) {
-                    fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, fillMap)) {
-                        fillMap.get(tag).add(way);
-                    }
-                } else {
-                    drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, drawableMap)) {
-                        drawableMap.get(tag).add(way);
-                    }
-                }
+            way.setTags(tags);
+
+            var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
+            if (drawStyle == DrawStyle.FILL) {
+                fillableList.add(way);
+            } else {
+                drawableList.add(way);
             }
         }
     }
@@ -225,7 +221,7 @@ public class OSMParser {
     }
 
     private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map) {
-        List listToCheck = map.get(tag);
+        List<Drawable> listToCheck = map.get(tag);
         boolean isDublet = true;
         if (listToCheck.size() == 0 || listToCheck.get(listToCheck.size() - 1) != drawable) {
             isDublet = false;

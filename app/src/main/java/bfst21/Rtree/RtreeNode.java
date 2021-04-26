@@ -65,7 +65,7 @@ public class RtreeNode {
             float aVal = vertical ? a.getRect().minY :  a.getRect().minX;
             float bVal = vertical ? b.getRect().minY : b.getRect().minX;
 
-            return Math.round(bVal - aVal);
+            return Float.compare(aVal, bVal);
         });
     }
     
