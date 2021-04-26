@@ -30,23 +30,8 @@ public class MapCanvas extends Canvas {
     boolean showNames = true;
 
     public boolean kdLines = false;
-    HashMap<String, Image> imageSet;
 
     public void init(Model model) {
-        imageSet = new HashMap<>();
-        imageSet.put("mill", new Image("bfst21/icons/" + "mill" + ".png"));
-        imageSet.put("museum", new Image("bfst21/icons/" + "museum" + ".png"));
-        imageSet.put("theme_park", new Image("bfst21/icons/" + "theme_park" + ".png"));
-        imageSet.put("aerodrome", new Image("bfst21/icons/" + "aerodrome" + ".png"));
-        imageSet.put("cinema", new Image("bfst21/icons/" + "cinema" + ".png"));
-        imageSet.put("castle", new Image("bfst21/icons/" + "castle" + ".png"));
-        imageSet.put("viewpoint", new Image("bfst21/icons/" + "viewpoint" + ".png"));
-        imageSet.put("statue", new Image("bfst21/icons/" + "statue" + ".png"));
-        imageSet.put("zoo", new Image("bfst21/icons/" + "zoo" + ".png"));
-        imageSet.put("suitcase", new Image("bfst21/icons/" + "suitcase" + ".png"));
-        imageSet.put("viewpoint", new Image("bfst21/icons/" + "viewpoint" + ".png"));
-        imageSet.put("default", new Image("bfst21/icons/" + "default" + ".png"));
-
         this.model = model;
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
@@ -127,7 +112,7 @@ public class MapCanvas extends Canvas {
             double size = (30 / Math.sqrt(trans.determinant()));
             gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
             String image = POI.getImageType();
-            gc.drawImage(imageSet.get(image), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
+            gc.drawImage(model.imageSet.get(image), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
 
             gc.setFill(Color.BLACK);
             gc.setFont(Font.font("Arial", FontWeight.BOLD,10 / Math.sqrt(trans.determinant())));

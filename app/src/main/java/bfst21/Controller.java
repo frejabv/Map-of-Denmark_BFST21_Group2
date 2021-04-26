@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import java.util.ArrayList;
@@ -292,17 +293,27 @@ public class Controller {
         for (POI poi : poiArrayList) {
             HBox nearbyContainer = new HBox();
             nearbyContainer.getStyleClass().add("nearbyPOIContainer");
-            ImageView imageview = new ImageView(new Image(getClass().getResource("/bfst21/icons/car.png").toString()));
-            imageview.setFitHeight(22.0);
-            imageview.setFitWidth(22.0);
+            StackPane stackPane = new StackPane();
+            if (poi.getImageType().equals("heart")){
+                stackPane.setStyle("-fx-background-color:WHITE;-fx-background-radius: 15;-fx-min-width: 30;-fx-border-width: 1px;-fx-border-color: black;-fx-border-radius: 15;");
+            }else{
+                stackPane.setStyle("-fx-background-color:rgba(52,152,219,1);-fx-background-radius: 15;-fx-min-width: 30;");
+            }
+            Image image = model.imageSet.get(poi.getImageType());
+            ImageView imageview = new ImageView(image); //poi.getImageType()
+            imageview.getStyleClass().add("testImageView");
+            imageview.setFitHeight(16.0);
+            imageview.setFitWidth(16.0);
+            imageview.setPreserveRatio(true);
             imageview.getStyleClass().add("nearbyPOIImage");
             VBox textlines = new VBox();
             Text attractionName = new Text(poi.getName());
-            Text attractionType = new Text(poi.getType());
+            Text attractionType = new Text(poi.getType().substring(0, 1).toUpperCase() + poi.getType().substring(1));
             attractionType.getStyleClass().add("attractionType");
             textlines.getChildren().add(attractionName);
             textlines.getChildren().add(attractionType);
-            nearbyContainer.getChildren().add(imageview);
+            stackPane.getChildren().add(imageview);
+            nearbyContainer.getChildren().add(stackPane);
             nearbyContainer.getChildren().add(textlines);
             NearbyPOI.getChildren().add(nearbyContainer);
         }
@@ -452,13 +463,13 @@ public class Controller {
     POI currentPOI = null;
     public void onMousePressedPinHeart() {
         //add this point to POI
-        POI poi = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+        POI poi = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
         model.addPOI(poi);
         model.getPOITree().insert(poi);
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
         if (heartIconFilePath[heartIconFilePath.length-1].equals("heart-border.png")){
             if (currentPOI == null){
-                currentPOI = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+                currentPOI = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
             }
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
             removePin.setVisible(false);

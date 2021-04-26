@@ -300,39 +300,50 @@ public class OSMParser {
             if (priority != 10){
                 if (systemPOITags.contains("windmill")){
                     imageType = "mill";
+                    type = tag;
                     priority = 10;
                 }else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")){
                     imageType = "museum";
+                    type = tag;
                     priority = 10;
                 } else if (systemPOITags.contains("theme_park")){
                     imageType = "theme_park";
+                    type = tag;
                     priority = 10;
                 } else if (systemPOITags.contains("aerodrome")){
                     imageType = "aerodrome";
+                    type = tag;
                     priority = 10;
                 } else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")){
                     imageType = "cinema";
+                    type = tag;
                     priority = 10;
                 } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")){
                     imageType = "castle";
+                    type = tag;
                     priority = 10;
                 } else if (systemPOITags.contains("lighthouse")){
                     imageType = "viewpoint";
+                    type = tag;
                     priority = 10;
                 } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust") || systemPOITags.contains("sculpture")){
                     imageType = "statue";
+                    type = tag;
                     priority = 10;
                 }else if (systemPOITags.contains("zoo")){
                     imageType = "zoo";
+                    type = tag;
                     priority = 10;
                 } /*else if (systemPOITags.contains("aquarium")){
                     imageType = "aquarium";
                     priority = 10;
                 }*/ else if (systemPOITags.contains("attraction")){
                     imageType = "suitcase";
+                    type = tag;
                     priority = 5;
                 } else if (systemPOITags.contains("viewpoint")){
                     imageType = "viewpoint";
+                    type = tag;
                     priority = 5;
                 }
             }
