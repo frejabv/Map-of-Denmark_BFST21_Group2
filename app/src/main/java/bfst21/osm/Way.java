@@ -1,11 +1,13 @@
 package bfst21.osm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
-public class Way extends Member implements Drawable {
+public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
 
     public Way(long id) {

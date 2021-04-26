@@ -4,6 +4,8 @@ import bfst21.osm.Node;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -11,9 +13,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +65,8 @@ public class Controller {
     private VBox leftContainer;
     @FXML
     private HBox rightContainer;
+    @FXML
+    private VBox NearbyPOI;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -88,6 +92,9 @@ public class Controller {
         if (model.getTtiMode()) {
             System.exit(0);
         }
+
+        leftContainer.setMaxWidth(canvas.getWidth()/100*33);
+        rightContainer.setMaxWidth(canvas.getWidth()/100*50);
     }
 
     @FXML
@@ -262,6 +269,10 @@ public class Controller {
         if (singleClick) {
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
+            if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()){
+                currentPOI = null;
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            }
             pinText.textProperty().setValue(coordinates);
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
@@ -332,6 +343,10 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
+        if (canvas.setPin && type != "pin"){
+            canvas.setPin = false;
+            canvas.repaint();
+        }
         if (!type.equals("debug")) {
             searchContainer.setVisible(false);
             searchContainer.setManaged(false);
@@ -364,6 +379,11 @@ public class Controller {
                 debugContainer.setManaged(state);
                 break;
             case "pin":
+                removePin.setVisible(true);
+                removePin.setManaged(true);
+                NearbyPOI.setVisible(false);
+                NearbyPOI.setManaged(false);
+                fadeButtons();
                 pinContainer.setVisible(state);
                 pinContainer.setManaged(state);
                 break;
@@ -403,11 +423,30 @@ public class Controller {
         scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
     }
 
+    @FXML
+    private ImageView heartIcon;
+    POI currentPOI = null;
     public void onMousePressedPinHeart() {
         //add this point to POI
         POI poi = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
         model.addPOI(poi);
         model.getPOITree().insert(poi);
+        String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
+        if (heartIconFilePath[heartIconFilePath.length-1].equals("heart-border.png")){
+            if (currentPOI == null){
+                currentPOI = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+            }
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
+            removePin.setVisible(false);
+            removePin.setManaged(false);
+            model.addPOI(currentPOI);
+        }
+        else{
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            model.removePOI(currentPOI);
+            changeType("pin", false);
+            currentPOI = null;
+        }
         canvas.setPin = false;
         canvas.repaint();
         updateUserPOI();
@@ -419,9 +458,39 @@ public class Controller {
     public void updateUserPOI() {
         userPOI.getChildren().clear();
         model.getPointsOfInterest().forEach(POI -> {
-            Button currentPOI = new Button(POI.getName());
-            userPOI.getChildren().add(currentPOI);
-            currentPOI.setOnAction(event -> {
+            Button currentPOILine = new Button(POI.getName());
+            userPOI.getChildren().add(currentPOILine);
+            currentPOILine.setOnAction(event -> {
+                currentPOI = POI;
+                changeType("pin",true);
+                removePin.setVisible(false);
+                removePin.setManaged(false);
+                NearbyPOI.setVisible(true);
+                NearbyPOI.setManaged(true);
+                Text nearbyAttractionsText = new Text("Nearby Attractions");
+                Region region = new Region();
+                region.getStyleClass().add("hr");
+                NearbyPOI.getChildren().clear();
+                NearbyPOI.getChildren().add(nearbyAttractionsText);
+                NearbyPOI.getChildren().add(region);
+                for (int i = 0; i < 5; i++) {
+                    HBox nearbyContainer = new HBox();
+                    nearbyContainer.getStyleClass().add("nearbyPOIContainer");
+                    ImageView imageview = new ImageView(new Image(getClass().getResource("/bfst21/icons/car.png").toString()));
+                    imageview.setFitHeight(22.0);
+                    imageview.setFitWidth(22.0);
+                    imageview.getStyleClass().add("nearbyPOIImage");
+                    VBox textlines = new VBox();
+                    Text attractionName = new Text("Attraction Name");
+                    Text attractionType = new Text("Attraction type");
+                    attractionType.getStyleClass().add("attractionType");
+                    textlines.getChildren().add(attractionName);
+                    textlines.getChildren().add(attractionType);
+                    nearbyContainer.getChildren().add(imageview);
+                    nearbyContainer.getChildren().add(textlines);
+                    NearbyPOI.getChildren().add(nearbyContainer);
+                }
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
                 canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
                 canvas.repaint();
             });
@@ -431,5 +500,35 @@ public class Controller {
     public void toggleKDLines(MouseEvent mouseEvent) {
         canvas.kdLines = !canvas.kdLines;
         canvas.repaint();
+        hideRoute();
+    }
+
+    public void toggleShowNames() {
+        canvas.showNames = !canvas.showNames;
+        canvas.repaint();
+    }
+
+    @FXML
+    private VBox routeDescription;
+    @FXML
+    private VBox routeStepsContainer;
+    public void showRoute(ArrayList<String> routeSteps){
+        routeDescription.setVisible(true);
+        routeDescription.setManaged(true);
+        routeStepsContainer.getChildren().clear();
+        /*for (Step temp : routeSteps){
+            FlowPane stepContainer = new FlowPane();
+            Image stepIcon = new Image(temp.getDirection().toString() + ".png");
+            ImageView stepIconContainer = new ImageView(stepIcon);
+            Text stepDescription = new Text("Drej til højre af " + temp.getRoadName() + " (" + temp.getDistance() + " meter)");
+            stepContainer.getChildren().add(stepIconContainer);
+            stepContainer.getChildren().add(stepDescription);
+            routeStepsContainer.getChildren().add(stepContainer);
+        }*/
+    }
+
+    public void hideRoute(){
+        routeDescription.setVisible(false);
+        routeDescription.setManaged(false);
     }
 }

@@ -1,9 +1,10 @@
 package bfst21.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class RadixTree {
+public class RadixTree implements Serializable {
     private final RadixNode root;
     private int size;
     private int places;

@@ -31,6 +31,7 @@ public class Model {
     private boolean ttiMode;
 
     private float minX, minY, maxX, maxY;
+    private List<City> cities;
 
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
@@ -47,6 +48,7 @@ public class Model {
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
+        cities = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
         systemPointsOfInterest = new ArrayList<>();
@@ -103,16 +105,20 @@ public class Model {
         return nodeIndex;
     }
 
+    public void setNodeIndex(MemberIndex<Node> nodeIndex) {
+        this.nodeIndex = nodeIndex;
+    }
+
     public void addToNodeIndex(Node node) {
         nodeIndex.addMember(node);
     }
 
-    public List<Drawable> getDrawables() {
-        return drawables;
-    }
-
     public MemberIndex<Way> getWayIndex() {
         return wayIndex;
+    }
+
+    public void setWayIndex(MemberIndex<Way> wayIndex) {
+        this.wayIndex = wayIndex;
     }
 
     public void addToWayIndex(Way way) {
@@ -123,12 +129,20 @@ public class Model {
         return relationIndex;
     }
 
+    public void setRelationIndex(MemberIndex<Relation> relationIndex) {
+        this.relationIndex = relationIndex;
+    }
+
     public void addToRelationIndex(Relation relation) {
         relationIndex.addMember(relation);
     }
 
     public ArrayList<Way> getCoastlines() {
         return coastlines;
+    }
+
+    public void setCoastlines(ArrayList<Way> coastlines) {
+        this.coastlines = coastlines;
     }
 
     public void addCoastline(Way way) {
@@ -147,8 +161,16 @@ public class Model {
         return drawableMap;
     }
 
+    public void setDrawableMap(Map<Tag, List<Drawable>> drawableMap) {
+        this.drawableMap = drawableMap;
+    }
+
     public Map<Tag, List<Drawable>> getFillMap() {
         return fillMap;
+    }
+
+    public void setFillMap(Map<Tag, List<Drawable>> fillMap) {
+        this.fillMap = fillMap;
     }
 
     public boolean getTtiMode() {
@@ -159,8 +181,16 @@ public class Model {
         return streetTree;
     }
 
+    public void setStreetTree(RadixTree streetTree) {
+        this.streetTree = streetTree;
+    }
+
     public void addPOI(POI poi) {
         pointsOfInterest.add(poi);
+    }
+
+    public void removePOI(POI poi) {
+        pointsOfInterest.remove(poi);
     }
 
     public ArrayList<POI> getPointsOfInterest() {
@@ -170,4 +200,10 @@ public class Model {
     public void addSystemPOI(POI poi) {systemPointsOfInterest.add(poi);}
 
     public ArrayList<POI> getSystemPointsOfInterest() {return systemPointsOfInterest;}
+
+    public void addToCityIndex(City city) {
+        cities.add(city);
+    }
+    public List<City> getCities(){return cities;}
+
 }

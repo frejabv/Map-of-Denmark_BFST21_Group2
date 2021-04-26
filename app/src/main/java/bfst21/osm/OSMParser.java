@@ -3,6 +3,7 @@ package bfst21.osm;
 import bfst21.Model;
 import bfst21.POI;
 import bfst21.exceptions.UnsupportedFileTypeException;
+import bfst21.search.RadixTree;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -12,10 +13,14 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
@@ -29,14 +34,62 @@ public class OSMParser {
             loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
             loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
+            saveOBJ(filepath + ".obj", model);
         } else if (filepath.endsWith(".obj")) {
-            // TODO
-            System.out.println("missing object loader");
+            try {
+                loadOBJ(filepath, model);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         } else {
             String[] splitFileName = filepath.split("\\.");
             if (splitFileName.length > 0) {
                 throw new UnsupportedFileTypeException("." + splitFileName[splitFileName.length - 1]);
             }
+        }
+    }
+
+    public static void loadOBJ(String filename, Model model) throws IOException, ClassNotFoundException {
+        try (var input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(OSMParser.class.getResource("/bfst21/data/" + filename).getFile())))) {
+            model.setFillMap((Map<Tag, List<Drawable>>) input.readObject());
+            model.setNodeIndex((MemberIndex<Node>) input.readObject());
+            model.setWayIndex((MemberIndex<Way>) input.readObject());
+            model.setRelationIndex((MemberIndex<Relation>) input.readObject());
+            model.setStreetTree((RadixTree) input.readObject());
+            model.setIslands((ArrayList<Drawable>) input.readObject());
+            model.setCoastlines((ArrayList<Way>) input.readObject());
+            model.setMinX(input.readFloat());
+            model.setMinY(input.readFloat());
+            model.setMaxX(input.readFloat());
+            model.setMaxY(input.readFloat());
+            model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveOBJ(String filename, Model model) throws IOException {
+        File file = null;
+        try {
+            file = Paths.get(OSMParser.class.getResource("/bfst21/data/" + filename).toURI()).toFile();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        try (var output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())))) {
+            output.writeObject(model.getFillMap());
+            output.writeObject(model.getNodeIndex());
+            output.writeObject(model.getWayIndex());
+            output.writeObject(model.getRelationIndex());
+            output.writeObject(model.getStreetTree());
+            output.writeObject(model.getIslands());
+            output.writeObject(model.getCoastlines());
+            output.writeFloat(model.getMinX());
+            output.writeFloat(model.getMinY());
+            output.writeFloat(model.getMaxX());
+            output.writeFloat(model.getMaxY());
+            output.writeObject(model.getDrawableMap());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -53,6 +106,7 @@ public class OSMParser {
 
         boolean isWay = false;
         boolean isNode = false;
+        String name = "";
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -106,6 +160,24 @@ public class OSMParser {
                             systemPOITags.add(v);
                         }
                     }
+                    if (k.equals("name")) {
+                        name = v;
+                    }
+                    if (k.equals("place")) {
+                        if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
+                                || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
+                                || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
+                            CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
+                            if (isNode) {
+                                model.addToCityIndex(new City(name, cityType, node.getX(), node.getY()));
+                            } else if (isWay && relation == null) {
+                                model.addToCityIndex(new City(name, cityType, way.first().getX(), way.first().getY()));
+                            } else if (isWay && relation != null) {
+                                model.addToCityIndex(new City(name, cityType, relation.ways.get(0).first().getX(),
+                                        relation.ways.get(0).first().getY()));
+                            }
+                        }
+                    }
 
                     try {
                         var tag = Tag.valueOf(v.toUpperCase());
@@ -122,8 +194,8 @@ public class OSMParser {
                     }
 
                     if (isNode) {
-                        // Example from samsoe.osm of an addr tag:
-                        // <tag k="addr:street" v="Havnevej"/>
+                        // example from samsoe.osm of an addr tag:
+                        // <tag k="addr:street" v="havnevej"/>
                         if (k.equals("addr:street")) {
                             model.getStreetTree().insert(v, node.getId());
                         }
@@ -136,6 +208,7 @@ public class OSMParser {
                     model.addToRelationIndex(relation);
                     tags = new ArrayList<>();
                     break;
+
                 case "member":
                     var type = xmlReader.getAttributeValue(null, "type");
                     var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
@@ -159,6 +232,7 @@ public class OSMParser {
                         relation.addMember(memberRef);
                         memberRef.addRole(relation.getId(), role);
                     }
+
                     break;
 
                 }

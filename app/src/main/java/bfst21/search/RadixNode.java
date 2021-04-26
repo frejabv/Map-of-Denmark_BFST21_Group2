@@ -1,8 +1,9 @@
 package bfst21.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class RadixNode {
+public class RadixNode implements Serializable {
     private ArrayList<RadixNode> children;
     boolean isPlace;
     String value;

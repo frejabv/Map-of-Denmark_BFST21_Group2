@@ -1,6 +1,7 @@
 package bfst21;
 
 import bfst21.osm.RenderingStyle;
+import bfst21.osm.Tag;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -23,12 +25,14 @@ public class MapCanvas extends Canvas {
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
+    boolean showNames = true;
 
     public boolean kdLines = false;
 
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
+        setCurrentCanvasEdges();
         moveToInitialPosition();
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
@@ -49,7 +53,7 @@ public class MapCanvas extends Canvas {
         gc.fill();
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
 
-        gc.setFill(renderingStyle.island);
+        gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
         for (var island : model.getIslands()) {
             island.draw(gc);
             gc.fill();
@@ -67,14 +71,28 @@ public class MapCanvas extends Canvas {
             });
         });
 
+        model.getRelationIndex().forEach(relation -> {
+            if (relation.getTags().size() != 0) {
+                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
+                    relation.draw(gc, renderingStyle);
+                }
+            }
+        });
+
         model.getDrawableMap().forEach((tag, drawables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
+            gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
             var style = renderingStyle.getDrawStyleByTag(tag);
-            drawables.forEach(drawable -> {
-                if (tag.zoomLimit > getDistanceWidth()) {
-                    drawable.draw(gc);
-                }
-            });
+            if (drawables != null) {
+                drawables.forEach(drawable -> {
+                    if (tag.zoomLimit > getDistanceWidth()) {
+                        drawable.draw(gc);
+                    }
+                    if (tag.zoomLimit / 100 > getDistanceWidth() && tag.equals(Tag.MOTORWAY)) {
+                        gc.setLineWidth(.00015);
+                    }
+                });
+            }
         });
 
         model.getRelationIndex().forEach(relation -> {
@@ -97,30 +115,35 @@ public class MapCanvas extends Canvas {
             gc.fillText(POI.getName(),POI.getX()+size,POI.getY());
         });
 
+        if (showNames) {
+            gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
+            model.getCities().forEach((city) -> {
+                city.drawType(gc, getDistanceWidth());
+            });
+        }
+
         model.getPointsOfInterest().forEach(POI -> {
             gc.setFill(Color.WHITE);
             double size = (30 / Math.sqrt(trans.determinant()));
             gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
-            gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
+            gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
+                    size / 2, size / 2);
             switch (POI.getType().toLowerCase()) {
                 case "home":
-                    //draw home icon
+                    // draw home icon
                     break;
                 case "work":
-                    //draw briefcase icon
+                    // draw briefcase icon
                     break;
                 default:
-                    //draw generic icon
+                    // draw generic icon
             }
         });
 
-        if (kdLines) {
-            model.getPOITree().drawLines(gc);
-        }
-
         if (setPin) {
             double size = (30 / Math.sqrt(trans.determinant()));
-            gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size, size);
+            gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size,
+                    size);
         }
 
         gc.restore();
@@ -139,19 +162,18 @@ public class MapCanvas extends Canvas {
     }
 
     public void zoom(double factor, Point2D center) {
-        setCurrentCanvasEdges();
         if (factor > 1) {
             if (getDistanceWidth() > 0.1) {
                 trans.prependScale(factor, factor, center);
-                repaint();
             }
         } else {
-            //TODO: make the boundry go to inital zoom position
+            // TODO: make the boundry go to inital zoom position
             if (getDistanceWidth() < 1000) {
                 trans.prependScale(factor, factor, center);
-                repaint();
             }
         }
+        setCurrentCanvasEdges();
+        repaint();
     }
 
     public String setPin(Point2D point) {
@@ -166,8 +188,8 @@ public class MapCanvas extends Canvas {
 
     public String setPin(double x, double y) {
         size = .3;
+        pinPoint = new Point2D(x, y);
         canvasPoint = new Point2D(x - (0.025 * size), y - (0.076 * size));
-        pinPoint = canvasPoint;
         setPin = true;
         repaint();
         return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
