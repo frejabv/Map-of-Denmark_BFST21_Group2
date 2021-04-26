@@ -153,6 +153,8 @@ public class POI_KDTree {
         }
 
         ArrayList<POI> closestList = new ArrayList<>();
+        closestList.add(root);
+        root.setDistTo(p);
         return nearest(root, closestList, p, true, listSize);
     }
 
