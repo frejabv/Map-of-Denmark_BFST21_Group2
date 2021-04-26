@@ -42,6 +42,12 @@ public class Rectangle {
                 && this.minY <= p.getY() && this.maxY >= p.getY();
     }
 
+    public boolean contains(Rectangle rect) {
+        if (rect == null) return false;
+        return this.minX <= rect.getMinX() && this.maxX >= rect.getMaxX()
+                && this.minY <= rect.getMinY() && this.maxY >= rect.getMaxY();
+    }
+
     public double distanceSquaredTo(Point2D p) {
         double dx = 0.0, dy = 0.0;
         if (p.getX() < minX) dx = p.getX() - minX;
