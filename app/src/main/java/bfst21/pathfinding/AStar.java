@@ -60,23 +60,23 @@ public class AStar {
         return distance * 111.320 * Model.scalingConstant;
     }
 
-    public void createPath(Node target){
+    public void createPath(Node target) {
         float minX = 100;
         float maxX = -100;
         float minY = 100;
         float maxY = -100;
         path = new ArrayList<Node>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
-            if (node.getX() < minX){
+            if (node.getX() < minX) {
                 minX = node.getX();
             }
-            if (node.getX() > maxX){
+            if (node.getX() > maxX) {
                 maxX = node.getX();
             }
-            if (node.getY() < minY){
+            if (node.getY() < minY) {
                 minY = node.getY();
             }
-            if (node.getY() > maxY){
+            if (node.getY() > maxY) {
                 maxY = node.getY();
             }
             path.add(node);
@@ -144,9 +144,9 @@ public class AStar {
             //the next way is different than the current
             if (firstId != secondId && !lastRoadName.equals(model.getWayIndex().getMember(secondId).getName())) {
                 currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
-                if (type.equals(TransportType.WALK)){
+                if (type.equals(TransportType.WALK)) {
                     currentMaxSpeed = 5;
-                } else if (type.equals(TransportType.BICYCLE)){
+                } else if (type.equals(TransportType.BICYCLE)) {
                     currentMaxSpeed = 15;
                 }
                 if (!isRoundabout) {
@@ -331,10 +331,9 @@ public class AStar {
     public String getTotalDistance() {
         String result = "Distance: ";
         double distance = Math.round(totalDistance * 10.0) / 10.0;
-        if (distance < 1){
-            result += distance*1000 + " m";
-        }
-        else{
+        if (distance < 1) {
+            result += distance * 1000 + " m";
+        } else {
             result += distance + " km";
         }
         return result;
@@ -352,13 +351,13 @@ public class AStar {
             int minutes = timeInMinutes % 60;
             int hours = timeInMinutes / 60;
 
-            if (hours >= 1){
+            if (hours >= 1) {
                 result += hours + " hours";
             }
-            if (hours >= 1 && minutes != 0){
+            if (hours >= 1 && minutes != 0) {
                 result += " and ";
             }
-            if (minutes != 0){
+            if (minutes != 0) {
                 result += minutes + " min";
             }
         }

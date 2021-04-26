@@ -5,14 +5,9 @@ import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.*;
-
 import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
+import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -34,9 +29,9 @@ public class Model {
     private AStar aStar;
     private TransportType currentTransportType = TransportType.CAR;
 
-    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.LIVING_STREET,Tag.MOTORWAY,Tag.PEDESTRIAN,Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
-    private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET,Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
-    private final ArrayList<Tag> walkable = new ArrayList<>(Arrays.asList(Tag.FOOTWAY, Tag.LIVING_STREET,Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> walkable = new ArrayList<>(Arrays.asList(Tag.FOOTWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
 
     private float minX, minY, maxX, maxY;
     private List<City> cities;
@@ -189,31 +184,33 @@ public class Model {
         return aStar;
     }
 
-    public boolean existsAStarPath(){
+    public boolean existsAStarPath() {
         return AStarPath != null;
     }
 
-    public List<Node> getAStarPath(){
+    public List<Node> getAStarPath() {
         return AStarPath;
     }
 
-    public void setAStarPath(List<Node> AStarPath){
+    public void setAStarPath(List<Node> AStarPath) {
         this.AStarPath = AStarPath;
     }
 
-    public List<Node> getAStarDebugPath(){
+    public List<Node> getAStarDebugPath() {
         return AStarDebugPath;
     }
 
-    public void setAStarDebugPath(List<Node> AStarDebugPath){
+    public void setAStarDebugPath(List<Node> AStarDebugPath) {
         this.AStarDebugPath = AStarDebugPath;
     }
 
-    public void setCurrentTransportType(TransportType type){
+    public void setCurrentTransportType(TransportType type) {
         this.currentTransportType = type;
     }
 
-    public TransportType getCurrentTransportType(){ return currentTransportType; }
+    public TransportType getCurrentTransportType() {
+        return currentTransportType;
+    }
 
     public ArrayList<Tag> getDriveableTags() {
         return driveable;
@@ -242,7 +239,10 @@ public class Model {
     public void addToCityIndex(City city) {
         cities.add(city);
     }
-    public List<City> getCities(){return cities;}
+
+    public List<City> getCities() {
+        return cities;
+    }
 
     public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
         this.aStarMinX = minX;

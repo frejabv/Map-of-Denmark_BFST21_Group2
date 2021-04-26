@@ -5,45 +5,45 @@ import bfst21.osm.Node;
 import bfst21.osm.Tag;
 import bfst21.osm.Way;
 
-public class Edge{
+public class Edge {
     public final double weight;
     public final Node target;
     private boolean isDriveable, isCyclable, isWalkable;
     private long wayID;
 
-    public Edge(Node targetNode, double costVal, long wayID){
+    public Edge(Node targetNode, double costVal, long wayID) {
         target = targetNode;
         weight = costVal;
         this.wayID = wayID;
     }
 
-    public void setPathTypes(Way way, Model model){
-        for(Tag tag : way.getTags()) {
-            if(model.getDriveableTags().contains(tag)) {
+    public void setPathTypes(Way way, Model model) {
+        for (Tag tag : way.getTags()) {
+            if (model.getDriveableTags().contains(tag)) {
                 isDriveable = true;
             }
-            if(model.getCyclableTags().contains(tag)) {
+            if (model.getCyclableTags().contains(tag)) {
                 isCyclable = true;
             }
-            if(model.getWalkableTags().contains(tag)) {
+            if (model.getWalkableTags().contains(tag)) {
                 isWalkable = true;
             }
         }
     }
 
-    public boolean isDriveable(){
+    public boolean isDriveable() {
         return isDriveable;
     }
 
-    public boolean isCyclable(){
+    public boolean isCyclable() {
         return isCyclable;
     }
 
-    public boolean isWalkable(){
+    public boolean isWalkable() {
         return isWalkable;
     }
 
-    public long getWayID(){
+    public long getWayID() {
         return wayID;
     }
 }

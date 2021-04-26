@@ -7,12 +7,9 @@ import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -23,7 +20,6 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import static javafx.scene.layout.Priority.SOMETIMES;
 
@@ -99,8 +95,8 @@ public class Controller {
             System.exit(0);
         }
 
-        leftContainer.setMaxWidth(canvas.getWidth()/100*33);
-        rightContainer.setMaxWidth(canvas.getWidth()/100*50);
+        leftContainer.setMaxWidth(canvas.getWidth() / 100 * 33);
+        rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
         fromNodeId = 32463915;
         toNodeId = 2247019210l;
 
@@ -112,7 +108,6 @@ public class Controller {
 
     @FXML
     private VBox regexContainer;
-
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
         List<String> regexString = Arrays.asList("[Postcode] [City]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
@@ -153,7 +148,7 @@ public class Controller {
         routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
             regex.run(newText);
             addSuggestions(model, "route", "from");
-            if (newText.length() < oldText.length()){
+            if (newText.length() < oldText.length()) {
                 canvas.hideRoute();
             }
         });
@@ -161,7 +156,7 @@ public class Controller {
         routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
             regex.run(newText);
             addSuggestions(model, "route", "to");
-            if (newText.length() < oldText.length()){
+            if (newText.length() < oldText.length()) {
                 canvas.hideRoute();
             }
         });
@@ -280,7 +275,6 @@ public class Controller {
 
     @FXML
     private Button removePin;
-
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
@@ -359,11 +353,11 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
-        if (canvas.setPin && type != "pin" && type != "debug"){
+        if (canvas.setPin && type != "pin" && type != "debug") {
             canvas.setPin = false;
             canvas.repaint();
         }
-        if (type != "route" || type != "debug"){
+        if (type != "route" || type != "debug") {
             canvas.hideRoute();
             canvas.repaint();
         }
@@ -420,7 +414,6 @@ public class Controller {
     private HBox scaleContainer;
     @FXML
     private VBox scale;
-
     public void updateScaleBar() {
         double scaleWidth = (canvas.getWidth() / 10) + 40;
         scaleContainer.setPrefWidth(scaleWidth);
@@ -448,7 +441,6 @@ public class Controller {
 
     @FXML
     private VBox userPOI;
-
     public void updateUserPOI() {
         userPOI.getChildren().clear();
         model.getPointsOfInterest().forEach(POI -> {
@@ -474,26 +466,26 @@ public class Controller {
     private Text arrivalText;
     @FXML
     private Text arrivalSmallText;
-    public void showRoute(){
+    public void showRoute() {
         routeDescription.setVisible(true);
         routeDescription.setManaged(true);
         routeStepsContainer.getChildren().clear();
         List<Step> routeSteps = model.getAStar().getPathDescription();
-        for (Step temp : routeSteps){
+        for (Step temp : routeSteps) {
             HBox stepContainer = new HBox();
             stepContainer.setAlignment(Pos.CENTER_LEFT);
             stepContainer.getStyleClass().add("stepContainer");
             String imagePath = temp.getDirection().toString().toLowerCase();
-            if (imagePath.equals("continue")){
+            if (imagePath.equals("continue")) {
                 imagePath = "follow";
-            } else if (imagePath.equals("arrival")){
+            } else if (imagePath.equals("arrival")) {
                 imagePath = "pin";
             }
             Image stepIcon = new Image("bfst21/icons/" + imagePath + ".png");
             ImageView stepIconContainer = new ImageView(stepIcon);
             Label stepDescription = new Label(temp.toString());
-            stepContainer.setHgrow(stepIconContainer,SOMETIMES);
-            stepContainer.setHgrow(stepDescription,SOMETIMES);
+            stepContainer.setHgrow(stepIconContainer, SOMETIMES);
+            stepContainer.setHgrow(stepDescription, SOMETIMES);
             stepIconContainer.getStyleClass().add("stepIcon");
             stepIconContainer.setFitWidth(22.0);
             stepIconContainer.setFitHeight(22.0);
@@ -510,10 +502,11 @@ public class Controller {
         arrivalSmallText.setText(model.getAStar().getTotalTime());
     }
 
-    public void hideRoute(){
+    public void hideRoute() {
         routeDescription.setVisible(false);
         routeDescription.setManaged(false);
     }
+
     @FXML
     private ToggleGroup selectTransportTypeSettings;
     public void selectTransportType() {
@@ -524,7 +517,7 @@ public class Controller {
     @FXML
     private CheckBox showAStarPath;
     public void toggleAStarDebugPath() {
-        if(showAStarPath.isSelected()) {
+        if (showAStarPath.isSelected()) {
             canvas.debugAStar = true;
             canvas.repaint();
         } else {
@@ -537,7 +530,7 @@ public class Controller {
     private ToggleGroup selectTransportTypeRoute;
     public void selectTransportTypeRoute() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
-        if(currentButton != null){
+        if (currentButton != null) {
             model.setCurrentTransportType(TransportType.valueOf(currentButton.getId().split("-")[0].toUpperCase()));
             model.getAStar().AStarSearch(model.getNodeIndex().getMember((long) fromNodeId), model.getNodeIndex().getMember((long) toNodeId), model.getCurrentTransportType());
             showRoute();

@@ -1,18 +1,17 @@
 package bfst21.osm;
 
+import javafx.scene.canvas.GraphicsContext;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
+    String name = "";
     int maxSpeed = -1;
     boolean isOneway;
     boolean isJunction;
-    String name = "";
 
     public Way(long id) {
         super(id);
@@ -24,10 +23,11 @@ public class Way extends Member implements Drawable, Serializable {
         this.nodes = new ArrayList<>();
     }
 
-    public Node first(){
+    public Node first() {
         return nodes.get(0);
     }
-    public Node last(){
+
+    public Node last() {
         return nodes.get(nodes.size() - 1);
     }
 
@@ -40,16 +40,24 @@ public class Way extends Member implements Drawable, Serializable {
     }
 
     public static Way merge(Way first, Way second) {
-        if(first == null) return second;
-        if(second == null) return first;
+        if (first == null) return second;
+        if (second == null) return first;
         Way merged = new Way();
         merged.nodes.addAll(first.nodes);
-        merged.nodes.addAll(second.nodes.subList(1,second.nodes.size()));
+        merged.nodes.addAll(second.nodes.subList(1, second.nodes.size()));
         return merged;
     }
 
     public static Way merge(Way first, Way second, Way third) {
-        return merge(merge(first,second),third);
+        return merge(merge(first, second), third);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getSpeed() {
@@ -60,12 +68,8 @@ public class Way extends Member implements Drawable, Serializable {
         this.maxSpeed = maxSpeed;
     }
 
-    public String getName(){ return name; }
-
-    public void setName(String name){ this.name = name; }
-
     public void checkSpeed() {
-        if(maxSpeed == -1){
+        if (maxSpeed == -1) {
             //Maybe check if way has areatype declared????? like urban
             if (tags.contains(Tag.MOTORWAY)) {
                 maxSpeed = 130;
@@ -77,17 +81,20 @@ public class Way extends Member implements Drawable, Serializable {
         }
 
     }
-    public void setIsOneway(){
+
+    public void setIsOneway() {
         this.isOneway = true;
     }
 
-    public boolean isOneway(){
+    public boolean isOneway() {
         return isOneway;
     }
 
-    public boolean isJunction(){ return isJunction; }
+    public boolean isJunction() {
+        return isJunction;
+    }
 
-    public void setIsJunction(){
+    public void setIsJunction() {
         this.isJunction = true;
         setIsOneway();
     }
