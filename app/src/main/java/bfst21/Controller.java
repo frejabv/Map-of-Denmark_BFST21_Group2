@@ -97,8 +97,8 @@ public class Controller {
 
         leftContainer.setMaxWidth(canvas.getWidth() / 100 * 33);
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
-        fromNodeId = 34058377;
-        toNodeId = 5581362417l;
+        fromNodeId = 491469749l;
+        toNodeId = 491471631l;
 
         model.setUpAStar();
         model.getAStar().AStarSearch(model.getNodeIndex().getMember(fromNodeId), model.getNodeIndex().getMember(toNodeId), model.getCurrentTransportType());
