@@ -275,8 +275,8 @@ public class AStar {
             for (Edge e : current.getAdjecencies()) {
                 if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
-                    child.setHScores(distanceToNode(child,end)/ type.maxSpeed);
-                    double cost = e.getWeight(type,model);
+                    child.setHScores(distanceToNode(child, end) / type.maxSpeed);
+                    double cost = e.getWeight(type, model);
                     double temp_g_scores = current.g_scores + cost;
                     double temp_f_scores = temp_g_scores + child.h_scores;
 
