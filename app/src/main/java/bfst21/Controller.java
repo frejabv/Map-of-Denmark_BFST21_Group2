@@ -52,8 +52,6 @@ public class Controller {
     @FXML
     private CheckBox enableDebugWindow;
     @FXML
-    private Text suggestionsHeader;
-    @FXML
     private Text pinText;
     @FXML
     private Text cpuProcess;
@@ -73,7 +71,6 @@ public class Controller {
     private Debug debug;
     private Point2D lastMouse;
     private boolean singleClick = true;
-    private Node nodeFrom;
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
     private Node fromNode, toNode;
@@ -124,7 +121,6 @@ public class Controller {
 
     public void setUpSearchField(Regex regex) {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
-            //Run Regex Matcher
             regex.run(newText);
             addSuggestions(model, "search", null);
         });
@@ -171,7 +167,7 @@ public class Controller {
                     model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
                     showRouteDescription();
                     canvas.showRoute();
-                    canvas.repaint(); //To show the route after it has been calculated
+                    canvas.repaint();
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
@@ -195,7 +191,7 @@ public class Controller {
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
                 routeContainer.getChildren().removeAll(routeContainer.lookup("#suggestionsHr"));
-                if(routeFieldFrom.getText().length() == 0){
+                if (routeFieldFrom.getText().length() == 0) {
                     routeFieldFrom.requestFocus();
                 }
             }
@@ -218,6 +214,7 @@ public class Controller {
         }
         selectedContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
+
         if (selectedField.textProperty().getValue().length() > 2) {
             ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
@@ -232,19 +229,17 @@ public class Controller {
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
                         if (fieldType.equals("from")) {
-                            Node nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
-                            Point2D p = new Point2D(nodeFrom.getX(), nodeFrom.getY());
+                            Point2D p = new Point2D(node.getX(), node.getY());
                             fromNode = model.getRtree().NearestWay(p).nearestNode(p);
                         } else {
-                            Node nodeTo = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldTo.getText()).getId());
-                            Point2D p = new Point2D(nodeTo.getX(), nodeTo.getY());
+                            Point2D p = new Point2D(node.getX(), node.getY());
                             toNode = model.getRtree().NearestWay(p).nearestNode(p);
                         }
                         if (fromNode != null && toNode != null) {
                             model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
                             showRouteDescription();
                             canvas.showRoute();
-                            canvas.repaint(); //To show the route after it has been calculated
+                            canvas.repaint();
                         }
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);
@@ -254,15 +249,14 @@ public class Controller {
                 suggestionList.add(newSuggestion);
             }
         }
-        if(suggestionList.size()>0) {
+        if (suggestionList.size() > 0) {
             Region hr = new Region();
             hr.setId("suggestionsHr");
             hr.getStyleClass().add("hr");
             selectedContainer.getChildren().remove(selectedContainer.lookup("#suggestionsHr"));
             selectedContainer.getChildren().add(hr);
             selectedContainer.getChildren().addAll(suggestionList);
-        }
-        else{
+        } else {
             selectedContainer.getChildren().removeAll(selectedContainer.lookup("#suggestionsHr"));
         }
     }
@@ -271,13 +265,6 @@ public class Controller {
     public void onKeyPressed(KeyEvent e) {
         if (e.getText().equals("d")) {
             toggleDebugMode();
-        }
-        if (e.getText().equals("s")) {
-            canvas.showRoute();
-            canvas.goToPosition(model.aStarMinX, model.aStarMaxX, model.aStarMaxY);
-        }
-        if (e.getText().equals("h")) {
-            canvas.hideRoute();
         }
     }
 
@@ -301,9 +288,6 @@ public class Controller {
     private void onMousePressedOnCanvas(MouseEvent e) {
         lastMouse = new Point2D(e.getX(), e.getY());
     }
-
-    @FXML
-    private Button removePin;
 
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
@@ -419,10 +403,9 @@ public class Controller {
         suggestionList.clear();
         switch (type) {
             case "route":
-                if(routeFieldFrom.getText().length() > 0 && routeFieldTo.getText().length() > 0){
+                if (routeFieldFrom.getText().length() > 0 && routeFieldTo.getText().length() > 0) {
                     showRouteDescription();
-                }
-                else{
+                } else {
                     hideRoute();
                 }
                 fadeButtons();

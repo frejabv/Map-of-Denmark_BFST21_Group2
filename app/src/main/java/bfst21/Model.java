@@ -6,13 +6,6 @@ import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 
-import java.lang.reflect.Array;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.*;
@@ -23,19 +16,20 @@ public class Model {
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
-    private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
-    float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private ArrayList<POI> pointsOfInterest;
+    private RadixTree streetTree;
     private Rtree roadTree;
 
     private boolean ttiMode;
+
+    private AStar aStar;
     private List<Node> AStarPath;
     private List<Node> AStarDebugPath;
-    private AStar aStar;
     private TransportType currentTransportType = TransportType.CAR;
+    float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
     private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
@@ -68,16 +62,11 @@ public class Model {
             e.printStackTrace();
         }
 
-        List<Drawable> testRoadList= new ArrayList<>();
-        for (Tag tag: drawableMap.keySet()) {
+        List<Drawable> testRoadList = new ArrayList<>();
+        for (Tag tag : drawableMap.keySet()) {
             testRoadList.addAll(drawableMap.get(tag));
         }
         roadTree = new Rtree(this, testRoadList);
-    }
-
-
-    public Rtree getRtree() {
-        return roadTree;
     }
 
     /*
@@ -195,6 +184,10 @@ public class Model {
         return streetTree;
     }
 
+    public void setStreetTree(RadixTree streetTree) {
+        this.streetTree = streetTree;
+    }
+
     public void setUpAStar() {
         aStar = new AStar(this);
     }
@@ -243,8 +236,11 @@ public class Model {
         return walkable;
     }
 
-    public void setStreetTree(RadixTree streetTree) {
-        this.streetTree = streetTree;
+    public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
+        this.aStarMinX = minX;
+        this.aStarMinY = minY;
+        this.aStarMaxX = maxX;
+        this.aStarMaxY = maxY;
     }
 
     public void addPOI(POI poi) {
@@ -263,10 +259,7 @@ public class Model {
         return cities;
     }
 
-    public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
-        this.aStarMinX = minX;
-        this.aStarMinY = minY;
-        this.aStarMaxX = maxX;
-        this.aStarMaxY = maxY;
+    public Rtree getRtree() {
+        return roadTree;
     }
 }

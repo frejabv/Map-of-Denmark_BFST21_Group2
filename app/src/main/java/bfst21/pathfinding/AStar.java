@@ -31,15 +31,15 @@ public class AStar {
                     Node node = tempWay.getNodes().get(i);
                     if (i != (tempWay.getNodes().size() - 1)) {
                         Node nextNode = tempWay.getNodes().get(i + 1);
-                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId()); ///wayButNowCasted.getSpeed()
+                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId());
                         edge.setPathTypes(tempWay, model);
-                        node.addAdjecencies(edge);
+                        node.addAdjacencies(edge);
                     }
                     if (i > 0 && !tempWay.isOneway()) {
                         Node previousNode = tempWay.getNodes().get(i - 1);
-                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId()); ///wayButNowCasted.getSpeed()
+                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId());
                         edge.setPathTypes(tempWay, model);
-                        node.addAdjecencies(edge);
+                        node.addAdjacencies(edge);
                     }
                 }
             }
@@ -51,7 +51,7 @@ public class AStar {
         model.setAStarPath(null);
         ArrayList<Node> listOfCheckedNodes = new ArrayList();
 
-        PriorityQueue<Node> pq = new PriorityQueue<>(20, new NodeComparator()); //Maybe set initial capacity based on educated guess?
+        PriorityQueue<Node> pq = new PriorityQueue<>(20, new NodeComparator());
 
         //cost from start
         start.g_scores = 0;
@@ -73,7 +73,7 @@ public class AStar {
             }
 
             //Checks every child of current node
-            for (Edge e : current.getAdjecencies()) {
+            for (Edge e : current.getAdjacencies()) {
                 if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
                     child.setHScores(distanceToNode(child, end) / type.maxSpeed);
@@ -105,21 +105,18 @@ public class AStar {
         createPath(end);
 
         List<Node> debugPath = new ArrayList<>();
-        model.setAStarDebugPath(debugPath);
         for (Node node : listOfCheckedNodes) {
-            if (node.explored) {
-                debugPath.add(node);
-                node.h_scores = 0;
-                node.f_scores = 0;
-                node.g_scores = 0;
-                node.parent = null;
-                node.explored = false;
-            }
+            debugPath.add(node);
+            node.h_scores = 0;
+            node.f_scores = 0;
+            node.g_scores = 0;
+            node.parent = null;
+            node.explored = false;
         }
+        model.setAStarDebugPath(debugPath);
     }
 
     public void createPath(Node target) {
-        model.setAStarPath(null);
         float minX = 100;
         float maxX = -100;
         float minY = 100;
@@ -148,27 +145,29 @@ public class AStar {
     public ArrayList<Step> getPathDescription() {
         ArrayList<Step> routeDescription = new ArrayList<>();
         double currentDistance = 0;
+        int currentMaxSpeed;
         totalTime = 0;
         totalDistance = 0;
         Direction direction = Direction.FOLLOW;
+
+        System.out.println("Path: " + path.size());
 
 
         for (int i = 1; i < path.size() - 1; i++) {
             Node node = path.get(i);
             Node nextNode = path.get(i + 1);
             Node previousNode = path.get(i - 1);
-            int currentMaxSpeed;
             currentDistance += distanceToNode(previousNode, node);
 
             long firstId = 0;
             long secondId = 0;
 
-            for (Edge e : previousNode.getAdjecencies()) {
+            for (Edge e : previousNode.getAdjacencies()) {
                 if (e.target == node) {
                     firstId = e.getWayID();
                 }
             }
-            for (Edge e : node.getAdjecencies()) {
+            for (Edge e : node.getAdjacencies()) {
                 if (e.target == nextNode) {
                     secondId = e.getWayID();
                 }
@@ -182,10 +181,10 @@ public class AStar {
             }
 
             //count exits in roundabout
-            if (isRoundabout && node.getAdjecencies().size() > 1) {
+            if (isRoundabout && node.getAdjacencies().size() > 1) {
                 int count = 0;
                 int limit = 0;
-                for (Edge e : node.getAdjecencies()) {
+                for (Edge e : node.getAdjacencies()) {
                     if (e.isDriveable() && e.isCyclable() && e.isWalkable()) {
                         limit = 3;
                     } else if (e.isDriveable() && e.isCyclable() || e.isDriveable() && e.isWalkable()) {
@@ -206,13 +205,15 @@ public class AStar {
                 } else if (type.equals(TransportType.BICYCLE)) {
                     currentMaxSpeed = TransportType.BICYCLE.maxSpeed;
                 }
-                if (!isRoundabout) {
+
+                if (!isRoundabout) { //if we're in a roundabout we don't want to give a description
                     Step step = new Step(direction, lastRoadName, currentDistance);
                     if (exits > 0) {
                         step.setExits(exits);
                     }
                     routeDescription.add(step);
                 }
+
                 totalDistance += currentDistance;
                 totalTime += currentDistance / currentMaxSpeed;
                 currentDistance = 0;
@@ -235,17 +236,18 @@ public class AStar {
         }
 
         // we handle very short paths
-        if (2 == path.size()) { //|| direction == Direction.FOLLOW
-            //missing currentmaxspeed
-            currentDistance += distanceToNode(path.get(0), path.get(1));
-            totalDistance += currentDistance;
-
+        if (2 == path.size()) {
             long firstId = 0;
-            for (Edge e : path.get(0).getAdjecencies()) {
+            for (Edge e : path.get(0).getAdjacencies()) {
                 if (e.target == path.get(1)) {
                     firstId = e.getWayID();
                 }
             }
+
+            currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
+            currentDistance += distanceToNode(path.get(0), path.get(1));
+            totalDistance += currentDistance;
+            totalTime += currentDistance / currentMaxSpeed;
 
             String lastRoadName;
             if (model.getWayIndex().getMember(firstId).getName().equals("")) {
@@ -261,9 +263,13 @@ public class AStar {
             routeDescription.add(step);
             routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
         }
-        if(routeDescription.size() == 0){
-            routeDescription.add(new Step(Direction.NO_PATH, "",0));
+
+        if (routeDescription.size() == 0) {
+            routeDescription.add(new Step(Direction.NO_PATH, "", 0));
         }
+
+        System.out.println(routeDescription.get(0).toString());
+        System.out.println(routeDescription.size());
         return routeDescription;
     }
 
@@ -274,14 +280,14 @@ public class AStar {
 
         double result = Math.toDegrees(theta); //the same as multiplying theta by 180/pi
 
-        //todo find better solution
+        //we handle if the result has the wrong sign, in this case plus instead of minus
         if (result > 0) result = 360 - result;
         result = Math.abs(result);
 
         if (result > 190) {
             direction = Direction.LEFT;
         } else if (result < 165) {
-            for (Edge e : currentNode.getAdjecencies()) {
+            for (Edge e : currentNode.getAdjacencies()) {
                 if (e.target == nextNode) {
                     if (model.getWayIndex().getMember(e.getWayID()).isJunction()) {
                         isRoundabout = true;

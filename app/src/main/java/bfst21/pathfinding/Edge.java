@@ -31,15 +31,13 @@ public class Edge {
         }
     }
 
-    public float getWeight(TransportType type, Model model){
-        if(type == TransportType.BICYCLE){
-            return weight/15;
-        }
-        else if(type == TransportType.WALK){
-            return weight/5;
-        }
-        else{
-            return weight/model.getWayIndex().getMember(wayID).getSpeed();
+    public float getWeight(TransportType type, Model model) {
+        if (type == TransportType.BICYCLE) {
+            return weight / 15;
+        } else if (type == TransportType.WALK) {
+            return weight / 5;
+        } else {
+            return weight / model.getWayIndex().getMember(wayID).getSpeed();
         }
     }
 

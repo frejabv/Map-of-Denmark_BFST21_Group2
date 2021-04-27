@@ -1,15 +1,11 @@
 package bfst21.osm;
 
+import bfst21.Model;
 import bfst21.pathfinding.Edge;
-
-import java.util.ArrayList;
-
-
-
+import javafx.geometry.Point2D;
 
 import java.io.Serializable;
-import bfst21.Model;
-import javafx.geometry.Point2D;
+import java.util.ArrayList;
 
 public class Node extends Member implements Serializable {
     private float x;
@@ -26,7 +22,8 @@ public class Node extends Member implements Serializable {
         this.x = x;
         this.y = y / -Model.scalingConstant;
     }
-    public Node(long id, float hVal){
+
+    public Node(long id, float hVal) {
         super(id);
         h_scores = hVal;
     }
@@ -39,18 +36,18 @@ public class Node extends Member implements Serializable {
         return y;
     }
 
-    public void setHScores(float h_scores){
+    public void setHScores(float h_scores) {
         this.h_scores = h_scores;
     }
 
-    public void addAdjecencies(Edge edge){
-        if(adjacencies == null){
+    public void addAdjacencies(Edge edge) {
+        if (adjacencies == null) {
             adjacencies = new ArrayList<>();
         }
         adjacencies.add(edge);
     }
 
-    public ArrayList<Edge> getAdjecencies(){
+    public ArrayList<Edge> getAdjacencies() {
         return adjacencies;
     }
 

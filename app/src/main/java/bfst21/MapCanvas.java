@@ -23,16 +23,16 @@ public class MapCanvas extends Canvas {
     GraphicsContext gc;
     boolean setPin;
     boolean RTreeLines;
+    public boolean debugAStar;
+    private boolean showRoute;
+    boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
-    public boolean debugAStar;
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
-    boolean showNames = true;
-    private boolean showRoute;
 
     public void init(Model model) {
         this.model = model;
@@ -97,14 +97,6 @@ public class MapCanvas extends Canvas {
                         gc.setLineWidth(.00015);
                     }
                 });
-            }
-        });
-
-        model.getRelationIndex().forEach(relation -> {
-            if (relation.getTags().size() != 0) {
-                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
-                    relation.draw(gc, renderingStyle);
-                }
             }
         });
 
@@ -180,7 +172,7 @@ public class MapCanvas extends Canvas {
                 trans.prependScale(factor, factor, center);
             }
         } else {
-            // TODO: make the boundry go to inital zoom position
+            // TODO: make the boundary go to initial zoom position
             if (getDistanceWidth() < 1000) {
                 trans.prependScale(factor, factor, center);
             }
@@ -195,7 +187,7 @@ public class MapCanvas extends Canvas {
         gc.setLineWidth(1 / Math.sqrt(trans.determinant())*2);
         gc.beginPath();
         for(Node n : nodes) {
-            for(Edge e : n.getAdjecencies()) {
+            for(Edge e : n.getAdjacencies()) {
                 Node child = e.target;
                 gc.moveTo(n.getX(), n.getY());
                 gc.lineTo(child.getX(), child.getY());
@@ -283,6 +275,7 @@ public class MapCanvas extends Canvas {
     public Point2D getPinPoint() {
         return pinPoint;
     }
+
     public void drawNearest() {
         gc.setStroke(Color.GREENYELLOW);
         gc.setLineWidth(3 / Math.sqrt(trans.determinant()));

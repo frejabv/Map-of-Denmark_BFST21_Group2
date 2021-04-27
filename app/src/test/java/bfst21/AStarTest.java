@@ -24,18 +24,18 @@ public class AStarTest {
     @Test
     public void testCreateAStar() {
         Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(2,testNode.getAdjecencies().size());
+        assertEquals(2,testNode.getAdjacencies().size());
         testNode = model.getNodeIndex().getMember(2);
-        assertEquals(3,testNode.getAdjecencies().size());
+        assertEquals(3,testNode.getAdjacencies().size());
     }
 
     @Test
     public void testAdjecencies() {
         //for Odense, has Korsør and Vejle as adjecencies
         Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(2,testNode.getAdjecencies().size());
-        assertEquals(model.getNodeIndex().getMember(12),testNode.getAdjecencies().get(0).target);
-        assertEquals(model.getNodeIndex().getMember(8),testNode.getAdjecencies().get(1).target);
+        assertEquals(2,testNode.getAdjacencies().size());
+        assertEquals(model.getNodeIndex().getMember(12),testNode.getAdjacencies().get(0).target);
+        assertEquals(model.getNodeIndex().getMember(8),testNode.getAdjacencies().get(1).target);
     }
 
     @Test
@@ -67,8 +67,8 @@ public class AStarTest {
     public void testDriveable() {
         //Odense to Korsør is a primary highway
         Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(true,testNode.getAdjecencies().get(0).isDriveable());
-        assertEquals(false,testNode.getAdjecencies().get(0).isWalkable());
+        assertEquals(true,testNode.getAdjacencies().get(0).isDriveable());
+        assertEquals(false,testNode.getAdjacencies().get(0).isWalkable());
     }
 
     @Test
@@ -96,11 +96,11 @@ public class AStarTest {
         Node testNode = model.getNodeIndex().getMember(11);
         Node destination = model.getNodeIndex().getMember(12);
 
-        double deltaX = Math.abs(testNode.getX() - destination.getX());
-        double deltaY = Math.abs(testNode.getY() - destination.getY());
-        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320 * Model.scalingConstant;
+        float deltaX = Math.abs(testNode.getX() - destination.getX());
+        float deltaY = Math.abs(testNode.getY() - destination.getY());
+        float distance = (float) ((Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320f * Model.scalingConstant);
 
-        assertEquals(distance, testNode.getAdjecencies().get(0).weight);
+        assertEquals(distance, testNode.getAdjacencies().get(0).weight);
     }
 
     @Test

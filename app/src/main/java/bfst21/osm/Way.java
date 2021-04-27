@@ -1,16 +1,12 @@
 package bfst21.osm;
 
+import bfst21.Rtree.Rectangle;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import bfst21.Rtree.Rectangle;
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import org.jetbrains.annotations.NotNull;
-import javafx.scene.paint.Color;
 
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
@@ -77,7 +73,6 @@ public class Way extends Member implements Drawable, Serializable {
 
     public void checkSpeed() {
         if (maxSpeed == 1) {
-            //Maybe check if way has areatype declared????? like urban
             if (tags.contains(Tag.MOTORWAY) || tags.contains(Tag.MOTORWAY_LINK)) {
                 maxSpeed = 130;
             } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.PRIMARY)) {
@@ -86,7 +81,6 @@ public class Way extends Member implements Drawable, Serializable {
                 maxSpeed = 50;
             }
         }
-
     }
 
     public void setIsOneway() {
@@ -97,13 +91,13 @@ public class Way extends Member implements Drawable, Serializable {
         return isOneway;
     }
 
-    public boolean isJunction() {
-        return isJunction;
-    }
-
     public void setIsJunction() {
         this.isJunction = true;
         setIsOneway();
+    }
+
+    public boolean isJunction() {
+        return isJunction;
     }
 
     @Override
@@ -133,7 +127,7 @@ public class Way extends Member implements Drawable, Serializable {
         float maxX = -181;
         float maxY = -181;
 
-        for (Node n: nodes) {
+        for (Node n : nodes) {
             if (n.getX() < minX) {
                 minX = n.getX();
             }
@@ -158,7 +152,7 @@ public class Way extends Member implements Drawable, Serializable {
     public double minimumDistanceToSquared(Point2D p) {
         double smallestDistance = Double.POSITIVE_INFINITY;
         for (int i = 1; i < nodes.size(); i++) {
-            double currentSegmentDist = minimumDistanceToSegment(nodes.get(i-1), nodes.get(i), p);
+            double currentSegmentDist = minimumDistanceToSegment(nodes.get(i - 1), nodes.get(i), p);
             if (currentSegmentDist < smallestDistance) {
                 smallestDistance = currentSegmentDist;
             }
@@ -184,12 +178,10 @@ public class Way extends Member implements Drawable, Serializable {
         if (param < 0) {
             xx = n1.getX();
             yy = n1.getY();
-        }
-        else if (param > 1) {
+        } else if (param > 1) {
             xx = n2.getX();
             yy = n2.getY();
-        }
-        else {
+        } else {
             xx = (float) (n1.getX() + param * C);
             yy = (float) (n1.getY() + param * D);
         }
@@ -205,7 +197,7 @@ public class Way extends Member implements Drawable, Serializable {
 
         for (int i = 1; i < nodes.size(); i++) {
             double currentDist = nodes.get(i).distanceToSquared(p);
-            if ( currentDist < closestDist) {
+            if (currentDist < closestDist) {
                 closest = nodes.get(i);
                 closestDist = currentDist;
             }

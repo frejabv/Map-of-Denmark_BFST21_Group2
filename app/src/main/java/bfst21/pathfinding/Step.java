@@ -49,13 +49,13 @@ public class Step {
         } else if (direction.equals(Direction.CONTINUE)) {
             result = "Continue ahead on ";
         } else if (direction.equals(Direction.ROUNDABOUT_OTHER_EXIT)) {
-            String ending;
+            String number;
             if (exits == 3) {
-                ending = exits + "rd";
+                number = exits + "rd";
             } else {
-                ending = exits + "th";
+                number = exits + "th";
             }
-            result = "Take the " + ending + " exit in the roundabout and follow ";
+            result = "Take the " + number + " exit in the roundabout and follow ";
         } else if (direction.equals(Direction.ROUNDABOUT_SECOND_EXIT)) {
             result = "Take the 2nd exit in the roundabout and follow ";
         } else if (direction.equals(Direction.ROUNDABOUT_FIRST_EXIT)) {
@@ -67,7 +67,7 @@ public class Step {
         }
         result += roadName + " for " + getMetric();
 
-        if(direction.equals(Direction.NO_PATH)){
+        if (direction.equals(Direction.NO_PATH)) {
             result = "No path was found";
         }
         return result;
