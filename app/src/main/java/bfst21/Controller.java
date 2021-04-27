@@ -290,32 +290,34 @@ public class Controller {
         NearbyPOI.getChildren().add(nearbyAttractionsText);
         NearbyPOI.getChildren().add(region);
         ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
-        for (POI poi : poiArrayList) {
-            HBox nearbyContainer = new HBox();
-            nearbyContainer.getStyleClass().add("nearbyPOIContainer");
-            StackPane stackPane = new StackPane();
-            if (poi.getImageType().equals("heart")){
-                stackPane.setStyle("-fx-background-color:WHITE;-fx-background-radius: 15;-fx-min-width: 30;-fx-border-width: 1px;-fx-border-color: black;-fx-border-radius: 15;");
-            }else{
-                stackPane.setStyle("-fx-background-color:rgba(52,152,219,1);-fx-background-radius: 15;-fx-min-width: 30;");
+        if (poiArrayList.size() > 0){
+            for (POI poi : poiArrayList) {
+                HBox nearbyContainer = new HBox();
+                nearbyContainer.getStyleClass().add("nearbyPOIContainer");
+                StackPane stackPane = new StackPane();
+                if (poi.getImageType().equals("heart")){
+                    stackPane.setStyle("-fx-background-color:WHITE;-fx-background-radius: 15;-fx-min-width: 30;-fx-border-width: 1px;-fx-border-color: black;-fx-border-radius: 15;");
+                }else{
+                    stackPane.setStyle("-fx-background-color:rgba(52,152,219,1);-fx-background-radius: 15;-fx-min-width: 30;");
+                }
+                Image image = model.imageSet.get(poi.getImageType());
+                ImageView imageview = new ImageView(image); //poi.getImageType()
+                imageview.getStyleClass().add("testImageView");
+                imageview.setFitHeight(16.0);
+                imageview.setFitWidth(16.0);
+                imageview.setPreserveRatio(true);
+                imageview.getStyleClass().add("nearbyPOIImage");
+                VBox textlines = new VBox();
+                Text attractionName = new Text(poi.getName());
+                Text attractionType = new Text(poi.getType().substring(0, 1).toUpperCase() + poi.getType().substring(1));
+                attractionType.getStyleClass().add("attractionType");
+                textlines.getChildren().add(attractionName);
+                textlines.getChildren().add(attractionType);
+                stackPane.getChildren().add(imageview);
+                nearbyContainer.getChildren().add(stackPane);
+                nearbyContainer.getChildren().add(textlines);
+                NearbyPOI.getChildren().add(nearbyContainer);
             }
-            Image image = model.imageSet.get(poi.getImageType());
-            ImageView imageview = new ImageView(image); //poi.getImageType()
-            imageview.getStyleClass().add("testImageView");
-            imageview.setFitHeight(16.0);
-            imageview.setFitWidth(16.0);
-            imageview.setPreserveRatio(true);
-            imageview.getStyleClass().add("nearbyPOIImage");
-            VBox textlines = new VBox();
-            Text attractionName = new Text(poi.getName());
-            Text attractionType = new Text(poi.getType().substring(0, 1).toUpperCase() + poi.getType().substring(1));
-            attractionType.getStyleClass().add("attractionType");
-            textlines.getChildren().add(attractionName);
-            textlines.getChildren().add(attractionType);
-            stackPane.getChildren().add(imageview);
-            nearbyContainer.getChildren().add(stackPane);
-            nearbyContainer.getChildren().add(textlines);
-            NearbyPOI.getChildren().add(nearbyContainer);
         }
     }
 
