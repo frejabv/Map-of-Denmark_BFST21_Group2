@@ -1,17 +1,20 @@
 package bfst21;
 
 import bfst21.Rtree.Rectangle;
+import bfst21.Rtree.Rtree;
+import bfst21.Rtree.RtreeNode;
+import bfst21.osm.Drawable;
 import bfst21.osm.Node;
 import bfst21.osm.Relation;
 import bfst21.osm.Way;
 import javafx.geometry.Point2D;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RectangleTest {
-    public final Model RTreeModel = new Model("data/TEST_RTREE_RECTANGLE.osm", false);
-    public final float scalingConstant = -0.56f;
 
     @Test
     public void WayRectangleTest() {
@@ -28,8 +31,8 @@ public class RectangleTest {
 
         assertEquals(0, way1234.getRect().getMinX());
         assertEquals(3, way1234.getRect().getMaxX());
-        assertEquals(0/scalingConstant, way1234.getRect().getMinY());
-        assertEquals(-3/scalingConstant, way1234.getRect().getMaxY());
+        assertEquals(0/-Model.scalingConstant, way1234.getRect().getMinY());
+        assertEquals(-3/-Model.scalingConstant, way1234.getRect().getMaxY());
 
         Way way4321 = new Way();
         way4321.addNode(n4);
@@ -39,8 +42,8 @@ public class RectangleTest {
         way4321.createRectangle();
         assertEquals(0, way4321.getRect().getMinX());
         assertEquals(3, way4321.getRect().getMaxX());
-        assertEquals(0/scalingConstant, way4321.getRect().getMinY());
-        assertEquals(-3/scalingConstant, way4321.getRect().getMaxY());
+        assertEquals(0/-Model.scalingConstant, way4321.getRect().getMinY());
+        assertEquals(-3/-Model.scalingConstant, way4321.getRect().getMaxY());
     }
 
     @Test
@@ -72,32 +75,8 @@ public class RectangleTest {
         testRelation.createRectangle();
         assertEquals(0, testRelation.getRect().getMinX());
         assertEquals(7, testRelation.getRect().getMaxX());
-        assertEquals(0/scalingConstant, testRelation.getRect().getMinY());
-        assertEquals(-7/scalingConstant, testRelation.getRect().getMaxY());
-    }
-
-    @Test
-    public void testRectangleFromOSM() {
-        Rectangle testRect1234 = new Rectangle(1, 9/-0.56f, 6, 3/-0.56f);
-        Rectangle OSMRect1234 = RTreeModel.getWayIndex().getMember(1234).getRect();
-        assertEquals(testRect1234.getMinX(), OSMRect1234.getMinX());
-        assertEquals(testRect1234.getMinY(), OSMRect1234.getMinY());
-        assertEquals(testRect1234.getMaxX(), OSMRect1234.getMaxX());
-        assertEquals(testRect1234.getMaxY(), OSMRect1234.getMaxY());
-
-        Rectangle testRect567 = new Rectangle(3, 10/-0.56f, 9, 1/-0.56f);
-        Rectangle OSMRect567 = RTreeModel.getWayIndex().getMember(567).getRect();
-        assertEquals(testRect567.getMinX(), OSMRect567.getMinX());
-        assertEquals(testRect567.getMinY(), OSMRect567.getMinY());
-        assertEquals(testRect567.getMaxX(), OSMRect567.getMaxX());
-        assertEquals(testRect567.getMaxY(), OSMRect567.getMaxY());
-
-        Rectangle testRect127 = new Rectangle(1, 10/-0.56f, 9, 1/-0.56f);
-        Rectangle OSMRect127 = RTreeModel.getRelationIndex().getMember(127).getRect();
-        assertEquals(testRect127.getMinX(), OSMRect127.getMinX());
-        assertEquals(testRect127.getMinY(), OSMRect127.getMinY());
-        assertEquals(testRect127.getMaxX(), OSMRect127.getMaxX());
-        assertEquals(testRect127.getMaxY(), OSMRect127.getMaxY());
+        assertEquals(0/-Model.scalingConstant, testRelation.getRect().getMinY());
+        assertEquals(-7/-Model.scalingConstant, testRelation.getRect().getMaxY());
     }
 
     @Test
@@ -163,5 +142,94 @@ public class RectangleTest {
         assertEquals(2, testRect.distanceSquaredTo(p7), 0.0001);
         assertEquals(1, testRect.distanceSquaredTo(p8), 0.0001);
         assertEquals(2, testRect.distanceSquaredTo(p9), 0.0001);
+    }
+    
+    @Test
+    public void testContainsPoint() {
+        Rectangle testBigRect = new Rectangle(-3,-3,3,3);
+        Rectangle testSmallRect = new Rectangle(-1,-1,1,1);
+
+        //3x3 grid from (-2,-2) to (2,2)
+        Point2D p1 = new Point2D(-2,-2);
+        Point2D p2 = new Point2D(-2,0);
+        Point2D p3 = new Point2D(-2,2);
+
+        Point2D p4 = new Point2D(0,-2);
+        Point2D p5 = new Point2D(0,0);
+        Point2D p6 = new Point2D(0,2);
+
+        Point2D p7 = new Point2D(2,-2);
+        Point2D p8 = new Point2D(2,0);
+        Point2D p9 = new Point2D(2,2);
+
+        assertTrue(testBigRect.contains(p1));
+        assertTrue(testBigRect.contains(p2));
+        assertTrue(testBigRect.contains(p3));
+        assertTrue(testBigRect.contains(p4));
+        assertTrue(testBigRect.contains(p5));
+        assertTrue(testBigRect.contains(p6));
+        assertTrue(testBigRect.contains(p7));
+        assertTrue(testBigRect.contains(p8));
+        assertTrue(testBigRect.contains(p9));
+
+        assertFalse(testSmallRect.contains(p1));
+        assertFalse(testSmallRect.contains(p2));
+        assertFalse(testSmallRect.contains(p3));
+        assertFalse(testSmallRect.contains(p4));
+        assertTrue(testSmallRect.contains(p5));
+        assertFalse(testSmallRect.contains(p6));
+        assertFalse(testSmallRect.contains(p7));
+        assertFalse(testSmallRect.contains(p8));
+        assertFalse(testSmallRect.contains(p9));
+
+        assertFalse(testSmallRect.contains((Point2D) null));
+    }
+
+    @Test
+    public void testContainsRect() {
+        Rectangle testBigRect = new Rectangle(-3,-3,3,3);
+        Rectangle testMediumRect = new Rectangle(-2,-2,2,2);
+        Rectangle testSmallRect = new Rectangle(-1,-1,1,1);
+
+        assertTrue(testSmallRect.contains(testSmallRect));
+        assertFalse(testSmallRect.contains(testMediumRect));
+        assertFalse(testSmallRect.contains(testBigRect));
+
+        assertTrue(testMediumRect.contains(testSmallRect));
+        assertTrue(testMediumRect.contains(testMediumRect));
+        assertFalse(testMediumRect.contains(testBigRect));
+
+        assertTrue(testBigRect.contains(testSmallRect));
+        assertTrue(testBigRect.contains(testMediumRect));
+        assertTrue(testBigRect.contains(testBigRect));
+
+        Rectangle r1 = new Rectangle(-4,-4,-2,-2);
+        Rectangle r2 = new Rectangle(-1,-4, 1,-2);
+        Rectangle r3 = new Rectangle(2,-4,4,-2);
+        Rectangle r4 = new Rectangle(-4,-1,-2,1);
+        Rectangle r5 = new Rectangle(2,-1,4,1);
+        Rectangle r6 = new Rectangle(-4,2,-2,4);
+        Rectangle r7 = new Rectangle(-1,2,1,4);
+        Rectangle r8 = new Rectangle(2,2,4,4);
+
+        assertFalse(testBigRect.contains(r1));
+        assertFalse(testBigRect.contains(r2));
+        assertFalse(testBigRect.contains(r3));
+        assertFalse(testBigRect.contains(r4));
+        assertFalse(testBigRect.contains(r5));
+        assertFalse(testBigRect.contains(r6));
+        assertFalse(testBigRect.contains(r7));
+        assertFalse(testBigRect.contains(r8));
+
+        assertFalse(testSmallRect.contains(r1));
+        assertFalse(testSmallRect.contains(r2));
+        assertFalse(testSmallRect.contains(r3));
+        assertFalse(testSmallRect.contains(r4));
+        assertFalse(testSmallRect.contains(r5));
+        assertFalse(testSmallRect.contains(r6));
+        assertFalse(testSmallRect.contains(r7));
+        assertFalse(testSmallRect.contains(r8));
+
+        assertFalse(testSmallRect.contains((Rectangle) null));
     }
 }
