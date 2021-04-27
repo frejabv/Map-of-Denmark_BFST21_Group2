@@ -14,8 +14,8 @@ public class OSMParserTest {
     private Model sjaelsoeModel;
 
     public OSMParserTest() throws Exception {
-        samsoeModel = new Model("TEST_MAP_SAMSOE.osm",false);
-        sjaelsoeModel = new Model("TEST_MAP_SJAELSOE.osm.zip",false);
+        samsoeModel = new Model("/bfst21/data/TEST_MAP_SAMSOE.osm",false);
+        sjaelsoeModel = new Model("/bfst21/data/TEST_MAP_SJAELSOE.osm.zip",false);
     }
 
     @Test
