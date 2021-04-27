@@ -51,7 +51,7 @@ public class RenderingStyle {
     public void defaultMode() {
         sea = Color.rgb(170, 218, 255);
         islandFar = Color.rgb(187, 226, 198);
-        islandClose = Color.rgb(250,250,250);
+        islandClose = Color.rgb(255,245,190);
         theme = theme.DEFAULT;
     }
 
@@ -62,7 +62,7 @@ public class RenderingStyle {
     }
 
     private void genDefaultMode() {
-        defaultColorMap.put(Tag.BUILDING, Color.rgb(241, 241, 241));
+        defaultColorMap.put(Tag.BUILDING, Color.rgb(149, 165, 166));
         defaultColorMap.put(Tag.PARK, Color.rgb(168, 218, 181));
         defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
         defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);

@@ -403,6 +403,12 @@ public class Controller {
         suggestionList.clear();
         switch (type) {
             case "route":
+                if(routeFieldFrom.getText().length() > 0 && routeFieldTo.getText().length() > 0){
+                    showRouteDescription();
+                }
+                else{
+                    hideRoute();
+                }
                 fadeButtons();
                 routeContainer.setVisible(state);
                 routeContainer.setManaged(state);
