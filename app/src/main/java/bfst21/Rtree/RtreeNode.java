@@ -70,19 +70,17 @@ public class RtreeNode {
         for (var descendant : descendants) {
             Rectangle descendantBoundingBox = descendant.getRect();
             
-            if (minX > descendantBoundingBox.minX) minX = descendantBoundingBox.minX;
-            if (maxX < descendantBoundingBox.minX) maxX = descendantBoundingBox.minX;
+            if (minX > descendantBoundingBox.getMinX()) minX = descendantBoundingBox.getMinX();
+            if (maxX < descendantBoundingBox.getMinX()) maxX = descendantBoundingBox.getMinX();
 
-            if (minY > descendantBoundingBox.minY) minY = descendantBoundingBox.minY;
-            if (maxY < descendantBoundingBox.minY) maxY = descendantBoundingBox.minY;
+            if (minY > descendantBoundingBox.getMinY()) minY = descendantBoundingBox.getMinY();
+            if (maxY < descendantBoundingBox.getMinY()) maxY = descendantBoundingBox.getMinY();
 
-            if (maxX < descendantBoundingBox.maxX) maxX = descendantBoundingBox.maxX;
-            if (minX > descendantBoundingBox.maxX) minX = descendantBoundingBox.maxX;
+            if (maxX < descendantBoundingBox.getMaxX()) maxX = descendantBoundingBox.getMaxX();
+            if (minX > descendantBoundingBox.getMaxX()) minX = descendantBoundingBox.getMaxX();
 
-            if (maxY < descendantBoundingBox.maxY) maxY = descendantBoundingBox.maxY;
-            if (minY > descendantBoundingBox.maxY) minY = descendantBoundingBox.maxY;
-
-
+            if (maxY < descendantBoundingBox.getMaxY()) maxY = descendantBoundingBox.getMaxY();
+            if (minY > descendantBoundingBox.getMaxY()) minY = descendantBoundingBox.getMaxY();
         }
 
         return new Rectangle(minX, minY, maxX, maxY);

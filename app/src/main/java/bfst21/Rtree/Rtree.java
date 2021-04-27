@@ -15,7 +15,7 @@ import java.util.List;
 public class Rtree {
     private RtreeNode root;
     public final static int maxChildren = 5;
-    private boolean vertical = true;
+    private boolean vertical = false;
 
     public Rtree(@org.jetbrains.annotations.NotNull List<Drawable> drawables){
         if (!drawables.isEmpty()) {
@@ -134,5 +134,9 @@ public class Rtree {
             }
         }
         return AllDrawables;
+    }
+
+    public RtreeNode getRoot() {
+        return root;
     }
 }
