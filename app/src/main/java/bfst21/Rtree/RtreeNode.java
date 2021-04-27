@@ -71,16 +71,12 @@ public class RtreeNode {
             Rectangle descendantBoundingBox = descendant.getRect();
             
             if (minX > descendantBoundingBox.getMinX()) minX = descendantBoundingBox.getMinX();
-            if (maxX < descendantBoundingBox.getMinX()) maxX = descendantBoundingBox.getMinX();
 
             if (minY > descendantBoundingBox.getMinY()) minY = descendantBoundingBox.getMinY();
-            if (maxY < descendantBoundingBox.getMinY()) maxY = descendantBoundingBox.getMinY();
 
             if (maxX < descendantBoundingBox.getMaxX()) maxX = descendantBoundingBox.getMaxX();
-            if (minX > descendantBoundingBox.getMaxX()) minX = descendantBoundingBox.getMaxX();
 
             if (maxY < descendantBoundingBox.getMaxY()) maxY = descendantBoundingBox.getMaxY();
-            if (minY > descendantBoundingBox.getMaxY()) minY = descendantBoundingBox.getMaxY();
         }
 
         return new Rectangle(minX, minY, maxX, maxY);
