@@ -20,29 +20,16 @@ import java.util.zip.ZipInputStream;
 public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
 
-    public static void readMapElements(String filepath, Model model) throws IOException, XMLStreamException {
-        if (filepath.endsWith(".osm")) {
-            InputStream in = OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath);
-            loadOSM(in, model);
-        } else if (filepath.endsWith(".zip")) {
-            loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
-            saveOBJ(filepath + ".obj", model);
-        } else if (filepath.endsWith(".obj")) {
-            try {
-                loadOBJ(filepath, model);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            String[] splitFileName = filepath.split("\\.");
-            if (splitFileName.length > 0) {
-                throw new UnsupportedFileTypeException("." + splitFileName[splitFileName.length - 1]);
-            }
+    public static void readMapElements(InputStream in, FileExtension fileExtension,  Model model) throws IOException, XMLStreamException {
+        switch (fileExtension) {
+            case OSM -> loadOSM(in, model);
+            case ZIP -> loadZIP(in, model);
+            case OBJ -> loadOBJ(in, model);
         }
     }
 
-    public static void loadOBJ(String filename, Model model) throws IOException, ClassNotFoundException {
-        try (var input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(OSMParser.class.getResource("/bfst21/data/" + filename).getFile())))) {
+    public static void loadOBJ(InputStream in, Model model) {
+        try (var input = new ObjectInputStream(new BufferedInputStream(in))) {
             model.setFillMap((Map<Tag, List<Drawable>>) input.readObject());
             model.setNodeIndex((MemberIndex<Node>) input.readObject());
             model.setWayIndex((MemberIndex<Way>) input.readObject());
@@ -300,5 +287,18 @@ public class OSMParser {
             isDublet = false;
         }
         return isDublet;
+    }
+
+    public static FileExtension genFileExtension(String filePath) {
+        String[] filePathParts = filePath.split("\\.");
+
+        return switch (filePathParts[filePathParts.length - 1]) {
+            case "osm" -> FileExtension.OSM;
+            case "zip" -> FileExtension.ZIP;
+            case "obj" -> FileExtension.OBJ;
+            default -> throw new UnsupportedFileTypeException(
+                    "Unsupported file type: " + filePathParts[filePathParts.length - 1]
+            );
+        };
     }
 }

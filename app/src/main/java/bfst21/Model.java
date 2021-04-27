@@ -1,9 +1,12 @@
 package bfst21;
 
+import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.osm.*;
 import bfst21.search.RadixTree;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +35,16 @@ public class Model {
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
 
-    public Model(String filepath, boolean ttiMode) {
+    public Model(String filePath, boolean ttiMode) {
+        // Java wouldn't let me expand this into variables. Im very sorry about the mess
+        this(
+                Model.class.getResourceAsStream(filePath),
+                OSMParser.genFileExtension(filePath),
+                ttiMode
+        );
+    }
+
+    public Model(InputStream in, FileExtension fileExtension, boolean ttiMode) {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
@@ -48,7 +60,7 @@ public class Model {
         this.ttiMode = ttiMode;
 
         try {
-            OSMParser.readMapElements(filepath, this);
+            OSMParser.readMapElements(in, fileExtension, this);
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
