@@ -73,7 +73,6 @@
           <TextField fx:id="searchField" styleClass="textfield">
             <promptText>Where would you like to go?</promptText>
           </TextField>
-          <Text fx:id="suggestionsHeader">Suggestions:</Text>
         </VBox>
         <VBox fx:id="routeContainer" styleClass="mainContainer">
           <TextField fx:id="routeFieldFrom" styleClass="textfield">
