@@ -66,6 +66,10 @@ public class Step {
             return "Arrived at " + roadName;
         }
         result += roadName + " for " + getMetric();
+
+        if(direction.equals(Direction.NO_PATH)){
+            result = "No path was found";
+        }
         return result;
     }
 
