@@ -26,7 +26,7 @@ public class OSMParser {
             loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
             loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
-            saveOBJ(filepath + ".obj", model);
+            //saveOBJ(filepath + ".obj", model);
         } else if (filepath.endsWith(".obj")) {
             try {
                 loadOBJ(filepath, model);

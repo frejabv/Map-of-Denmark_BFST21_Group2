@@ -60,18 +60,11 @@ public class Model {
         }
 
         List<Drawable> testList= new ArrayList<>();
-        //testList.addAll(drawableMap.get(Tag.MOTORWAY));
-        testList.addAll(drawableMap.get(Tag.CYCLEWAY));
-        testList.addAll(drawableMap.get(Tag.FOOTWAY));
-        testList.addAll(drawableMap.get(Tag.LIVING_STREET));
-        testList.addAll(drawableMap.get(Tag.PATH));
-        testList.addAll(drawableMap.get(Tag.RESIDENTIAL));
-        testList.addAll(drawableMap.get(Tag.TERTIARY));
-        testList.addAll(drawableMap.get(Tag.SERVICE));
-        testList.addAll(drawableMap.get(Tag.UNCLASSIFIED));
-        testList.addAll(drawableMap.get(Tag.TRACK));
+        for (Tag tag: drawableMap.keySet()) {
+            testList.addAll(drawableMap.get(tag));
+        }
 
-        rtree = new Rtree(this, testList);
+        rtree = new Rtree(testList);
         System.out.println("here");
     }
 
