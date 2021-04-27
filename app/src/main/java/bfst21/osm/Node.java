@@ -14,9 +14,9 @@ import javafx.geometry.Point2D;
 public class Node extends Member implements Serializable {
     private float x;
     private float y;
-    public double g_scores;
-    public double h_scores;
-    public double f_scores = 0;
+    public float g_scores;
+    public float h_scores;
+    public float f_scores = 0;
     private ArrayList<Edge> adjacencies;
     public Node parent;
     public boolean explored = false;
