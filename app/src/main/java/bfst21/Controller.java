@@ -167,13 +167,11 @@ public class Controller {
                 Node nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
                 Point2D p = new Point2D(nodeFrom.getX(), nodeFrom.getY());
                 fromNode = model.getRtree().NearestWay(p).nearestNode(p);
-
                 if (toNode != null) {
                     model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
                     showRouteDescription();
                     canvas.showRoute();
                     canvas.repaint(); //To show the route after it has been calculated
-                    System.out.println("Route searched");
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
@@ -191,9 +189,8 @@ public class Controller {
                 if (fromNode != null) {
                     model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
                     showRouteDescription();
-                    canvas.repaint(); //To show the route after it has been calculated
+                    canvas.repaint();
                     canvas.showRoute();
-                    System.out.println("Route searched");
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
@@ -248,7 +245,6 @@ public class Controller {
                             showRouteDescription();
                             canvas.showRoute();
                             canvas.repaint(); //To show the route after it has been calculated
-                            System.out.println("Route searched");
                         }
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);

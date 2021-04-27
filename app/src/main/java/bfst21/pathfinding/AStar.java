@@ -10,7 +10,6 @@ import java.util.*;
 
 public class AStar {
     Model model;
-    List<Node> initialisedNodes;
     boolean isRoundabout;
     double totalDistance = 0;
     double totalTime = 0;
@@ -24,48 +23,108 @@ public class AStar {
     }
 
     private void readData() {
-        initialisedNodes = new ArrayList<>();
-
         for (Map.Entry<Tag, List<Drawable>> entry : model.getDrawableMap().entrySet()) {
             List<Drawable> value = entry.getValue();
             for (Drawable way : value) {
-                Way wayButNowCasted = (Way) way;
-                for (int i = 0; i < wayButNowCasted.getNodes().size(); i++) {
-                    Node node = wayButNowCasted.getNodes().get(i);
-                    if (i != (wayButNowCasted.getNodes().size() - 1)) {
-                        Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
-                        edge.setPathTypes(wayButNowCasted, model);
+                Way tempWay = (Way) way;
+                for (int i = 0; i < tempWay.getNodes().size(); i++) {
+                    Node node = tempWay.getNodes().get(i);
+                    if (i != (tempWay.getNodes().size() - 1)) {
+                        Node nextNode = tempWay.getNodes().get(i + 1);
+                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId()); ///wayButNowCasted.getSpeed()
+                        edge.setPathTypes(tempWay, model);
                         node.addAdjecencies(edge);
                     }
-                    if (i > 0 && !wayButNowCasted.isOneway()) {
-                        Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
-                        edge.setPathTypes(wayButNowCasted, model);
+                    if (i > 0 && !tempWay.isOneway()) {
+                        Node previousNode = tempWay.getNodes().get(i - 1);
+                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId()); ///wayButNowCasted.getSpeed()
+                        edge.setPathTypes(tempWay, model);
                         node.addAdjecencies(edge);
                     }
-                    initialisedNodes.add(node);
                 }
             }
         }
     }
 
-    private float distanceToNode(Node current, Node destination) {
-        float distance = 0;
-        if (current != destination) {
-            float deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
-            float deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
-            distance = (float) Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    public void AStarSearch(Node start, Node end, TransportType type) {
+        this.type = type;
+        model.setAStarPath(null);
+        ArrayList<Node> listOfCheckedNodes = new ArrayList();
+
+        PriorityQueue<Node> pq = new PriorityQueue<>(20, new NodeComparator()); //Maybe set initial capacity based on educated guess?
+
+        //cost from start
+        start.g_scores = 0;
+
+        pq.add(start);
+
+        boolean found = false;
+
+        while ((!pq.isEmpty()) && (!found)) { //While content in PQ and goal not found
+            //the node in having the lowest f_score value
+            Node current = pq.poll(); //Gets the first element in the PQ
+
+            current.explored = true; //Adds current to the explored set to remember that it is explored
+            listOfCheckedNodes.add(current);
+
+            //Checks if current is goal
+            if (current.getId() == end.getId()) {
+                found = true;
+            }
+
+            //Checks every child of current node
+            for (Edge e : current.getAdjecencies()) {
+                if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
+                    Node child = e.target;
+                    child.setHScores(distanceToNode(child, end) / type.maxSpeed);
+                    float cost = e.getWeight(type, model);
+                    float temp_g_scores = current.g_scores + cost;
+                    float temp_f_scores = temp_g_scores + child.h_scores;
+
+
+                    //Checks if child node has been evaluated and the newer f_score is higher, skip
+                    if ((child.explored) && (temp_f_scores >= child.f_scores)) {
+                        continue;
+                    }
+
+                    //else if child node is not in queue (add it) or newer f_score is lower (Update them)
+                    else if ((!pq.contains(child)) || (temp_f_scores < child.f_scores)) {
+                        child.parent = current;
+                        child.g_scores = temp_g_scores;
+                        child.f_scores = temp_f_scores;
+
+                        if (pq.contains(child)) {
+                            pq.remove(child);
+                        }
+                        pq.add(child);
+                    }
+                }
+            }
         }
-        return distance * 111.320f * Model.scalingConstant;
+
+        createPath(end);
+
+        List<Node> debugPath = new ArrayList<>();
+        model.setAStarDebugPath(debugPath);
+        for (Node node : listOfCheckedNodes) {
+            if (node.explored) {
+                debugPath.add(node);
+                node.h_scores = 0;
+                node.f_scores = 0;
+                node.g_scores = 0;
+                node.parent = null;
+                node.explored = false;
+            }
+        }
     }
 
     public void createPath(Node target) {
+        model.setAStarPath(null);
         float minX = 100;
         float maxX = -100;
         float minY = 100;
         float maxY = -100;
-        path = new ArrayList<Node>();
+        path = new ArrayList<>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
             if (node.getX() < minX) {
                 minX = node.getX();
@@ -81,7 +140,6 @@ public class AStar {
             }
             path.add(node);
         }
-
         Collections.reverse(path);
         model.setAStarPath(path);
         model.setAStarBounds(minX, minY, maxX, maxY);
@@ -99,7 +157,7 @@ public class AStar {
             Node node = path.get(i);
             Node nextNode = path.get(i + 1);
             Node previousNode = path.get(i - 1);
-
+            int currentMaxSpeed;
             currentDistance += distanceToNode(previousNode, node);
 
             long firstId = 0;
@@ -115,7 +173,6 @@ public class AStar {
                     secondId = e.getWayID();
                 }
             }
-            int currentMaxSpeed = 1;
 
             String lastRoadName;
             if (model.getWayIndex().getMember(firstId).getName().equals("")) {
@@ -204,6 +261,9 @@ public class AStar {
             routeDescription.add(step);
             routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
         }
+        if(routeDescription.size() == 0){
+            routeDescription.add(new Step(Direction.NO_PATH, "",0));
+        }
         return routeDescription;
     }
 
@@ -249,71 +309,6 @@ public class AStar {
         return direction;
     }
 
-    public void AStarSearch(Node start, Node end, TransportType type) {
-        this.type = type;
-
-        PriorityQueue<Node> pq = new PriorityQueue<Node>(20, new NodeComparator()); //Maybe set initial capacity based on educated guess?
-
-        //cost from start
-        start.g_scores = 0;
-
-        pq.add(start);
-
-        boolean found = false;
-
-        while ((!pq.isEmpty()) && (!found)) { //While content in PQ and goal not found
-            //the node in having the lowest f_score value
-            Node current = pq.poll(); //Gets the first element in the PQ
-
-            current.explored = true; //Adds current to the explored set to remember that it is explored
-
-            //Checks if current is goal
-            if (current.getId() == end.getId()) {
-                found = true;
-            }
-
-            //Checks every child of current node
-            for (Edge e : current.getAdjecencies()) {
-                if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
-                    Node child = e.target;
-                    child.setHScores(distanceToNode(child, end) / type.maxSpeed);
-                    double cost = e.getWeight(type, model);
-                    double temp_g_scores = current.g_scores + cost;
-                    double temp_f_scores = temp_g_scores + child.h_scores;
-
-
-                    //Checks if child node has been evaluated and the newer f_score is higher, skip
-                    if ((child.explored) && (temp_f_scores >= child.f_scores)) {
-                        continue;
-                    }
-
-                    //else if child node is not in queue (add it) or newer f_score is lower (Update them)
-                    else if ((!pq.contains(child)) || (temp_f_scores < child.f_scores)) {
-                        child.parent = current;
-                        child.g_scores = temp_g_scores;
-                        child.f_scores = temp_f_scores;
-
-                        if (pq.contains(child)) {
-                            pq.remove(child);
-                        }
-                        pq.add(child);
-                    }
-                }
-            }
-        }
-
-        List<Node> debugPath = new ArrayList<Node>();
-        for (Node node : initialisedNodes) {
-            if (node.explored) {
-                debugPath.add(node);
-                node.explored = false;
-            }
-        }
-        model.setAStarDebugPath(debugPath);
-
-        createPath(end);
-    }
-
     private static class NodeComparator implements Comparator<Node> {
         //override compare method
         public int compare(Node i, Node j) {
@@ -325,6 +320,16 @@ public class AStar {
                 return 0;
             }
         }
+    }
+
+    private float distanceToNode(Node current, Node destination) {
+        float distance = 0;
+        if (current != destination) {
+            float deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
+            float deltaY = Math.abs(destination.getY()) - Math.abs(current.getY());
+            distance = (float) Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        }
+        return distance * 111.320f * Model.scalingConstant;
     }
 
     public String getTotalDistance() {
@@ -359,7 +364,6 @@ public class AStar {
                 result += minutes + " min";
             }
         }
-
         return result;
     }
 }

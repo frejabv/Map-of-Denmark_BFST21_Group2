@@ -73,8 +73,6 @@ public class Model {
             testRoadList.addAll(drawableMap.get(tag));
         }
         roadTree = new Rtree(this, testRoadList);
-
-        System.out.println("here");
     }
 
 
