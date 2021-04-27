@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import javafx.scene.paint.Color;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,20 +31,19 @@ public class RenderingStyle {
         styleMap.put(Tag.WATER, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
 
-        widthMap.put(Tag.MOTORWAY,3.0);
-        widthMap.put(Tag.PRIMARY,2.0);
-        widthMap.put(Tag.SECONDARY,1.5);
+        widthMap.put(Tag.MOTORWAY, 3.0);
+        widthMap.put(Tag.PRIMARY, 2.0);
+        widthMap.put(Tag.SECONDARY, 1.5);
 
         genDefaultMode();
         genDarkMode();
         defaultMode();
     }
 
-    public Color getIslandColor(float distanceWidth){
-        if(distanceWidth >= 7.0){
+    public Color getIslandColor(float distanceWidth) {
+        if (distanceWidth >= 7.0) {
             return islandFar;
-        }
-        else{
+        } else {
             return islandClose;
         }
     }
@@ -51,7 +51,7 @@ public class RenderingStyle {
     public void defaultMode() {
         sea = Color.rgb(170, 218, 255);
         islandFar = Color.rgb(187, 226, 198);
-        islandClose = Color.rgb(255,245,190);
+        islandClose = Color.rgb(255, 245, 190);
         theme = theme.DEFAULT;
     }
 
@@ -65,10 +65,14 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.BUILDING, Color.rgb(149, 165, 166));
         defaultColorMap.put(Tag.PARK, Color.rgb(168, 218, 181));
         defaultColorMap.put(Tag.WATER, Color.LIGHTBLUE);
+
         defaultColorMap.put(Tag.FOOTWAY, Color.GREEN);
         defaultColorMap.put(Tag.PATH, Color.GREEN);
-        defaultColorMap.put(Tag.MOTORWAY, Color.rgb(	255, 181, 20));
         defaultColorMap.put(Tag.CYCLEWAY, Color.TURQUOISE);
+        defaultColorMap.put(Tag.TRACK, Color.BROWN);
+
+        defaultColorMap.put(Tag.MOTORWAY, Color.rgb(255, 181, 20));
+        defaultColorMap.put(Tag.MOTORWAY_LINK, Color.rgb(255, 181, 20));
 
         defaultColorMap.put(Tag.PEDESTRIAN, Color.WHITE);
         defaultColorMap.put(Tag.UNCLASSIFIED, Color.WHITE);
@@ -78,20 +82,24 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.SERVICE, Color.WHITE);
         defaultColorMap.put(Tag.JUNCTION, Color.WHITE);
         defaultColorMap.put(Tag.TERTIARY, Color.WHITE);
+        defaultColorMap.put(Tag.TERTIARY_LINK, Color.WHITE);
         defaultColorMap.put(Tag.SECONDARY, Color.rgb(189, 195, 199));
+        defaultColorMap.put(Tag.SECONDARY_LINK, Color.rgb(189, 195, 199));
         defaultColorMap.put(Tag.PRIMARY, Color.rgb(253, 218, 118));
+        defaultColorMap.put(Tag.PRIMARY_LINK, Color.rgb(253, 218, 118));
         defaultColorMap.put(Tag.TRUNK, Color.WHITE);
-        defaultColorMap.put(Tag.TRACK, Color.BROWN);
+        defaultColorMap.put(Tag.TRUNK_LINK, Color.WHITE);
     }
 
     private void genDarkMode() {
-
         darkModeColorMap.put(Tag.WATER, Color.LIGHTBLUE);
         darkModeColorMap.put(Tag.PARK, Color.rgb(116, 125, 140));
+        darkModeColorMap.put(Tag.BUILDING, Color.rgb(72, 84, 96));
+
         darkModeColorMap.put(Tag.FOOTWAY, Color.GREEN);
         darkModeColorMap.put(Tag.PATH, Color.GREEN);
-        darkModeColorMap.put(Tag.BUILDING, Color.rgb(72, 84, 96));
         darkModeColorMap.put(Tag.CYCLEWAY, Color.TURQUOISE);
+        darkModeColorMap.put(Tag.TRACK, Color.BROWN);
 
         darkModeColorMap.put(Tag.PEDESTRIAN, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.UNCLASSIFIED, Color.rgb(128, 142, 155));
@@ -101,10 +109,13 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.SERVICE, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.JUNCTION, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.TERTIARY, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.TERTIARY_LINK, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.SECONDARY, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.SECONDARY_LINK, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.PRIMARY, Color.rgb(128, 142, 155));
+        darkModeColorMap.put(Tag.PRIMARY_LINK, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.TRUNK, Color.rgb(128, 142, 155));
-        darkModeColorMap.put(Tag.TRACK, Color.BROWN);
+        darkModeColorMap.put(Tag.TRUNK_LINK, Color.rgb(128, 142, 155));
     }
 
     public Color getColorByTag(Tag tag) {
