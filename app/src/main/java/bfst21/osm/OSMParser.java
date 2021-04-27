@@ -23,7 +23,10 @@ public class OSMParser {
     public static void readMapElements(InputStream in, FileExtension fileExtension,  Model model) throws IOException, XMLStreamException {
         switch (fileExtension) {
             case OSM -> loadOSM(in, model);
-            case ZIP -> loadZIP(in, model);
+            case ZIP -> {
+                loadZIP(in, model);
+                saveOBJ(model);
+            }
             case OBJ -> loadOBJ(in, model);
         }
     }
@@ -47,10 +50,10 @@ public class OSMParser {
         }
     }
 
-    public static void saveOBJ(String filename, Model model) throws IOException {
+    public static void saveOBJ(Model model) throws IOException {
         File file = null;
         try {
-            file = Paths.get(OSMParser.class.getResource("/bfst21/data/" + filename).toURI()).toFile();
+            file = Paths.get(OSMParser.class.getResource("/bfst21/data/objectOutput").toURI()).toFile();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
