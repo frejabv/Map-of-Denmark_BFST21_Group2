@@ -274,7 +274,7 @@ public class Controller {
             Button nearestWay = new Button("Find nearest way");
             nearestWay.setId("nearest");
             nearestWay.setOnAction(event -> {
-                canvas.drawNearest();
+                canvas.getNearestNodeOnNearestWay();
             });
             pinContainer.getChildren().add(nearestWay);
         } else {

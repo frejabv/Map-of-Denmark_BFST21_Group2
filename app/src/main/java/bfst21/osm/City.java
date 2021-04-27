@@ -97,6 +97,10 @@ public class City implements Drawable{
 
     @Override
     public Rectangle getRect() {
-        return null;
+        if (relation != null) {
+            return relation.getRect();
+        } else {
+            return way.getRect();
+        }
     }
 }

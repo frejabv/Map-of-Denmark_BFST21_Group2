@@ -1,6 +1,7 @@
 package bfst21;
 
 import bfst21.Rtree.Rectangle;
+import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
 import bfst21.osm.Way;
 import bfst21.osm.Tag;
@@ -242,13 +243,13 @@ public class MapCanvas extends Canvas {
     public Point2D getPinPoint() {
         return pinPoint;
     }
-    public void drawNearest() {
-        gc.setStroke(Color.GREENYELLOW);
-        gc.setLineWidth(3 / Math.sqrt(trans.determinant()));
-        Way nearest = model.getRtree().NearestWay(pinPoint);
-        System.out.println("way ID: " + nearest.getId());
-        System.out.println("Node ID: " + nearest.nearestNode(pinPoint).getId() + " coordinate: "+ nearest.nearestNode(pinPoint).getY() + " " + nearest.nearestNode(canvasPoint).getX() * -0.56f);
-        nearest.getRect().draw(gc);
-        nearest.draw(gc);
+
+    //TODO make it return nearest node to mouse (needs UI)
+    public Node getNearestNodeOnNearestWay() {
+        Way nearestWay = model.getRtree().NearestWay(pinPoint);
+        System.out.println("way ID: " + nearestWay.getId());
+        Node nearestNode = nearestWay.nearestNode(pinPoint);
+        System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
+        return nearestNode;
     }
 }
