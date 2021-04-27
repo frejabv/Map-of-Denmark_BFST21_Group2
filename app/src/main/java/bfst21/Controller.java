@@ -14,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -136,12 +137,14 @@ public class Controller {
                 canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                 searchContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
+                searchContainer.getChildren().removeAll(searchContainer.lookup("#suggestionsHr"));
             }
         });
     }
 
     public void setUpRouteFields(Regex regex) {
         routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
+            hideRoute();
             regex.run(newText);
             addSuggestions(model, "route", "from");
             if (newText.length() < oldText.length()) {
@@ -150,6 +153,7 @@ public class Controller {
         });
 
         routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
+            hideRoute();
             regex.run(newText);
             addSuggestions(model, "route", "to");
             if (newText.length() < oldText.length()) {
@@ -173,6 +177,8 @@ public class Controller {
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
+                routeContainer.getChildren().removeAll(routeContainer.lookup("#suggestionsHr"));
+                routeFieldTo.requestFocus();
             }
         });
 
@@ -191,6 +197,10 @@ public class Controller {
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
+                routeContainer.getChildren().removeAll(routeContainer.lookup("#suggestionsHr"));
+                if(routeFieldFrom.getText().length() == 0){
+                    routeFieldFrom.requestFocus();
+                }
             }
         });
     }
@@ -241,14 +251,24 @@ public class Controller {
                             System.out.println("Route searched");
                         }
                     }
-
                     selectedContainer.getChildren().removeAll(suggestionList);
                     suggestionList.clear();
+                    selectedContainer.getChildren().removeAll(selectedContainer.lookup("#suggestionsHr"));
                 });
                 suggestionList.add(newSuggestion);
             }
         }
-        selectedContainer.getChildren().addAll(suggestionList);
+        if(suggestionList.size()>0) {
+            Region hr = new Region();
+            hr.setId("suggestionsHr");
+            hr.getStyleClass().add("hr");
+            selectedContainer.getChildren().remove(selectedContainer.lookup("#suggestionsHr"));
+            selectedContainer.getChildren().add(hr);
+            selectedContainer.getChildren().addAll(suggestionList);
+        }
+        else{
+            selectedContainer.getChildren().removeAll(selectedContainer.lookup("#suggestionsHr"));
+        }
     }
 
     @FXML
