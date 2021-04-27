@@ -26,19 +26,19 @@ public class AStar {
         for (Map.Entry<Tag, List<Drawable>> entry : model.getDrawableMap().entrySet()) {
             List<Drawable> value = entry.getValue();
             for (Drawable way : value) {
-                Way wayButNowCasted = (Way) way;
-                for (int i = 0; i < wayButNowCasted.getNodes().size(); i++) {
-                    Node node = wayButNowCasted.getNodes().get(i);
-                    if (i != (wayButNowCasted.getNodes().size() - 1)) {
-                        Node nextNode = wayButNowCasted.getNodes().get(i + 1);
-                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
-                        edge.setPathTypes(wayButNowCasted, model);
+                Way tempWay = (Way) way;
+                for (int i = 0; i < tempWay.getNodes().size(); i++) {
+                    Node node = tempWay.getNodes().get(i);
+                    if (i != (tempWay.getNodes().size() - 1)) {
+                        Node nextNode = tempWay.getNodes().get(i + 1);
+                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId()); ///wayButNowCasted.getSpeed()
+                        edge.setPathTypes(tempWay, model);
                         node.addAdjecencies(edge);
                     }
-                    if (i > 0 && !wayButNowCasted.isOneway()) {
-                        Node previousNode = wayButNowCasted.getNodes().get(i - 1);
-                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), wayButNowCasted.getId()); ///wayButNowCasted.getSpeed()
-                        edge.setPathTypes(wayButNowCasted, model);
+                    if (i > 0 && !tempWay.isOneway()) {
+                        Node previousNode = tempWay.getNodes().get(i - 1);
+                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId()); ///wayButNowCasted.getSpeed()
+                        edge.setPathTypes(tempWay, model);
                         node.addAdjecencies(edge);
                     }
                 }
