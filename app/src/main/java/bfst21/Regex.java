@@ -16,8 +16,11 @@ public class Regex {
         this.regexVisualisers = regexVisualisers;
         //Regular expressions
         regexList = new ArrayList<>();
+        regexList.add("(?<postcode>\\d{4})");
+        regexList.add("(?<city>[A-zÆØÅæøå.\\- ]+)");
+        regexList.add("(?<postcode>\\d{4})\\s+(?<city>[A-zÆØÅæøå.]+)(?:\\s+)?(?:,?)(?:\\s?)(?<region>[A-zÆØÅæøå. ]+)?");
+        regexList.add("(?<street>[^\\n,]+)");
         regexList.add("(?<street>[^\\n,]*?)\\s+(?<house>\\d+[A-zÆØÅæøå]*)");
-        regexList.add("(?<postcode>\\d{4})(?:\\s*)?(?<city>.*)");
         regexList.add("(?<street>[^\\n,]*?)\\s+(?<house>\\d+[A-zÆØÅæøå]*)(?:\\s*,)?(?:\\s*)?(?<postcode>\\d{4})(?:\\s*)?(?<city>[A-zÆØÅæøå. ]+)");
         regexList.add("(?<street>[^\\n,]*?)\\s+(?<house>\\d+[A-zÆØÅæøå]*)(?:\\s*,)?(?:\\s*)?(?<floor>[A-z0-9ÆØÅæøå]+(?:\\.)?)+(?:\\s*)?(?<side>[A-z0-9ÆØÅæøå\\. ]+)*");
         regexList.add("(?<street>[^\\n,]*?)\\s+(?<house>\\d+[A-zÆØÅæøå]*)(?:(?:,)?\\s+(?<floor>[A-z0-9ÆØÅæøå]+(?:\\.)?)(?:\\s*)?(?<side>[A-z0-9ÆØÅæøå\\. ]+?)(?:,)?(?:\\s*)?(?<postcode>\\d{4})(?:\\s*)?(?<city>.*))?");

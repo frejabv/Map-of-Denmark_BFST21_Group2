@@ -100,7 +100,7 @@ public class Controller {
 
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
-        List<String> regexString = Arrays.asList("[Street] [Number]", "[Postal Code] [City]", "[Street] [Number], [Postal Code] [City]", "[Street] [Number], [Floor] [Side]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
+        List<String> regexString = Arrays.asList("[Postal code]", "[City]", "[Postal Code] [City]", "[Roadname]", "[Roadname] [Number]", "[Roadname] [Number], [Postal Code] [City]", "[Street] [Number], [Floor] [Side]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
         for (int i = 0; i < regexString.size(); i++) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");

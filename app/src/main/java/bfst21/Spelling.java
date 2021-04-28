@@ -1,11 +1,26 @@
 package bfst21;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.*;
 public class Spelling {
     private static final String ABC = "abcdefghijklmnopqrstuvwxyzæøå";
     private static Map<String, Integer> dictionary = new HashMap<>();
     private static String DICTIONARY_VALUES = ""; //INSERT DICTIONARY VALUES HERE
     public static void main(String[] args) {
+        String pattern = ";(?<street>[^\\n,]*?)\\s+(?<house>\\d+[A-zÆØÅæøå]*)(?:\\s*,)?(?:\\s*)?(?<postcode>\\d{4})(?:\\s*)?(?<city>[A-zÆØÅæøå. ]+);";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(";4. Maj Stræde 17B, 2300 København S.;");
+        boolean success = matcher.find();
+
+        String street = success ? matcher.group("street") : null;
+        String house = success ? matcher.group("house") : null;
+        String postcode = success ? matcher.group("postcode") : null;
+        String city = success ? matcher.group("city") : null;
+        System.out.println("Street: " + street);
+        System.out.println("House: " + house);
+        System.out.println("Postcode: " + postcode);
+        System.out.println("City: " + city);
     }
     public Spelling(){
         Stream.of(DICTIONARY_VALUES.toLowerCase().split(",")).forEach((word) -> {
