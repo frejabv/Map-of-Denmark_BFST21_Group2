@@ -97,6 +97,9 @@ public class OSMParser {
         boolean isWay = false;
         boolean isNode = false;
         String name = "";
+        String housenumber = "";
+        String street = "";
+        String postcode = "";
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -177,7 +180,13 @@ public class OSMParser {
                         // example from samsoe.osm of an addr tag:
                         // <tag k="addr:street" v="havnevej"/>
                         if (k.equals("addr:street")) {
-                            model.getStreetTree().insert(v, node.getId());
+                            street = v;
+                        }
+                        if (k.equals("addr:housenumber")) {
+                            housenumber = v;
+                        }
+                        if (k.equals("addr:postcode")) {
+                            postcode = v;
                         }
                     }
 
@@ -221,6 +230,12 @@ public class OSMParser {
                 switch (xmlReader.getLocalName()) {
                 case "node":
                     isNode = false;
+                    if(street != "" && housenumber != "" && postcode != "") {
+                        model.getStreetNumberPostcodeTree().insert(street + " " + housenumber + " " + postcode, node.getId());
+                        model.getStreetNumberTree().insert(street + " " + housenumber, node.getId());
+                        model.getStreetTree().insert(street, node.getId());
+                        System.out.println(street + " " + housenumber + " " + postcode);
+                    }
                     break;
                 case "way":
                     addWayToList(way, tags, model);
