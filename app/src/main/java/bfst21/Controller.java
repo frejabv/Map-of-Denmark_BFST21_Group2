@@ -71,7 +71,7 @@ public class Controller {
     private boolean singleClick = true;
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
-    private long fromNodeId, toNodeId;
+    private Node fromNode, toNode;
 
     public void init(Model model) {
         this.model = model;
@@ -125,15 +125,14 @@ public class Controller {
         searchField.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 searchField.textProperty().setValue(suggestionList.get(0).getText());
-                //Node node;
-                /*if(searchField.textProperty().getValue().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
-                    node = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(suggestionList.get(0).getText()).getId());
-                } else if(searchField.textProperty().getValue().contains(" ")) { //regex.matches(street)
-                    node = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(suggestionList.get(0).getText()).getId());
+                Node node;
+                if(searchField.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                    node = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(searchField.getText()).getId());
+                } else if(searchField.getText().contains(" ")) { //regex.matches(street)
+                    node = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(searchField.getText()).getId());
                 } else {
-                    node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
-                }*/
-                Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
+                    node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(searchField.getText()).getId());
+                }
                 canvas.setPin(node.getX(), node.getY());
                 canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                 searchContainer.getChildren().removeAll(suggestionList);
@@ -156,8 +155,15 @@ public class Controller {
         routeFieldFrom.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
-                fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if (toNodeId != 0) {
+                Node nodeFrom;
+                if(routeFieldFrom.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                    nodeFrom = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(routeFieldFrom.getText()).getId());
+                } else if(routeFieldFrom.getText().contains(" ")) { //regex.matches(street)
+                    nodeFrom = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(routeFieldFrom.getText()).getId());
+                } else {
+                    nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
+                }
+                if (toNode != null) {
                     //model.getAStar().AStarSearch(fromNodeId, toNodeId);
                     System.out.println("Route searched");
                 }
@@ -169,8 +175,15 @@ public class Controller {
         routeFieldTo.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
-                toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if (fromNodeId != 0) {
+                Node nodeTo;
+                if(routeFieldTo.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                    nodeTo = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(routeFieldTo.getText()).getId());
+                } else if(routeFieldTo.getText().contains(" ")) { //regex.matches(street)
+                    nodeTo = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(routeFieldTo.getText()).getId());
+                } else {
+                    nodeTo = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldTo.getText()).getId());
+                }
+                if (fromNode != null) {
                     //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                     System.out.println("Route searched");
                 }
@@ -217,11 +230,11 @@ public class Controller {
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
                         if (fieldType.equals("from")) {
-                            fromNodeId = node.getId();
+                            fromNode = node;
                             //potential route search here as well
                         } else {
-                            toNodeId = node.getId();
-                            if (fromNodeId != 0) {
+                            toNode = node;
+                            if (fromNode != null) {
                                 //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                                 System.out.println("Route searched");
                             }
