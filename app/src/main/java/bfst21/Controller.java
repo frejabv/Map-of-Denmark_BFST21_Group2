@@ -125,6 +125,14 @@ public class Controller {
         searchField.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 searchField.textProperty().setValue(suggestionList.get(0).getText());
+                //Node node;
+                /*if(searchField.textProperty().getValue().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                    node = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(suggestionList.get(0).getText()).getId());
+                } else if(searchField.textProperty().getValue().contains(" ")) { //regex.matches(street)
+                    node = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(suggestionList.get(0).getText()).getId());
+                } else {
+                    node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
+                }*/
                 Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
                 canvas.setPin(node.getX(), node.getY());
                 canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
@@ -189,7 +197,14 @@ public class Controller {
         selectedContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
         if (selectedField.textProperty().getValue().length() > 2) {
-            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
+            ArrayList<RadixNode> suggestions;
+            if(selectedField.textProperty().getValue().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                suggestions = model.getStreetNumberPostcodeTree().getSuggestions(selectedField.textProperty().getValue());
+            } else if(selectedField.textProperty().getValue().contains(" ")) { //regex.matches(street)
+                suggestions = model.getStreetNumberTree().getSuggestions(selectedField.textProperty().getValue());
+            } else {
+                suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
+            }
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
                 RadixNode suggestion = suggestions.get(i);
                 Text newSuggestion = new Text(suggestion.getFullName());

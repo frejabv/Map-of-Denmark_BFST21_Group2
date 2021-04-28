@@ -18,9 +18,12 @@ public class Model {
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
-    private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
+
+    private RadixTree streetTree;
+    private RadixTree streetNumberTree;
+    private RadixTree streetNumberPostcodeTree;
 
     private ArrayList<POI> pointsOfInterest;
 
@@ -40,8 +43,11 @@ public class Model {
         coastlines = new ArrayList<>();
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
-        streetTree = new RadixTree();
         cities = new ArrayList<>();
+
+        streetTree = new RadixTree();
+        streetNumberTree = new RadixTree();
+        streetNumberPostcodeTree = new RadixTree();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -171,6 +177,22 @@ public class Model {
 
     public void setStreetTree(RadixTree streetTree) {
         this.streetTree = streetTree;
+    }
+
+    public RadixTree getStreetNumberTree() {
+        return streetNumberTree;
+    }
+
+    public void setStreetNumberTree(RadixTree streetNumberTree) {
+        this.streetNumberTree = streetNumberTree;
+    }
+
+    public RadixTree getStreetNumberPostcodeTree() {
+        return streetNumberPostcodeTree;
+    }
+
+    public void setStreetNumberPostcodeTree(RadixTree streetNumberPostcodeTree) {
+        this.streetNumberPostcodeTree = streetNumberPostcodeTree;
     }
 
     public void addPOI(POI poi) {
