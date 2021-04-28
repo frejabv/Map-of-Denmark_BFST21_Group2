@@ -46,7 +46,6 @@ public class AStarTest {
         Node aalborg = model.getNodeIndex().getMember(2);
         Node randers = model.getNodeIndex().getMember(5);
         astar.AStarSearch(skagen, randers, model.getCurrentTransportType());
-        astar.createPath(randers);
         ArrayList<Step> steps = astar.getPathDescription();
 
         double deltaX = Math.abs(skagen.getX() - aalborg.getX());
@@ -79,13 +78,11 @@ public class AStarTest {
         Node viborg = model.getNodeIndex().getMember(4);
 
         astar.AStarSearch(århus,viborg, model.getCurrentTransportType());
-        astar.createPath(viborg);
         ArrayList<Step> steps = astar.getPathDescription();
         assertEquals(3, steps.size());
 
         model.setCurrentTransportType(TransportType.BICYCLE);
         astar.AStarSearch(model.getNodeIndex().getMember(7),model.getNodeIndex().getMember(4), model.getCurrentTransportType());
-        astar.createPath(viborg);
         steps = astar.getPathDescription();
         assertEquals(2, steps.size());
     }
@@ -98,7 +95,8 @@ public class AStarTest {
 
         float deltaX = Math.abs(testNode.getX() - destination.getX());
         float deltaY = Math.abs(testNode.getY() - destination.getY());
-        float distance = (float) ((Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320f * Model.scalingConstant);
+        float step = (float) Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
+        float distance = step * 111.320f * Model.scalingConstant;
 
         assertEquals(distance, testNode.getAdjacencies().get(0).weight);
     }

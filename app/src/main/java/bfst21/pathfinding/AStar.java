@@ -150,9 +150,6 @@ public class AStar {
         totalDistance = 0;
         Direction direction = Direction.FOLLOW;
 
-        System.out.println("Path: " + path.size());
-
-
         for (int i = 1; i < path.size() - 1; i++) {
             Node node = path.get(i);
             Node nextNode = path.get(i + 1);
@@ -268,8 +265,6 @@ public class AStar {
             routeDescription.add(new Step(Direction.NO_PATH, "", 0));
         }
 
-        System.out.println(routeDescription.get(0).toString());
-        System.out.println(routeDescription.size());
         return routeDescription;
     }
 
