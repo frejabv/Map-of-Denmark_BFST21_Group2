@@ -34,10 +34,14 @@ public class Regex {
     }
 
     public void run(String text) {
+        System.out.println();
         for (int i = 0; i < patterns.size(); i++) {
             Matcher matcher = patterns.get(i).matcher(text);
             regexVisualisers.get(i).getStyleClass().clear();
             if (matcher.find()) {
+                System.out.println("'" + text.substring(matcher.start(),matcher.end()) + "' (" + matcher.pattern() + ")");
+                //System.out.println(matcher.toString());
+                //System.out.println(matcher.pattern().toString());
                 regexVisualisers.get(i).getStyleClass().add("regexMatchGreen");
             } else {
                 regexVisualisers.get(i).getStyleClass().add("regexMatchRed");
