@@ -184,12 +184,12 @@ public class OSMParser {
                             }
 
                             if ((k.startsWith("cycleway") || k.startsWith("bicycle")) && !(v.equals("no"))) {
-                                tags.add(Tag.CYCLEWAY);
+                                way.getTags().add(Tag.CYCLEWAY);
                                 break;
                             }
 
                             if ((k.equals("sidewalk") || k.equals("foot")) && !v.equals("no")) {
-                                tags.add(Tag.FOOTWAY);
+                                way.getTags().add(Tag.FOOTWAY);
                                 break;
                             }
 
@@ -253,7 +253,7 @@ public class OSMParser {
                             isNode = false;
                             break;
                         case "way":
-                            way.setTags(tags);
+                            way.getTags().addAll(tags);
                             way.checkSpeed();
                             way.createRectangle();
                             addWayToList(way, tags, model);
