@@ -1,10 +1,11 @@
 package bfst21;
 
-import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
+import bfst21.Rtree.Rectangle;
 import bfst21.osm.RenderingStyle;
 import bfst21.osm.Way;
 import bfst21.osm.Tag;
+import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -14,12 +15,17 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
+import java.util.List;
+
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
     boolean RTreeLines;
+    public boolean debugAStar;
+    private boolean showRoute;
+    boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
     double size;
@@ -27,7 +33,6 @@ public class MapCanvas extends Canvas {
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
-    boolean showNames = true;
 
     public void init(Model model) {
         this.model = model;
@@ -95,13 +100,12 @@ public class MapCanvas extends Canvas {
             }
         });
 
-        model.getRelationIndex().forEach(relation -> {
-            if (relation.getTags().size() != 0) {
-                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
-                    relation.draw(gc, renderingStyle);
-                }
+        if(model.existsAStarPath() && showRoute){
+            if(debugAStar) {
+                drawDebugAStarPath();
             }
-        });
+            paintPath(model.getAStarPath());
+        }
 
         if (showNames) {
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
@@ -144,7 +148,7 @@ public class MapCanvas extends Canvas {
 
             Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-            model.getRoadRTree().drawRTree(window, gc);
+            model.getRtree().drawRTree(window, gc);
         }
 
         gc.restore();
@@ -177,7 +181,35 @@ public class MapCanvas extends Canvas {
         repaint();
     }
 
-    public String setPin(Point2D point) {
+    public void drawDebugAStarPath() {
+        List<Node> nodes = model.getAStarDebugPath();
+        gc.setStroke(Color.CORNFLOWERBLUE);
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant())*2);
+        gc.beginPath();
+        for(Node n : nodes) {
+            for(Edge e : n.getAdjacencies()) {
+                Node child = e.target;
+                gc.moveTo(n.getX(), n.getY());
+                gc.lineTo(child.getX(), child.getY());
+            }
+        }
+        gc.stroke();
+    }
+
+    public void paintPath(List<Node> path){
+        gc.setStroke(Color.ORANGERED);
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant())*3);
+        gc.beginPath();
+        for (int i = 0;i < path.size()-1; i++){
+            Node current = path.get(i);
+            Node next = path.get(i+1);
+            gc.moveTo(current.getX(),current.getY());
+            gc.lineTo(next.getX(),next.getY());
+        }
+        gc.stroke();
+    }
+
+    public String setPin(Point2D point){
         size = .3;
         canvasPoint = mouseToModelCoords(point);
         pinPoint = canvasPoint;
@@ -251,5 +283,14 @@ public class MapCanvas extends Canvas {
         Node nearestNode = nearestWay.nearestNode(pinPoint);
         System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
         return nearestNode;
+    }
+
+    public void showRoute(){
+        showRoute = true;
+        repaint();
+    }
+    public void hideRoute(){
+        showRoute = false;
+        repaint();
     }
 }

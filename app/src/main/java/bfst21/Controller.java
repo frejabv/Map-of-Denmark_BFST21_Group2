@@ -2,22 +2,28 @@ package bfst21;
 
 import bfst21.osm.Node;
 import bfst21.osm.Way;
+import bfst21.pathfinding.Step;
+import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static javafx.scene.layout.Priority.SOMETIMES;
 
 public class Controller {
     @FXML
@@ -47,8 +53,6 @@ public class Controller {
     @FXML
     private CheckBox enableDebugWindow;
     @FXML
-    private Text suggestionsHeader;
-    @FXML
     private Text pinText;
     @FXML
     private Text cpuProcess;
@@ -72,7 +76,7 @@ public class Controller {
     private boolean singleClick = true;
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
-    private long fromNodeId, toNodeId;
+    private Node fromNode, toNode;
 
     public void init(Model model) {
         this.model = model;
@@ -92,8 +96,10 @@ public class Controller {
             System.exit(0);
         }
 
-        leftContainer.setMaxWidth(canvas.getWidth()/100*33);
-        rightContainer.setMaxWidth(canvas.getWidth()/100*50);
+        leftContainer.setMaxWidth(canvas.getWidth() / 100 * 33);
+        rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
+
+        model.setUpAStar();
     }
 
     @FXML
@@ -118,7 +124,6 @@ public class Controller {
 
     public void setUpSearchField(Regex regex) {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
-            //Run Regex Matcher
             regex.run(newText);
             addSuggestions(model, "search", null);
         });
@@ -131,44 +136,67 @@ public class Controller {
                 canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                 searchContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
+                searchContainer.getChildren().removeAll(searchContainer.lookup("#suggestionsHr"));
             }
         });
     }
 
     public void setUpRouteFields(Regex regex) {
         routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
+            hideRoute();
             regex.run(newText);
             addSuggestions(model, "route", "from");
+            if (newText.length() < oldText.length()) {
+                canvas.hideRoute();
+            }
         });
 
         routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
+            hideRoute();
             regex.run(newText);
             addSuggestions(model, "route", "to");
+            if (newText.length() < oldText.length()) {
+                canvas.hideRoute();
+            }
         });
 
         routeFieldFrom.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
-                fromNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if (toNodeId != 0) {
-                    //model.getAStar().AStarSearch(fromNodeId, toNodeId);
-                    System.out.println("Route searched");
+                Node nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
+                Point2D p = new Point2D(nodeFrom.getX(), nodeFrom.getY());
+                fromNode = model.getRtree().NearestWay(p).nearestNode(p);
+                if (toNode != null) {
+                    model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+                    showRouteDescription();
+                    canvas.showRoute();
+                    canvas.repaint();
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
+                routeContainer.getChildren().removeAll(routeContainer.lookup("#suggestionsHr"));
+                routeFieldTo.requestFocus();
             }
         });
 
         routeFieldTo.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
-                toNodeId = model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId();
-                if (fromNodeId != 0) {
-                    //model.getAStar().AStarSearch(fromNodeID, toNodeId);
-                    System.out.println("Route searched");
+                Node nodeTo = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldTo.getText()).getId());
+                Point2D p = new Point2D(nodeTo.getX(), nodeTo.getY());
+                toNode = model.getRtree().NearestWay(p).nearestNode(p);
+                if (fromNode != null) {
+                    model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+                    showRouteDescription();
+                    canvas.repaint();
+                    canvas.showRoute();
                 }
                 routeContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
+                routeContainer.getChildren().removeAll(routeContainer.lookup("#suggestionsHr"));
+                if (routeFieldFrom.getText().length() == 0) {
+                    routeFieldFrom.requestFocus();
+                }
             }
         });
     }
@@ -189,6 +217,7 @@ public class Controller {
         }
         selectedContainer.getChildren().removeAll(suggestionList);
         suggestionList.clear();
+
         if (selectedField.textProperty().getValue().length() > 2) {
             ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
@@ -203,24 +232,36 @@ public class Controller {
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
                         if (fieldType.equals("from")) {
-                            fromNodeId = node.getId();
-                            //potential route search here as well
+                            Point2D p = new Point2D(node.getX(), node.getY());
+                            fromNode = model.getRtree().NearestWay(p).nearestNode(p);
                         } else {
-                            toNodeId = node.getId();
-                            if (fromNodeId != 0) {
-                                //model.getAStar().AStarSearch(fromNodeID, toNodeId);
-                                System.out.println("Route searched");
-                            }
+                            Point2D p = new Point2D(node.getX(), node.getY());
+                            toNode = model.getRtree().NearestWay(p).nearestNode(p);
                         }
-                        System.out.println(fieldType + ": " + node.getId());
+                        if (fromNode != null && toNode != null) {
+                            model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+                            showRouteDescription();
+                            canvas.showRoute();
+                            canvas.repaint();
+                        }
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);
                     suggestionList.clear();
+                    selectedContainer.getChildren().removeAll(selectedContainer.lookup("#suggestionsHr"));
                 });
                 suggestionList.add(newSuggestion);
             }
         }
-        selectedContainer.getChildren().addAll(suggestionList);
+        if (suggestionList.size() > 0) {
+            Region hr = new Region();
+            hr.setId("suggestionsHr");
+            hr.getStyleClass().add("hr");
+            selectedContainer.getChildren().remove(selectedContainer.lookup("#suggestionsHr"));
+            selectedContainer.getChildren().add(hr);
+            selectedContainer.getChildren().addAll(suggestionList);
+        } else {
+            selectedContainer.getChildren().removeAll(selectedContainer.lookup("#suggestionsHr"));
+        }
     }
 
     @FXML
@@ -252,11 +293,9 @@ public class Controller {
     }
 
     @FXML
-    private Button removePin;
-
-    @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
+            hideAll();
             pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
@@ -269,7 +308,7 @@ public class Controller {
             });
 
             //TODO add to fxml and make it look good
-            if (pinContainer.lookup("#nearest") != null){
+            if (pinContainer.lookup("#nearest") != null) {
                 pinContainer.getChildren().remove(pinContainer.lookup("#nearest"));
             }
             Button nearestWay = new Button("Find nearest way");
@@ -308,8 +347,10 @@ public class Controller {
     public void onMousePressedRoute() {
         if (routeContainer.isVisible()) {
             hideAll();
+            canvas.hideRoute();
         } else {
             changeType("route", true);
+            canvas.showRoute();
         }
     }
 
@@ -342,6 +383,14 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
+        if (canvas.setPin && type != "pin" && type != "debug") {
+            canvas.setPin = false;
+            canvas.repaint();
+        }
+        if (type != "route" && type != "debug") {
+            canvas.hideRoute();
+            canvas.repaint();
+        }
         if (!type.equals("debug")) {
             searchContainer.setVisible(false);
             searchContainer.setManaged(false);
@@ -357,6 +406,11 @@ public class Controller {
         suggestionList.clear();
         switch (type) {
             case "route":
+                if (routeFieldFrom.getText().length() > 0 && routeFieldTo.getText().length() > 0) {
+                    showRouteDescription();
+                } else {
+                    hideRoute();
+                }
                 fadeButtons();
                 routeContainer.setVisible(state);
                 routeContainer.setManaged(state);
@@ -449,24 +503,86 @@ public class Controller {
     private VBox routeDescription;
     @FXML
     private VBox routeStepsContainer;
-    public void showRoute(ArrayList<String> routeSteps){
+    @FXML
+    private Text arrivalText;
+    @FXML
+    private Text arrivalSmallText;
+
+    public void showRouteDescription() {
         routeDescription.setVisible(true);
         routeDescription.setManaged(true);
         routeStepsContainer.getChildren().clear();
-        /*for (Step temp : routeSteps){
-            FlowPane stepContainer = new FlowPane();
-            Image stepIcon = new Image(temp.getDirection().toString() + ".png");
+        List<Step> routeSteps = model.getAStar().getPathDescription();
+        for (Step temp : routeSteps) {
+            HBox stepContainer = new HBox();
+            stepContainer.setAlignment(Pos.CENTER_LEFT);
+            stepContainer.getStyleClass().add("stepContainer");
+            String imagePath;
+            imagePath = temp.getDirection().toString().toLowerCase();
+            if (imagePath.equals("continue")) {
+                imagePath = "follow";
+            } else if (imagePath.equals("arrival")) {
+                imagePath = "pin";
+            }
+            Image stepIcon = new Image("bfst21/icons/" + imagePath + ".png");
             ImageView stepIconContainer = new ImageView(stepIcon);
-            Text stepDescription = new Text("Drej til højre af " + temp.getRoadName() + " (" + temp.getDistance() + " meter)");
+            Label stepDescription = new Label(temp.toString());
+            stepContainer.setHgrow(stepIconContainer, SOMETIMES);
+            stepContainer.setHgrow(stepDescription, SOMETIMES);
+            stepIconContainer.getStyleClass().add("stepIcon");
+            stepIconContainer.setFitWidth(22.0);
+            stepIconContainer.setFitHeight(22.0);
+            stepIconContainer.setPickOnBounds(true);
+            stepIconContainer.setPreserveRatio(true);
             stepContainer.getChildren().add(stepIconContainer);
             stepContainer.getChildren().add(stepDescription);
+            stepDescription.maxWidth(Double.POSITIVE_INFINITY);
+            stepDescription.getStyleClass().add("labelTest");
+            stepDescription.setWrapText(true);
             routeStepsContainer.getChildren().add(stepContainer);
-        }*/
+        }
+        arrivalText.setText(String.valueOf(model.getAStar().getTotalDistance()));
+        arrivalSmallText.setText(model.getAStar().getTotalTime());
     }
 
-    public void hideRoute(){
+    public void hideRoute() {
         routeDescription.setVisible(false);
         routeDescription.setManaged(false);
+    }
+
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
+
+    public void selectTransportType() {
+        ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
+        model.setCurrentTransportType(TransportType.valueOf(currentButton.getText().toUpperCase()));
+    }
+
+    @FXML
+    private CheckBox showAStarPath;
+
+    public void toggleAStarDebugPath() {
+        if (showAStarPath.isSelected()) {
+            canvas.debugAStar = true;
+            canvas.repaint();
+        } else {
+            canvas.debugAStar = false;
+            canvas.repaint();
+        }
+    }
+
+    @FXML
+    private ToggleGroup selectTransportTypeRoute;
+
+    public void selectTransportTypeRoute() {
+        ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
+        if (currentButton != null) {
+            String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
+            model.setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
+            model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+            showRouteDescription();
+            canvas.repaint(); //To show the route after it has been calculated
+        }
     }
 
     public void toggleRTreeLines() {

@@ -13,6 +13,10 @@ import javafx.scene.paint.Color;
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
     private Rectangle rect;
+    String name = "";
+    int maxSpeed = 1;
+    boolean isOneway;
+    boolean isJunction;
 
     public Way(long id) {
         super(id);
@@ -24,10 +28,11 @@ public class Way extends Member implements Drawable, Serializable {
         this.nodes = new ArrayList<>();
     }
 
-    public Node first(){
+    public Node first() {
         return nodes.get(0);
     }
-    public Node last(){
+
+    public Node last() {
         return nodes.get(nodes.size() - 1);
     }
 
@@ -35,17 +40,66 @@ public class Way extends Member implements Drawable, Serializable {
         nodes.add(node);
     }
 
+    public List<Node> getNodes() {
+        return nodes;
+    }
+
     public static Way merge(Way first, Way second) {
-        if(first == null) return second;
-        if(second == null) return first;
+        if (first == null) return second;
+        if (second == null) return first;
         Way merged = new Way();
         merged.nodes.addAll(first.nodes);
-        merged.nodes.addAll(second.nodes.subList(1,second.nodes.size()));
+        merged.nodes.addAll(second.nodes.subList(1, second.nodes.size()));
         return merged;
     }
 
     public static Way merge(Way first, Way second, Way third) {
-        return merge(merge(first,second),third);
+        return merge(merge(first, second), third);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public void checkSpeed() {
+        if (maxSpeed == 1) {
+            if (tags.contains(Tag.MOTORWAY) || tags.contains(Tag.MOTORWAY_LINK)) {
+                maxSpeed = 130;
+            } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.PRIMARY)) {
+                maxSpeed = 80;
+            } else if (tags.contains(Tag.JUNCTION) || tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
+                maxSpeed = 50;
+            }
+        }
+    }
+
+    public void setIsOneway() {
+        this.isOneway = true;
+    }
+
+    public boolean isOneway() {
+        return isOneway;
+    }
+
+    public void setIsJunction() {
+        this.isJunction = true;
+        setIsOneway();
+    }
+
+    public boolean isJunction() {
+        return isJunction;
     }
 
     @Override
@@ -72,7 +126,7 @@ public class Way extends Member implements Drawable, Serializable {
     public void createRectangle() {
         float minX = 1800, minY = 1800, maxX = -1800, maxY = -1800;
 
-        for (Node n: nodes) {
+        for (Node n : nodes) {
             if (n.getX() < minX) {
                 minX = n.getX();
             }
@@ -97,7 +151,7 @@ public class Way extends Member implements Drawable, Serializable {
     public double minimumDistanceToSquared(Point2D p) {
         double smallestDistance = Double.POSITIVE_INFINITY;
         for (int i = 1; i < nodes.size(); i++) {
-            double currentSegmentDist = minimumDistanceToSegment(nodes.get(i-1), nodes.get(i), p);
+            double currentSegmentDist = minimumDistanceToSegment(nodes.get(i - 1), nodes.get(i), p);
             if (currentSegmentDist < smallestDistance) {
                 smallestDistance = currentSegmentDist;
             }
@@ -149,7 +203,7 @@ public class Way extends Member implements Drawable, Serializable {
 
         for (int i = 1; i < nodes.size(); i++) {
             double currentDist = nodes.get(i).distanceToSquared(p);
-            if ( currentDist < closestDist) {
+            if (currentDist < closestDist) {
                 closest = nodes.get(i);
                 closestDist = currentDist;
             }
