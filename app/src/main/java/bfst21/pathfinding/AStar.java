@@ -164,12 +164,12 @@ public class AStar {
             long secondId = 0;
 
             for (Edge e : previousNode.getAdjacencies()) {
-                if (e.target == node) {
+                if (e.target == node && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
                     firstId = e.getWayID();
                 }
             }
             for (Edge e : node.getAdjacencies()) {
-                if (e.target == nextNode) {
+                if (e.target == nextNode && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
                     secondId = e.getWayID();
                 }
             }
