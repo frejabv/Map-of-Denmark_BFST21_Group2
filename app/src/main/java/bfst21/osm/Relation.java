@@ -71,7 +71,7 @@ public class Relation extends Member {
     }
 
     public void createRectangle(){
-        float minX = 181, maxX = -181, minY = 91, maxY = -91;
+        float minX = 1800, maxX = -1800, minY = 1800, maxY = -1800;
 
         for (Way w: ways) {
             //check min values

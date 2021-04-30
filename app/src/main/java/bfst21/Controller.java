@@ -1,6 +1,7 @@
 package bfst21;
 
 import bfst21.osm.Node;
+import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
@@ -63,6 +64,8 @@ public class Controller {
     private Text memoryUse;
     @FXML
     private Text scaletext;
+    @FXML
+    private Text closestRoad;
     @FXML
     private VBox leftContainer;
     @FXML
@@ -585,5 +588,16 @@ public class Controller {
     public void toggleRTreeLines() {
         canvas.RTreeLines = !canvas.RTreeLines;
         canvas.repaint();
+    }
+
+    public void updateClosestRoad(String text) {
+        closestRoad.textProperty().setValue(text);
+    }
+
+    public void onMouseMovedOnCanvas(MouseEvent e) {
+        Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
+        Way road = model.getRoadRTree().nearestWay(mousePoint);
+        // TODO make it print the name of the road, not  the ID
+        updateClosestRoad(String.valueOf(road.getId()));
     }
 }

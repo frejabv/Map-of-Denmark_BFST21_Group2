@@ -64,7 +64,7 @@ public class RtreeNode {
     }
     
     protected Rectangle createBoundingBox(List<Drawable> descendants) {
-        float minX = 181, minY = 91, maxX = -181, maxY = -91;
+        float minX = 1800, minY = 1800, maxX = -1800, maxY = -1800;
         
         for (var descendant : descendants) {
             Rectangle descendantBoundingBox = descendant.getRect();
