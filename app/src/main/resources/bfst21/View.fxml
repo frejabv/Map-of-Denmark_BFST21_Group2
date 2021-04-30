@@ -39,6 +39,7 @@
                onMousePressed="#onMousePressedOnCanvas"
                onMouseDragged="#onMouseDraggedOnCanvas"
                onMouseReleased="#onMouseReleasedOnCanvas"
+               onMouseMoved="#onMouseMovedOnCanvas"
     />
     <GridPane pickOnBounds="false">
       <columnConstraints>
@@ -297,7 +298,7 @@
       <bottom>
         <BorderPane styleClass="nearestRoad" pickOnBounds="false">
           <center>
-            <Text>Closest Road (0m)</Text>
+            <Text fx:id="closestRoad">Closest Road (0m)</Text>
           </center>
         </BorderPane>
       </bottom>
