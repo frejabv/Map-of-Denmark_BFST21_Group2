@@ -137,7 +137,7 @@ public class RectangleTest {
         assertEquals(1, testRect.distanceSquaredTo(p2), 0.0001);
         assertEquals(2, testRect.distanceSquaredTo(p3), 0.0001);
         assertEquals(1, testRect.distanceSquaredTo(p4), 0.0001);
-        assertEquals(0, testRect.distanceSquaredTo(p5), 0.0001);
+        assertEquals(0, testRect.distanceSquaredTo(p5));
         assertEquals(1, testRect.distanceSquaredTo(p6), 0.0001);
         assertEquals(2, testRect.distanceSquaredTo(p7), 0.0001);
         assertEquals(1, testRect.distanceSquaredTo(p8), 0.0001);
