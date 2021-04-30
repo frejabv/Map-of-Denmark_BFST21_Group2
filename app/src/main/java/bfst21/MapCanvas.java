@@ -23,6 +23,7 @@ public class MapCanvas extends Canvas {
     GraphicsContext gc;
     boolean setPin;
     boolean RTreeLines;
+    boolean nearestNodeLine;
     public boolean debugAStar;
     private boolean showRoute;
     boolean showNames = true;
@@ -276,7 +277,6 @@ public class MapCanvas extends Canvas {
         return pinPoint;
     }
 
-    //TODO make it return nearest node to mouse (needs UI)
     public Node getNearestNodeOnNearestWay() {
         Way nearestWay = model.getRoadRTree().nearestWay(pinPoint);
         System.out.println("way ID: " + nearestWay.getId());

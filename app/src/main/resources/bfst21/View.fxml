@@ -272,6 +272,7 @@
               </FlowPane>
               <Region styleClass="hr"/>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show R-tree lines</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleNearestNodeLine">Show line from mouse to nearest node on nearest way</CheckBox>
               <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Regex Matcher</Text>

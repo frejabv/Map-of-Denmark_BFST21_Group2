@@ -31,6 +31,7 @@ public class Model {
 
     private ArrayList<POI> pointsOfInterest;
     private Rtree roadRTree;
+    private Node nearestNode;
 
     private boolean ttiMode;
 
@@ -268,5 +269,9 @@ public class Model {
 
     public Rtree getRoadRTree() {
         return roadRTree;
+    }
+
+    public void setNearestNode(Node nearestNode) {
+        this.nearestNode = nearestNode;
     }
 }

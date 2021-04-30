@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
     private Rectangle rect;
-    String name = "";
+    String name = "unknown";
     int maxSpeed = 1;
     boolean isOneway;
     boolean isJunction;
