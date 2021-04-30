@@ -1,13 +1,16 @@
 package bfst21.Rtree;
 
 import bfst21.osm.Drawable;
+import javafx.geometry.Point2D;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RtreeNode {
-    Rectangle rect;
-    List<RtreeNode> children;
+public class RtreeNode implements Comparable<RtreeNode>{
+    private Rectangle rect;
+    protected List<RtreeNode> children;
+    private double distTo;
 
     public RtreeNode(List<Drawable> descendants) {
         rect = createBoundingBox(descendants);
@@ -79,5 +82,18 @@ public class RtreeNode {
         }
 
         return new Rectangle(minX, minY, maxX, maxY);
+    }
+
+    public void setDistTo(Point2D p) {
+        this.distTo = rect.distanceSquaredTo(p);
+    }
+
+    public double getDistTo() {
+        return distTo;
+    }
+
+    @Override
+    public int compareTo(@NotNull RtreeNode that) {
+        return Double.compare(this.distTo, that.distTo);
     }
 }

@@ -1,6 +1,4 @@
 package bfst21.Rtree;
-import bfst21.MapCanvas;
-import bfst21.Model;
 import bfst21.osm.Drawable;
 import bfst21.osm.Way;
 
@@ -11,6 +9,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class Rtree {
     private RtreeNode root;
@@ -23,41 +22,47 @@ public class Rtree {
         }
     }
 
-    //TODO make nearest way check for nearby rectangles if nothing is found.
+    // TODO make nearest way check for nearby rectangles if nothing is found.
     public Way nearestWay(Point2D p) {
         Way nearest = null;
-        double currentNearestDist = 100000000;
+        double currentNearestDist = Double.POSITIVE_INFINITY;
 
-        LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
-        explorationQueue.add(root);
+        PriorityQueue<RtreeNode> pQueue = new PriorityQueue<>();
+        root.setDistTo(p);
+        pQueue.add(root);
 
-        while (!explorationQueue.isEmpty()) {
-            var current = explorationQueue.removeFirst();
+        while (!pQueue.isEmpty()) {
+            var current = pQueue.poll();
 
-            if (current.children != null) {
-                for (var child : current.children) {
-                    if (child.getRect().contains(p)) {
-                        explorationQueue.add(child);
+            if (current.getDistTo() < currentNearestDist) {
+                if (current.children != null) {
+                    for (var child : current.children) {
+                        child.setDistTo(p);
+                        pQueue.add(child);
                     }
                 }
-            }
 
-            if(current instanceof RtreeLeaf) {
-                if (current.getRect().contains(p)) {
-                    for (Drawable way: ((RtreeLeaf) current).getDrawables()) {
-                        if (way instanceof Way) {
-                            double wayDistance = ((Way) way).minimumDistanceToSquared(p);
-                            if (currentNearestDist > wayDistance) {
-                                currentNearestDist = wayDistance;
-                                nearest = (Way) way;
+                if (current instanceof RtreeLeaf) {
+                    if (current.getRect().distanceSquaredTo(p) < currentNearestDist) {
+                        for (Drawable way : ((RtreeLeaf) current).getDrawables()) {
+                            if (way instanceof Way) {
+                                double wayDistance = ((Way) way).minimumDistanceToSquared(p);
+                                if (currentNearestDist > wayDistance) {
+                                    currentNearestDist = wayDistance;
+                                    nearest = (Way) way;
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                pQueue.clear();
             }
         }
         return nearest;
     }
+
+    public void drawLineToNearestNodeOnNearestWay() {}
 
     public List<Drawable> query(Rectangle queryRect) {
         ArrayList<Drawable> result = new ArrayList<>();
