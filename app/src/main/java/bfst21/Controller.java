@@ -1,11 +1,10 @@
 package bfst21;
 
 import bfst21.osm.Node;
+import bfst21.osm.Way;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -61,6 +60,8 @@ public class Controller {
     private Text memoryUse;
     @FXML
     private Text scaletext;
+    @FXML
+    private Text closestRoad;
     @FXML
     private VBox leftContainer;
     @FXML
@@ -256,14 +257,27 @@ public class Controller {
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
+            pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
             pinText.textProperty().setValue(coordinates);
+            Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
                 canvas.repaint();
                 hideAll();
             });
+
+            //TODO add to fxml and make it look good
+            if (pinContainer.lookup("#nearest") != null){
+                pinContainer.getChildren().remove(pinContainer.lookup("#nearest"));
+            }
+            Button nearestWay = new Button("Find nearest way");
+            nearestWay.setId("nearest");
+            nearestWay.setOnAction(event -> {
+                canvas.getNearestNodeOnNearestWay();
+            });
+            pinContainer.getChildren().add(nearestWay);
         } else {
             singleClick = true;
         }
@@ -453,5 +467,21 @@ public class Controller {
     public void hideRoute(){
         routeDescription.setVisible(false);
         routeDescription.setManaged(false);
+    }
+
+    public void toggleRTreeLines() {
+        canvas.RTreeLines = !canvas.RTreeLines;
+        canvas.repaint();
+    }
+
+    public void updateClosestRoad(String text) {
+        closestRoad.textProperty().setValue(text);
+    }
+
+    public void onMouseMovedOnCanvas(MouseEvent e) {
+        Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
+        Way road = model.getRoadRTree().nearestWay(mousePoint);
+        // TODO make it print the name of the road, not  the ID
+        updateClosestRoad(String.valueOf(road.getId()));
     }
 }

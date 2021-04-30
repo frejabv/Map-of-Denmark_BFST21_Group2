@@ -39,6 +39,7 @@
                onMousePressed="#onMousePressedOnCanvas"
                onMouseDragged="#onMouseDraggedOnCanvas"
                onMouseReleased="#onMouseReleasedOnCanvas"
+               onMouseMoved="#onMouseMovedOnCanvas"
     />
     <GridPane pickOnBounds="false">
       <columnConstraints>
@@ -271,7 +272,7 @@
                 <Text styleClass="mainContainer-subheader">Dev Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox>Show KD-tree lines</CheckBox>
+              <CheckBox onMouseClicked="#toggleRTreeLines">Show R-tree lines</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
               </FlowPane>
@@ -291,6 +292,15 @@
             <Region styleClass="scalebar" pickOnBounds="false"/>
           </VBox>
         </HBox>
+      </bottom>
+    </BorderPane>
+    <BorderPane pickOnBounds="false">
+      <bottom>
+        <BorderPane styleClass="nearestRoad" pickOnBounds="false">
+          <center>
+            <Text fx:id="closestRoad">Closest Road (0m)</Text>
+          </center>
+        </BorderPane>
       </bottom>
     </BorderPane>
   </StackPane>

@@ -1,6 +1,9 @@
 package bfst21;
 
+import bfst21.Rtree.Rectangle;
+import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
+import bfst21.osm.Way;
 import bfst21.osm.Tag;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -16,6 +19,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    boolean RTreeLines;
     Point2D canvasPoint;
     Point2D pinPoint;
     double size;
@@ -130,6 +134,19 @@ public class MapCanvas extends Canvas {
                     size);
         }
 
+        if (RTreeLines) {
+            //display window
+            Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
+            maxPoint = mouseToModelCoords(maxPoint);
+
+            Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
+            minPoint = mouseToModelCoords(minPoint);
+
+            Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
+            gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+            model.getRoadRTree().drawRTree(window, gc);
+        }
+
         gc.restore();
         long elapsedTime = System.nanoTime() - start;
         if (redrawIndex < 20) {
@@ -225,5 +242,14 @@ public class MapCanvas extends Canvas {
 
     public Point2D getPinPoint() {
         return pinPoint;
+    }
+
+    //TODO make it return nearest node to mouse (needs UI)
+    public Node getNearestNodeOnNearestWay() {
+        Way nearestWay = model.getRoadRTree().nearestWay(pinPoint);
+        System.out.println("way ID: " + nearestWay.getId());
+        Node nearestNode = nearestWay.nearestNode(pinPoint);
+        System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
+        return nearestNode;
     }
 }

@@ -2,6 +2,7 @@ package bfst21.osm;
 
 import java.io.Serializable;
 import bfst21.Model;
+import javafx.geometry.Point2D;
 
 public class Node extends Member implements Serializable {
     private float x;
@@ -19,5 +20,9 @@ public class Node extends Member implements Serializable {
 
     public float getY() {
         return y;
+    }
+
+    public double distanceToSquared(Point2D p) {
+        return (x - p.getX()) * (x - p.getX()) + (y - p.getY()) * (y - p.getY());
     }
 }

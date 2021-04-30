@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.search.RadixTree;
 
@@ -23,8 +24,10 @@ public class Model {
     private ArrayList<Way> coastlines;
 
     private ArrayList<POI> pointsOfInterest;
+    private Rtree roadRTree;
 
     private boolean ttiMode;
+
 
     private float minX, minY, maxX, maxY;
     private List<City> cities;
@@ -52,6 +55,19 @@ public class Model {
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
+
+        List<Drawable> roadList= new ArrayList<>();
+        for (Tag tag: drawableMap.keySet()) {
+            roadList.addAll(drawableMap.get(tag));
+        }
+        roadRTree = new Rtree(roadList);
+
+        System.out.println("here");
+    }
+
+
+    public Rtree getRoadRTree() {
+        return roadRTree;
     }
 
     /*

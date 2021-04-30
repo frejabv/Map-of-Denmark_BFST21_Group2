@@ -159,3 +159,7 @@
     -fx-border-insets: 0 0 0 10px;
     -fx-background-insets: 0 0 0 10px;
 }
+
+.nearestRoad{
+    -fx-padding: 0 0 20px 0;
+}

@@ -26,7 +26,7 @@ public class OSMParser {
             loadOSM(in, model);
         } else if (filepath.endsWith(".zip")) {
             loadZIP(OSMParser.class.getResourceAsStream("/bfst21/data/" + filepath), model);
-            saveOBJ(filepath + ".obj", model);
+            //saveOBJ(filepath + ".obj", model);
         } else if (filepath.endsWith(".obj")) {
             try {
                 loadOBJ(filepath, model);
@@ -149,12 +149,11 @@ public class OSMParser {
                                 || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
                             CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
                             if (isNode) {
-                                model.addToCityIndex(new City(name, cityType, node.getX(), node.getY()));
+                                model.addToCityIndex(new City(name, cityType, node));
                             } else if (isWay && relation == null) {
-                                model.addToCityIndex(new City(name, cityType, way.first().getX(), way.first().getY()));
+                                model.addToCityIndex(new City(name, cityType, way));
                             } else if (isWay && relation != null) {
-                                model.addToCityIndex(new City(name, cityType, relation.ways.get(0).first().getX(),
-                                        relation.ways.get(0).first().getY()));
+                                model.addToCityIndex(new City(name, cityType, relation));
                             }
                         }
                     }
@@ -223,10 +222,12 @@ public class OSMParser {
                     isNode = false;
                     break;
                 case "way":
+                    way.createRectangle();
                     addWayToList(way, tags, model);
                     break;
                 case "relation":
                     relation.setTags(tags);
+                    relation.createRectangle();
                     relation = null;
                     break;
                 }
