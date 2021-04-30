@@ -113,6 +113,11 @@ public class Way extends Member implements Drawable, Serializable {
 
         float dot = pointXDiff * nDeltaX + pointYDiff * nDeltaY;
         float lengthSq = nDeltaX * nDeltaX + nDeltaY * nDeltaY;
+        /*
+        param describes where the point is, relative to the line.
+        if param < 0 || param > 1 it is closest to one of the end nodes.
+        if 0 < param < 1, then the closest point is on the line segment.
+        */
         double param = -1;
         if (lengthSq != 0) //in case of 0 length
             param = dot / lengthSq;
