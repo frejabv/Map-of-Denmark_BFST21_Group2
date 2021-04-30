@@ -74,7 +74,6 @@
           <TextField fx:id="searchField" styleClass="textfield">
             <promptText>Where would you like to go?</promptText>
           </TextField>
-          <Text fx:id="suggestionsHeader">Suggestions:</Text>
         </VBox>
         <VBox fx:id="routeContainer" styleClass="mainContainer">
           <TextField fx:id="routeFieldFrom" styleClass="textfield">
@@ -86,7 +85,7 @@
           <VBox fx:id="routeDescription" styleClass="routeDescription">
             <Region styleClass="hr" />
             <HBox>
-              <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
+              <ToggleButton id="car-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <ToggleGroup fx:id="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -96,7 +95,7 @@
                   </ImageView>
                 </graphic>
               </ToggleButton>
-              <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+              <ToggleButton id="bicycle-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -106,7 +105,7 @@
                   </ImageView>
                 </graphic>
               </ToggleButton>
-              <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+              <ToggleButton id="walk-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -140,13 +139,13 @@
                 </HBox>
                 <HBox alignment="CENTER" styleClass="stepContainer">
                   <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/roundaboutfirstexit.png"/>
+                    <Image url="@icons/roundabout_first_exit.png"/>
                   </ImageView>
                   <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                 </HBox>
                 <HBox alignment="CENTER" styleClass="stepContainer">
                   <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@icons/roundaboutsecondexit.png"/>
+                    <Image url="@icons/roundabout_second_exit.png"/>
                   </ImageView>
                   <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                 </HBox>
@@ -159,8 +158,8 @@
               </VBox>
             </ScrollPane>
             <Region styleClass="hr" />
-            <Text styleClass="arrivalText">0 min. (0,0km)</Text>
-            <Text styleClass="arrivalSmallText">Arrives 00:00</Text>
+            <Text fx:id="arrivalText" styleClass="arrivalText">0 min. (0,0km)</Text>
+            <Text fx:id="arrivalSmallText" styleClass="arrivalSmallText">Arrives 00:00</Text>
           </VBox>
         </VBox>
         <VBox fx:id="settingsContainer" styleClass="mainContainer">
@@ -191,7 +190,7 @@
               <HBox>
                 <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
                   <toggleGroup>
-                    <ToggleGroup fx:id="selectTransportType"/>
+                    <ToggleGroup fx:id="selectTransportTypeSettings"/>
                   </toggleGroup>
                   <graphic>
                     <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -201,7 +200,7 @@
                 </ToggleButton>
                 <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                   <toggleGroup>
-                    <fx:reference source="selectTransportType"/>
+                    <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
                   <graphic>
                     <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -211,7 +210,7 @@
                 </ToggleButton>
                 <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                   <toggleGroup>
-                    <fx:reference source="selectTransportType"/>
+                    <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
                   <graphic>
                     <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -272,7 +271,8 @@
                 <Text styleClass="mainContainer-subheader">Dev Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox onMouseClicked="#toggleRTreeLines">Show R-tree lines</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show R-tree lines</CheckBox>
+              <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
               </FlowPane>
