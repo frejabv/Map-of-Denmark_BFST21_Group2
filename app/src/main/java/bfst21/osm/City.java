@@ -68,11 +68,11 @@ public class City implements Drawable {
         if (lon == 0.0 && lat == 0.0) {
             if (relation != null) {
                 lat = (relation.getRect().getMaxX() + relation.getRect().getMinX()) / 2;
-                lon = ((relation.getRect().getMaxY() + relation.getRect().getMinY()) / 2);
+                lon = (relation.getRect().getMaxY() + relation.getRect().getMinY()) / 2;
                 relation = null;
             } else {
                 lat = (way.getRect().getMaxX() + way.getRect().getMinX()) / 2;
-                lon = (way.getRect().getMaxY() + way.getRect().getMinY() / 2);
+                lon = (way.getRect().getMaxY() + way.getRect().getMinY()) / 2;
                 way = null;
             }
         }
