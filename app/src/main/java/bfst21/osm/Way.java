@@ -70,10 +70,7 @@ public class Way extends Member implements Drawable, Serializable {
     }
 
     public void createRectangle() {
-        float minX = 181;
-        float minY = 181;
-        float maxX = -181;
-        float maxY = -181;
+        float minX = 181, minY = 91, maxX = -181, maxY = -91;
 
         for (Node n: nodes) {
             if (n.getX() < minX) {
@@ -109,37 +106,36 @@ public class Way extends Member implements Drawable, Serializable {
     }
 
     private Double minimumDistanceToSegment(Node n1, Node n2, Point2D p) {
-        //jeg synes det her er så grimt... jeg vil gerne gøre det mindre, men det er også svært at gøre læsbart.
-        float A = (float) (p.getX() - n1.getX());
-        float B = (float) (p.getY() - n1.getY());
-        float C = n2.getX() - n1.getX();
-        float D = n2.getY() - n1.getY();
+        float pointXDiff = (float) (p.getX() - n1.getX());
+        float pointYDiff = (float) (p.getY() - n1.getY());
+        float nDeltaX = n2.getX() - n1.getX();
+        float nDeltaY = n2.getY() - n1.getY();
 
-        float dot = A * C + B * D;
-        float len_sq = C * C + D * D;
+        float dot = pointXDiff * nDeltaX + pointYDiff * nDeltaY;
+        float lengthSq = nDeltaX * nDeltaX + nDeltaY * nDeltaY;
         double param = -1;
-        if (len_sq != 0) //in case of 0 length
-            param = dot / len_sq;
+        if (lengthSq != 0) //in case of 0 length
+            param = dot / lengthSq;
 
-        float xx;
-        float yy;
+        float nearestX;
+        float nearestY;
 
         if (param < 0) {
-            xx = n1.getX();
-            yy = n1.getY();
+            nearestX = n1.getX();
+            nearestY = n1.getY();
         }
         else if (param > 1) {
-            xx = n2.getX();
-            yy = n2.getY();
+            nearestX = n2.getX();
+            nearestY = n2.getY();
         }
         else {
-            xx = (float) (n1.getX() + param * C);
-            yy = (float) (n1.getY() + param * D);
+            nearestX = (float) (n1.getX() + param * nDeltaX);
+            nearestY = (float) (n1.getY() + param * nDeltaY);
         }
 
-        var dx = p.getX() - xx;
-        var dy = p.getY() - yy;
-        return Math.sqrt(dx * dx + dy * dy);
+        var deltaX = p.getX() - nearestX;
+        var deltaY = p.getY() - nearestY;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 
     public Node nearestNode(Point2D p) {

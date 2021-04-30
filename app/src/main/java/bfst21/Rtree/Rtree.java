@@ -88,8 +88,6 @@ public class Rtree {
         return result;
     }
 
-    //can be made more effective if needed, by iterating over the tree once instead of twice
-    //can also be split into two methods: one for drawing bounding boxes and one for drawing drawables' rectangles
     public void drawRTree(Rectangle window, GraphicsContext gc) {
         gc.setStroke(Color.PURPLE);
         for (Drawable d: query(window)) {
@@ -118,7 +116,7 @@ public class Rtree {
     }
 
     public List<Drawable> getAllDrawables(RtreeNode startNode) {
-        List<Drawable> AllDrawables = new ArrayList<>();
+        List<Drawable> allDrawables = new ArrayList<>();
 
         LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
         explorationQueue.add(startNode);
@@ -130,10 +128,10 @@ public class Rtree {
             }
 
             else if (current instanceof RtreeLeaf) {
-                AllDrawables.addAll(((RtreeLeaf) current).getDrawables());
+                allDrawables.addAll(((RtreeLeaf) current).getDrawables());
             }
         }
-        return AllDrawables;
+        return allDrawables;
     }
 
     public RtreeNode getRoot() {
