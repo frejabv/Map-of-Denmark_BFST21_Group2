@@ -64,24 +64,18 @@ public class RtreeNode {
     }
     
     protected Rectangle createBoundingBox(List<Drawable> descendants) {
-        float minX = 180000, minY = 900000, maxX = -180000, maxY = -10000;
+        float minX = 181, minY = 91, maxX = -181, maxY = -91;
         
         for (var descendant : descendants) {
             Rectangle descendantBoundingBox = descendant.getRect();
             
-            if (minX > descendantBoundingBox.minX) minX = descendantBoundingBox.minX;
-            if (maxX < descendantBoundingBox.minX) maxX = descendantBoundingBox.minX;
+            if (minX > descendantBoundingBox.getMinX()) minX = descendantBoundingBox.getMinX();
 
-            if (minY > descendantBoundingBox.minY) minY = descendantBoundingBox.minY;
-            if (maxY < descendantBoundingBox.minY) maxY = descendantBoundingBox.minY;
+            if (minY > descendantBoundingBox.getMinY()) minY = descendantBoundingBox.getMinY();
 
-            if (maxX < descendantBoundingBox.maxX) maxX = descendantBoundingBox.maxX;
-            if (minX > descendantBoundingBox.maxX) minX = descendantBoundingBox.maxX;
+            if (maxX < descendantBoundingBox.getMaxX()) maxX = descendantBoundingBox.getMaxX();
 
-            if (maxY < descendantBoundingBox.maxY) maxY = descendantBoundingBox.maxY;
-            if (minY > descendantBoundingBox.maxY) minY = descendantBoundingBox.maxY;
-
-
+            if (maxY < descendantBoundingBox.getMaxY()) maxY = descendantBoundingBox.getMaxY();
         }
 
         return new Rectangle(minX, minY, maxX, maxY);

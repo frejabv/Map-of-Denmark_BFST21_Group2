@@ -5,7 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 
 public class Rectangle {
-    float minX, minY, maxX, maxY;
+    protected float minX, minY, maxX, maxY;
 
     public Rectangle(float minX, float minY, float maxX, float maxY){
         this.minX = minX;

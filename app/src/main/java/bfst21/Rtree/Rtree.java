@@ -13,22 +13,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Rtree {
-    private Model model;
     private RtreeNode root;
     public final static int maxChildren = 5;
-    private int height;
-    private int rootSlices;
-    private boolean vertical = true;
-    private MapCanvas canvas;
+    private boolean vertical = false;
 
-    public Rtree(Model model, @org.jetbrains.annotations.NotNull List<Drawable> drawables){
-        this.model = model;
-        height = (int) Math.ceil(log(drawables.size()));
-        var subtreeHeight  = Math.pow(maxChildren, height - 1);
-
-        rootSlices = (int) Math.floor(Math.sqrt(Math.ceil(height / subtreeHeight)));
-
-        root = new RtreeNode(drawables, vertical, rootSlices);
+    public Rtree(@org.jetbrains.annotations.NotNull List<Drawable> drawables){
+        if (!drawables.isEmpty()) {
+            root = new RtreeNode(drawables, vertical, maxChildren);
+        }
     }
 
     public Way NearestWay(Point2D p) {
@@ -96,10 +88,6 @@ public class Rtree {
         return result;
     }
 
-    private double log(double num)  {
-        return Math.log(Rtree.maxChildren) / Math.log(num);
-    }
-
     public void drawRTree(Rectangle window, GraphicsContext gc) {
         gc.setStroke(Color.PURPLE);
         for (Drawable d: query(window)) {
@@ -121,21 +109,14 @@ public class Rtree {
                     }
                 }
             }
-/*
-            if(current instanceof RtreeLeaf) {
-                if (window.intersects(current.getRect())) {
-                    result.addAll(((RtreeLeaf) current).getDrawables());
-                }
-            } */
         }
-
 
         gc.setStroke(Color.BLACK);
         window.draw(gc);
     }
 
     public List<Drawable> getAllDrawables(RtreeNode startNode) {
-        List<Drawable> AllDrawables = new ArrayList<>();
+        List<Drawable> allDrawables = new ArrayList<>();
 
         LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
         explorationQueue.add(startNode);
@@ -147,9 +128,13 @@ public class Rtree {
             }
 
             else if (current instanceof RtreeLeaf) {
-                AllDrawables.addAll(((RtreeLeaf) current).getDrawables());
+                allDrawables.addAll(((RtreeLeaf) current).getDrawables());
             }
         }
-        return AllDrawables;
+        return allDrawables;
+    }
+
+    public RtreeNode getRoot() {
+        return root;
     }
 }

@@ -6,22 +6,28 @@ import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.stream.XMLStreamException;
 import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
+
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
+    private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
 
     private ArrayList<POI> pointsOfInterest;
-    private RadixTree streetTree;
-    private Rtree roadTree;
+    private Rtree roadRTree;
 
     private boolean ttiMode;
 
@@ -58,11 +64,13 @@ public class Model {
             e.printStackTrace();
         }
 
-        List<Drawable> testRoadList = new ArrayList<>();
-        for (Tag tag : drawableMap.keySet()) {
-            testRoadList.addAll(drawableMap.get(tag));
+        List<Drawable> roadList = new ArrayList<>();
+        for (Tag tag: drawableMap.keySet()) {
+            roadList.addAll(drawableMap.get(tag));
         }
-        roadTree = new Rtree(this, testRoadList);
+        roadRTree = new Rtree(roadList);
+
+        System.out.println("here");
     }
 
     /*
@@ -244,6 +252,6 @@ public class Model {
     }
 
     public Rtree getRtree() {
-        return roadTree;
+        return roadRTree;
     }
 }

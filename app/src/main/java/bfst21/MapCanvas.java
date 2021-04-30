@@ -148,7 +148,7 @@ public class MapCanvas extends Canvas {
 
             Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-            model.getRtree().drawRTree(window, gc);
+            model.getRoadRTree().drawRTree(window, gc);
         }
 
         gc.restore();
@@ -172,7 +172,7 @@ public class MapCanvas extends Canvas {
                 trans.prependScale(factor, factor, center);
             }
         } else {
-            // TODO: make the boundary go to initial zoom position
+            // TODO: make the boundry go to inital zoom position
             if (getDistanceWidth() < 1000) {
                 trans.prependScale(factor, factor, center);
             }
@@ -276,14 +276,13 @@ public class MapCanvas extends Canvas {
         return pinPoint;
     }
 
-    public void drawNearest() {
-        gc.setStroke(Color.GREENYELLOW);
-        gc.setLineWidth(3 / Math.sqrt(trans.determinant()));
-        Way nearest = model.getRtree().NearestWay(pinPoint);
-        System.out.println("way ID: " + nearest.getId());
-        System.out.println("Node ID: " + nearest.nearestNode(pinPoint).getId() + " coordinate: "+ nearest.nearestNode(pinPoint).getY() + " " + nearest.nearestNode(canvasPoint).getX() * -0.56f);
-        nearest.getRect().draw(gc);
-        nearest.draw(gc);
+    //TODO make it return nearest node to mouse (needs UI)
+    public Node getNearestNodeOnNearestWay() {
+        Way nearestWay = model.getRoadRTree().NearestWay(pinPoint);
+        System.out.println("way ID: " + nearestWay.getId());
+        Node nearestNode = nearestWay.nearestNode(pinPoint);
+        System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
+        return nearestNode;
     }
 
     public void showRoute(){
