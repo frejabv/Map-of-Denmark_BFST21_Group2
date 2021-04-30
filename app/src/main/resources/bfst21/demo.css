@@ -94,6 +94,12 @@
 .textfield:focused {
     -fx-focus-color: transparent;
 }
+.checkBox {
+    /*JavaFX Margin Fix*/
+    -fx-padding: 0px 0px 20px 0px;
+    -fx-border-insets: 0 0 20px 0;
+    -fx-background-insets: 0 0 20px 0;
+}
 .pinBorderPane{
     -fx-spacing: 20px;
 }
@@ -158,4 +164,8 @@
     -fx-padding: 0 0 0 10px;
     -fx-border-insets: 0 0 0 10px;
     -fx-background-insets: 0 0 0 10px;
+}
+
+.nearestRoad{
+    -fx-padding: 0 0 20px 0;
 }

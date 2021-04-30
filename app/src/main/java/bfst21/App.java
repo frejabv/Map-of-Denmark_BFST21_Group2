@@ -1,7 +1,5 @@
 package bfst21;
 
-import java.io.File;
-
 import bfst21.Startup.StartupScreen;
 import javafx.application.Application;
 import javafx.stage.Stage;

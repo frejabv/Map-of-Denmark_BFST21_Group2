@@ -1,5 +1,6 @@
 package bfst21.osm;
 
+import bfst21.Rtree.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.FillRule;
 
@@ -9,6 +10,7 @@ import java.util.List;
 public class Relation extends Member {
     ArrayList<Member> members = new ArrayList<>();
     ArrayList<Way> ways = new ArrayList<>();
+    Rectangle rect;
 
     public Relation(long id) {
         super(id);
@@ -68,4 +70,43 @@ public class Relation extends Member {
         gc.fill();
     }
 
+    public void createRectangle(){
+        float minX = 1800, maxX = -1800, minY = 1800, maxY = -1800;
+
+        for (Way w: ways) {
+            //check min values
+            if (w.getRect().getMinX() < minX) {
+                minX = w.getRect().getMinX();
+            }
+            if (w.getRect().getMinX() > maxX) {
+                maxX = w.getRect().getMinX();
+            }
+            if (w.getRect().getMinY() < minY) {
+                minY = w.getRect().getMinY();
+            }
+            if (w.getRect().getMinY() > maxY) {
+                maxY = w.getRect().getMinY();
+            }
+
+            //check max values
+            if (w.getRect().getMaxX() < minX) {
+                minX = w.getRect().getMaxX();
+            }
+            if (w.getRect().getMaxX() > maxX) {
+                maxX = w.getRect().getMaxX();
+            }
+            if (w.getRect().getMaxY() < minY) {
+                minY = w.getRect().getMaxY();
+            }
+            if (w.getRect().getMaxY() > maxY) {
+                maxY = w.getRect().getMaxY();
+            }
+        }
+
+        rect = new Rectangle(minX, minY, maxX, maxY);
+    }
+
+    public Rectangle getRect(){
+        return rect;
+    }
 }

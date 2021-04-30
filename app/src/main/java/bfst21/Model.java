@@ -1,7 +1,10 @@
 package bfst21;
 
 import bfst21.exceptions.UnsupportedFileTypeException;
+import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
+import bfst21.pathfinding.AStar;
+import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 
 import java.io.File;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
+import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -26,8 +30,15 @@ public class Model {
     private ArrayList<Way> coastlines;
 
     private ArrayList<POI> pointsOfInterest;
+    private Rtree roadRTree;
 
     private boolean ttiMode;
+
+    private AStar aStar;
+    private List<Node> AStarPath;
+    private List<Node> AStarDebugPath;
+    private TransportType currentTransportType = TransportType.CAR;
+    float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private float minX, minY, maxX, maxY;
     private List<City> cities;
@@ -67,6 +78,14 @@ public class Model {
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
+
+        List<Drawable> roadList = new ArrayList<>();
+        for (Tag tag: drawableMap.keySet()) {
+            roadList.addAll(drawableMap.get(tag));
+        }
+        roadRTree = new Rtree(roadList);
+
+        System.out.println("here");
     }
 
     /*
@@ -188,6 +207,49 @@ public class Model {
         this.streetTree = streetTree;
     }
 
+    public void setUpAStar() {
+        aStar = new AStar(this);
+    }
+
+    public AStar getAStar() {
+        return aStar;
+    }
+
+    public boolean existsAStarPath() {
+        return AStarPath != null;
+    }
+
+    public List<Node> getAStarPath() {
+        return AStarPath;
+    }
+
+    public void setAStarPath(List<Node> AStarPath) {
+        this.AStarPath = AStarPath;
+    }
+
+    public List<Node> getAStarDebugPath() {
+        return AStarDebugPath;
+    }
+
+    public void setAStarDebugPath(List<Node> AStarDebugPath) {
+        this.AStarDebugPath = AStarDebugPath;
+    }
+
+    public void setCurrentTransportType(TransportType type) {
+        this.currentTransportType = type;
+    }
+
+    public TransportType getCurrentTransportType() {
+        return currentTransportType;
+    }
+
+    public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
+        this.aStarMinX = minX;
+        this.aStarMinY = minY;
+        this.aStarMaxX = maxX;
+        this.aStarMaxY = maxY;
+    }
+
     public void addPOI(POI poi) {
         pointsOfInterest.add(poi);
     }
@@ -199,5 +261,12 @@ public class Model {
     public void addToCityIndex(City city) {
         cities.add(city);
     }
-    public List<City> getCities(){return cities;}
+
+    public List<City> getCities() {
+        return cities;
+    }
+
+    public Rtree getRtree() {
+        return roadRTree;
+    }
 }
