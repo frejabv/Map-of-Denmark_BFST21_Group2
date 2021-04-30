@@ -574,7 +574,8 @@ public class Controller {
     public void selectTransportTypeRoute() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
         if (currentButton != null) {
-            model.setCurrentTransportType(TransportType.valueOf(currentButton.getId().split("-")[0].toUpperCase()));
+            String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
+            model.setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
             model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
             showRouteDescription();
             canvas.repaint(); //To show the route after it has been calculated
