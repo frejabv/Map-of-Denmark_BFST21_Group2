@@ -23,7 +23,8 @@ public class Rtree {
         }
     }
 
-    public Way NearestWay(Point2D p) {
+    //TODO make nearest way check for nearby rectangles if nothing is found.
+    public Way nearestWay(Point2D p) {
         Way nearest = null;
         double currentNearestDist = 100000000;
 

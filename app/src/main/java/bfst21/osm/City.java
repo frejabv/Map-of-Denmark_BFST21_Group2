@@ -72,7 +72,7 @@ public class City implements Drawable {
                 relation = null;
             } else {
                 lat = (way.getRect().getMaxX() + way.getRect().getMinX()) / 2;
-                lon = (way.getRect().getMaxY() + way.getRect().getMinY() / 2);
+                lon = ((way.getRect().getMaxY() + way.getRect().getMinY()) / 2);
                 way = null;
             }
         }
