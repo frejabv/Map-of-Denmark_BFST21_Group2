@@ -148,7 +148,7 @@ public class MapCanvas extends Canvas {
 
             Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-            model.getRoadRTree().drawRTree(window, gc);
+            model.getRtree().drawRTree(window, gc);
         }
 
         gc.restore();
@@ -278,7 +278,7 @@ public class MapCanvas extends Canvas {
 
     //TODO make it return nearest node to mouse (needs UI)
     public Node getNearestNodeOnNearestWay() {
-        Way nearestWay = model.getRoadRTree().NearestWay(pinPoint);
+        Way nearestWay = model.getRtree().NearestWay(pinPoint);
         System.out.println("way ID: " + nearestWay.getId());
         Node nearestNode = nearestWay.nearestNode(pinPoint);
         System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
