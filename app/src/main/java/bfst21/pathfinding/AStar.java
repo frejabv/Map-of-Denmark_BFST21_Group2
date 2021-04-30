@@ -17,6 +17,10 @@ public class AStar {
     List<Node> path;
     TransportType type;
 
+    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> walkable = new ArrayList<>(Arrays.asList(Tag.FOOTWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
+
     public AStar(Model model) {
         this.model = model;
         readData();
@@ -32,13 +36,13 @@ public class AStar {
                     if (i != (tempWay.getNodes().size() - 1)) {
                         Node nextNode = tempWay.getNodes().get(i + 1);
                         Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId());
-                        edge.setPathTypes(tempWay, model);
+                        edge.setPathTypes(tempWay, this);
                         node.addAdjacencies(edge);
                     }
                     if (i > 0 && !tempWay.isOneway()) {
                         Node previousNode = tempWay.getNodes().get(i - 1);
                         Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId());
-                        edge.setPathTypes(tempWay, model);
+                        edge.setPathTypes(tempWay, this);
                         node.addAdjacencies(edge);
                     }
                 }
@@ -77,7 +81,7 @@ public class AStar {
                 if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
                     child.setHScores(distanceToNode(child, end) / type.maxSpeed);
-                    float cost = e.getWeight(type, model);
+                    float cost = e.getWeight(type, model.getWayIndex().getMember(e.getWayID()).getSpeed());
                     float temp_g_scores = current.g_scores + cost;
                     float temp_f_scores = temp_g_scores + child.h_scores;
 
@@ -372,5 +376,17 @@ public class AStar {
             }
         }
         return result;
+    }
+
+    public ArrayList<Tag> getDriveableTags() {
+        return driveable;
+    }
+
+    public ArrayList<Tag> getCyclableTags() {
+        return cyclable;
+    }
+
+    public ArrayList<Tag> getWalkableTags() {
+        return walkable;
     }
 }

@@ -31,10 +31,6 @@ public class Model {
     private TransportType currentTransportType = TransportType.CAR;
     float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
-    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
-    private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
-    private final ArrayList<Tag> walkable = new ArrayList<>(Arrays.asList(Tag.FOOTWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
-
     private float minX, minY, maxX, maxY;
     private List<City> cities;
 
@@ -222,18 +218,6 @@ public class Model {
 
     public TransportType getCurrentTransportType() {
         return currentTransportType;
-    }
-
-    public ArrayList<Tag> getDriveableTags() {
-        return driveable;
-    }
-
-    public ArrayList<Tag> getCyclableTags() {
-        return cyclable;
-    }
-
-    public ArrayList<Tag> getWalkableTags() {
-        return walkable;
     }
 
     public void setAStarBounds(float minX, float minY, float maxX, float maxY) {

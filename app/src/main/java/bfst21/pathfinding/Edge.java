@@ -17,27 +17,27 @@ public class Edge {
         this.wayID = wayID;
     }
 
-    public void setPathTypes(Way way, Model model) {
+    public void setPathTypes(Way way, AStar astar) {
         for (Tag tag : way.getTags()) {
-            if (model.getDriveableTags().contains(tag)) {
+            if (astar.getDriveableTags().contains(tag)) {
                 isDriveable = true;
             }
-            if (model.getCyclableTags().contains(tag)) {
+            if (astar.getCyclableTags().contains(tag)) {
                 isCyclable = true;
             }
-            if (model.getWalkableTags().contains(tag)) {
+            if (astar.getWalkableTags().contains(tag)) {
                 isWalkable = true;
             }
         }
     }
 
-    public float getWeight(TransportType type, Model model) {
+    public float getWeight(TransportType type, int speed) {
         if (type == TransportType.BICYCLE) {
             return weight / 15;
         } else if (type == TransportType.WALK) {
             return weight / 5;
         } else {
-            return weight / model.getWayIndex().getMember(wayID).getSpeed();
+            return weight / speed;
         }
     }
 
