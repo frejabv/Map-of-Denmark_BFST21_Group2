@@ -338,6 +338,9 @@ public class Controller {
             pinContainer.setVisible(false);
             pinContainer.setManaged(false);
         }
+        searchContainer.getChildren().removeAll(suggestionList);
+        routeContainer.getChildren().removeAll(suggestionList);
+        suggestionList.clear();
         switch (type) {
             case "route":
                 fadeButtons();
