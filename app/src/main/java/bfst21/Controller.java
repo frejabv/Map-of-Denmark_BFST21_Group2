@@ -482,6 +482,7 @@ public class Controller {
         Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
         Way road = model.getRoadRTree().nearestWay(mousePoint);
         // TODO make it print the name of the road, not  the ID
-        updateClosestRoad(String.valueOf(road.getId()));
+        if (road != null)
+            updateClosestRoad(String.valueOf(road.getId()));
     }
 }
