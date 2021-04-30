@@ -5,6 +5,7 @@ import bfst21.osm.Node;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import bfst21.pathfinding.AStar;
+import bfst21.pathfinding.Edge;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,6 +89,27 @@ public class AStarTest {
     }
 
     @Test
+    public void testWalkRoute() {
+        //from Roskilde to Helsingør there is a footway
+        AStar astar = model.getAStar();
+        Node roskilde = model.getNodeIndex().getMember(13);
+        Node helsingør = model.getNodeIndex().getMember(15);
+
+        model.setCurrentTransportType(TransportType.WALK);
+        astar.AStarSearch(helsingør, roskilde, model.getCurrentTransportType());
+        ArrayList<Step> steps = astar.getPathDescription();
+
+        assertEquals(3, steps.size());
+        assertEquals("unknown road", steps.get(0).getRoadName());
+
+        //there is no walk route to korsør
+        Node korsør = model.getNodeIndex().getMember(12);
+        astar.AStarSearch(helsingør, korsør, model.getCurrentTransportType());
+        steps = astar.getPathDescription();
+        assertEquals("No path was found", steps.get(0).toString());
+    }
+
+    @Test
     public void testDistance() {
         //distance from Odense to Korsør
         Node testNode = model.getNodeIndex().getMember(11);
@@ -119,6 +141,33 @@ public class AStarTest {
     }
 
     @Test
+    public void testTotalTime() {
+        //distance from Odense to Korsør
+        AStar astar = model.getAStar();
+        Node testNode = model.getNodeIndex().getMember(11);
+        Node destination = model.getNodeIndex().getMember(12);
+
+        double deltaX = Math.abs(testNode.getX() - destination.getX());
+        double deltaY = Math.abs(testNode.getY() - destination.getY());
+        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
+        double totalDistance = Math.round(distance * 10.0) / 10.0;
+        long wayID = 0;
+        for (Edge e : testNode.getAdjacencies()) {
+            if (e.target == destination) {
+                wayID = e.getWayID();
+            }
+        }
+        double totalTime = totalDistance / model.getWayIndex().getMember(wayID).getSpeed();
+        int time = (int) (totalTime * 60);
+        int minutes = time % 60;
+        int hours = time / 60;
+
+        astar.AStarSearch(testNode, destination, TransportType.CAR);
+        astar.getPathDescription();
+        assertEquals("Estimated Time: " + hours + " hours and " + minutes + " min", astar.getTotalTime());
+    }
+
+    @Test
     public void testRoundaboutExitDescription() {
         Model modelRoundabout = new Model("roundabout-simple.osm",false);
         modelRoundabout.setUpAStar();
@@ -127,7 +176,7 @@ public class AStarTest {
         Node destination = modelRoundabout.getNodeIndex().getMember(1);
 
         astar.AStarSearch(testNode, destination, TransportType.CAR);
-        assertEquals("Take the 3rd exit in the roundabout and follow  for 24932km", astar.getPathDescription().get(2).toString());
+        assertEquals("Take the 3rd exit in the roundabout and follow unknown road for 24932km", astar.getPathDescription().get(2).toString());
     }
 
     @Test
