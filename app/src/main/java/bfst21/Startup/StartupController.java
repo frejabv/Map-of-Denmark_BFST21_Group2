@@ -2,11 +2,15 @@ package bfst21.Startup;
 
 import bfst21.Model;
 import bfst21.View;
+import bfst21.osm.FileExtension;
+import bfst21.osm.OSMParser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class StartupController {
     Stage stage;
@@ -31,7 +35,11 @@ public class StartupController {
 
     public void startMapView(String filePath) {
         try {
-            var model = new Model(filePath, false);
+            FileExtension fileExtension = OSMParser.genFileExtension(filePath);
+            InputStream in = new FileInputStream(filePath);
+            String[] filePathParts = filePath.split("/");
+
+            var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             View view = new View(model, stage);
         } catch (IOException e) {
             e.printStackTrace();
