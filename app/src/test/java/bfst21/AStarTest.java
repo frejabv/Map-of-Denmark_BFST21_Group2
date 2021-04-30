@@ -117,4 +117,28 @@ public class AStarTest {
         astar.getPathDescription();
         assertEquals("Distance: " + totalDistance + " km", astar.getTotalDistance());
     }
+
+    @Test
+    public void testRoundaboutExitDescription() {
+        Model modelRoundabout = new Model("roundabout-simple.osm",false);
+        modelRoundabout.setUpAStar();
+        AStar astar = modelRoundabout.getAStar();
+        Node testNode = modelRoundabout.getNodeIndex().getMember(12);
+        Node destination = modelRoundabout.getNodeIndex().getMember(1);
+
+        astar.AStarSearch(testNode, destination, TransportType.CAR);
+        assertEquals("Take the 3rd exit in the roundabout and follow  for 24932km", astar.getPathDescription().get(2).toString());
+    }
+
+    @Test
+    public void testRoundaboutExitType() {
+        Model modelRoundabout = new Model("roundabout-simple.osm",false);
+        modelRoundabout.setUpAStar();
+        AStar astar = modelRoundabout.getAStar();
+        Node testNode = modelRoundabout.getNodeIndex().getMember(12);
+        Node destination = modelRoundabout.getNodeIndex().getMember(1);
+
+        astar.AStarSearch(testNode, destination, TransportType.CAR);
+        assertEquals("roundabout_other_exit", astar.getPathDescription().get(2).getDirection().toString().toLowerCase());
+    }
 }
