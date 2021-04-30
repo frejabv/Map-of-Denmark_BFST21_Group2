@@ -23,7 +23,6 @@ public class Rtree {
 
     public Rtree(Model model, @org.jetbrains.annotations.NotNull List<Drawable> drawables){
         this.model = model;
-        //System.out.println(Math.ceil(log(drawables.size())));
         height = (int) Math.ceil(log(drawables.size()));
         var subtreeHeight  = Math.pow(maxChildren, height - 1);
 

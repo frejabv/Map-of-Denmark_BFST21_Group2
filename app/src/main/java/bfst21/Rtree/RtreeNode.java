@@ -29,7 +29,6 @@ public class RtreeNode {
         if (descendants.size() > (sliceSize * sliceSize)) {
             for (int i = 0; i < sliceSize; i++) {
                 var toIndex = Math.min(currentOffset + splitSize, descendants.size() - 1);
-                //System.out.println(toIndex);
                 children.add(new RtreeNode(descendants.subList(currentOffset, toIndex), !vertical));
                 currentOffset += splitSize;
             }
