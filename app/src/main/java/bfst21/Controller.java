@@ -165,7 +165,7 @@ public class Controller {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
                 Node nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
                 Point2D p = new Point2D(nodeFrom.getX(), nodeFrom.getY());
-                fromNode = model.getRtree().NearestWay(p).nearestNode(p);
+                fromNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                 if (toNode != null) {
                     model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
                     showRouteDescription();
@@ -184,7 +184,7 @@ public class Controller {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
                 Node nodeTo = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldTo.getText()).getId());
                 Point2D p = new Point2D(nodeTo.getX(), nodeTo.getY());
-                toNode = model.getRtree().NearestWay(p).nearestNode(p);
+                toNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                 if (fromNode != null) {
                     model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
                     showRouteDescription();
@@ -233,10 +233,10 @@ public class Controller {
                     } else {
                         if (fieldType.equals("from")) {
                             Point2D p = new Point2D(node.getX(), node.getY());
-                            fromNode = model.getRtree().NearestWay(p).nearestNode(p);
+                            fromNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                         } else {
                             Point2D p = new Point2D(node.getX(), node.getY());
-                            toNode = model.getRtree().NearestWay(p).nearestNode(p);
+                            toNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                         }
                         if (fromNode != null && toNode != null) {
                             model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());

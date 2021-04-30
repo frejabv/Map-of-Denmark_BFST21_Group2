@@ -148,7 +148,7 @@ public class MapCanvas extends Canvas {
 
             Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-            model.getRtree().drawRTree(window, gc);
+            model.getRoadRTree().drawRTree(window, gc);
         }
 
         gc.restore();

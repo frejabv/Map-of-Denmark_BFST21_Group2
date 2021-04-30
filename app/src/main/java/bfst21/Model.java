@@ -251,7 +251,7 @@ public class Model {
         return cities;
     }
 
-    public Rtree getRtree() {
+    public Rtree getRoadRTree() {
         return roadRTree;
     }
 }
