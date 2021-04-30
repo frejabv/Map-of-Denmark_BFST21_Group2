@@ -279,7 +279,7 @@ public class MapCanvas extends Canvas {
 
     public Node getNearestNodeOnNearestWay() {
         Way nearestWay = model.getRoadRTree().nearestWay(pinPoint);
-        System.out.println("way ID: " + nearestWay.getId());
+        System.out.println("Nearest way name: " + nearestWay.getName() + " ID: " + nearestWay.getId());
         Node nearestNode = nearestWay.nearestNode(pinPoint);
         System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
         return nearestNode;
