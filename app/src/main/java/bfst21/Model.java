@@ -40,11 +40,12 @@ public class Model {
         this(
                 Model.class.getResourceAsStream(filePath),
                 OSMParser.genFileExtension(filePath),
+                filePath,
                 ttiMode
         );
     }
 
-    public Model(InputStream in, FileExtension fileExtension, boolean ttiMode) {
+    public Model(InputStream in, FileExtension fileExtension, String fileName, boolean ttiMode) {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
@@ -59,8 +60,10 @@ public class Model {
 
         this.ttiMode = ttiMode;
 
+        String[] fileNameParts = fileName.split("/");
+
         try {
-            OSMParser.readMapElements(in, fileExtension, this);
+            OSMParser.readMapElements(in, fileExtension, fileNameParts[fileNameParts.length - 1], this);
         } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }

@@ -9,7 +9,9 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,14 +22,19 @@ import java.util.zip.ZipInputStream;
 public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
 
-    public static void readMapElements(InputStream in, FileExtension fileExtension,  Model model) throws IOException, XMLStreamException {
+    public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
+            throws IOException, XMLStreamException {
         switch (fileExtension) {
-            case OSM -> loadOSM(in, model);
-            case ZIP -> {
-                loadZIP(in, model);
-                saveOBJ(model);
-            }
-            case OBJ -> loadOBJ(in, model);
+        case OSM:
+            loadOSM(in, model);
+            break;
+        case ZIP:
+            loadZIP(in, model);
+            saveOBJ(fileName, model);
+            break;
+        case OBJ:
+            loadOBJ(in, model);
+            break;
         }
     }
 
@@ -50,14 +57,17 @@ public class OSMParser {
         }
     }
 
-    public static void saveOBJ(Model model) throws IOException {
-        File file = null;
-        try {
-            file = Paths.get(OSMParser.class.getResource("/bfst21/data/objectOutput").toURI()).toFile();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+    public static void saveOBJ(String fileName, Model model) throws IOException {
+        // Point java to the correct folder on the host machine
+        URL fileURL = OSMParser.class.getResource("/bfst21/data/");
+        File file = new File(fileURL.getPath() + fileName);
+
+        if (!file.createNewFile()) {
+            // Figure out whether or not we need to freak out if we are overwriting an existing obj file
         }
-        try (var output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())))) {
+
+        try (var output = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())))) {
             output.writeObject(model.getFillMap());
             output.writeObject(model.getNodeIndex());
             output.writeObject(model.getWayIndex());
@@ -295,13 +305,21 @@ public class OSMParser {
     public static FileExtension genFileExtension(String filePath) {
         String[] filePathParts = filePath.split("\\.");
 
-        return switch (filePathParts[filePathParts.length - 1]) {
-            case "osm" -> FileExtension.OSM;
-            case "zip" -> FileExtension.ZIP;
-            case "obj" -> FileExtension.OBJ;
-            default -> throw new UnsupportedFileTypeException(
-                    "Unsupported file type: " + filePathParts[filePathParts.length - 1]
-            );
-        };
+        FileExtension toReturn;
+
+        switch (filePathParts[filePathParts.length - 1]) {
+        case "osm":
+            toReturn = FileExtension.OSM;
+            break;
+        case "zip":
+            toReturn = FileExtension.ZIP;
+            break;
+        case "obj":
+            toReturn = FileExtension.OBJ;
+            break;
+        default:
+            throw new UnsupportedFileTypeException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
+        }
+        return toReturn;
     }
 }

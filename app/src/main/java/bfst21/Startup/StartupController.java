@@ -37,8 +37,9 @@ public class StartupController {
         try {
             FileExtension fileExtension = OSMParser.genFileExtension(filePath);
             InputStream in = new FileInputStream(filePath);
+            String[] filePathParts = filePath.split("/");
 
-            var model = new Model(in, fileExtension, false);
+            var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             View view = new View(model, stage);
         } catch (IOException e) {
             e.printStackTrace();
