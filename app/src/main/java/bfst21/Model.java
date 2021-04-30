@@ -4,7 +4,6 @@ import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.search.RadixTree;
 
-import java.lang.reflect.Array;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +16,6 @@ public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
 
-    // drawables are all ways that not in any other list
-    private List<Drawable> drawables;
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
@@ -27,7 +24,7 @@ public class Model {
     private ArrayList<Way> coastlines;
 
     private ArrayList<POI> pointsOfInterest;
-    private Rtree rtree;
+    private Rtree roadRTree;
 
     private boolean ttiMode;
 
@@ -59,18 +56,18 @@ public class Model {
             e.printStackTrace();
         }
 
-        List<Drawable> testList= new ArrayList<>();
+        List<Drawable> roadList= new ArrayList<>();
         for (Tag tag: drawableMap.keySet()) {
-            testList.addAll(drawableMap.get(tag));
+            roadList.addAll(drawableMap.get(tag));
         }
+        roadRTree = new Rtree(roadList);
 
-        rtree = new Rtree(testList);
         System.out.println("here");
     }
 
 
-    public Rtree getRtree() {
-        return rtree;
+    public Rtree getRoadRTree() {
+        return roadRTree;
     }
 
     /*

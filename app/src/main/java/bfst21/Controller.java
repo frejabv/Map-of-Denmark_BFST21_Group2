@@ -465,7 +465,7 @@ public class Controller {
         routeDescription.setManaged(false);
     }
 
-    public void toggleRTreeLines(MouseEvent mouseEvent) {
+    public void toggleRTreeLines() {
         canvas.RTreeLines = !canvas.RTreeLines;
         canvas.repaint();
     }
