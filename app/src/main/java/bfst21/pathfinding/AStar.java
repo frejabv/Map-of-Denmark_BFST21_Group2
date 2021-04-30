@@ -223,12 +223,18 @@ public class AStar {
                 currentDistance += distanceToNode(node, nextNode);
                 totalDistance += currentDistance;
                 totalTime += currentDistance / currentMaxSpeed;
-                Step step = new Step(direction, model.getWayIndex().getMember(secondId).getName(), currentDistance);
+                String roadName;
+                if(model.getWayIndex().getMember(secondId).getName().equals("")) {
+                    roadName = "unknown road";
+                } else {
+                    roadName = model.getWayIndex().getMember(secondId).getName();
+                }
+                Step step = new Step(direction, roadName, currentDistance);
                 if (exits > 0) {
                     step.setExits(exits);
                 }
                 routeDescription.add(step);
-                routeDescription.add(new Step(Direction.ARRIVAL, model.getWayIndex().getMember(secondId).getName(), 0));
+                routeDescription.add(new Step(Direction.ARRIVAL, roadName, 0));
             }
         }
 
