@@ -273,6 +273,7 @@
               <Region styleClass="hr"/>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show R-tree lines</CheckBox>
               <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
               </FlowPane>

@@ -10,6 +10,7 @@ enum Theme {
 }
 
 public class RenderingStyle {
+    private Map<Tag, Boolean> doubleDrawn;
     private Map<Tag, Color> defaultColorMap;
     private Map<Tag, Color> darkModeColorMap;
     private Map<Tag, DrawStyle> styleMap;
@@ -21,6 +22,7 @@ public class RenderingStyle {
     public Color islandClose;
 
     public RenderingStyle() {
+        doubleDrawn = new HashMap<Tag, Boolean>();
         defaultColorMap = new HashMap<>();
         darkModeColorMap = new HashMap<>();
         styleMap = new HashMap<>();
@@ -31,9 +33,27 @@ public class RenderingStyle {
         styleMap.put(Tag.WATER, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
 
+        doubleDrawn.put(Tag.JUNCTION, true);
+        doubleDrawn.put(Tag.LIVING_STREET, true);
+        doubleDrawn.put(Tag.MOTORWAY, true);
+        doubleDrawn.put(Tag.MOTORWAY_LINK, true);
+        doubleDrawn.put(Tag.PRIMARY, true);
+        doubleDrawn.put(Tag.PRIMARY_LINK, true);
+        doubleDrawn.put(Tag.RESIDENTIAL, true);
+        doubleDrawn.put(Tag.ROAD, true);
+        doubleDrawn.put(Tag.SECONDARY, true);
+        doubleDrawn.put(Tag.SECONDARY_LINK, true);
+        doubleDrawn.put(Tag.SERVICE, true);
+        doubleDrawn.put(Tag.TERTIARY, true);
+        doubleDrawn.put(Tag.TERTIARY_LINK, true);
+        doubleDrawn.put(Tag.TRUNK, true);
+        doubleDrawn.put(Tag.TRUNK_LINK, true);
+        doubleDrawn.put(Tag.UNCLASSIFIED, true);
+
         widthMap.put(Tag.MOTORWAY, 3.0);
         widthMap.put(Tag.PRIMARY, 2.0);
         widthMap.put(Tag.SECONDARY, 1.5);
+        widthMap.put(Tag.TERTIARY, 1.8);
 
         genDefaultMode();
         genDarkMode();
@@ -132,12 +152,17 @@ public class RenderingStyle {
 
     public double getWidthByTag(Tag tag) {
         var width = widthMap.get(tag);
-        return width == null ? 1.0 : width;
+        return width == null ? 2.0 : width;
     }
 
     public DrawStyle getDrawStyleByTag(Tag tag) {
         var style = styleMap.get(tag);
 
         return style == null ? DrawStyle.STROKE : style;
+    }
+
+    public boolean getDoubleDrawn(Tag tag){
+        Boolean drawnDouble = doubleDrawn.get(tag);
+        return drawnDouble == null ? false : drawnDouble;
     }
 }

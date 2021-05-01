@@ -601,4 +601,9 @@ public class Controller {
         if (road != null)
             updateClosestRoad(String.valueOf(road.getId()));
     }
+
+    public void toggleDoubleDraw() {
+        canvas.doubleDraw = !canvas.doubleDraw;
+        canvas.repaint();
+    }
 }

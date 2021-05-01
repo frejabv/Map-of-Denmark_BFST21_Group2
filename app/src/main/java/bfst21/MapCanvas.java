@@ -22,6 +22,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    boolean doubleDraw;
     boolean RTreeLines;
     public boolean debugAStar;
     private boolean showRoute;
@@ -83,18 +84,51 @@ public class MapCanvas extends Canvas {
                 }
             }
         });
+        //Draw dark
+        if (doubleDraw){
+            model.getDrawableMap().forEach((tag, drawables) -> {
+                if (renderingStyle.getDoubleDrawn(tag)) {
+                    Color c1 = renderingStyle.getColorByTag(tag);
+                    int darkRed = (int) (c1.getRed() * 255 * 0.75);
+                    int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
+                    int darkBlue = (int) (c1.getBlue() * 255 * 0.75);
+                    gc.setStroke(Color.rgb(darkRed, darkGreen, darkBlue));
+                    gc.setLineWidth(renderingStyle.getWidthByTag(tag) * 1.5 / Math.sqrt(trans.determinant()));
+                    var style = renderingStyle.getDrawStyleByTag(tag);
+                    if (drawables != null) {
+                        drawables.forEach(drawable -> {
+                            if (tag.zoomLimit > getDistanceWidth()) {
+                                //Draw dark back
+                                drawable.draw(gc);
+                            }
+                        });
+                    }
+                }
+            });
+        }
 
+        //Draw normal
         model.getDrawableMap().forEach((tag, drawables) -> {
             gc.setStroke(renderingStyle.getColorByTag(tag));
-            gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+            if (renderingStyle.getDoubleDrawn(tag)) {
+                gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+            }
+            else{
+                gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+            }
             var style = renderingStyle.getDrawStyleByTag(tag);
             if (drawables != null) {
                 drawables.forEach(drawable -> {
-                    if (tag.zoomLimit > getDistanceWidth()) {
-                        drawable.draw(gc);
-                    }
-                    if (tag.zoomLimit / 100 > getDistanceWidth() && tag.equals(Tag.MOTORWAY)) {
+                    if (tag.zoomLimit / 100 > getDistanceWidth() && tag.equals(Tag.PRIMARY)) {
                         gc.setLineWidth(.00015);
+                    }else if (tag.zoomLimit / 100 > getDistanceWidth() && tag.equals(Tag.TERTIARY)) {
+                        gc.setLineWidth(.00014);
+                    }
+                    if (tag.zoomLimit > getDistanceWidth()) {
+                        if (renderingStyle.getDoubleDrawn(tag) && doubleDraw){
+                            drawable.draw(gc);
+                        }
+                        drawable.draw(gc);
                     }
                 });
             }
