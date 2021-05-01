@@ -91,7 +91,7 @@ public class MapCanvas extends Canvas {
         //Draw dark
         if (doubleDraw){
             model.getDrawableMap().forEach((tag, drawables) -> {
-                if (renderingStyle.getDoubleDrawn(tag)) {
+                if (tag.zoomLimit > getDistanceWidth() && renderingStyle.getDoubleDrawn(tag)) {
                     Color c1 = renderingStyle.getColorByTag(tag);
                     int darkRed = (int) (c1.getRed() * 255 * 0.75);
                     int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
