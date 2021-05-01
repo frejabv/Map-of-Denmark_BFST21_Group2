@@ -53,7 +53,12 @@ public class RenderingStyle {
         widthMap.put(Tag.MOTORWAY, 3.0);
         widthMap.put(Tag.PRIMARY, 2.0);
         widthMap.put(Tag.SECONDARY, 1.5);
-        widthMap.put(Tag.TERTIARY, 1.8);
+        widthMap.put(Tag.TERTIARY, 2.0);
+        widthMap.put(Tag.RESIDENTIAL, 0.8);
+        widthMap.put(Tag.SERVICE, 0.6);
+        widthMap.put(Tag.CYCLEWAY, 0.3);
+        widthMap.put(Tag.FOOTWAY, 0.3);
+        widthMap.put(Tag.PATH, 0.3);
 
         genDefaultMode();
         genDarkMode();
@@ -152,7 +157,7 @@ public class RenderingStyle {
 
     public double getWidthByTag(Tag tag) {
         var width = widthMap.get(tag);
-        return width == null ? 2.0 : width;
+        return width == null ? 1.0 : width;
     }
 
     public DrawStyle getDrawStyleByTag(Tag tag) {

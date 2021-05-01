@@ -11,6 +11,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -51,6 +53,8 @@ public class MapCanvas extends Canvas {
     void repaint() {
         long start = System.nanoTime();
         gc = getGraphicsContext2D();
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setLineJoin(StrokeLineJoin.ROUND);
         gc.save();
         gc.setTransform(new Affine());
         gc.setFill(renderingStyle.sea);
@@ -93,14 +97,14 @@ public class MapCanvas extends Canvas {
                     int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
                     int darkBlue = (int) (c1.getBlue() * 255 * 0.75);
                     gc.setStroke(Color.rgb(darkRed, darkGreen, darkBlue));
-                    gc.setLineWidth(renderingStyle.getWidthByTag(tag) * 1.5 / Math.sqrt(trans.determinant()));
+                    gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+                    if (getDistanceWidth() < 7.0){
+                        gc.setLineWidth((renderingStyle.getWidthByTag(tag)/13333));
+                    }
                     var style = renderingStyle.getDrawStyleByTag(tag);
                     if (drawables != null) {
                         drawables.forEach(drawable -> {
-                            if (tag.zoomLimit > getDistanceWidth()) {
-                                //Draw dark back
-                                drawable.draw(gc);
-                            }
+                            drawable.draw(gc);
                         });
                     }
                 }
@@ -109,20 +113,23 @@ public class MapCanvas extends Canvas {
 
         //Draw normal
         model.getDrawableMap().forEach((tag, drawables) -> {
+            double innerRoadWidth = 1;
+            if (doubleDraw){
+                innerRoadWidth = 0.65;
+            }
             gc.setStroke(renderingStyle.getColorByTag(tag));
             if (renderingStyle.getDoubleDrawn(tag)) {
-                gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+                gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant())*0.5);
             }
             else{
                 gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
             }
             var style = renderingStyle.getDrawStyleByTag(tag);
             if (drawables != null) {
+                double finalInnerRoadWidth = innerRoadWidth;
                 drawables.forEach(drawable -> {
-                    if (tag.zoomLimit / 100 > getDistanceWidth() && tag.equals(Tag.PRIMARY)) {
-                        gc.setLineWidth(.00015);
-                    }else if (tag.zoomLimit / 100 > getDistanceWidth() && tag.equals(Tag.TERTIARY)) {
-                        gc.setLineWidth(.00014);
+                    if (getDistanceWidth() < 7.0){
+                        gc.setLineWidth((renderingStyle.getWidthByTag(tag)/13333)* finalInnerRoadWidth);
                     }
                     if (tag.zoomLimit > getDistanceWidth()) {
                         if (renderingStyle.getDoubleDrawn(tag) && doubleDraw){
@@ -207,7 +214,7 @@ public class MapCanvas extends Canvas {
             }
         } else {
             // TODO: make the boundry go to inital zoom position
-            if (getDistanceWidth() < 1000) {
+            if (getDistanceWidth() < 1000000000) {
                 trans.prependScale(factor, factor, center);
             }
         }

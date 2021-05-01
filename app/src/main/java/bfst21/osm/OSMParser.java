@@ -195,6 +195,9 @@ public class OSMParser {
                                 way.getTags().add(Tag.FOOTWAY);
                                 break;
                             }
+                            if (k.equals("landuse") && v.equals("residential")){
+                                break;
+                            }
 
                             try {
                                 var tag = Tag.valueOf(v.toUpperCase());
