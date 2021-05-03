@@ -22,7 +22,7 @@ public class Rtree {
         }
     }
 
-    // TODO make nearest way check for nearby rectangles if nothing is found.
+
     public Way nearestWay(Point2D p) {
         Way nearest = null;
         double currentNearestDist = Double.POSITIVE_INFINITY;
@@ -61,8 +61,6 @@ public class Rtree {
         }
         return nearest;
     }
-
-    public void drawLineToNearestNodeOnNearestWay() {}
 
     public List<Drawable> query(Rectangle queryRect) {
         ArrayList<Drawable> result = new ArrayList<>();

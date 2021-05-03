@@ -29,6 +29,7 @@ public class MapCanvas extends Canvas {
     boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
+    Point2D mousePoint = new Point2D(0,0);
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -57,8 +58,9 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
 
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
         gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
         for (var island : model.getIslands()) {
             island.draw(gc);
@@ -150,6 +152,16 @@ public class MapCanvas extends Canvas {
             Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
             model.getRoadRTree().drawRTree(window, gc);
+        }
+
+        if (nearestNodeLine) {
+            gc.setStroke(Color.RED);
+            gc.setLineWidth((2 / Math.sqrt(trans.determinant())));
+
+            gc.beginPath();
+            gc.moveTo(mousePoint.getX(), mousePoint.getY());
+            gc.lineTo(model.getNearestNode().getX(), model.getNearestNode().getY());
+            gc.stroke();
         }
 
         gc.restore();
@@ -283,6 +295,16 @@ public class MapCanvas extends Canvas {
         Node nearestNode = nearestWay.nearestNode(pinPoint);
         System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
         return nearestNode;
+    }
+
+    public void drawLineToNearest(Point2D mousePosition, Node nearest) {
+        gc.setStroke(Color.RED);
+        gc.setLineWidth((2 / Math.sqrt(trans.determinant())));
+        gc.moveTo(mousePosition.getX(), mousePosition.getY());
+        gc.beginPath();
+        gc.moveTo(nearest.getX(), nearest.getY());
+        gc.stroke();
+        gc.setStroke(Color.BLACK);
     }
 
     public void showRoute(){

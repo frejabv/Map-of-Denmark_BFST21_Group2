@@ -274,4 +274,8 @@ public class Model {
     public void setNearestNode(Node nearestNode) {
         this.nearestNode = nearestNode;
     }
+
+    public Node getNearestNode() {
+        return nearestNode;
+    }
 }
