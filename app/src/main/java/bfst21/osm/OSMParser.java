@@ -28,7 +28,7 @@ public class OSMParser {
             break;
         case ZIP:
             loadZIP(in, model);
-            saveOBJ(fileName, model);
+            // saveOBJ(fileName, model);
             break;
         case OBJ:
             loadOBJ(in, model);
