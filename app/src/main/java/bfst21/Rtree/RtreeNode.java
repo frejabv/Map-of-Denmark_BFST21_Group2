@@ -27,17 +27,24 @@ public class RtreeNode implements Comparable<RtreeNode>{
 
         sortDrawables(descendants, vertical);
 
-        int splitSize = (int) Math.floor(descendants.size() / sliceSize);
+        int splitSize = descendants.size() / sliceSize;
+
+        if (descendants.size() % sliceSize != 0) {
+            // Integer division in java always throws away the decimal place, essentially floor the number. If the
+            // number is not divisible by sliceSize we want to ceil the number instead.
+            splitSize++;
+        }
+
         int currentOffset = 0;
         if (descendants.size() > (sliceSize * sliceSize)) {
             for (int i = 0; i < sliceSize; i++) {
-                var toIndex = Math.min(currentOffset + splitSize, descendants.size() - 1);
+                var toIndex = Math.min(currentOffset + splitSize, descendants.size());
                 children.add(new RtreeNode(descendants.subList(currentOffset, toIndex), !vertical));
                 currentOffset += splitSize;
             }
         } else {
             for (int i = 0; i < sliceSize; i++) {
-                var toIndex = Math.min(currentOffset + splitSize, descendants.size() - 1);
+                var toIndex = Math.min(currentOffset + splitSize, descendants.size());
                 children.add(new RtreeLeaf(descendants.subList(currentOffset, toIndex)));
                 currentOffset += splitSize;
             }
