@@ -1,7 +1,7 @@
 package bfst21.Rtree;
+
 import bfst21.osm.Drawable;
 import bfst21.osm.Way;
-
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -12,16 +12,15 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class Rtree {
-    private RtreeNode root;
     public final static int maxChildren = 5;
+    private RtreeNode root;
     private boolean vertical = false;
 
-    public Rtree(@org.jetbrains.annotations.NotNull List<Drawable> drawables){
+    public Rtree(@org.jetbrains.annotations.NotNull List<Drawable> drawables) {
         if (!drawables.isEmpty()) {
             root = new RtreeNode(drawables, vertical, maxChildren);
         }
     }
-
 
     public Way nearestWay(Point2D p) {
         Way nearest = null;
@@ -65,7 +64,7 @@ public class Rtree {
     public List<Drawable> query(Rectangle queryRect) {
         ArrayList<Drawable> result = new ArrayList<>();
 
-        LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
+        LinkedList<RtreeNode> explorationQueue = new LinkedList<>();
         explorationQueue.add(root);
 
         while (!explorationQueue.isEmpty()) {
@@ -73,16 +72,15 @@ public class Rtree {
 
             if (current.children != null) {
                 for (var child : current.children) {
-                    if (queryRect.contains(child.getRect())){
+                    if (queryRect.contains(child.getRect())) {
                         result.addAll(getAllDrawables(child));
-                    }
-                    else if (queryRect.intersects(child.getRect())) {
+                    } else if (queryRect.intersects(child.getRect())) {
                         explorationQueue.add(child);
                     }
                 }
             }
 
-            if(current instanceof RtreeLeaf) {
+            if (current instanceof RtreeLeaf) {
                 if (queryRect.intersects(current.getRect())) {
                     result.addAll(((RtreeLeaf) current).getDrawables());
                 }
@@ -95,7 +93,7 @@ public class Rtree {
     public void drawRTree(Rectangle window, GraphicsContext gc) {
         gc.setStroke(Color.RED);
 
-        LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
+        LinkedList<RtreeNode> explorationQueue = new LinkedList<>();
         explorationQueue.add(root);
 
         while (!explorationQueue.isEmpty()) {
@@ -124,16 +122,14 @@ public class Rtree {
     public List<Drawable> getAllDrawables(RtreeNode startNode) {
         List<Drawable> allDrawables = new ArrayList<>();
 
-        LinkedList<RtreeNode>  explorationQueue = new LinkedList<>();
+        LinkedList<RtreeNode> explorationQueue = new LinkedList<>();
         explorationQueue.add(startNode);
         while (!explorationQueue.isEmpty()) {
             RtreeNode current = explorationQueue.removeFirst();
 
             if (current.getChildren() != null) {
                 explorationQueue.addAll(current.getChildren());
-            }
-
-            else if (current instanceof RtreeLeaf) {
+            } else if (current instanceof RtreeLeaf) {
                 allDrawables.addAll(((RtreeLeaf) current).getDrawables());
             }
         }

@@ -596,11 +596,13 @@ public class Controller {
     public void onMouseMovedOnCanvas(MouseEvent e) {
         Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
         Way road = model.getRoadRTree().nearestWay(mousePoint);
+
         if (road.getName().equals("")) {
             updateClosestRoad("ID: " + road.getId());
         } else {
             updateClosestRoad(String.valueOf(road.getName()));
         }
+
         model.setNearestNode(road.nearestNode(mousePoint));
         if (canvas.nearestNodeLine) {
             canvas.mousePoint = mousePoint;
