@@ -289,24 +289,6 @@ public class MapCanvas extends Canvas {
         return pinPoint;
     }
 
-    public Node getNearestNodeOnNearestWay() {
-        Way nearestWay = model.getRoadRTree().nearestWay(pinPoint);
-        System.out.println("Nearest way name: " + nearestWay.getName() + " ID: " + nearestWay.getId());
-        Node nearestNode = nearestWay.nearestNode(pinPoint);
-        System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
-        return nearestNode;
-    }
-
-    public void drawLineToNearest(Point2D mousePosition, Node nearest) {
-        gc.setStroke(Color.RED);
-        gc.setLineWidth((2 / Math.sqrt(trans.determinant())));
-        gc.moveTo(mousePosition.getX(), mousePosition.getY());
-        gc.beginPath();
-        gc.moveTo(nearest.getX(), nearest.getY());
-        gc.stroke();
-        gc.setStroke(Color.BLACK);
-    }
-
     public void showRoute(){
         showRoute = true;
         repaint();
