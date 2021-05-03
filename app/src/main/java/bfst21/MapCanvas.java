@@ -22,7 +22,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
-    boolean RTreeLines;
+    boolean RTreeLines, roadRectangles;
     boolean nearestNodeLine;
     public boolean debugAStar;
     private boolean showRoute;
@@ -30,6 +30,7 @@ public class MapCanvas extends Canvas {
     Point2D canvasPoint;
     Point2D pinPoint;
     Point2D mousePoint = new Point2D(0,0);
+    Rectangle debugViewport;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -50,6 +51,8 @@ public class MapCanvas extends Canvas {
     }
 
     void repaint() {
+        //Rtree query
+
         long start = System.nanoTime();
         gc = getGraphicsContext2D();
         gc.save();
@@ -142,16 +145,15 @@ public class MapCanvas extends Canvas {
         }
 
         if (RTreeLines) {
-            //display window
-            Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
-            maxPoint = mouseToModelCoords(maxPoint);
+            drawViewportWindow();
 
-            Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
-            minPoint = mouseToModelCoords(minPoint);
+            model.getRoadRTree().drawRTree(debugViewport, gc);
+        }
 
-            Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
-            gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-            model.getRoadRTree().drawRTree(window, gc);
+        if (roadRectangles) {
+            drawViewportWindow();
+
+            model.getRoadRTree().drawRoadRectangles(debugViewport, gc);
         }
 
         if (nearestNodeLine) {
@@ -296,5 +298,19 @@ public class MapCanvas extends Canvas {
     public void hideRoute(){
         showRoute = false;
         repaint();
+    }
+
+    public void drawViewportWindow() {
+        Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
+        maxPoint = mouseToModelCoords(maxPoint);
+
+        Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
+        minPoint = mouseToModelCoords(minPoint);
+
+        Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+        gc.setStroke(Color.BLACK);
+        debugViewport = window;
+        window.draw(gc);
     }
 }

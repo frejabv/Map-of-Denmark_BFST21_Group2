@@ -579,6 +579,11 @@ public class Controller {
         canvas.repaint();
     }
 
+    public void toggleRoadRectangles() {
+        canvas.roadRectangles = !canvas.roadRectangles;
+        canvas.repaint();
+    }
+
     public void toggleNearestNodeLine() {
         canvas.nearestNodeLine = !canvas.nearestNodeLine;
         canvas.repaint();
