@@ -40,13 +40,13 @@ public class RtreeNode implements Comparable<RtreeNode>{
             for (int i = 0; i < sliceSize; i++) {
                 var toIndex = Math.min(currentOffset + splitSize, descendants.size());
                 children.add(new RtreeNode(descendants.subList(currentOffset, toIndex), !vertical));
-                currentOffset += splitSize;
+                currentOffset = Math.min(currentOffset + splitSize, descendants.size());
             }
         } else {
             for (int i = 0; i < sliceSize; i++) {
                 var toIndex = Math.min(currentOffset + splitSize, descendants.size());
                 children.add(new RtreeLeaf(descendants.subList(currentOffset, toIndex)));
-                currentOffset += splitSize;
+                currentOffset = Math.min(currentOffset + splitSize, descendants.size());
             }
         }
     }
