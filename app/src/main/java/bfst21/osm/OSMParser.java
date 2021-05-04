@@ -103,10 +103,10 @@ public class OSMParser {
                         case "bounds":
                             model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                             model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                            model.setMaxY(
-                                    Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
-                            model.setMinY(
-                                    Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
+                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat"))
+                                    / -Model.scalingConstant);
+                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat"))
+                                    / -Model.scalingConstant);
                             break;
                         case "node":
                             var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -185,7 +185,7 @@ public class OSMParser {
                             }
 
                             if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
-                                if(!v.equals("no")) {
+                                if (!v.equals("no")) {
                                     way.getTags().add(Tag.CYCLEWAY);
                                 }
                                 break;
@@ -354,7 +354,8 @@ public class OSMParser {
             toReturn = FileExtension.OBJ;
             break;
         default:
-            throw new UnsupportedFileTypeException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
+                throw new UnsupportedFileTypeException(
+                        "Unsupported file type: " + filePathParts[filePathParts.length - 1]);
         }
         return toReturn;
     }
