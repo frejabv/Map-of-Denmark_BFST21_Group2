@@ -115,7 +115,7 @@
                                                fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/follow.png"/>
                                     </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest"
+                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
                                            wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                                 </HBox>
                                 <HBox alignment="CENTER" styleClass="stepContainer">
@@ -123,7 +123,7 @@
                                                fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/left.png"/>
                                     </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest"
+                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
                                            wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                                 </HBox>
                                 <HBox alignment="CENTER" styleClass="stepContainer">
@@ -131,7 +131,7 @@
                                                fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/right.png"/>
                                     </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest"
+                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
                                            wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                                 </HBox>
                                 <HBox alignment="CENTER" styleClass="stepContainer">
@@ -139,7 +139,7 @@
                                                fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/roundabout_first_exit.png"/>
                                     </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest"
+                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
                                            wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                                 </HBox>
                                 <HBox alignment="CENTER" styleClass="stepContainer">
@@ -147,7 +147,7 @@
                                                fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/roundabout_second_exit.png"/>
                                     </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest"
+                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
                                            wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                                 </HBox>
                                 <HBox alignment="CENTER" styleClass="stepContainer">
@@ -155,7 +155,7 @@
                                                fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                         <Image url="@icons/pin.png"/>
                                     </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest"
+                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
                                            wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                                 </HBox>
                             </VBox>
