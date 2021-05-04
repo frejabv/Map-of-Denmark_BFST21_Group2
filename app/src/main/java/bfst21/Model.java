@@ -86,6 +86,26 @@ public class Model {
         }
         roadRTree = new Rtree(roadList);
 
+        /*for(Relation drawable: relationIndex){
+            if(drawable.getTags().size() != 0) {
+                Tag tag = drawable.getTags().get(0);
+                RenderingStyle renderingStyle = new RenderingStyle();
+                DrawStyle style = renderingStyle.getDrawStyleByTag(tag);
+                if (style == DrawStyle.FILL) {
+                    fillMap.putIfAbsent(tag, new ArrayList<>());
+                    fillMap.get(tag).add((Drawable) drawable);
+                } else {
+                    drawableMap.putIfAbsent(tag, new ArrayList<>());
+                    drawableMap.get(tag).add((Drawable) drawable);
+                }
+            }
+        }*/
+
+        for(Relation rel : relationIndex){
+            System.out.println(rel.getTags());
+            System.out.println();
+        }
+
         drawableMap.forEach((tag, drawables) -> {
             drawableTagPriority.add(tag);
         });
