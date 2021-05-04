@@ -574,6 +574,11 @@ public class Controller {
         }
     }
 
+    public void toggleSmallerViewPort() {
+        canvas.smallerViewPort = !canvas.smallerViewPort;
+        canvas.repaint();
+    }
+
     public void toggleRTreeLines() {
         canvas.RTreeLines = !canvas.RTreeLines;
         canvas.repaint();
@@ -614,4 +619,6 @@ public class Controller {
         canvas.doubleDraw = !canvas.doubleDraw;
         canvas.repaint();
     }
+
+
 }

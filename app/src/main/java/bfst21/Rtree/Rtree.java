@@ -108,6 +108,8 @@ public class Rtree {
                 }
             }
         }
+        gc.setStroke(Color.BLACK);
+        window.draw(gc);
     }
 
     public void drawRoadRectangles(Rectangle window, GraphicsContext gc) {

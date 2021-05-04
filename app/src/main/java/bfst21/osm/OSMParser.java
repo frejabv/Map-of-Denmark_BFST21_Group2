@@ -166,7 +166,11 @@ public class OSMParser {
 
                             if (k.equals("maxspeed")) {
                                 v.replace(" km", "").replace(" mph", "");
-                                way.setMaxSpeed(Integer.parseInt(v));
+                                try {
+                                    way.setMaxSpeed(Integer.parseInt(v));
+                                } catch (java.lang.RuntimeException e) {
+                                    System.out.println(way.getId());
+                                }
                             }
 
                             if (k.equals("oneway")) {

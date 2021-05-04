@@ -271,6 +271,7 @@
                 <Text styleClass="mainContainer-subheader">Dev Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleSmallerViewPort">Reduce view port size</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show Road-Rtree lines</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRoadRectangles">Show Road-Rtree Way rectangles</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleNearestNodeLine">Show line from mouse to nearest node on nearest way</CheckBox>
