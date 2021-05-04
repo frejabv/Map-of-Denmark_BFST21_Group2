@@ -5,6 +5,7 @@ import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
+import com.sun.javafx.PlatformUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -70,6 +71,8 @@ public class Controller {
     private VBox leftContainer;
     @FXML
     private HBox rightContainer;
+    @FXML
+    private CheckBox showNames;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -80,6 +83,16 @@ public class Controller {
 
     public void init(Model model) {
         this.model = model;
+        System.out.println(System.getProperty("os.name"));
+        String OS = System.getProperty("os.name").toLowerCase();
+
+        //Check if OS is Linux
+        if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")){
+            canvas.showNames = false;
+            showNames.setVisible(false);
+            showNames.setManaged(false);
+        }
+
         canvas.init(model);
         canvas.setCurrentCanvasEdges();
         updateScaleBar();
