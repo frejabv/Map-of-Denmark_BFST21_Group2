@@ -115,7 +115,19 @@ public class RadixTree implements Serializable {
      */
     public void insert(String stringToInsert, long id) {
         fullName = stringToInsert;
-        insert(stringToInsert, id, root);
+        insert(stringToInsert, id, root, true);
+    }
+
+    public void insert(String roadName, String restOfAdress, long id) {
+        fullName = roadName;
+        insert(roadName, id, root, false);
+        var roadNameNode = lookupNode(roadName);
+        fullName = roadName + restOfAdress;
+        if (roadNameNode != null) {
+            insert(restOfAdress, id, roadNameNode, true);
+        } else {
+            insert(roadName + restOfAdress, id);
+        }
     }
 
     /**
@@ -128,15 +140,14 @@ public class RadixTree implements Serializable {
      * partly equal. Case 5: None of the children have something in common with
      * stringToInsert.
      */
-    private void insert(String stringToInsert, long id, RadixNode currentNode) {
-        if (currentNode != root && (currentNode == null || currentNode.getValue().equals("") || stringToInsert.equals(""))) {
+    private void insert(String stringToInsert, long id, RadixNode currentNode, boolean secondary) {
         if (currentNode != root
                 && (currentNode == null || currentNode.getValue().equals("") || stringToInsert.equals(""))) {
             return;
         }
 
         if (currentNode.getChildren().size() == 0) {
-            RadixNode node = new RadixNode(stringToInsert, fullName, id);
+            RadixNode node = new RadixNode(stringToInsert, fullName, id, secondary);
             currentNode.getChildren().add(node);
             size++;
             places++;
@@ -147,12 +158,14 @@ public class RadixTree implements Serializable {
         for (int i = 0; i < children.size(); i++) {
             if (stringToInsert.startsWith(children.get(i).getValue())) { // the child is a prefix to stringToInsert,
                                                                          // like child: test and stringToInsert: tester
+                insert(stringToInsert.substring(children.get(i).getValue().length()), id,
+                        currentNode.getChildren().get(i), secondary);
                 return;
             } else if (children.get(i).getValue().startsWith(stringToInsert)) { // stringToInsert is a prefix to child,
                                                                                 // like child: tester and
                                                                                 // stringToInsert: test
                 RadixNode originalNode = children.get(i);
-                RadixNode newParentNode = new RadixNode(stringToInsert, fullName, id);
+                RadixNode newParentNode = new RadixNode(stringToInsert, fullName, id, secondary);
                 children.set(i, newParentNode);
                 originalNode.setValue(originalNode.getValue().substring(stringToInsert.length()));
                 children.get(i).addChild(originalNode);
@@ -171,7 +184,7 @@ public class RadixTree implements Serializable {
                          */
                         RadixNode originalNode = children.get(i);
                         originalNode.setValue(nodeContent.substring(j));
-                        RadixNode newChildNode = new RadixNode(stringToInsert.substring(j), fullName, id);
+                        RadixNode newChildNode = new RadixNode(stringToInsert.substring(j), fullName, id, secondary);
                         RadixNode newParentNode = new RadixNode(stringToInsert.substring(0, j));
                         children.set(i, newParentNode);
                         children.get(i).addChild(originalNode);
@@ -182,6 +195,7 @@ public class RadixTree implements Serializable {
                     }
                 }
             } else if (i == children.size() - 1) { // none of the children contain stringToInsert
+                RadixNode node = new RadixNode(stringToInsert, fullName, id, secondary);
                 currentNode.getChildren().add(node);
                 size++;
                 places++;
