@@ -142,6 +142,7 @@ public class MapCanvas extends Canvas {
         };
 
         if(model.existsAStarPath() && showRoute){
+            gc.setLineDashes(0);
             if(debugAStar) {
                 drawDebugAStarPath();
             }
