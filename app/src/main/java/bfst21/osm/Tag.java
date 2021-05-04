@@ -34,11 +34,12 @@ public enum Tag{
     HEATH(200,6),
     CEMETERY(100,7),
     FOREST(400,8),
-    GRASS(100,9),
-    SCRUB(100,10),
-    LAKE(100,11),
-    WATER(400,12),
-    BUILDING(7,13),
+    WOOD(400,9),
+    GRASS(100,10),
+    SCRUB(100,11),
+    LAKE(100,12),
+    WATER(400,13),
+    BUILDING(7,14),
 
     TERRITORIALBORDER(100000000,5);
 

@@ -41,6 +41,7 @@ public class RenderingStyle {
         styleMap.put(Tag.SCRUB, DrawStyle.FILL);
         styleMap.put(Tag.FARMYARD, DrawStyle.FILL);
         styleMap.put(Tag.FOREST, DrawStyle.FILL);
+        styleMap.put(Tag.WOOD, DrawStyle.FILL);
         styleMap.put(Tag.CYCLEWAY, DrawStyle.DASH);
         styleMap.put(Tag.FOOTWAY, DrawStyle.DASH);
         styleMap.put(Tag.PATH, DrawStyle.DASH);
@@ -154,6 +155,7 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.FARMYARD, Color.rgb(255, 217, 140));
         defaultColorMap.put(Tag.WATERWAY, Color.LIGHTBLUE);
         defaultColorMap.put(Tag.FOREST, Color.rgb(168, 218, 181));
+        defaultColorMap.put(Tag.WOOD,Color.rgb(168, 218, 181));
     }
 
     private void genDarkMode() {
@@ -195,6 +197,7 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.FARMYARD, Color.rgb(255, 217, 140));
         darkModeColorMap.put(Tag.WATERWAY, Color.LIGHTBLUE);
         darkModeColorMap.put(Tag.FOREST, Color.RED);
+        darkModeColorMap.put(Tag.WOOD,Color.rgb(168, 218, 181));
     }
 
     public Color getColorByTag(Tag tag) {

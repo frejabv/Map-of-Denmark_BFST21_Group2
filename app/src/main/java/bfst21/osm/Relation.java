@@ -7,10 +7,11 @@ import javafx.scene.shape.FillRule;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Relation extends Member {
+public class Relation extends Member implements Drawable{
     ArrayList<Member> members = new ArrayList<>();
     ArrayList<Way> ways = new ArrayList<>();
     Rectangle rect;
+    RenderingStyle renderingStyle = new RenderingStyle();
 
     public Relation(long id) {
         super(id);
@@ -28,16 +29,16 @@ public class Relation extends Member {
         return members;
     }
 
-    public void draw(GraphicsContext gc, RenderingStyle style) {
+    public void draw(GraphicsContext gc) {
         if(!tags.isEmpty()) {
-            gc.setStroke(style.getColorByTag(tags.get(0)));
-            gc.setFill(style.getColorByTag(tags.get(0)));
+            gc.setStroke(renderingStyle.getColorByTag(tags.get(0)));
+            gc.setFill(renderingStyle.getColorByTag(tags.get(0)));
 
             if(tags.contains(Tag.BUILDING)) {
                 drawBuilding(gc);
             } else {
                 for(Way way : ways) {
-                    var drawStyle = style.getDrawStyleByTag(tags.get(0));
+                    var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
                     way.draw(gc);
                     if(drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();

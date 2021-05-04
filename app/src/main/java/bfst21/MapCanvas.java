@@ -79,13 +79,6 @@ public class MapCanvas extends Canvas {
             });
         };
 
-        model.getRelationIndex().forEach(relation -> {
-            if (relation.getTags().size() != 0) {
-                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
-                    relation.draw(gc, renderingStyle);
-                }
-            }
-        });
         //Draw dark
         if (doubleDraw){
             for(Tag tag: model.getDrawableTagPriority()){
