@@ -104,6 +104,7 @@ public class MapCanvas extends Canvas {
                 }
             }
         });
+
         // Draw dark
         if (doubleDraw) {
             for (Drawable road : activeDrawList) {
