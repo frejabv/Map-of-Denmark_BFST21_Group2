@@ -100,6 +100,7 @@ public class OSMParser {
         String housenumber = "";
         String street = "";
         String postcode = "";
+        String city = "";
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -188,6 +189,9 @@ public class OSMParser {
                         if (k.equals("addr:postcode")) {
                             postcode = v;
                         }
+                        if (k.equals("addr:city")) {
+                            city = v;
+                        }
                     }
 
                     break;
@@ -231,9 +235,9 @@ public class OSMParser {
                 case "node":
                     isNode = false;
                     if(street != "" && housenumber != "" && postcode != "") {
-                        model.getStreetNumberPostcodeTree().insert(street + " " + housenumber + " " + postcode, node.getId());
-                        model.getStreetNumberTree().insert(street + " " + housenumber, node.getId());
-                        model.getStreetTree().insert(street, node.getId());
+                        model.getAddressTree().insert(street + " " + housenumber + " " + postcode + " " + city, node.getId());
+                        //model.getStreetNumberTree().insert(street + " " + housenumber, node.getId());
+                        //model.getStreetTree().insert(street, node.getId());
                         System.out.println(street + " " + housenumber + " " + postcode);
                     }
                     break;

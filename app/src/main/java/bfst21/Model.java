@@ -23,7 +23,7 @@ public class Model {
 
     private RadixTree streetTree;
     private RadixTree streetNumberTree;
-    private RadixTree streetNumberPostcodeTree;
+    private RadixTree addressTree;
 
     private ArrayList<POI> pointsOfInterest;
 
@@ -47,7 +47,7 @@ public class Model {
 
         streetTree = new RadixTree();
         streetNumberTree = new RadixTree();
-        streetNumberPostcodeTree = new RadixTree();
+        addressTree = new RadixTree();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -187,12 +187,12 @@ public class Model {
         this.streetNumberTree = streetNumberTree;
     }
 
-    public RadixTree getStreetNumberPostcodeTree() {
-        return streetNumberPostcodeTree;
+    public RadixTree getAddressTree() {
+        return addressTree;
     }
 
-    public void setStreetNumberPostcodeTree(RadixTree streetNumberPostcodeTree) {
-        this.streetNumberPostcodeTree = streetNumberPostcodeTree;
+    public void setAddressTree(RadixTree addressTree) {
+        this.addressTree = addressTree;
     }
 
     public void addPOI(POI poi) {
