@@ -183,19 +183,7 @@ public class AStar {
 
             //count exits in roundabout
             if (isRoundabout && node.getAdjacencies().size() > 1) {
-                int count = 0;
-                int limit = 0;
-                for (Edge e : node.getAdjacencies()) {
-                    if (e.isDriveable() && e.isCyclable() && e.isWalkable()) {
-                        limit = 3;
-                    } else if (e.isDriveable() && e.isCyclable() || e.isDriveable() && e.isWalkable()) {
-                        limit = 2;
-                    } else {
-                        limit = 1;
-                    }
-                    count++;
-                }
-                if (count > limit) exits++;
+                exits++;
             }
 
             //the next way is different than the current
