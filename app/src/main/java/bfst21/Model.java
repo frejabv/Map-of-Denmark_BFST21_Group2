@@ -28,7 +28,7 @@ public class Model {
     private ArrayList<Way> coastlines;
 
     private ArrayList<POI> pointsOfInterest;
-    private Rtree roadRTree;
+    private Rtree roadRTree, fillRTree;
     private Node nearestNode;
 
     private boolean ttiMode;
@@ -47,7 +47,12 @@ public class Model {
 
     public Model(String filePath, boolean ttiMode) {
         // Java wouldn't let me expand this into variables. Im very sorry about the mess
-        this(Model.class.getResourceAsStream(filePath), OSMParser.genFileExtension(filePath), filePath, ttiMode);
+        this(
+                Model.class.getResourceAsStream(filePath),
+                OSMParser.genFileExtension(filePath),
+                filePath,
+                ttiMode
+        );
     }
 
     public Model(InputStream in, FileExtension fileExtension, String fileName, boolean ttiMode) {
@@ -80,6 +85,12 @@ public class Model {
             roadList.addAll(drawableMap.get(tag));
         }
         roadRTree = new Rtree(roadList);
+
+        List<Drawable> fillList = new ArrayList<>();
+        for (Tag tag: fillMap.keySet()) {
+            fillList.addAll(fillMap.get(tag));
+        }
+        fillRTree = new Rtree(fillList);
 
         drawableMap.forEach((tag, drawables) -> {
             drawableTagPriority.add(tag);
@@ -271,6 +282,10 @@ public class Model {
 
     public Rtree getRoadRTree() {
         return roadRTree;
+    }
+
+    public Rtree getFillRTree() {
+        return fillRTree;
     }
 
     public void setNearestNode(Node nearestNode) {
