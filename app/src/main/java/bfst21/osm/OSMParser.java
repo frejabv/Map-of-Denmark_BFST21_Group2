@@ -24,15 +24,15 @@ public class OSMParser {
             throws IOException, XMLStreamException {
         switch (fileExtension) {
             case OSM:
-               loadOSM(in, model);
-              break;
+                loadOSM(in, model);
+                break;
             case ZIP:
-             loadZIP(in, model);
-              // saveOBJ(fileName, model);
-              break;
-         case OBJ:
-              loadOBJ(in, model);
-               break;
+                //loadZIP(in, model);
+                // saveOBJ(fileName, model);
+                break;
+            case OBJ:
+                loadOBJ(in, model);
+                break;
         }
     }
 

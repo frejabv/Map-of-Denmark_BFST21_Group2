@@ -1,10 +1,7 @@
 package bfst21;
 
-import bfst21.osm.Node;
+import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
-import bfst21.osm.RenderingStyle;
-import bfst21.osm.Way;
-import bfst21.osm.Tag;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -196,18 +193,27 @@ public class MapCanvas extends Canvas {
                     size);
         }
 
+
+        gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
+        gc.setLineDashes(0);
         if (smallerViewPort) {
             gc.setStroke(Color.BLACK);
-            gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
             viewport.draw(gc);
         }
 
         if (RTreeLines) {
+            gc.setStroke(Color.RED);
             model.getRoadRTree().drawRTree(viewport, gc);
         }
 
         if (roadRectangles) {
+            gc.setStroke(Color.PURPLE);
             model.getRoadRTree().drawRoadRectangles(viewport, gc);
+        }
+
+        if (smallerViewPort || RTreeLines || roadRectangles) {
+            gc.setStroke(Color.BLACK);
+            viewport.draw(gc);
         }
 
         if (nearestNodeLine) {

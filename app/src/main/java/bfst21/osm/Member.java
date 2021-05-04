@@ -47,8 +47,4 @@ public class Member implements Serializable, Drawable {
     public Rectangle getRect() {
         return null;
     }
-
-    public Tag getTag() {
-        return tags.get(0);
-    }
 }
