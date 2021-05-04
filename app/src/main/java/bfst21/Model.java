@@ -18,7 +18,8 @@ public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
 
-    private ArrayList<Tag> tagsPriority;
+    private ArrayList<Tag> drawableTagPriority;
+    private ArrayList<Tag> fillableTagPriority;
 
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
@@ -64,7 +65,8 @@ public class Model {
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
         cities = new ArrayList<>();
-        tagsPriority = new ArrayList<>();
+        drawableTagPriority = new ArrayList<>();
+        fillableTagPriority = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -85,9 +87,13 @@ public class Model {
         roadRTree = new Rtree(roadList);
 
         drawableMap.forEach((tag, drawables) -> {
-            tagsPriority.add(tag);
+            drawableTagPriority.add(tag);
         });
-        tagsPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
+        fillMap.forEach((tag, drawables) -> {
+            fillableTagPriority.add(tag);
+        });
+        drawableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
+        fillableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
     }
 
     /*
@@ -272,7 +278,9 @@ public class Model {
         return roadRTree;
     }
 
-    public ArrayList<Tag> getTagsPriority(){
-        return tagsPriority;
+    public ArrayList<Tag> getDrawableTagPriority(){
+        return drawableTagPriority;
     }
+
+    public ArrayList<Tag> getFillableTagPriority(){ return fillableTagPriority; }
 }
