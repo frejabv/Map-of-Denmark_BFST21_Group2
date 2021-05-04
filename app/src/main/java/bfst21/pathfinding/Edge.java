@@ -29,6 +29,12 @@ public class Edge {
                 isWalkable = true;
             }
         }
+        if(way.isCyclable()) {
+            isCyclable = true;
+        }
+        if(way.isWalkable()) {
+            isWalkable = true;
+        }
     }
 
     public float getWeight(TransportType type, int speed) {

@@ -186,13 +186,13 @@ public class OSMParser {
 
                             if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
                                 if(!v.equals("no")) {
-                                    way.getTags().add(Tag.CYCLEWAY);
+                                    way.setIsCyclable();
                                 }
                                 break;
                             }
 
-                            if ((k.equals("sidewalk") || k.equals("foot")) && !v.equals("no")) {
-                                way.getTags().add(Tag.FOOTWAY);
+                            if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
+                                way.setIsWalkable();
                                 break;
                             }
 

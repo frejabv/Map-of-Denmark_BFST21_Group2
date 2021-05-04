@@ -17,6 +17,8 @@ public class Way extends Member implements Drawable, Serializable {
     int maxSpeed = 1;
     boolean isOneway;
     boolean isJunction;
+    boolean isCyclable;
+    boolean isWalkable;
 
     public Way(long id) {
         super(id);
@@ -100,6 +102,22 @@ public class Way extends Member implements Drawable, Serializable {
 
     public boolean isJunction() {
         return isJunction;
+    }
+
+    public void setIsCyclable() {
+        isCyclable = true;
+    }
+
+    public boolean isCyclable() {
+        return isCyclable;
+    }
+
+    public void setIsWalkable() {
+        isWalkable = true;
+    }
+
+    public boolean isWalkable() {
+        return isWalkable;
     }
 
     @Override
