@@ -256,7 +256,7 @@ public class OSMParser {
                             isNode = false;
                             break;
                         case "way":
-                            way.getTags().addAll(tags);
+                            way.setTags(tags);
                             way.checkSpeed();
                             way.createRectangle();
                             addWayToList(way, tags, model);
