@@ -66,7 +66,8 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
-        model.getFillMap().forEach((tag, fillables) -> {
+        for(Tag tag: model.getFillableTagPriority()){
+            List<Drawable> fillables = model.getFillMap().get(tag);
             gc.setStroke(renderingStyle.getColorByTag(tag));
             gc.setFill(renderingStyle.getColorByTag(tag));
 
@@ -76,7 +77,7 @@ public class MapCanvas extends Canvas {
                     gc.fill();
                 }
             });
-        });
+        };
 
         model.getRelationIndex().forEach(relation -> {
             if (relation.getTags().size() != 0) {
@@ -87,7 +88,7 @@ public class MapCanvas extends Canvas {
         });
         //Draw dark
         if (doubleDraw){
-            for(Tag tag: model.getTagsPriority()){
+            for(Tag tag: model.getDrawableTagPriority()){
                 List<Drawable> drawables = model.getDrawableMap().get(tag);
                 if (tag.zoomLimit > getDistanceWidth() && renderingStyle.getDoubleDrawn(tag)) {
                     Color c1 = renderingStyle.getColorByTag(tag);
@@ -100,7 +101,7 @@ public class MapCanvas extends Canvas {
                         gc.setLineWidth((renderingStyle.getWidthByTag(tag)/13333));
                     }
                     var style = renderingStyle.getDrawStyleByTag(tag);
-                    if (drawables != null) {
+                    if (drawables != null && style != DrawStyle.DASH) {
                         drawables.forEach(drawable -> {
                             drawable.draw(gc);
                         });
@@ -109,9 +110,8 @@ public class MapCanvas extends Canvas {
             };
         }
 
-
         //Draw normal
-        for(Tag tag: model.getTagsPriority()){
+        for(Tag tag: model.getDrawableTagPriority()){
             List<Drawable> drawables = model.getDrawableMap().get(tag);
             double innerRoadWidth = 1;
             if (doubleDraw){
@@ -124,11 +124,11 @@ public class MapCanvas extends Canvas {
             else{
                 gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
             }
-            var style = renderingStyle.getDrawStyleByTag(tag);
+            setStyle(renderingStyle.getDrawStyleByTag(tag));
             if (drawables != null) {
                 double finalInnerRoadWidth = innerRoadWidth;
                 drawables.forEach(drawable -> {
-                    if (getDistanceWidth() < 7.0){
+                    if (getDistanceWidth() < 7.0 && renderingStyle.getDrawStyleByTag(tag) != DrawStyle.DASH){
                         gc.setLineWidth((renderingStyle.getWidthByTag(tag)/13333)* finalInnerRoadWidth);
                     }
                     if (tag.zoomLimit > getDistanceWidth()) {
@@ -300,6 +300,16 @@ public class MapCanvas extends Canvas {
             zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
             pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
         }
+    }
+
+    private void setStyle(DrawStyle style){
+        if(style == DrawStyle.DASH){
+            gc.setLineDashes(5/Math.sqrt(trans.determinant()));
+        }
+        else{
+            gc.setLineDashes(0);
+        }
+
     }
 
     public void setCurrentCanvasEdges() {
