@@ -7,11 +7,13 @@ import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 import bfst21.osm.Tag;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-
-import javax.xml.stream.XMLStreamException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;

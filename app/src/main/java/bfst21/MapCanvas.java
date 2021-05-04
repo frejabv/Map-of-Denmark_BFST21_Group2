@@ -1,8 +1,10 @@
 package bfst21;
 
+import bfst21.osm.Node;
 import bfst21.Rtree.Rectangle;
-import bfst21.Rtree.Rtree;
-import bfst21.osm.*;
+import bfst21.osm.RenderingStyle;
+import bfst21.osm.Way;
+import bfst21.osm.Tag;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -78,6 +80,7 @@ public class MapCanvas extends Canvas {
 
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+
         gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
         for (var island : model.getIslands()) {
             island.draw(gc);
@@ -98,8 +101,8 @@ public class MapCanvas extends Canvas {
 
         //TODO - make part of R-tree
         model.getRelationIndex().forEach(relation -> {
-            if (relation.getTags().size() != 0) {
-                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
+            if (relation.getTag() != null) {
+                if (relation.getTag().zoomLimit > getDistanceWidth()) {
                     relation.draw(gc, renderingStyle);
                 }
             }
@@ -265,7 +268,7 @@ public class MapCanvas extends Canvas {
     public void drawDebugAStarPath() {
         List<Node> nodes = model.getAStarDebugPath();
         gc.setStroke(Color.CORNFLOWERBLUE);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()) * 2);
+        gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
         gc.beginPath();
         for (Node n : nodes) {
             for (Edge e : n.getAdjacencies()) {

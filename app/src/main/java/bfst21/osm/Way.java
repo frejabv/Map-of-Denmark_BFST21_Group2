@@ -7,6 +7,10 @@ import java.util.List;
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.shape.StrokeLineCap;
 import org.jetbrains.annotations.NotNull;
 import javafx.scene.paint.Color;
@@ -18,6 +22,8 @@ public class Way extends Member implements Drawable, Serializable {
     int maxSpeed = 1;
     boolean isOneway;
     boolean isJunction;
+    boolean isCyclable;
+    boolean isWalkable;
 
     public Way(long id) {
         super(id);
@@ -76,11 +82,11 @@ public class Way extends Member implements Drawable, Serializable {
 
     public void checkSpeed() {
         if (maxSpeed == 1) {
-            if (tags.contains(Tag.MOTORWAY) || tags.contains(Tag.MOTORWAY_LINK)) {
+            if (tag == Tag.MOTORWAY || tag == Tag.MOTORWAY_LINK) {
                 maxSpeed = 130;
-            } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.PRIMARY)) {
+            } else if (tag == Tag.SECONDARY || tag == Tag.TERTIARY || tag == Tag.TRUNK || tag == Tag.PRIMARY) {
                 maxSpeed = 80;
-            } else if (tags.contains(Tag.JUNCTION) || tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
+            } else if (tag == Tag.JUNCTION || tag == Tag.LIVING_STREET || tag == Tag.UNCLASSIFIED || tag == Tag.RESIDENTIAL || tag == Tag.ROAD || tag == Tag.SERVICE) {
                 maxSpeed = 50;
             }
         }
@@ -103,14 +109,30 @@ public class Way extends Member implements Drawable, Serializable {
         return isJunction;
     }
 
+    public void setIsCyclable() {
+        isCyclable = true;
+    }
+
+    public boolean isCyclable() {
+        return isCyclable;
+    }
+
+    public void setIsWalkable() {
+        isWalkable = true;
+    }
+
+    public boolean isWalkable() {
+        return isWalkable;
+    }
+
     @Override
     public void draw(GraphicsContext gc) {
         gc.beginPath();
         var firstNode = nodes.get(0);
         gc.moveTo(firstNode.getX(), firstNode.getY());
 
-        for (int i = 1; i < nodes.size(); i++) {
-            gc.lineTo(nodes.get(i).getX(), nodes.get(i).getY());
+        for (var node : nodes) {
+            gc.lineTo(node.getX(), node.getY());
         }
         gc.stroke();
     }
@@ -183,12 +205,10 @@ public class Way extends Member implements Drawable, Serializable {
         if (param < 0) {
             nearestX = n1.getX();
             nearestY = n1.getY();
-        }
-        else if (param > 1) {
+        } else if (param > 1) {
             nearestX = n2.getX();
             nearestY = n2.getY();
-        }
-        else {
+        } else {
             nearestX = (float) (n1.getX() + param * nDeltaX);
             nearestY = (float) (n1.getY() + param * nDeltaY);
         }

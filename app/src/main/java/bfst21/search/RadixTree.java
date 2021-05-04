@@ -90,6 +90,7 @@ public class RadixTree implements Serializable {
                         currentNode = child;
                         foundChild = true;
                         charLength += currentNode.getValue().length();
+                        break;
                     }
                 }
             }
