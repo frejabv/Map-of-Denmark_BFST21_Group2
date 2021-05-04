@@ -7,6 +7,7 @@ import java.util.List;
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.shape.StrokeLineCap;
 import org.jetbrains.annotations.NotNull;
 import javafx.scene.paint.Color;
 

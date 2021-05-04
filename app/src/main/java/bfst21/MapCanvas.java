@@ -1,10 +1,7 @@
 package bfst21;
 
-import bfst21.osm.Node;
+import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
-import bfst21.osm.RenderingStyle;
-import bfst21.osm.Way;
-import bfst21.osm.Tag;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -90,7 +87,8 @@ public class MapCanvas extends Canvas {
         });
         //Draw dark
         if (doubleDraw){
-            model.getDrawableMap().forEach((tag, drawables) -> {
+            for(Tag tag: model.getTagsPriority()){
+                List<Drawable> drawables = model.getDrawableMap().get(tag);
                 if (tag.zoomLimit > getDistanceWidth() && renderingStyle.getDoubleDrawn(tag)) {
                     Color c1 = renderingStyle.getColorByTag(tag);
                     int darkRed = (int) (c1.getRed() * 255 * 0.75);
@@ -108,11 +106,13 @@ public class MapCanvas extends Canvas {
                         });
                     }
                 }
-            });
+            };
         }
 
+
         //Draw normal
-        model.getDrawableMap().forEach((tag, drawables) -> {
+        for(Tag tag: model.getTagsPriority()){
+            List<Drawable> drawables = model.getDrawableMap().get(tag);
             double innerRoadWidth = 1;
             if (doubleDraw){
                 innerRoadWidth = 0.65;
@@ -139,7 +139,7 @@ public class MapCanvas extends Canvas {
                     }
                 });
             }
-        });
+        };
 
         if(model.existsAStarPath() && showRoute){
             if(debugAStar) {

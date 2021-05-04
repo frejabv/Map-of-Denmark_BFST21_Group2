@@ -14,7 +14,7 @@ public class App extends Application {
         if (fileSelectorMode) {
             new StartupScreen(primaryStage);
         } else {
-            var model = new Model("/bfst21/data/bornholm.osm.zip", ttiMode);
+            var model = new Model("/bfst21/data/bornholm.osm", ttiMode);
             new View(model, primaryStage);
         }
     }

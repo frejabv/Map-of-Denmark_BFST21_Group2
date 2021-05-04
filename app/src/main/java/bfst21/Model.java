@@ -1,26 +1,24 @@
 package bfst21;
 
-import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
+import bfst21.osm.Tag;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 import javax.xml.stream.XMLStreamException;
-import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
+
+    private ArrayList<Tag> tagsPriority;
 
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
@@ -66,6 +64,7 @@ public class Model {
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
         cities = new ArrayList<>();
+        tagsPriority = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -85,7 +84,10 @@ public class Model {
         }
         roadRTree = new Rtree(roadList);
 
-        System.out.println("here");
+        drawableMap.forEach((tag, drawables) -> {
+            tagsPriority.add(tag);
+        });
+        tagsPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
     }
 
     /*
@@ -268,5 +270,9 @@ public class Model {
 
     public Rtree getRoadRTree() {
         return roadRTree;
+    }
+
+    public ArrayList<Tag> getTagsPriority(){
+        return tagsPriority;
     }
 }
