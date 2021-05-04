@@ -609,4 +609,9 @@ public class Controller {
             canvas.repaint();
         }
     }
+
+    public void toggleDoubleDraw() {
+        canvas.doubleDraw = !canvas.doubleDraw;
+        canvas.repaint();
+    }
 }

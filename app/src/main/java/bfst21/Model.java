@@ -1,26 +1,24 @@
 package bfst21;
 
-import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
+import bfst21.osm.Tag;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.stream.XMLStreamException;
-import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
+
+    private ArrayList<Tag> drawableTagPriority;
+    private ArrayList<Tag> fillableTagPriority;
 
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
@@ -49,12 +47,7 @@ public class Model {
 
     public Model(String filePath, boolean ttiMode) {
         // Java wouldn't let me expand this into variables. Im very sorry about the mess
-        this(
-                Model.class.getResourceAsStream(filePath),
-                OSMParser.genFileExtension(filePath),
-                filePath,
-                ttiMode
-        );
+        this(Model.class.getResourceAsStream(filePath), OSMParser.genFileExtension(filePath), filePath, ttiMode);
     }
 
     public Model(InputStream in, FileExtension fileExtension, String fileName, boolean ttiMode) {
@@ -67,6 +60,8 @@ public class Model {
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
         cities = new ArrayList<>();
+        drawableTagPriority = new ArrayList<>();
+        fillableTagPriority = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -81,12 +76,19 @@ public class Model {
         }
 
         List<Drawable> roadList = new ArrayList<>();
-        for (Tag tag: drawableMap.keySet()) {
+        for (Tag tag : drawableMap.keySet()) {
             roadList.addAll(drawableMap.get(tag));
         }
         roadRTree = new Rtree(roadList);
 
-        System.out.println("here");
+        drawableMap.forEach((tag, drawables) -> {
+            drawableTagPriority.add(tag);
+        });
+        fillMap.forEach((tag, drawables) -> {
+            fillableTagPriority.add(tag);
+        });
+        drawableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
+        fillableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
     }
 
     /*
@@ -277,5 +279,13 @@ public class Model {
 
     public Node getNearestNode() {
         return nearestNode;
+    }
+
+    public ArrayList<Tag> getDrawableTagPriority() {
+        return drawableTagPriority;
+    }
+
+    public ArrayList<Tag> getFillableTagPriority() {
+        return fillableTagPriority;
     }
 }

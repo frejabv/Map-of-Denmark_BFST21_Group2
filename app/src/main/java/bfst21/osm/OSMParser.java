@@ -196,6 +196,11 @@ public class OSMParser {
                                 break;
                             }
 
+                            if (k.equals("landuse") && v.equals("residential")){
+                                tags.add(Tag.CITYBOARDER);
+                                break;
+                            }
+
                             try {
                                 var tag = Tag.valueOf(v.toUpperCase());
                                 tags.add(tag);
