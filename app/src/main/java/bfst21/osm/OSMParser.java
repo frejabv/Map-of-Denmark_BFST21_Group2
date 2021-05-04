@@ -137,7 +137,7 @@ public class OSMParser {
                                 break;
                             }
 
-                            if (k.equals("service")) {
+                            if (k.equals("service") || k.equals("surface")) {
                                 break;
                             }
 
