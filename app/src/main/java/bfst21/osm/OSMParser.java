@@ -10,16 +10,9 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.util.*;
-import java.util.zip.ZipInputStream;
-
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 public class OSMParser {
@@ -110,238 +103,230 @@ public class OSMParser {
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
-            case XMLStreamReader.START_ELEMENT:
-                switch (xmlReader.getLocalName()) {
-                case "bounds":
-                    model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
-                    model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                    model.setMaxY(
-                            Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
-                    model.setMinY(
-                            Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
-                    model.getPOITree().setBounds();
-                    break;
-                case "node":
-                    var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
-                    var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
-                    var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
-                    node = new Node(lon, lat, id);
-                    model.addToNodeIndex(node);
-                    isNode = true;
-                    break;
-                case "way":
-                    isWay = true;
-                    var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
-                    way = new Way(wayId);
-                    model.addToWayIndex(way);
-                    tags = new ArrayList<>();
-                    break;
-                case "nd":
-                    if (isWay && way != null) {
-                        var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
-                        way.addNode(model.getNodeIndex().getMember(ref));
-                    }
-                    break;
-                case "tag":
-                    var k = xmlReader.getAttributeValue(null, "k");
-                    var v = xmlReader.getAttributeValue(null, "v");
-                    if (k.equals("name")){
-                        systemPOIName = v;
-                    }
-                    if (k.equals("building")) {
-                        tags.add(Tag.BUILDING);
-                        break;
-                    }
-                    if (k.equals("service")) {
-                        break;
-                    }
-                    if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic") || k.equals("man_made")){
-                        if (systemPoi.contains(v)) {
-                            systemPOITags.add(v);
-                        }
-                    }
-                    if (k.equals("name")) {
-                        name = v;
-                    }
-                    if (k.equals("place")) {
-                        if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
-                                || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
-                                || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
-                            CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
-                            if (isNode) {
-                                model.addToCityIndex(new City(name, cityType, node.getX(), node.getY()));
-                            } else if (isWay && relation == null) {
-                                model.addToCityIndex(new City(name, cityType, way.first().getX(), way.first().getY()));
-                            } else if (isWay && relation != null) {
-                                model.addToCityIndex(new City(name, cityType, relation.ways.get(0).first().getX(),
-                                        relation.ways.get(0).first().getY()));
+                case XMLStreamReader.START_ELEMENT:
+                    switch (xmlReader.getLocalName()) {
+                        case "bounds":
+                            model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
+                            model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
+                            model.setMaxY(
+                                    Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
+                            model.setMinY(
+                                    Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
+                            model.getPOITree().setBounds();
+                            break;
+                        case "node":
+                            var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                            var lon = Float.parseFloat(xmlReader.getAttributeValue(null, "lon"));
+                            var lat = Float.parseFloat(xmlReader.getAttributeValue(null, "lat"));
+                            node = new Node(lon, lat, id);
+                            model.addToNodeIndex(node);
+                            isNode = true;
+                            break;
+                        case "way":
+                            isWay = true;
+                            var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                            way = new Way(wayId);
+                            model.addToWayIndex(way);
+                            tags = new ArrayList<>();
+                            break;
+                        case "nd":
+                            if (isWay && way != null) {
+                                var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                                way.addNode(model.getNodeIndex().getMember(ref));
                             }
-                        }
-                    }
+                            break;
+                        case "tag":
+                            var k = xmlReader.getAttributeValue(null, "k");
+                            var v = xmlReader.getAttributeValue(null, "v");
+                            if (k.equals("name")) {
+                                systemPOIName = v;
+                            }
+                            if (k.equals("building")) {
+                                tags.add(Tag.BUILDING);
+                                break;
+                            }
+                            if (k.equals("service")) {
+                                break;
+                            }
+                            if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic") || k.equals("man_made")) {
+                                if (systemPoi.contains(v)) {
+                                    systemPOITags.add(v);
+                                }
+                            }
+                            if (k.equals("name")) {
+                                name = v;
+                            }
+                            if (k.equals("place")) {
+                                if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
+                                        || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
+                                        || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
+                                    CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
+                                    if (isNode) {
+                                        model.addToCityIndex(new City(name, cityType, node.getX(), node.getY()));
+                                    } else if (isWay && relation == null) {
+                                        model.addToCityIndex(new City(name, cityType, way.first().getX(), way.first().getY()));
+                                    } else if (isWay && relation != null) {
+                                        model.addToCityIndex(new City(name, cityType, relation.ways.get(0).first().getX(),
+                                                relation.ways.get(0).first().getY()));
+                                    }
+                                }
+                            }
 
-                    try {
-                        var tag = Tag.valueOf(v.toUpperCase());
-                        tags.add(tag);
-                    } catch (IllegalArgumentException e) {
-                        // We don't care about tags not in our Tag enum
-                    }
+                            try {
+                                var tag = Tag.valueOf(v.toUpperCase());
+                                tags.add(tag);
+                            } catch (IllegalArgumentException e) {
+                                // We don't care about tags not in our Tag enum
+                            }
 
-                    try {
-                        var tag = Tag.valueOf(k.toUpperCase());
-                        tags.add(tag);
-                    } catch (IllegalArgumentException e) {
-                        // We don't care about tags not in our Tag enum
-                    }
+                            try {
+                                var tag = Tag.valueOf(k.toUpperCase());
+                                tags.add(tag);
+                            } catch (IllegalArgumentException e) {
+                                // We don't care about tags not in our Tag enum
+                            }
 
-                    if (isNode) {
-                        // Example from samsoe.osm of an addr tag:
-                        // <tag k="addr:street" v="Havnevej"/>
-                        if (k.equals("addr:street")) {
-                            model.getStreetTree().insert(v, node.getId());
-                        }
-                    }
+                            if (isNode) {
+                                // Example from samsoe.osm of an addr tag:
+                                // <tag k="addr:street" v="Havnevej"/>
+                                if (k.equals("addr:street")) {
+                                    model.getStreetTree().insert(v, node.getId());
+                                }
+                            }
 
+                            break;
+                        case "relation":
+                            var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
+                            relation = new Relation(relationId);
+                            model.addToRelationIndex(relation);
+                            tags = new ArrayList<>();
+                            break;
+
+                        case "member":
+                            var type = xmlReader.getAttributeValue(null, "type");
+                            var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
+                            var role = xmlReader.getAttributeValue(null, "role");
+                            Member memberRef = null;
+                            switch (type) {
+                                case "node":
+                                    memberRef = model.getNodeIndex().getMember(ref);
+                                    break;
+                                case "way":
+                                    memberRef = model.getWayIndex().getMember(ref);
+                                    if (memberRef != null) {
+                                        relation.addWay((Way) memberRef);
+                                    }
+                                    break;
+                                case "relation":
+                                    memberRef = model.getRelationIndex().getMember(ref);
+                                    break;
+                            }
+                            if (memberRef != null) {
+                                relation.addMember(memberRef);
+                                memberRef.addRole(relation.getId(), role);
+                            }
+
+                            break;
+
+                    }
                     break;
-                case "relation":
-                    var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
-                    relation = new Relation(relationId);
-                    model.addToRelationIndex(relation);
-                    tags = new ArrayList<>();
-                    break;
-
-                case "member":
-                    var type = xmlReader.getAttributeValue(null, "type");
-                    var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
-                    var role = xmlReader.getAttributeValue(null, "role");
-                    Member memberRef = null;
-                    switch (type) {
-                    case "node":
-                        memberRef = model.getNodeIndex().getMember(ref);
-                        break;
-                    case "way":
-                        memberRef = model.getWayIndex().getMember(ref);
-                        if (memberRef != null) {
-                            relation.addWay((Way) memberRef);
-                        }
-                        break;
-                    case "relation":
-                        memberRef = model.getRelationIndex().getMember(ref);
-                        break;
-                    }
-                    if (memberRef != null) {
-                        relation.addMember(memberRef);
-                        memberRef.addRole(relation.getId(), role);
-                    }
-
-                    break;
-
-                }
-                break;
-            case XMLStreamReader.END_ELEMENT:
-                switch (xmlReader.getLocalName()) {
-                    case "node":
-                        if (systemPOITags.size() > 0 && systemPOIName != ""){
-                            //POI list can be kd-tree only
-                            POI poi = createSystemPOI(systemPOIName,systemPOITags,node.getX(),node.getY());
-                            model.addSystemPOI(poi);
-                            model.getPOITree().insert(poi);
-                            System.out.println(systemPOITags.size());
+                case XMLStreamReader.END_ELEMENT:
+                    switch (xmlReader.getLocalName()) {
+                        case "node":
+                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                                //POI list can be kd-tree only
+                                POI poi = createSystemPOI(systemPOIName, systemPOITags, node.getX(), node.getY());
+                                model.addSystemPOI(poi);
+                                model.getPOITree().insert(poi);
+                                systemPOIName = "";
+                                systemPOITags = new ArrayList<>();
+                            }
+                            isNode = false;
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
-                        }
-                        isNode = false;
-                        systemPOIName = "";
-                        systemPOITags = new ArrayList<>();
-                        break;
-                    case "way":
-                        if (systemPOITags.size() > 0 && systemPOIName != ""){
-                            POI poi = createSystemPOI(systemPOIName,systemPOITags, way.first().getX(),way.first().getY());
-                            model.addSystemPOI(poi);
-                            model.getPOITree().insert(poi);
-                            System.out.println(systemPOITags.size());
+                            break;
+                        case "way":
+                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                                POI poi = createSystemPOI(systemPOIName, systemPOITags, way.first().getX(), way.first().getY());
+                                model.addSystemPOI(poi);
+                                model.getPOITree().insert(poi);
+                                systemPOIName = "";
+                                systemPOITags = new ArrayList<>();
+                            }
+                            addWayToList(way, tags, model);
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
-                        }
-                        addWayToList(way, tags, model);
-                        systemPOIName = "";
-                        systemPOITags = new ArrayList<>();
-                        break;
-                    case "relation":
-                        if (systemPOITags.size() > 0 && systemPOIName != ""){
-                            POI poi = createSystemPOI(systemPOIName,systemPOITags, relation.ways.get(0).first().getX(),relation.ways.get(0).first().getY());
-                            model.addSystemPOI(poi);
-                            model.getPOITree().insert(poi);
-                            System.out.println(systemPOITags.size());
-                            systemPOIName = "";
-                            systemPOITags = new ArrayList<>();
-                        }
+                            break;
+                        case "relation":
+                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                                POI poi = createSystemPOI(systemPOIName, systemPOITags, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                model.addSystemPOI(poi);
+                                model.getPOITree().insert(poi);
+                                systemPOIName = "";
+                                systemPOITags = new ArrayList<>();
+                            }
 
-                        relation.setTags(tags);
-                        relation = null;
-                        systemPOIName = "";
-                        systemPOITags = new ArrayList<>();
-                        break;
-                }
-                break;
+                            relation.setTags(tags);
+                            relation = null;
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
+                            break;
+                    }
+                    break;
             }
         }
         // TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
         System.out.println("coastlines: " + model.getCoastlines());
-        }
+    }
 
     private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
         String type = "default";
         String imageType = "default";
         int priority = 0;
-        //List<String> systemPoi = new ArrayList<>(Arrays.asList("attraction", "viewpoint", "artwork", "building"));
-        //From specific tags to more general
-        for(String tag :systemPOITags) {
-            if (priority != 10){
-                if (systemPOITags.contains("windmill")){
+        for (String tag : systemPOITags) {
+            if (priority != 10) {
+                if (systemPOITags.contains("windmill")) {
                     imageType = "mill";
                     type = tag;
                     priority = 10;
-                }else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")){
+                } else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")) {
                     imageType = "museum";
                     type = tag;
                     priority = 10;
-                } else if (systemPOITags.contains("theme_park")){
+                } else if (systemPOITags.contains("theme_park")) {
                     imageType = "theme_park";
                     type = tag;
                     priority = 10;
-                } else if (systemPOITags.contains("aerodrome")){
+                } else if (systemPOITags.contains("aerodrome")) {
                     imageType = "aerodrome";
                     type = tag;
                     priority = 10;
-                } else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")){
+                } else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")) {
                     imageType = "cinema";
                     type = tag;
                     priority = 10;
-                } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")){
+                } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")) {
                     imageType = "castle";
                     type = tag;
                     priority = 10;
-                } else if (systemPOITags.contains("lighthouse")){
+                } else if (systemPOITags.contains("lighthouse")) {
                     imageType = "viewpoint";
                     type = tag;
                     priority = 10;
-                } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust") || systemPOITags.contains("sculpture")){
+                } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust") || systemPOITags.contains("sculpture")) {
                     imageType = "statue";
                     type = tag;
                     priority = 10;
-                }else if (systemPOITags.contains("zoo")){
+                } else if (systemPOITags.contains("zoo")) {
                     imageType = "zoo";
                     type = tag;
                     priority = 10;
-                } /*else if (systemPOITags.contains("aquarium")){
-                    imageType = "aquarium";
-                    priority = 10;
-                }*/ else if (systemPOITags.contains("attraction")){
+                } else if (systemPOITags.contains("attraction")) {
                     imageType = "suitcase";
                     type = tag;
                     priority = 5;
-                } else if (systemPOITags.contains("viewpoint")){
+                } else if (systemPOITags.contains("viewpoint")) {
                     imageType = "viewpoint";
                     type = tag;
                     priority = 5;
@@ -349,7 +334,7 @@ public class OSMParser {
             }
         }
         //sanitise type
-        POI result = new POI(systemPOIName,type, imageType,x,y);
+        POI result = new POI(systemPOIName, type, imageType, x, y);
         return result;
     }
 
