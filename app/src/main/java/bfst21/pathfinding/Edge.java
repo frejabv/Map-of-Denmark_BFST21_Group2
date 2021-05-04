@@ -1,6 +1,5 @@
 package bfst21.pathfinding;
 
-import bfst21.Model;
 import bfst21.osm.Node;
 import bfst21.osm.Tag;
 import bfst21.osm.Way;
@@ -18,7 +17,7 @@ public class Edge {
     }
 
     public void setPathTypes(Way way, AStar astar) {
-        for (Tag tag : way.getTags()) {
+        Tag tag = way.getTag();
             if (astar.getDriveableTags().contains(tag)) {
                 isDriveable = true;
             }
@@ -28,7 +27,6 @@ public class Edge {
             if (astar.getWalkableTags().contains(tag)) {
                 isWalkable = true;
             }
-        }
         if(way.isCyclable()) {
             isCyclable = true;
         }

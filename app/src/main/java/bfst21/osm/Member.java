@@ -7,11 +7,10 @@ import java.util.HashMap;
 public class Member implements Serializable {
     long id;
     HashMap<Long, String> roleMap;
-    ArrayList<Tag> tags;
+    Tag tag;
 
     public Member(long id){
         this.id = id;
-        tags = new ArrayList<>();
     }
 
     public long getId() { return id; }
@@ -24,11 +23,11 @@ public class Member implements Serializable {
         roleMap.put(id,role);
     }
 
-    public void setTags(ArrayList<Tag> tags){
-        this.tags = tags;
+    public void setTag(Tag tag){
+        this.tag = tag;
     }
 
-    public ArrayList<Tag> getTags() {
-        return tags;
+    public Tag getTag() {
+        return tag;
     }
 }

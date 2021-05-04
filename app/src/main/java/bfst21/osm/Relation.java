@@ -29,15 +29,15 @@ public class Relation extends Member {
     }
 
     public void draw(GraphicsContext gc, RenderingStyle style) {
-        if(!tags.isEmpty()) {
-            gc.setStroke(style.getColorByTag(tags.get(0)));
-            gc.setFill(style.getColorByTag(tags.get(0)));
+        if(tag != null) {
+            gc.setStroke(style.getColorByTag(tag));
+            gc.setFill(style.getColorByTag(tag));
 
-            if(tags.contains(Tag.BUILDING)) {
+            if(tag == Tag.BUILDING) {
                 drawBuilding(gc);
             } else {
                 for(Way way : ways) {
-                    var drawStyle = style.getDrawStyleByTag(tags.get(0));
+                    var drawStyle = style.getDrawStyleByTag(tag);
                     way.draw(gc);
                     if(drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();
@@ -51,7 +51,6 @@ public class Relation extends Member {
         boolean innerDrawn = false;
         gc.setFillRule(FillRule.EVEN_ODD);
         gc.beginPath();
-        //System.out.println("ID of relation: " + id);
         for(Way way : ways) {
             String value = way.getRoleMap().get(id);
             if(value.equals("inner")) {

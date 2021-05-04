@@ -77,11 +77,11 @@ public class Way extends Member implements Drawable, Serializable {
 
     public void checkSpeed() {
         if (maxSpeed == 1) {
-            if (tags.contains(Tag.MOTORWAY) || tags.contains(Tag.MOTORWAY_LINK)) {
+            if (tag == Tag.MOTORWAY || tag == Tag.MOTORWAY_LINK) {
                 maxSpeed = 130;
-            } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.PRIMARY)) {
+            } else if (tag == Tag.SECONDARY || tag == Tag.TERTIARY || tag == Tag.TRUNK || tag == Tag.PRIMARY) {
                 maxSpeed = 80;
-            } else if (tags.contains(Tag.JUNCTION) || tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
+            } else if (tag == Tag.JUNCTION || tag == Tag.LIVING_STREET || tag == Tag.UNCLASSIFIED || tag == Tag.RESIDENTIAL || tag == Tag.ROAD || tag == Tag.SERVICE) {
                 maxSpeed = 50;
             }
         }
