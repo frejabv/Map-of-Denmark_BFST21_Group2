@@ -51,7 +51,7 @@ public class MapCanvas extends Canvas {
     }
 
     void repaint() {
-        //Rtree query
+        //Rtree queries
 
         long start = System.nanoTime();
         gc = getGraphicsContext2D();
