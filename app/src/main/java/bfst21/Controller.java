@@ -4,8 +4,6 @@ import bfst21.osm.Node;
 import bfst21.search.RadixNode;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -126,13 +124,15 @@ public class Controller {
             if (!suggestionList.isEmpty()) {
                 searchField.textProperty().setValue(suggestionList.get(0).getText());
                 Node node;
-                if(searchField.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
-                    node = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(searchField.getText()).getId());
+                node = model.getNodeIndex().getMember(model.getAddressTree().lookupNode(searchField.getText()).getId());
+
+                /*if(searchField.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber) regex streetnumbermore, streetnumbermore
+                                    node = model.getNodeIndex().getMember(model.getAddressTree().lookupNode(searchField.getText()).getId());
                 } else if(searchField.getText().contains(" ")) { //regex.matches(street)
                     node = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(searchField.getText()).getId());
                 } else {
                     node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(searchField.getText()).getId());
-                }
+                }*/
                 canvas.setPin(node.getX(), node.getY());
                 canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                 searchContainer.getChildren().removeAll(suggestionList);
@@ -156,13 +156,13 @@ public class Controller {
             if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
                 Node nodeFrom;
-                if(routeFieldFrom.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
-                    nodeFrom = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(routeFieldFrom.getText()).getId());
+                /*if(routeFieldFrom.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                    nodeFrom = model.getNodeIndex().getMember(model.getAddressTree().lookupNode(routeFieldFrom.getText()).getId());
                 } else if(routeFieldFrom.getText().contains(" ")) { //regex.matches(street)
                     nodeFrom = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(routeFieldFrom.getText()).getId());
                 } else {
                     nodeFrom = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldFrom.getText()).getId());
-                }
+                }*/
                 if (toNode != null) {
                     //model.getAStar().AStarSearch(fromNodeId, toNodeId);
                     System.out.println("Route searched");
@@ -176,13 +176,13 @@ public class Controller {
             if (!suggestionList.isEmpty()) {
                 routeFieldTo.textProperty().setValue(suggestionList.get(0).getText());
                 Node nodeTo;
-                if(routeFieldTo.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
-                    nodeTo = model.getNodeIndex().getMember(model.getStreetNumberPostcodeTree().lookupNode(routeFieldTo.getText()).getId());
+                /*if(routeFieldTo.getText().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                    nodeTo = model.getNodeIndex().getMember(model.getAddressTree().lookupNode(routeFieldTo.getText()).getId());
                 } else if(routeFieldTo.getText().contains(" ")) { //regex.matches(street)
                     nodeTo = model.getNodeIndex().getMember(model.getStreetNumberTree().lookupNode(routeFieldTo.getText()).getId());
                 } else {
                     nodeTo = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(routeFieldTo.getText()).getId());
-                }
+                }*/
                 if (fromNode != null) {
                     //model.getAStar().AStarSearch(fromNodeID, toNodeId);
                     System.out.println("Route searched");
@@ -211,13 +211,15 @@ public class Controller {
         suggestionList.clear();
         if (selectedField.textProperty().getValue().length() > 2) {
             ArrayList<RadixNode> suggestions;
-            if(selectedField.textProperty().getValue().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
-                suggestions = model.getStreetNumberPostcodeTree().getSuggestions(selectedField.textProperty().getValue());
+            suggestions = model.getAddressTree().getSuggestions(selectedField.textProperty().getValue());
+
+            /*if(selectedField.textProperty().getValue().matches(".* \\d+.* (?:\\d*)")) { //regex.matches(streetNumber)
+                suggestions = model.getAddressTree().getSuggestions(selectedField.textProperty().getValue());
             } else if(selectedField.textProperty().getValue().contains(" ")) { //regex.matches(street)
                 suggestions = model.getStreetNumberTree().getSuggestions(selectedField.textProperty().getValue());
             } else {
                 suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
-            }
+            }*/
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
                 RadixNode suggestion = suggestions.get(i);
                 Text newSuggestion = new Text(suggestion.getFullName());
