@@ -107,12 +107,12 @@ public class Controller {
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
         List<String> regexString = Arrays.asList("[Postcode] [City]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
-        for (String s : regexString) {
+        for (String regex : regexString) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");
             Text bullet = new Text("\u25CF");
             bullet.getStyleClass().add("regexMatch");
-            Text text = new Text(s);
+            Text text = new Text(regex);
             hbox.getChildren().add(bullet);
             hbox.getChildren().add(text);
             regexVisualisers.add(bullet);
