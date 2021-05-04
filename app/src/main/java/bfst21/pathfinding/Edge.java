@@ -18,19 +18,19 @@ public class Edge {
 
     public void setPathTypes(Way way, AStar astar) {
         Tag tag = way.getTag();
-            if (astar.getDriveableTags().contains(tag)) {
-                isDriveable = true;
-            }
-            if (astar.getCyclableTags().contains(tag)) {
-                isCyclable = true;
-            }
-            if (astar.getWalkableTags().contains(tag)) {
-                isWalkable = true;
-            }
-        if(way.isCyclable()) {
+        if (astar.getDriveableTags().contains(tag)) {
+            isDriveable = true;
+        }
+        if (astar.getCyclableTags().contains(tag)) {
             isCyclable = true;
         }
-        if(way.isWalkable()) {
+        if (astar.getWalkableTags().contains(tag)) {
+            isWalkable = true;
+        }
+        if (way.isCyclable()) {
+            isCyclable = true;
+        }
+        if (way.isWalkable()) {
             isWalkable = true;
         }
     }

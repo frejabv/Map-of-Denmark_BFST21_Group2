@@ -228,7 +228,7 @@ public class AStar {
                 totalDistance += currentDistance;
                 totalTime += currentDistance / currentMaxSpeed;
                 String roadName;
-                if(model.getWayIndex().getMember(secondId).getName().equals("")) {
+                if (model.getWayIndex().getMember(secondId).getName().equals("")) {
                     roadName = "unknown road";
                 } else {
                     roadName = model.getWayIndex().getMember(secondId).getName();

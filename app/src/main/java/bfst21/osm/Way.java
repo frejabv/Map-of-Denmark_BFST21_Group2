@@ -1,14 +1,12 @@
 package bfst21.osm;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import org.jetbrains.annotations.NotNull;
-import javafx.scene.paint.Color;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
@@ -200,12 +198,10 @@ public class Way extends Member implements Drawable, Serializable {
         if (param < 0) {
             nearestX = n1.getX();
             nearestY = n1.getY();
-        }
-        else if (param > 1) {
+        } else if (param > 1) {
             nearestX = n2.getX();
             nearestY = n2.getY();
-        }
-        else {
+        } else {
             nearestX = (float) (n1.getX() + param * nDeltaX);
             nearestY = (float) (n1.getY() + param * nDeltaY);
         }

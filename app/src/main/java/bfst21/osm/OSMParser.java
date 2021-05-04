@@ -10,10 +10,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -23,16 +19,16 @@ public class OSMParser {
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
             throws IOException, XMLStreamException {
         switch (fileExtension) {
-        case OSM:
-            loadOSM(in, model);
-            break;
-        case ZIP:
-            loadZIP(in, model);
-            saveOBJ(fileName, model);
-            break;
-        case OBJ:
-            loadOBJ(in, model);
-            break;
+            case OSM:
+                loadOSM(in, model);
+                break;
+            case ZIP:
+                loadZIP(in, model);
+                saveOBJ(fileName, model);
+                break;
+            case OBJ:
+                loadOBJ(in, model);
+                break;
         }
     }
 
@@ -184,7 +180,7 @@ public class OSMParser {
                             }
 
                             if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
-                                if(!v.equals("no")) {
+                                if (!v.equals("no")) {
                                     way.setIsCyclable();
                                 }
                                 break;
@@ -253,7 +249,7 @@ public class OSMParser {
                             tag = null;
                             break;
                         case "way":
-                            if(tag != null) {
+                            if (tag != null) {
                                 way.setTag(tag);
                                 addWayToList(way, tag, model);
                             }
@@ -262,7 +258,7 @@ public class OSMParser {
                             tag = null;
                             break;
                         case "relation":
-                            if(tag != null) {
+                            if (tag != null) {
                                 relation.setTag(tag);
                             }
                             relation.createRectangle();
@@ -285,22 +281,22 @@ public class OSMParser {
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
 
-            if (tag == Tag.COASTLINE) {
-                model.addCoastline(way);
-            } else {
-                var drawStyle = renderingStyle.getDrawStyleByTag(tag);
+        if (tag == Tag.COASTLINE) {
+            model.addCoastline(way);
+        } else {
+            var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
-                if (drawStyle == DrawStyle.FILL) {
-                    fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, fillMap)) {
-                        fillMap.get(tag).add(way);
-                    }
-                } else {
-                    drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, drawableMap)) {
-                        drawableMap.get(tag).add(way);
-                    }
+            if (drawStyle == DrawStyle.FILL) {
+                fillMap.putIfAbsent(tag, new ArrayList<>());
+                if (!isDublet(way, tag, fillMap)) {
+                    fillMap.get(tag).add(way);
                 }
+            } else {
+                drawableMap.putIfAbsent(tag, new ArrayList<>());
+                if (!isDublet(way, tag, drawableMap)) {
+                    drawableMap.get(tag).add(way);
+                }
+            }
         }
     }
 
@@ -345,17 +341,17 @@ public class OSMParser {
         FileExtension toReturn;
 
         switch (filePathParts[filePathParts.length - 1]) {
-        case "osm":
-            toReturn = FileExtension.OSM;
-            break;
-        case "zip":
-            toReturn = FileExtension.ZIP;
-            break;
-        case "obj":
-            toReturn = FileExtension.OBJ;
-            break;
-        default:
-            throw new UnsupportedFileTypeException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
+            case "osm":
+                toReturn = FileExtension.OSM;
+                break;
+            case "zip":
+                toReturn = FileExtension.ZIP;
+                break;
+            case "obj":
+                toReturn = FileExtension.OBJ;
+                break;
+            default:
+                throw new UnsupportedFileTypeException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
         }
         return toReturn;
     }
