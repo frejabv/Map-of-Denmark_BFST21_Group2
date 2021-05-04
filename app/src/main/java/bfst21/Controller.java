@@ -600,7 +600,7 @@ public class Controller {
         if (road.getName().equals("")) {
             updateClosestRoad("ID: " + road.getId());
         } else {
-            updateClosestRoad(String.valueOf(road.getName()));
+            updateClosestRoad(road.getName());
         }
 
         model.setNearestNode(road.nearestNode(mousePoint));
