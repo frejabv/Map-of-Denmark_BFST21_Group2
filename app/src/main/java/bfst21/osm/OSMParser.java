@@ -160,7 +160,7 @@ public class OSMParser {
                             }
 
                             if (k.equals("maxspeed")) {
-                                v.replace(" km", "").replace(" mph", "");
+                                v.replaceAll("\\D+", "");
                                 way.setMaxSpeed(Integer.parseInt(v));
                             }
 
