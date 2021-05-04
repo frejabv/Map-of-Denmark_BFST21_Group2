@@ -32,6 +32,13 @@ public class RenderingStyle {
         styleMap.put(Tag.BUILDING, DrawStyle.FILL);
         styleMap.put(Tag.WATER, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
+        styleMap.put(Tag.CITYBOARDER, DrawStyle.FILL);
+        styleMap.put(Tag.MEADOW,DrawStyle.FILL);
+        styleMap.put(Tag.HEATH,DrawStyle.FILL);
+        styleMap.put(Tag.CYCLEWAY, DrawStyle.DASH);
+        styleMap.put(Tag.FOOTWAY, DrawStyle.DASH);
+        styleMap.put(Tag.PATH, DrawStyle.DASH);
+        styleMap.put(Tag.TRACK, DrawStyle.DASH);
 
         doubleDrawn.put(Tag.JUNCTION, true);
         doubleDrawn.put(Tag.LIVING_STREET, true);
@@ -56,9 +63,10 @@ public class RenderingStyle {
         widthMap.put(Tag.TERTIARY, 2.0);
         widthMap.put(Tag.RESIDENTIAL, 0.8);
         widthMap.put(Tag.SERVICE, 0.6);
-        widthMap.put(Tag.CYCLEWAY, 0.3);
-        widthMap.put(Tag.FOOTWAY, 0.3);
-        widthMap.put(Tag.PATH, 0.3);
+        widthMap.put(Tag.CYCLEWAY, 0.5);
+        widthMap.put(Tag.FOOTWAY, 0.5);
+        widthMap.put(Tag.PATH, 0.5);
+        widthMap.put(Tag.TRACK, 0.5);
 
         genDefaultMode();
         genDarkMode();
@@ -114,6 +122,11 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.PRIMARY_LINK, Color.rgb(253, 218, 118));
         defaultColorMap.put(Tag.TRUNK, Color.WHITE);
         defaultColorMap.put(Tag.TRUNK_LINK, Color.WHITE);
+
+        //TODO: fix colors
+        defaultColorMap.put(Tag.CITYBOARDER, Color.LIGHTGREY);
+        defaultColorMap.put(Tag.MEADOW, Color.rgb(168, 218, 181));
+        defaultColorMap.put(Tag.HEATH, Color.GREEN);
     }
 
     private void genDarkMode() {
@@ -141,6 +154,11 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.PRIMARY_LINK, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.TRUNK, Color.rgb(128, 142, 155));
         darkModeColorMap.put(Tag.TRUNK_LINK, Color.rgb(128, 142, 155));
+
+        //TODO: fix colors
+        darkModeColorMap.put(Tag.CITYBOARDER, Color.LIGHTGREY);
+        darkModeColorMap.put(Tag.MEADOW, Color.rgb(168, 218, 181));
+        darkModeColorMap.put(Tag.HEATH, Color.GREEN);
     }
 
     public Color getColorByTag(Tag tag) {
