@@ -69,7 +69,7 @@ public class Controller {
     @FXML
     private VBox leftContainer;
     @FXML
-    private HBox rightContainer;
+    private VBox rightContainer;
 
     private Debug debug;
     private Point2D lastMouse;
