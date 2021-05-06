@@ -112,10 +112,10 @@ public class OSMParserTest {
     public void testSjaelsoePrimary(){ assertEquals(8,sjaelsoeModel.getDrawableMap().get(Tag.PRIMARY).size()); }
 
     @Test
-    public void testSamsoeResidential(){ assertEquals(490,samsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
+    public void testSamsoeResidential(){ assertEquals(361,samsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
 
     @Test
-    public void testSjaelsoeResidential(){ assertEquals(164,sjaelsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
+    public void testSjaelsoeResidential(){ assertEquals(152,sjaelsoeModel.getDrawableMap().get(Tag.RESIDENTIAL).size()); }
 
     @Test
     public void testSamsoeSecondary(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.SECONDARY).size()); }

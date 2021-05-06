@@ -5,6 +5,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -133,6 +134,60 @@ public class OSMObjectsTest {
         HashMap<Long, String> roles = testNode.getRoleMap();
         assertEquals("inner", roles.get(Long.valueOf(111)));
         assertEquals("outer", roles.get(Long.valueOf(222)));
+    }
+
+    @Test
+    public void testMergingOuterWaysInRelation() {
+        Relation testRelation = new Relation(222);
+
+        Way testWay1 = new Way(1);
+        testWay1.addRole(222, "inner");
+        Node testNode1 = new Node(100, 200, 300);
+        Node testNode2 = new Node(200, 300, 400);
+        testWay1.addNode(testNode1);
+        testWay1.addNode(testNode2);
+
+        Way testWay2 = new Way(2);
+        testWay2.addRole(222, "outer");
+        Node testNode3 = new Node(300, 400, 500);
+        Node testNode4 = new Node(400, 500, 600);
+        testWay2.addNode(testNode3);
+        testWay2.addNode(testNode4);
+
+        Way testWay3 = new Way(3);
+        testWay3.addRole(222, "outer");
+        Node testNode5 = new Node(500, 600, 700);
+        Node testNode6 = new Node(600, 700, 800);
+        testWay3.addNode(testNode5);
+        testWay3.addNode(testNode6);
+
+        Way testWay4 = new Way(4);
+        testWay4.addRole(222, "outer");
+        Node testNode7 = new Node(700, 800, 900);
+        Node testNode8 = new Node(800, 900, 1000);
+        testWay4.addNode(testNode7);
+        testWay4.addNode(testNode8);
+
+        testRelation.addMember(testWay1);
+        testRelation.addMember(testWay2);
+        testRelation.addMember(testWay3);
+        testRelation.addMember(testWay4);
+
+        HashMap<Long, String> roles = testWay1.getRoleMap();
+        assertEquals("inner", roles.get(222l));
+
+        ArrayList<Way> outers = new ArrayList<>();
+        outers.add(testWay2);
+        outers.add(testWay3);
+        outers.add(testWay4);
+
+        ArrayList<Way> mergedList = testRelation.mergeOuter(outers);
+
+        assertEquals(1, mergedList.size());
+
+        Way mergedTestWay = mergedList.get(0);
+        assertEquals(mergedTestWay.first(), testNode1);
+        assertEquals(mergedTestWay.last(), testNode6);
     }
 
     @Test
