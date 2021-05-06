@@ -153,13 +153,13 @@ public class OSMParser {
                                 if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
                                         || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
                                         || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
-                                    CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
+                                    AreaType areaType = AreaType.valueOf(v.toUpperCase());
                                     if (isNode) {
-                                        model.addToCityIndex(new City(name, cityType, node));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, node));
                                     } else if (isWay && relation == null) {
-                                        model.addToCityIndex(new City(name, cityType, way));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, way));
                                     } else if (isWay && relation != null) {
-                                        model.addToCityIndex(new City(name, cityType, relation));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, relation));
                                     }
                                 }
                             }

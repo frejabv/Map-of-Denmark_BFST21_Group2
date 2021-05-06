@@ -41,7 +41,7 @@ public class Model {
     float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private float minX, minY, maxX, maxY;
-    private List<City> cities;
+    private List<AreaName> areaNames;
 
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
@@ -65,7 +65,7 @@ public class Model {
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
-        cities = new ArrayList<>();
+        areaNames = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -258,12 +258,12 @@ public class Model {
         return pointsOfInterest;
     }
 
-    public void addToCityIndex(City city) {
-        cities.add(city);
+    public void addToAreaNamesIndex(AreaName areaName) {
+        areaNames.add(areaName);
     }
 
-    public List<City> getCities() {
-        return cities;
+    public List<AreaName> getAreaNames() {
+        return areaNames;
     }
 
     public Rtree getRoadRTree() {

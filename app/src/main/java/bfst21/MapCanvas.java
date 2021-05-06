@@ -109,8 +109,8 @@ public class MapCanvas extends Canvas {
 
         if (showNames) {
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            model.getCities().forEach((city) -> {
-                city.drawType(gc, getDistanceWidth());
+            model.getAreaNames().forEach((areaName) -> {
+                areaName.drawType(gc, getDistanceWidth());
             });
         }
 
