@@ -35,12 +35,38 @@ public class Relation extends Member implements Drawable{
             gc.setStroke(renderingStyle.getColorByTag(tags.get(0)));
             gc.setFill(renderingStyle.getColorByTag(tags.get(0)));
 
-            //either we assume that there will be a role present in the first or last position
-            //or we whitelist tags we know can include an inner.
-            //if(ways.get(0).getRoleMap() != null || ways.get(ways.size()-1).getRoleMap() != null) {
-                drawInnerOuter(gc);
-            /*} else {
-                //or we might just put this in the else, if innerDrawn is false.
+            boolean innerDrawn = false;
+            ArrayList<Way> outerLines = new ArrayList<>();
+
+            gc.setFillRule(FillRule.EVEN_ODD);
+            gc.beginPath();
+
+            for(Way way : ways) {
+                String value = way.getRoleMap().get(id);
+                if(value.equals("inner")) {
+                    way.drawRelationPart(gc);
+                    innerDrawn = true;
+                }
+                if(value.equals("outer")) {
+                    outerLines.add(way);
+                }
+            }
+
+            ArrayList<Way> mergedList;
+            if(outerLines.size() > 1) {
+                mergedList = mergeOuter(outerLines);
+            } else {
+                mergedList = outerLines;
+            }
+
+            if(innerDrawn) {
+                for(Way way : mergedList) {
+                    way.drawRelationPart(gc);
+                }
+                gc.fill();
+            } else {
+                //draw relation normally
+                gc.setFillRule(FillRule.NON_ZERO);
                 for(Way way : ways) {
                     var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
                     way.draw(gc);
@@ -48,50 +74,8 @@ public class Relation extends Member implements Drawable{
                         gc.fill();
                     }
                 }
-            }*/
-        }
-    }
-
-    public void drawInnerOuter(GraphicsContext gc) {
-        boolean innerDrawn = false;
-        ArrayList<Way> outerLines = new ArrayList<>();
-
-        gc.setFillRule(FillRule.EVEN_ODD);
-        gc.beginPath();
-
-        for(Way way : ways) {
-            String value = way.getRoleMap().get(id);
-            if(value.equals("inner")) {
-                way.drawRelationPart(gc);
-                innerDrawn = true;
-            }
-            if(value.equals("outer")) {
-                outerLines.add(way);
             }
         }
-
-        ArrayList<Way> mergedList;
-        if(outerLines.size() > 1) {
-            mergedList = mergeOuter(outerLines);
-        } else {
-            mergedList = outerLines;
-        }
-
-        if(innerDrawn) {
-            for(Way way : mergedList) {
-                way.draw(gc);
-            }
-            gc.fill();
-        } else {
-            for(Way way : ways) {
-                var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
-                way.draw(gc);
-                if(drawStyle.equals(DrawStyle.FILL)) {
-                    gc.fill();
-                }
-            }
-        }
-        //gc.fill();
     }
 
     public ArrayList<Way> mergeOuter(ArrayList<Way> outerLines) {
