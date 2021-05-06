@@ -201,6 +201,11 @@ public class OSMParser {
                                 break;
                             }
 
+                            if(k.equals("ferry")){
+                                tags.add(Tag.FERRY);
+                                break;
+                            }
+
                             try {
                                 var tag = Tag.valueOf(v.toUpperCase());
                                 tags.add(tag);

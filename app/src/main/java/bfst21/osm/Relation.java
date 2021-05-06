@@ -11,7 +11,6 @@ public class Relation extends Member implements Drawable{
     ArrayList<Member> members = new ArrayList<>();
     ArrayList<Way> ways = new ArrayList<>();
     Rectangle rect;
-    RenderingStyle renderingStyle = new RenderingStyle();
 
     public Relation(long id) {
         super(id);
@@ -29,7 +28,7 @@ public class Relation extends Member implements Drawable{
         return members;
     }
 
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, RenderingStyle renderingStyle) {
         if(!tags.isEmpty()) {
             gc.setStroke(renderingStyle.getColorByTag(tags.get(0)));
             gc.setFill(renderingStyle.getColorByTag(tags.get(0)));
@@ -39,7 +38,7 @@ public class Relation extends Member implements Drawable{
             } else {
                 for(Way way : ways) {
                     var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
-                    way.draw(gc);
+                    way.draw(gc, renderingStyle);
                     if(drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();
                     }

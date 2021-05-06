@@ -104,7 +104,7 @@ public class Way extends Member implements Drawable, Serializable {
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, RenderingStyle renderingStyle) {
         gc.beginPath();
         var firstNode = nodes.get(0);
         gc.moveTo(firstNode.getX(), firstNode.getY());

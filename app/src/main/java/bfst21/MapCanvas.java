@@ -62,7 +62,7 @@ public class MapCanvas extends Canvas {
 
         gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
         for (var island : model.getIslands()) {
-            island.draw(gc);
+            island.draw(gc, renderingStyle);
             gc.fill();
         }
 
@@ -70,10 +70,9 @@ public class MapCanvas extends Canvas {
             List<Drawable> fillables = model.getFillMap().get(tag);
             gc.setStroke(renderingStyle.getColorByTag(tag));
             gc.setFill(renderingStyle.getColorByTag(tag));
-
             fillables.forEach(fillable -> {
                 if (tag.zoomLimit > getDistanceWidth()) {
-                    fillable.draw(gc);
+                    fillable.draw(gc, renderingStyle);
                     gc.fill();
                 }
             });
@@ -96,7 +95,7 @@ public class MapCanvas extends Canvas {
                     var style = renderingStyle.getDrawStyleByTag(tag);
                     if (drawables != null && style != DrawStyle.DASH) {
                         drawables.forEach(drawable -> {
-                            drawable.draw(gc);
+                            drawable.draw(gc, renderingStyle);
                         });
                     }
                 }
@@ -126,9 +125,9 @@ public class MapCanvas extends Canvas {
                     }
                     if (tag.zoomLimit > getDistanceWidth()) {
                         if (renderingStyle.getDoubleDrawn(tag) && doubleDraw){
-                            drawable.draw(gc);
+                            drawable.draw(gc, renderingStyle);
                         }
-                        drawable.draw(gc);
+                        drawable.draw(gc, renderingStyle);
                     }
                 });
             }
@@ -145,7 +144,7 @@ public class MapCanvas extends Canvas {
         if (showNames) {
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
             model.getCities().forEach((city) -> {
-                city.drawType(gc, getDistanceWidth());
+                city.drawType(gc, getDistanceWidth(), renderingStyle);
             });
         }
 
@@ -232,8 +231,11 @@ public class MapCanvas extends Canvas {
     }
 
     public void paintPath(List<Node> path){
-        gc.setStroke(Color.ORANGERED);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant())*3);
+        gc.setStroke(Color.rgb(112,161,255));
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+        if(getDistanceWidth() < 7.0){
+            gc.setLineWidth(0.000045);
+        }
         gc.beginPath();
         for (int i = 0;i < path.size()-1; i++){
             Node current = path.get(i);
