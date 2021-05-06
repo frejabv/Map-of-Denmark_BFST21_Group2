@@ -142,6 +142,7 @@ public class MapCanvas extends Canvas {
         }
 
         if (showNames) {
+            gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
             model.getCities().forEach((city) -> {
                 city.drawType(gc, getDistanceWidth(), renderingStyle);
