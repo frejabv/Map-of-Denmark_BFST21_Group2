@@ -162,7 +162,7 @@ public class OSMParser {
                             if (k.equals("maxspeed")) {
                                 v.replaceAll("\\D+", "");
                                 if(!v.equals("")){
-                                    int speed = Math.round(Integer.parseInt(v));
+                                    int speed = (int) Math.round(Double.parseDouble(v));
                                     way.setMaxSpeed(speed);
                                 }
                             }
