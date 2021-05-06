@@ -206,6 +206,11 @@ public class OSMParser {
                                 break;
                             }
 
+                            if(k.equals("natural") && (v.equals("sand") || v.equals("beach"))){
+                                tags.add(Tag.BEACH);
+                                break;
+                            }
+
                             try {
                                 var tag = Tag.valueOf(v.toUpperCase());
                                 tags.add(tag);
