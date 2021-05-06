@@ -18,7 +18,7 @@ public class AStarTest {
 
     @BeforeEach
     public void setUp() {
-        model = new Model("dk-AstarTest.osm",false);
+        model = new Model("/bfst21/data/dk-AstarTest.osm",false);
         model.setUpAStar();
     }
     
@@ -169,7 +169,7 @@ public class AStarTest {
 
     @Test
     public void testRoundaboutExitDescription() {
-        Model modelRoundabout = new Model("roundabout-simple.osm",false);
+        Model modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm",false);
         modelRoundabout.setUpAStar();
         AStar astar = modelRoundabout.getAStar();
         Node testNode = modelRoundabout.getNodeIndex().getMember(12);
@@ -181,7 +181,7 @@ public class AStarTest {
 
     @Test
     public void testRoundaboutExitType() {
-        Model modelRoundabout = new Model("roundabout-simple.osm",false);
+        Model modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm",false);
         modelRoundabout.setUpAStar();
         AStar astar = modelRoundabout.getAStar();
         Node testNode = modelRoundabout.getNodeIndex().getMember(12);

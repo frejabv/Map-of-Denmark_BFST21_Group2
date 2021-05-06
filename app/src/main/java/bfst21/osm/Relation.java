@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Relation extends Member implements Drawable{
+public class Relation extends Member implements Drawable {
     ArrayList<Member> members = new ArrayList<>();
     ArrayList<Way> ways = new ArrayList<>();
     Rectangle rect;
@@ -18,7 +18,7 @@ public class Relation extends Member implements Drawable{
         super(id);
     }
 
-    public void  addMember(Member member) {
+    public void addMember(Member member) {
         members.add(member);
     }
 
@@ -31,7 +31,7 @@ public class Relation extends Member implements Drawable{
     }
 
     public void draw(GraphicsContext gc) {
-        if(!tags.isEmpty()) {
+        if (!tags.isEmpty()) {
             gc.setStroke(renderingStyle.getColorByTag(tags.get(0)));
             gc.setFill(renderingStyle.getColorByTag(tags.get(0)));
 
@@ -41,36 +41,36 @@ public class Relation extends Member implements Drawable{
             gc.setFillRule(FillRule.EVEN_ODD);
             gc.beginPath();
 
-            for(Way way : ways) {
+            for (Way way : ways) {
                 String value = way.getRoleMap().get(id);
-                if(value.equals("inner")) {
+                if (value.equals("inner")) {
                     way.drawRelationPart(gc);
                     innerDrawn = true;
                 }
-                if(value.equals("outer")) {
+                if (value.equals("outer")) {
                     outerLines.add(way);
                 }
             }
 
             ArrayList<Way> mergedList;
-            if(outerLines.size() > 1) {
+            if (outerLines.size() > 1) {
                 mergedList = mergeOuter(outerLines);
             } else {
                 mergedList = outerLines;
             }
 
-            if(innerDrawn) {
-                for(Way way : mergedList) {
+            if (innerDrawn) {
+                for (Way way : mergedList) {
                     way.drawRelationPart(gc);
                 }
                 gc.fill();
             } else {
                 //draw relation normally
                 gc.setFillRule(FillRule.NON_ZERO);
-                for(Way way : ways) {
+                for (Way way : ways) {
                     var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
                     way.draw(gc);
-                    if(drawStyle.equals(DrawStyle.FILL)) {
+                    if (drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();
                     }
                 }
@@ -98,10 +98,10 @@ public class Relation extends Member implements Drawable{
         return mergedList;
     }
 
-    public void createRectangle(){
+    public void createRectangle() {
         float minX = 1800, maxX = -1800, minY = 1800, maxY = -1800;
 
-        for (Way w: ways) {
+        for (Way w : ways) {
             //check min values
             if (w.getRect().getMinX() < minX) {
                 minX = w.getRect().getMinX();
@@ -134,7 +134,7 @@ public class Relation extends Member implements Drawable{
         rect = new Rectangle(minX, minY, maxX, maxY);
     }
 
-    public Rectangle getRect(){
+    public Rectangle getRect() {
         return rect;
     }
 }
