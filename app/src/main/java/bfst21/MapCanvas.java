@@ -140,10 +140,10 @@ public class MapCanvas extends Canvas {
 
         if (RTreeLines) {
             //display window
-            Point2D maxPoint = new Point2D(getWidth() * 3 / 4, getHeight() * 3 / 4);
+            Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
             maxPoint = mouseToModelCoords(maxPoint);
 
-            Point2D minPoint = new Point2D(getWidth() * 1 / 4, getHeight() * 1 / 4);
+            Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
             minPoint = mouseToModelCoords(minPoint);
 
             Rectangle window = new Rectangle((float) minPoint.getX(), (float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
