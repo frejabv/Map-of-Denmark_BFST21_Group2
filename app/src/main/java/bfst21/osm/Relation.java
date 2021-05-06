@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.FillRule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Relation extends Member implements Drawable{
@@ -34,9 +35,12 @@ public class Relation extends Member implements Drawable{
             gc.setStroke(renderingStyle.getColorByTag(tags.get(0)));
             gc.setFill(renderingStyle.getColorByTag(tags.get(0)));
 
-            if(tags.contains(Tag.BUILDING)) {
-                drawBuilding(gc);
-            } else {
+            //either we assume that there will be a role present in the first or last position
+            //or we whitelist tags we know can include an inner.
+            //if(ways.get(0).getRoleMap() != null || ways.get(ways.size()-1).getRoleMap() != null) {
+                drawInnerOuter(gc);
+            /*} else {
+                //or we might just put this in the else, if innerDrawn is false.
                 for(Way way : ways) {
                     var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
                     way.draw(gc);
@@ -44,31 +48,70 @@ public class Relation extends Member implements Drawable{
                         gc.fill();
                     }
                 }
-            }
+            }*/
         }
     }
 
-    public void drawBuilding(GraphicsContext gc) {
+    public void drawInnerOuter(GraphicsContext gc) {
         boolean innerDrawn = false;
+        ArrayList<Way> outerLines = new ArrayList<>();
+
         gc.setFillRule(FillRule.EVEN_ODD);
         gc.beginPath();
-        //System.out.println("ID of relation: " + id);
+
         for(Way way : ways) {
             String value = way.getRoleMap().get(id);
             if(value.equals("inner")) {
                 way.drawRelationPart(gc);
                 innerDrawn = true;
             }
+            if(value.equals("outer")) {
+                outerLines.add(way);
+            }
         }
+
+        ArrayList<Way> mergedList;
+        if(outerLines.size() > 1) {
+            mergedList = mergeOuter(outerLines);
+        } else {
+            mergedList = outerLines;
+        }
+
         if(innerDrawn) {
+            for(Way way : mergedList) {
+                way.draw(gc);
+            }
+            gc.fill();
+        } else {
             for(Way way : ways) {
-                String value = way.getRoleMap().get(id);
-                if(value.equals("outer")) {
-                    way.drawRelationPart(gc);
+                var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
+                way.draw(gc);
+                if(drawStyle.equals(DrawStyle.FILL)) {
+                    gc.fill();
                 }
             }
         }
-        gc.fill();
+        //gc.fill();
+    }
+
+    public ArrayList<Way> mergeOuter(ArrayList<Way> outerLines) {
+        HashMap<Node, Way> pieces = new HashMap<>();
+        for (var line : outerLines) {
+            var before = pieces.remove(line.first());
+            var after = pieces.remove(line.last());
+            if (before == after)
+                after = null;
+            var merged = Way.merge(before, line, after);
+            pieces.put(merged.first(), merged);
+            pieces.put(merged.last(), merged);
+        }
+        ArrayList<Way> mergedList = new ArrayList<>();
+        pieces.forEach((node, way) -> {
+            if (way.last() == node) {
+                mergedList.add(way);
+            }
+        });
+        return mergedList;
     }
 
     public void createRectangle(){
