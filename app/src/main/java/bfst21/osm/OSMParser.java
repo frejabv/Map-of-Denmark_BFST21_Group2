@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 import bfst21.Model;
+import bfst21.POI.POI;
 import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.search.RadixTree;
 
@@ -9,16 +10,15 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
+import java.net.URL;
+
 public class OSMParser {
-    private static HashMap<String, List<String>> addresses = new HashMap<>();
+    private static List<String> systemPOITags;
+    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall", "windmill", "lighthouse", "bust", "statue", "sculpture"));
+
 
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
             throws IOException, XMLStreamException {
@@ -27,7 +27,7 @@ public class OSMParser {
                 loadOSM(in, model);
                 break;
             case ZIP:
-                //loadZIP(in, model);
+                loadZIP(in, model);
                 // saveOBJ(fileName, model);
                 break;
             case OBJ:
@@ -61,7 +61,8 @@ public class OSMParser {
         File file = new File(fileURL.getPath() + fileName);
 
         if (!file.createNewFile()) {
-            // Figure out whether or not we need to freak out if we are overwriting an existing obj file
+            // Figure out whether or not we need to freak out if we are overwriting an
+            // existing obj file
         }
 
         try (var output = new ObjectOutputStream(
@@ -88,6 +89,7 @@ public class OSMParser {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
         Tag tag = null;
+        systemPOITags = new ArrayList<>();
         Node node = null;
         Way way = null;
         Relation relation = null;
@@ -95,6 +97,12 @@ public class OSMParser {
         boolean isWay = false;
         boolean isNode = false;
         String name = "";
+        String systemPOIName = "";
+
+        String streetname = "";
+        String housenumber = "";
+        String postcode = "";
+        String city = "";
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -103,10 +111,11 @@ public class OSMParser {
                         case "bounds":
                             model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                             model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                            model.setMaxY(
-                                    Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
-                            model.setMinY(
-                                    Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
+                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat"))
+                                    / -Model.scalingConstant);
+                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat"))
+                                    / -Model.scalingConstant);
+                            model.getPOITree().setBounds();
                             break;
                         case "node":
                             var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -115,6 +124,7 @@ public class OSMParser {
                             node = new Node(lon, lat, id);
                             model.addToNodeIndex(node);
                             isNode = true;
+                            break;
                         case "way":
                             isWay = true;
                             var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -130,6 +140,9 @@ public class OSMParser {
                         case "tag":
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
+                            if (k.equals("name")) {
+                                systemPOIName = v;
+                            }
 
                             if (k.equals("building")) {
                                 tag = Tag.BUILDING;
@@ -138,6 +151,12 @@ public class OSMParser {
 
                             if (k.equals("service")) {
                                 break;
+                            }
+
+                            if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic")) {
+                                if (systemPoi.contains(v)) {
+                                    systemPOITags.add(v);
+                                }
                             }
 
                             if (k.equals("name")) {
@@ -152,56 +171,52 @@ public class OSMParser {
                                 if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
                                         || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
                                         || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
-                                    CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
+                                    AreaType areaType = AreaType.valueOf(v.toUpperCase());
                                     if (isNode) {
-                                        model.addToCityIndex(new City(name, cityType, node));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, node));
                                     } else if (isWay && relation == null) {
-                                        model.addToCityIndex(new City(name, cityType, way));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, way));
                                     } else if (isWay && relation != null) {
-                                        model.addToCityIndex(new City(name, cityType, relation));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, relation));
                                     }
                                 }
                             }
 
-                            if (k.equals("maxspeed")) {
-                                v.replace(" km", "").replace(" mph", "");
-                                try {
-                                    way.setMaxSpeed(Integer.parseInt(v));
-                                } catch (java.lang.RuntimeException e) {
-                                    System.out.println(way.getId());
+                            if (isWay) {
+                                if (k.equals("maxspeed")) {
+                                    v.replaceAll("\\D+", "");
+                                    if (!v.equals("")) {
+                                        int speed = (int) Math.round(Double.parseDouble(v));
+                                        way.setMaxSpeed(speed);
+                                    }
                                 }
-                            }
 
-                            if (k.equals("oneway")) {
-                                if (v.equals("yes") || v.equals("true") || v.equals("1")) {
-                                    way.setIsOneway();
+                                if (k.equals("oneway")) {
+                                    if (v.equals("yes") || v.equals("true") || v.equals("1")) {
+                                        way.setIsOneway();
+                                    }
+                                    if (v.equals("-1")) {
+                                        Collections.reverse(way.getNodes());
+                                        way.setIsOneway();
+                                    }
                                 }
-                                if (v.equals("-1")) {
-                                    Collections.reverse(way.getNodes());
-                                    way.setIsOneway();
+
+                                if (k.equals("junction") || v.equals("roundabout")) {
+                                    way.setIsJunction();
+                                    break;
                                 }
-                            }
 
-                            if (k.equals("junction") || v.equals("roundabout")) {
-                                way.setIsJunction();
-                                break;
-                            }
-
-                            if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
-                                if (!v.equals("no")) {
-                                    way.setIsCyclable();
+                                if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
+                                    if (!v.equals("no")) {
+                                        way.setIsCyclable();
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
 
-                            if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
-                                way.setIsWalkable();
-                                break;
-                            }
-
-                            if (k.equals("landuse") && v.equals("residential")){
-                                tag = Tag.CITYBOARDER;
-                                break;
+                                if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
+                                    way.setIsWalkable();
+                                    break;
+                                }
                             }
 
                             try {
@@ -220,7 +235,17 @@ public class OSMParser {
                                 // example from samsoe.osm of an addr tag:
                                 // <tag k="addr:street" v="havnevej"/>
                                 if (k.equals("addr:street")) {
-                                    model.getStreetTree().insert(v, node.getId());
+                                    streetname = v;
+                                }
+
+                                if (k.equals("addr:housenumber")) {
+                                    housenumber = v;
+                                }
+                                if (k.equals("addr:postcode")) {
+                                    postcode = v;
+                                }
+                                if (k.equals("addr:city")) {
+                                    city = v;
                                 }
                             }
                             break;
@@ -258,10 +283,29 @@ public class OSMParser {
                 case XMLStreamReader.END_ELEMENT:
                     switch (xmlReader.getLocalName()) {
                         case "node":
+                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                                //POI list can be kd-tree only
+                                POI poi = createSystemPOI(systemPOIName, systemPOITags, node.getX(), node.getY());
+                                model.addSystemPOI(poi);
+                                model.getPOITree().insert(poi);
+                            }
                             isNode = false;
                             tag = null;
+
+                            systemPOITags = new ArrayList<>();
+                            if (!streetname.equals("") && !housenumber.equals("") && !postcode.equals("")
+                                    && !city.equals("")) {
+
+                                model.getStreetTree().insert(streetname,
+                                        " " + housenumber + " " + postcode + " " + city, node.getId());
+                            }
                             break;
                         case "way":
+                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                                POI poi = createSystemPOI(systemPOIName, systemPOITags, way.first().getX(), way.first().getY());
+                                model.addSystemPOI(poi);
+                                model.getPOITree().insert(poi);
+                            }
                             if (tag != null) {
                                 way.setTag(tag);
                                 addWayToList(way, tag, model);
@@ -269,8 +313,15 @@ public class OSMParser {
                             way.checkSpeed();
                             way.createRectangle();
                             tag = null;
+
                             break;
                         case "relation":
+                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                                POI poi = createSystemPOI(systemPOIName, systemPOITags, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                model.addSystemPOI(poi);
+                                model.getPOITree().insert(poi);
+                            }
+
                             if (tag != null) {
                                 relation.setTag(tag);
                             }
@@ -279,13 +330,73 @@ public class OSMParser {
                             tag = null;
                             break;
                     }
+                    systemPOIName = "";
+                    systemPOITags = new ArrayList<>();
                     break;
             }
         }
         model.setIslands(mergeCoastlines(model.getCoastlines()));
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
-            System.out.println("you fool, you think it is that simple? hahahahah");
+            System.out.println("No coastlines found");
         }
+    }
+
+    private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
+        String type = "default";
+        String imageType = "default";
+        int priority = 0;
+        for (String tag : systemPOITags) {
+            if (priority != 10) {
+                if (systemPOITags.contains("windmill")) {
+                    imageType = "mill";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")) {
+                    imageType = "museum";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("theme_park")) {
+                    imageType = "theme_park";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("aerodrome")) {
+                    imageType = "aerodrome";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")) {
+                    imageType = "cinema";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")) {
+                    imageType = "castle";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("lighthouse")) {
+                    imageType = "viewpoint";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust") || systemPOITags.contains("sculpture")) {
+                    imageType = "statue";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("zoo")) {
+                    imageType = "zoo";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("attraction")) {
+                    imageType = "suitcase";
+                    type = tag;
+                    priority = 5;
+                } else if (systemPOITags.contains("viewpoint")) {
+                    imageType = "viewpoint";
+                    type = tag;
+                    priority = 5;
+                }
+            }
+        }
+        //sanitise type
+        POI result = new POI(systemPOIName, type, imageType, x, y);
+        return result;
     }
 
     public static void addWayToList(Way way, Tag tag, Model model) {
@@ -363,7 +474,8 @@ public class OSMParser {
                 toReturn = FileExtension.OBJ;
                 break;
             default:
-                throw new UnsupportedFileTypeException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
+                throw new UnsupportedFileTypeException(
+                        "Unsupported file type: " + filePathParts[filePathParts.length - 1]);
         }
         return toReturn;
     }
