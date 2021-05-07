@@ -147,26 +147,24 @@ public class OSMObjectsTest {
         testWay1.addNode(testNode1);
         testWay1.addNode(testNode2);
 
+        Node testNode3 = new Node(200, 300, 500);
+        Node testNode4 = new Node(300, 400, 600);
+        Node testNode5 = new Node(300, 400, 700);
+
         Way testWay2 = new Way(2);
         testWay2.addRole(222, "outer");
-        Node testNode3 = new Node(300, 400, 500);
-        Node testNode4 = new Node(400, 500, 600);
         testWay2.addNode(testNode3);
         testWay2.addNode(testNode4);
 
         Way testWay3 = new Way(3);
         testWay3.addRole(222, "outer");
-        Node testNode5 = new Node(500, 600, 700);
-        Node testNode6 = new Node(600, 700, 800);
+        testWay3.addNode(testNode4);
         testWay3.addNode(testNode5);
-        testWay3.addNode(testNode6);
 
         Way testWay4 = new Way(4);
         testWay4.addRole(222, "outer");
-        Node testNode7 = new Node(700, 800, 900);
-        Node testNode8 = new Node(800, 900, 1000);
-        testWay4.addNode(testNode7);
-        testWay4.addNode(testNode8);
+        testWay4.addNode(testNode5);
+        testWay4.addNode(testNode3);
 
         testRelation.addMember(testWay1);
         testRelation.addMember(testWay2);
@@ -186,8 +184,8 @@ public class OSMObjectsTest {
         assertEquals(1, mergedList.size());
 
         Way mergedTestWay = mergedList.get(0);
-        assertEquals(mergedTestWay.first(), testNode1);
-        assertEquals(mergedTestWay.last(), testNode6);
+        assertEquals(mergedTestWay.first(), testNode3);
+        assertEquals(mergedTestWay.last(), testNode3);
     }
 
     @Test
