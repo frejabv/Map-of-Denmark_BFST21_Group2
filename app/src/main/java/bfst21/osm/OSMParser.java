@@ -291,7 +291,7 @@ public class OSMParser {
                             }
                             isNode = false;
                             tag = null;
-
+                            systemPOIName = "";
                             systemPOITags = new ArrayList<>();
                             if (!streetname.equals("") && !housenumber.equals("") && !postcode.equals("")
                                     && !city.equals("")) {
@@ -313,7 +313,8 @@ public class OSMParser {
                             way.checkSpeed();
                             way.createRectangle();
                             tag = null;
-
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
                             break;
                         case "relation":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
@@ -328,10 +329,10 @@ public class OSMParser {
                             relation.createRectangle();
                             relation = null;
                             tag = null;
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
                             break;
                     }
-                    systemPOIName = "";
-                    systemPOITags = new ArrayList<>();
                     break;
             }
         }
