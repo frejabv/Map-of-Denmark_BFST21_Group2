@@ -14,8 +14,8 @@ public class OSMParserTest {
     private Model sjaelsoeModel;
 
     public OSMParserTest() throws Exception {
-        samsoeModel = new Model("TEST_MAP_SAMSOE.osm",false);
-        sjaelsoeModel = new Model("TEST_MAP_SJAELSOE.osm.zip",false);
+        samsoeModel = new Model("/bfst21/data/TEST_MAP_SAMSOE.osm",false);
+        sjaelsoeModel = new Model("/bfst21/data/TEST_MAP_SJAELSOE.osm.zip",false);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class OSMParserTest {
     public void testSamsoeCycleways(){ assertEquals(19,samsoeModel.getDrawableMap().get(Tag.CYCLEWAY).size()); }
 
     @Test
-    public void testSjaelsoeCycleways(){ assertEquals(188,sjaelsoeModel.getDrawableMap().get(Tag.CYCLEWAY).size()); }
+    public void testSjaelsoeCycleways(){ assertEquals(154,sjaelsoeModel.getDrawableMap().get(Tag.CYCLEWAY).size()); }
 
     @Test
     public void testSamsoeFootways(){ assertEquals(108,samsoeModel.getDrawableMap().get(Tag.FOOTWAY).size()); }
@@ -139,7 +139,7 @@ public class OSMParserTest {
     public void testSamsoeTrack(){ assertEquals(337,samsoeModel.getDrawableMap().get(Tag.TRACK).size()); }
 
     @Test
-    public void testSjaelsoTrack(){ assertEquals(54,sjaelsoeModel.getDrawableMap().get(Tag.TRACK).size()); }
+    public void testSjaelsoTrack(){ assertEquals(29,sjaelsoeModel.getDrawableMap().get(Tag.TRACK).size()); }
 
     @Test
     public void testSamsoeTrunk(){ assertThrows(NullPointerException.class, () -> samsoeModel.getDrawableMap().get(Tag.TRUNK).size()); }

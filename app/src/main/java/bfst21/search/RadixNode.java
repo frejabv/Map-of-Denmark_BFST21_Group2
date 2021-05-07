@@ -1,10 +1,12 @@
 package bfst21.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class RadixNode {
+public class RadixNode implements Serializable {
     private ArrayList<RadixNode> children;
     boolean isPlace;
+    boolean secondary;
     String value;
     String fullName;
     long id;
@@ -15,11 +17,12 @@ public class RadixNode {
         this.value = value;
     }
 
-    public RadixNode(String value, String fullName, long id) {
+    public RadixNode(String value, String fullName, long id, boolean secondary) {
         this(value);
         this.fullName = fullName;
         this.id = id;
         isPlace = true;
+        this.secondary = secondary;
     }
 
     public void addChild(RadixNode child) {
