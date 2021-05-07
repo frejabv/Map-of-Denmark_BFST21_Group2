@@ -1,10 +1,10 @@
 package bfst21;
 
-import bfst21.osm.Node;
 import bfst21.Rtree.Rectangle;
+import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
-import bfst21.osm.Way;
 import bfst21.osm.Tag;
+import bfst21.osm.Way;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -79,8 +79,8 @@ public class MapCanvas extends Canvas {
         });
 
         model.getRelationIndex().forEach(relation -> {
-            if (relation.getTags().size() != 0) {
-                if (relation.getTags().get(0).zoomLimit > getDistanceWidth()) {
+            if (relation.getTag() != null) {
+                if (relation.getTag().zoomLimit > getDistanceWidth()) {
                     relation.draw(gc, renderingStyle);
                 }
             }
@@ -102,8 +102,8 @@ public class MapCanvas extends Canvas {
             }
         });
 
-        if(model.existsAStarPath() && showRoute){
-            if(debugAStar) {
+        if (model.existsAStarPath() && showRoute) {
+            if (debugAStar) {
                 drawDebugAStarPath();
             }
             paintPath(model.getAStarPath());
@@ -123,14 +123,14 @@ public class MapCanvas extends Canvas {
             gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
                     size / 2, size / 2);
             switch (POI.getType().toLowerCase()) {
-            case "home":
-                // draw home icon
-                break;
-            case "work":
-                // draw briefcase icon
-                break;
-            default:
-                // draw generic icon
+                case "home":
+                    // draw home icon
+                    break;
+                case "work":
+                    // draw briefcase icon
+                    break;
+                default:
+                    // draw generic icon
             }
         });
 
@@ -148,7 +148,7 @@ public class MapCanvas extends Canvas {
             Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
             minPoint = mouseToModelCoords(minPoint);
 
-            Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
+            Rectangle window = new Rectangle((float) minPoint.getX(), (float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
             gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
             model.getRoadRTree().drawRTree(window, gc);
         }
@@ -186,10 +186,10 @@ public class MapCanvas extends Canvas {
     public void drawDebugAStarPath() {
         List<Node> nodes = model.getAStarDebugPath();
         gc.setStroke(Color.CORNFLOWERBLUE);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant())*2);
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()) * 2);
         gc.beginPath();
-        for(Node n : nodes) {
-            for(Edge e : n.getAdjacencies()) {
+        for (Node n : nodes) {
+            for (Edge e : n.getAdjacencies()) {
                 Node child = e.target;
                 gc.moveTo(n.getX(), n.getY());
                 gc.lineTo(child.getX(), child.getY());
@@ -198,20 +198,20 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public void paintPath(List<Node> path){
+    public void paintPath(List<Node> path) {
         gc.setStroke(Color.ORANGERED);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant())*3);
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()) * 3);
         gc.beginPath();
-        for (int i = 0;i < path.size()-1; i++){
+        for (int i = 0; i < path.size() - 1; i++) {
             Node current = path.get(i);
-            Node next = path.get(i+1);
-            gc.moveTo(current.getX(),current.getY());
-            gc.lineTo(next.getX(),next.getY());
+            Node next = path.get(i + 1);
+            gc.moveTo(current.getX(), current.getY());
+            gc.lineTo(next.getX(), next.getY());
         }
         gc.stroke();
     }
 
-    public String setPin(Point2D point){
+    public String setPin(Point2D point) {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
         pinPoint = canvasPoint;
@@ -283,15 +283,16 @@ public class MapCanvas extends Canvas {
         Way nearestWay = model.getRoadRTree().nearestWay(pinPoint);
         System.out.println("way ID: " + nearestWay.getId());
         Node nearestNode = nearestWay.nearestNode(pinPoint);
-        System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
+        System.out.println("Node ID: " + nearestNode.getId() + " coordinate: " + nearestNode.getY() * -0.56f + " " + nearestNode.getX());
         return nearestNode;
     }
 
-    public void showRoute(){
+    public void showRoute() {
         showRoute = true;
         repaint();
     }
-    public void hideRoute(){
+
+    public void hideRoute() {
         showRoute = false;
         repaint();
     }

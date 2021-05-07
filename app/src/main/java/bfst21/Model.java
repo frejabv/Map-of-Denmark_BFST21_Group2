@@ -1,22 +1,18 @@
 package bfst21;
 
-import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 
-import java.io.File;
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.stream.XMLStreamException;
-import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -81,7 +77,7 @@ public class Model {
         }
 
         List<Drawable> roadList = new ArrayList<>();
-        for (Tag tag: drawableMap.keySet()) {
+        for (Tag tag : drawableMap.keySet()) {
             roadList.addAll(drawableMap.get(tag));
         }
         roadRTree = new Rtree(roadList);

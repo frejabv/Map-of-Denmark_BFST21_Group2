@@ -16,7 +16,7 @@ public class Relation extends Member {
         super(id);
     }
 
-    public void  addMember(Member member) {
+    public void addMember(Member member) {
         members.add(member);
     }
 
@@ -29,17 +29,17 @@ public class Relation extends Member {
     }
 
     public void draw(GraphicsContext gc, RenderingStyle style) {
-        if(!tags.isEmpty()) {
-            gc.setStroke(style.getColorByTag(tags.get(0)));
-            gc.setFill(style.getColorByTag(tags.get(0)));
+        if (tag != null) {
+            gc.setStroke(style.getColorByTag(tag));
+            gc.setFill(style.getColorByTag(tag));
 
-            if(tags.contains(Tag.BUILDING)) {
+            if (tag == Tag.BUILDING) {
                 drawBuilding(gc);
             } else {
-                for(Way way : ways) {
-                    var drawStyle = style.getDrawStyleByTag(tags.get(0));
+                for (Way way : ways) {
+                    var drawStyle = style.getDrawStyleByTag(tag);
                     way.draw(gc);
-                    if(drawStyle.equals(DrawStyle.FILL)) {
+                    if (drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();
                     }
                 }
@@ -51,18 +51,17 @@ public class Relation extends Member {
         boolean innerDrawn = false;
         gc.setFillRule(FillRule.EVEN_ODD);
         gc.beginPath();
-        //System.out.println("ID of relation: " + id);
-        for(Way way : ways) {
+        for (Way way : ways) {
             String value = way.getRoleMap().get(id);
-            if(value.equals("inner")) {
+            if (value.equals("inner")) {
                 way.drawRelationPart(gc);
                 innerDrawn = true;
             }
         }
-        if(innerDrawn) {
-            for(Way way : ways) {
+        if (innerDrawn) {
+            for (Way way : ways) {
                 String value = way.getRoleMap().get(id);
-                if(value.equals("outer")) {
+                if (value.equals("outer")) {
                     way.drawRelationPart(gc);
                 }
             }
@@ -70,10 +69,10 @@ public class Relation extends Member {
         gc.fill();
     }
 
-    public void createRectangle(){
+    public void createRectangle() {
         float minX = 1800, maxX = -1800, minY = 1800, maxY = -1800;
 
-        for (Way w: ways) {
+        for (Way w : ways) {
             //check min values
             if (w.getRect().getMinX() < minX) {
                 minX = w.getRect().getMinX();
@@ -106,7 +105,7 @@ public class Relation extends Member {
         rect = new Rectangle(minX, minY, maxX, maxY);
     }
 
-    public Rectangle getRect(){
+    public Rectangle getRect() {
         return rect;
     }
 }

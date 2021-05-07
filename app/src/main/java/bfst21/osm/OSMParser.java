@@ -10,10 +10,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -88,7 +84,7 @@ public class OSMParser {
             throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
-        ArrayList<Tag> tags = new ArrayList<>();
+        Tag tag = null;
         Node node = null;
         Way way = null;
         Relation relation = null;
@@ -126,7 +122,6 @@ public class OSMParser {
                             var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             way = new Way(wayId);
                             model.addToWayIndex(way);
-                            tags = new ArrayList<>();
                             break;
                         case "nd":
                             if (isWay && way != null) {
@@ -139,7 +134,7 @@ public class OSMParser {
                             var v = xmlReader.getAttributeValue(null, "v");
 
                             if (k.equals("building")) {
-                                tags.add(Tag.BUILDING);
+                                tag = Tag.BUILDING;
                                 break;
                             }
 
@@ -171,8 +166,11 @@ public class OSMParser {
                             }
 
                             if (k.equals("maxspeed")) {
-                                v.replace(" km", "").replace(" mph", "");
-                                way.setMaxSpeed(Integer.parseInt(v));
+                                v.replaceAll("\\D+", "");
+                                if(!v.equals("")){
+                                    int speed = (int) Math.round(Double.parseDouble(v));
+                                    way.setMaxSpeed(speed);
+                                }
                             }
 
                             if (k.equals("oneway")) {
@@ -192,26 +190,24 @@ public class OSMParser {
 
                             if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
                                 if (!v.equals("no")) {
-                                    way.getTags().add(Tag.CYCLEWAY);
+                                    way.setIsCyclable();
                                 }
                                 break;
                             }
 
-                            if ((k.equals("sidewalk") || k.equals("foot")) && !v.equals("no")) {
-                                way.getTags().add(Tag.FOOTWAY);
+                            if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
+                                way.setIsWalkable();
                                 break;
                             }
 
                             try {
-                                var tag = Tag.valueOf(v.toUpperCase());
-                                tags.add(tag);
+                                tag = Tag.valueOf(v.toUpperCase());
                             } catch (IllegalArgumentException e) {
                                 // We don't care about tags not in our Tag enum
                             }
 
                             try {
-                                var tag = Tag.valueOf(k.toUpperCase());
-                                tags.add(tag);
+                                tag = Tag.valueOf(k.toUpperCase());
                             } catch (IllegalArgumentException e) {
                                 // We don't care about tags not in our Tag enum
                             }
@@ -238,7 +234,6 @@ public class OSMParser {
                             var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             relation = new Relation(relationId);
                             model.addToRelationIndex(relation);
-                            tags = new ArrayList<>();
                             break;
                         case "member":
                             var type = xmlReader.getAttributeValue(null, "type");
@@ -270,25 +265,30 @@ public class OSMParser {
                     switch (xmlReader.getLocalName()) {
                         case "node":
                             isNode = false;
-
+                            tag = null;
                             if (!streetname.equals("") && !housenumber.equals("") && !postcode.equals("")
                                     && !city.equals("")) {
 
                                 model.getStreetTree().insert(streetname,
                                         " " + housenumber + " " + postcode + " " + city, node.getId());
                             }
-
                             break;
                         case "way":
-                            way.getTags().addAll(tags);
+                            if (tag != null) {
+                                way.setTag(tag);
+                                addWayToList(way, tag, model);
+                            }
                             way.checkSpeed();
                             way.createRectangle();
-                            addWayToList(way, tags, model);
+                            tag = null;
                             break;
                         case "relation":
-                            relation.setTags(tags);
+                            if (tag != null) {
+                                relation.setTag(tag);
+                            }
                             relation.createRectangle();
                             relation = null;
+                            tag = null;
                             break;
                     }
                     break;
@@ -301,27 +301,25 @@ public class OSMParser {
         }
     }
 
-    public static void addWayToList(Way way, List<Tag> tags, Model model) {
+    public static void addWayToList(Way way, Tag tag, Model model) {
         var drawableMap = model.getDrawableMap();
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
 
-        for (var tag : tags) {
-            if (tag == Tag.COASTLINE) {
-                model.addCoastline(way);
-            } else {
-                var drawStyle = renderingStyle.getDrawStyleByTag(tag);
+        if (tag == Tag.COASTLINE) {
+            model.addCoastline(way);
+        } else {
+            var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
-                if (drawStyle == DrawStyle.FILL) {
-                    fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, fillMap)) {
-                        fillMap.get(tag).add(way);
-                    }
-                } else {
-                    drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, drawableMap)) {
-                        drawableMap.get(tag).add(way);
-                    }
+            if (drawStyle == DrawStyle.FILL) {
+                fillMap.putIfAbsent(tag, new ArrayList<>());
+                if (!isDublet(way, tag, fillMap)) {
+                    fillMap.get(tag).add(way);
+                }
+            } else {
+                drawableMap.putIfAbsent(tag, new ArrayList<>());
+                if (!isDublet(way, tag, drawableMap)) {
+                    drawableMap.get(tag).add(way);
                 }
             }
         }
