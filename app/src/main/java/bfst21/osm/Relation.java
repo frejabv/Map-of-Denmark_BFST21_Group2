@@ -74,6 +74,9 @@ public class Relation extends Member {
 
         for (Way w : ways) {
             //check min values
+            if (w.getRect() == null) {
+                continue;
+            }
             if (w.getRect().getMinX() < minX) {
                 minX = w.getRect().getMinX();
             }
