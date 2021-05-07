@@ -13,14 +13,9 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 import java.net.URL;
 
 public class OSMParser {
-    private static HashMap<String, List<String>> addresses = new HashMap<>();
     private static List<String> systemPOITags;
     static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall", "windmill", "lighthouse", "bust", "statue", "sculpture"));
 
@@ -296,7 +291,7 @@ public class OSMParser {
                             }
                             isNode = false;
                             tag = null;
-                            systemPOIName = "";
+
                             systemPOITags = new ArrayList<>();
                             if (!streetname.equals("") && !housenumber.equals("") && !postcode.equals("")
                                     && !city.equals("")) {
@@ -318,8 +313,7 @@ public class OSMParser {
                             way.checkSpeed();
                             way.createRectangle();
                             tag = null;
-                            systemPOIName = "";
-                            systemPOITags = new ArrayList<>();
+
                             break;
                         case "relation":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
@@ -334,10 +328,10 @@ public class OSMParser {
                             relation.createRectangle();
                             relation = null;
                             tag = null;
-                            systemPOIName = "";
-                            systemPOITags = new ArrayList<>();
                             break;
                     }
+                    systemPOIName = "";
+                    systemPOITags = new ArrayList<>();
                     break;
             }
         }

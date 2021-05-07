@@ -285,16 +285,6 @@ public class Controller {
         if (e.getText().equals("d")) {
             toggleDebugMode();
         }
-        //debugging hotkey
-        if (e.getText().equals("k")) {
-            if (canvas.setPin) {
-                System.out.println();
-                ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
-                for (POI poi : poiArrayList) {
-                    System.out.println(poi.getName());
-                }
-            }
-        }
     }
 
     @FXML
@@ -542,6 +532,7 @@ public class Controller {
 
     @FXML
     private ImageView heartIcon;
+
     POI currentPOI = null;
     public void onMousePressedPinHeart() {
         //add this point to POI

@@ -4,7 +4,6 @@ import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
 import bfst21.osm.Tag;
-import bfst21.osm.Way;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -13,19 +12,16 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-
 import java.util.List;
-
-import java.util.HashMap;
 
 public class MapCanvas extends Canvas {
     private Model model;
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    public boolean kdLines;
     boolean RTreeLines, roadRectangles;
     boolean nearestNodeLine;
     public boolean debugAStar;
@@ -41,8 +37,6 @@ public class MapCanvas extends Canvas {
     public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     private float mapZoomLimit;
-
-    public boolean kdLines = false;
 
     public void init(Model model) {
         this.model = model;
@@ -212,7 +206,7 @@ public class MapCanvas extends Canvas {
             }
         } else {
             // TODO: make the boundry go to inital zoom position
-            if (getDistanceWidth() < 1000) {
+            if (getDistanceWidth() < mapZoomLimit) {
                 trans.prependScale(factor, factor, center);
             }
         }
