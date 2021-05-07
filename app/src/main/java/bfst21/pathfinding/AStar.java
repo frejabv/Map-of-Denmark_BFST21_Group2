@@ -77,6 +77,9 @@ public class AStar {
             }
 
             //Checks every child of current node
+            if (current.getAdjacencies() == null) {
+                continue;
+            }
             for (Edge e : current.getAdjacencies()) {
                 if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
