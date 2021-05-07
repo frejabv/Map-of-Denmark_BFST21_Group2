@@ -37,7 +37,8 @@ public class Model {
     private AStar aStar;
     private List<Node> AStarPath;
     private List<Node> AStarDebugPath;
-    private TransportType currentTransportType = TransportType.CAR;
+    private TransportType defaultTransportType = TransportType.CAR;
+    private TransportType currentTransportType = defaultTransportType;
     float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private float minX, minY, maxX, maxY;
@@ -239,8 +240,17 @@ public class Model {
         this.currentTransportType = type;
     }
 
+    public void setDefaultTransportType(TransportType type) {
+        this.defaultTransportType = type;
+        setCurrentTransportType(type);
+    }
+
     public TransportType getCurrentTransportType() {
         return currentTransportType;
+    }
+
+    public TransportType getDefaultTransportType() {
+        return defaultTransportType;
     }
 
     public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
