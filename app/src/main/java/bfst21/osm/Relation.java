@@ -7,7 +7,7 @@ import javafx.scene.shape.FillRule;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Relation extends Member {
+public class Relation extends Member implements Drawable{
     ArrayList<Member> members = new ArrayList<>();
     ArrayList<Way> ways = new ArrayList<>();
     Rectangle rect;
@@ -38,7 +38,7 @@ public class Relation extends Member {
             } else {
                 for (Way way : ways) {
                     var drawStyle = style.getDrawStyleByTag(tag);
-                    way.draw(gc);
+                    way.draw(gc, style);
                     if (drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();
                     }

@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
@@ -11,6 +12,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -22,6 +25,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    boolean doubleDraw;
     boolean RTreeLines, roadRectangles;
     boolean nearestNodeLine;
     public boolean debugAStar;
@@ -57,69 +61,103 @@ public class MapCanvas extends Canvas {
 
         long start = System.nanoTime();
         gc = getGraphicsContext2D();
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setLineJoin(StrokeLineJoin.ROUND);
         gc.save();
         gc.setTransform(new Affine());
         gc.setFill(renderingStyle.sea);
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
-
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
 
         gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
         for (var island : model.getIslands()) {
-            island.draw(gc);
+            island.draw(gc, renderingStyle);
             gc.fill();
         }
 
-        model.getFillMap().forEach((tag, fillables) -> {
+        for(Tag tag: model.getFillableTagPriority()){
+            List<Drawable> fillables = model.getFillMap().get(tag);
             gc.setStroke(renderingStyle.getColorByTag(tag));
             gc.setFill(renderingStyle.getColorByTag(tag));
-
             fillables.forEach(fillable -> {
                 if (tag.zoomLimit > getDistanceWidth()) {
-                    fillable.draw(gc);
+                    fillable.draw(gc, renderingStyle);
                     gc.fill();
                 }
             });
-        });
+        };
 
-        model.getRelationIndex().forEach(relation -> {
-            if (relation.getTag() != null) {
-                if (relation.getTag().zoomLimit > getDistanceWidth()) {
-                    relation.draw(gc, renderingStyle);
-                }
-            }
-        });
-
-        model.getDrawableMap().forEach((tag, drawables) -> {
-            gc.setStroke(renderingStyle.getColorByTag(tag));
-            gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
-            var style = renderingStyle.getDrawStyleByTag(tag);
-            if (drawables != null) {
-                drawables.forEach(drawable -> {
-                    if (tag.zoomLimit > getDistanceWidth()) {
-                        drawable.draw(gc);
+        //Draw dark
+        if (doubleDraw){
+            for(Tag tag: model.getDrawableTagPriority()){
+                List<Drawable> drawables = model.getDrawableMap().get(tag);
+                if (tag.zoomLimit > getDistanceWidth() && renderingStyle.getDoubleDrawn(tag)) {
+                    Color c1 = renderingStyle.getColorByTag(tag);
+                    int darkRed = (int) (c1.getRed() * 255 * 0.75);
+                    int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
+                    int darkBlue = (int) (c1.getBlue() * 255 * 0.75);
+                    gc.setStroke(Color.rgb(darkRed, darkGreen, darkBlue));
+                    gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+                    if (getDistanceWidth() < 7.0){
+                        gc.setLineWidth((renderingStyle.getWidthByTag(tag)/13333));
                     }
-                    if (tag.zoomLimit / 100 > getDistanceWidth() && tag.equals(Tag.MOTORWAY)) {
-                        gc.setLineWidth(.00015);
+                    var style = renderingStyle.getDrawStyleByTag(tag);
+                    if (drawables != null && style != DrawStyle.DASH) {
+                        drawables.forEach(drawable -> {
+                            drawable.draw(gc, renderingStyle);
+                        });
+                    }
+                }
+            };
+        }
+
+        //Draw normal
+        for(Tag tag: model.getDrawableTagPriority()){
+            List<Drawable> drawables = model.getDrawableMap().get(tag);
+            double innerRoadWidth = 1;
+            if (doubleDraw){
+                innerRoadWidth = 0.65;
+            }
+            gc.setStroke(renderingStyle.getColorByTag(tag));
+            if (renderingStyle.getDoubleDrawn(tag)) {
+                gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant())*0.5);
+            }
+            else{
+                gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
+            }
+            setStyle(renderingStyle.getDrawStyleByTag(tag));
+            if (drawables != null) {
+                double finalInnerRoadWidth = innerRoadWidth;
+                drawables.forEach(drawable -> {
+                    if (getDistanceWidth() < 7.0 && renderingStyle.getDrawStyleByTag(tag) != DrawStyle.DASH){
+                        gc.setLineWidth((renderingStyle.getWidthByTag(tag)/13333)* finalInnerRoadWidth);
+                    }
+                    if (tag.zoomLimit > getDistanceWidth()) {
+                        if (renderingStyle.getDoubleDrawn(tag) && doubleDraw){
+                            drawable.draw(gc, renderingStyle);
+                        }
+                        drawable.draw(gc, renderingStyle);
                     }
                 });
             }
-        });
+        }
 
-        if (model.existsAStarPath() && showRoute) {
-            if (debugAStar) {
+        if(model.existsAStarPath() && showRoute){
+            gc.setLineDashes(0);
+            if(debugAStar) {
                 drawDebugAStarPath();
             }
             paintPath(model.getAStarPath());
         }
 
         if (showNames) {
+            gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
             model.getAreaNames().forEach((areaName) -> {
-                areaName.drawType(gc, getDistanceWidth());
+                areaName.drawType(gc, getDistanceWidth(), renderingStyle);
             });
         }
 
@@ -214,9 +252,12 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public void paintPath(List<Node> path) {
-        gc.setStroke(Color.ORANGERED);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()) * 3);
+    public void paintPath(List<Node> path){
+        gc.setStroke(Color.rgb(112,161,255));
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+        if(getDistanceWidth() < 7.0){
+            gc.setLineWidth(0.000045);
+        }
         gc.beginPath();
         for (int i = 0; i < path.size() - 1; i++) {
             Node current = path.get(i);
@@ -277,6 +318,16 @@ public class MapCanvas extends Canvas {
             zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
             pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
         }
+    }
+
+    private void setStyle(DrawStyle style){
+        if(style == DrawStyle.DASH){
+            gc.setLineDashes(5/Math.sqrt(trans.determinant()));
+        }
+        else{
+            gc.setLineDashes(0);
+        }
+
     }
 
     public void setCurrentCanvasEdges() {

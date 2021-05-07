@@ -113,6 +113,7 @@ public class Controller {
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
 
         model.setUpAStar();
+        model.addRelationsToDrawStyles();
     }
 
     @FXML
@@ -646,5 +647,10 @@ public class Controller {
         } else if (type.equals(TransportType.WALK)){
             walkRoute.setSelected(true);
         }
+    }
+
+    public void toggleDoubleDraw() {
+        canvas.doubleDraw = !canvas.doubleDraw;
+        canvas.repaint();
     }
 }

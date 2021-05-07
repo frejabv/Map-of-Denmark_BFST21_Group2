@@ -7,6 +7,9 @@ import javafx.scene.canvas.GraphicsContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.shape.StrokeLineCap;
+import org.jetbrains.annotations.NotNull;
+import javafx.scene.paint.Color;
 
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
@@ -79,7 +82,7 @@ public class Way extends Member implements Drawable, Serializable {
                 maxSpeed = 130;
             } else if (tag == Tag.SECONDARY || tag == Tag.TERTIARY || tag == Tag.TRUNK || tag == Tag.PRIMARY) {
                 maxSpeed = 80;
-            } else if (tag == Tag.JUNCTION || tag == Tag.LIVING_STREET || tag == Tag.UNCLASSIFIED || tag == Tag.RESIDENTIAL || tag == Tag.ROAD || tag == Tag.SERVICE) {
+            } else if (tag == Tag.LIVING_STREET || tag == Tag.UNCLASSIFIED || tag == Tag.RESIDENTIAL || tag == Tag.ROAD || tag == Tag.SERVICE) {
                 maxSpeed = 50;
             }
         }
@@ -119,13 +122,13 @@ public class Way extends Member implements Drawable, Serializable {
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, RenderingStyle renderingStyle) {
         gc.beginPath();
         var firstNode = nodes.get(0);
         gc.moveTo(firstNode.getX(), firstNode.getY());
 
-        for (var node : nodes) {
-            gc.lineTo(node.getX(), node.getY());
+        for (int i = 1; i < nodes.size(); i++) {
+            gc.lineTo(nodes.get(i).getX(), nodes.get(i).getY());
         }
         gc.stroke();
     }
