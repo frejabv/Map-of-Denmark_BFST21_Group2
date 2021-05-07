@@ -69,7 +69,7 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
-        gc.setStroke(Color.BLACK);
+        gc.setStroke(Color.TRANSPARENT);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
 
         gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));

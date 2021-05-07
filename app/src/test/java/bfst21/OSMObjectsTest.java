@@ -5,6 +5,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -122,17 +123,69 @@ public class OSMObjectsTest {
     }
 
     @Test
-    public void testMemberRoles() {
+    public void testWayRoles() {
         Relation testRelation1 = new Relation(111);
         Relation testRelation2 = new Relation(222);
-        Member testNode = new Node(10, 10, 123);
-        testNode.addRole(111, "inner");
-        testNode.addRole(222, "outer");
-        testRelation1.addMember(testNode);
-        testRelation2.addMember(testNode);
-        HashMap<Long, String> roles = testNode.getRoleMap();
+        Way testWay = new Way(123);
+        testWay.addRole(111, "inner");
+        testWay.addRole(222, "outer");
+        testRelation1.addMember(testWay);
+        testRelation2.addMember(testWay);
+        HashMap<Long, String> roles = testWay.getRoleMap();
         assertEquals("inner", roles.get(Long.valueOf(111)));
         assertEquals("outer", roles.get(Long.valueOf(222)));
+    }
+
+    @Test
+    public void testMergingOuterWaysInRelation() {
+        Relation testRelation = new Relation(222);
+
+        Way testWay1 = new Way(1);
+        testWay1.addRole(222, "inner");
+        Node testNode1 = new Node(100, 200, 300);
+        Node testNode2 = new Node(200, 300, 400);
+        testWay1.addNode(testNode1);
+        testWay1.addNode(testNode2);
+
+        Node testNode3 = new Node(200, 300, 500);
+        Node testNode4 = new Node(300, 400, 600);
+        Node testNode5 = new Node(300, 400, 700);
+
+        Way testWay2 = new Way(2);
+        testWay2.addRole(222, "outer");
+        testWay2.addNode(testNode3);
+        testWay2.addNode(testNode4);
+
+        Way testWay3 = new Way(3);
+        testWay3.addRole(222, "outer");
+        testWay3.addNode(testNode4);
+        testWay3.addNode(testNode5);
+
+        Way testWay4 = new Way(4);
+        testWay4.addRole(222, "outer");
+        testWay4.addNode(testNode5);
+        testWay4.addNode(testNode3);
+
+        testRelation.addMember(testWay1);
+        testRelation.addMember(testWay2);
+        testRelation.addMember(testWay3);
+        testRelation.addMember(testWay4);
+
+        HashMap<Long, String> roles = testWay1.getRoleMap();
+        assertEquals("inner", roles.get(222l));
+
+        ArrayList<Way> outers = new ArrayList<>();
+        outers.add(testWay2);
+        outers.add(testWay3);
+        outers.add(testWay4);
+
+        ArrayList<Way> mergedList = testRelation.mergeOuter(outers);
+
+        assertEquals(1, mergedList.size());
+
+        Way mergedTestWay = mergedList.get(0);
+        assertEquals(mergedTestWay.first(), testNode3);
+        assertEquals(mergedTestWay.last(), testNode3);
     }
 
     @Test
@@ -148,17 +201,6 @@ public class OSMObjectsTest {
         assertEquals(testRelation, testMemberIndex.getMember(123));
         assertEquals(testNode, testMemberIndex.getMember(456));
         assertEquals(testWay, testMemberIndex.getMember(789));
-    }
-
-    @Test
-    public void testRenderingStyleGetColor() {
-        RenderingStyle testStyle = new RenderingStyle();
-        testStyle.darkMode();
-        assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
-        assertEquals(Color.rgb(128, 142, 155), testStyle.getColorByTag(Tag.PRIMARY));
-        testStyle.defaultMode();
-        assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
-        assertEquals(Color.rgb(253, 218, 118), testStyle.getColorByTag(Tag.PRIMARY));
     }
 
     @Test

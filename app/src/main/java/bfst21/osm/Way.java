@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javafx.scene.shape.StrokeLineCap;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import javafx.scene.paint.Color;
 
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
+    HashMap<Long, String> roleMap;
     private Rectangle rect;
     String name = "";
     int maxSpeed = 1;
@@ -54,6 +56,16 @@ public class Way extends Member implements Drawable, Serializable {
         merged.nodes.addAll(first.nodes);
         merged.nodes.addAll(second.nodes.subList(1, second.nodes.size()));
         return merged;
+    }
+
+    public HashMap<Long, String> getRoleMap() {
+        return roleMap;
+    }
+
+    public void addRole(long id, String role) {
+        if (roleMap == null)
+            roleMap = new HashMap<>();
+        roleMap.put(id, role);
     }
 
     public static Way merge(Way first, Way second, Way third) {
