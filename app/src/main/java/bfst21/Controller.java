@@ -17,9 +17,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,6 +74,8 @@ public class Controller {
     private HBox rightContainer;
     @FXML
     private CheckBox showNames;
+    @FXML
+    private VBox NearbyPOI;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -137,6 +140,7 @@ public class Controller {
 
     public void setUpSearchField(Regex regex) {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
+            //Run Regex Matcher
             regex.run(newText);
             addSuggestions(model, "search", null);
         });
@@ -282,6 +286,7 @@ public class Controller {
         if (e.getText().equals("d")) {
             toggleDebugMode();
         }
+        //debugging hotkey
         if (e.getText().equals("k")) {
             if (canvas.setPin) {
                 System.out.println();
@@ -321,6 +326,10 @@ public class Controller {
             pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
+            if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()){
+                currentPOI = null;
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            }
             pinText.textProperty().setValue(coordinates);
             Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
@@ -328,8 +337,53 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
+
+            NearbyPOI.setVisible(true);
+            NearbyPOI.setManaged(true);
+            updateNearbyPOI();
         } else {
             singleClick = true;
+        }
+    }
+
+    private void updateNearbyPOI() {
+        NearbyPOI.setVisible(true);
+        NearbyPOI.setManaged(true);
+        Text nearbyAttractionsText = new Text("Nearby Attractions");
+        Region region = new Region();
+        region.getStyleClass().add("hr");
+        NearbyPOI.getChildren().clear();
+        NearbyPOI.getChildren().add(nearbyAttractionsText);
+        NearbyPOI.getChildren().add(region);
+        ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
+        if (poiArrayList.size() > 0){
+            for (POI poi : poiArrayList) {
+                HBox nearbyContainer = new HBox();
+                nearbyContainer.getStyleClass().add("nearbyPOIContainer");
+                StackPane stackPane = new StackPane();
+                if (poi.getImageType().equals("heart")){
+                    stackPane.setStyle("-fx-background-color:WHITE;-fx-background-radius: 15;-fx-min-width: 30;-fx-border-width: 1px;-fx-border-color: black;-fx-border-radius: 15;");
+                }else{
+                    stackPane.setStyle("-fx-background-color:rgba(52,152,219,1);-fx-background-radius: 15;-fx-min-width: 30;");
+                }
+                Image image = model.imageSet.get(poi.getImageType());
+                ImageView imageview = new ImageView(image); //poi.getImageType()
+                imageview.getStyleClass().add("testImageView");
+                imageview.setFitHeight(16.0);
+                imageview.setFitWidth(16.0);
+                imageview.setPreserveRatio(true);
+                imageview.getStyleClass().add("nearbyPOIImage");
+                VBox textlines = new VBox();
+                Text attractionName = new Text(poi.getName());
+                Text attractionType = new Text(poi.getType().substring(0, 1).toUpperCase() + poi.getType().substring(1));
+                attractionType.getStyleClass().add("attractionType");
+                textlines.getChildren().add(attractionName);
+                textlines.getChildren().add(attractionType);
+                stackPane.getChildren().add(imageview);
+                nearbyContainer.getChildren().add(stackPane);
+                nearbyContainer.getChildren().add(textlines);
+                NearbyPOI.getChildren().add(nearbyContainer);
+            }
         }
     }
 
@@ -358,10 +412,8 @@ public class Controller {
     public void onMousePressedRoute() {
         if (routeContainer.isVisible()) {
             hideAll();
-            canvas.hideRoute();
         } else {
             changeType("route", true);
-            canvas.showRoute();
         }
     }
 
@@ -442,6 +494,11 @@ public class Controller {
                 debugContainer.setManaged(state);
                 break;
             case "pin":
+                removePin.setVisible(true);
+                removePin.setManaged(true);
+                NearbyPOI.setVisible(false);
+                NearbyPOI.setManaged(false);
+                fadeButtons();
                 pinContainer.setVisible(state);
                 pinContainer.setManaged(state);
                 break;
@@ -481,11 +538,30 @@ public class Controller {
         scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
     }
 
+    @FXML
+    private ImageView heartIcon;
+    POI currentPOI = null;
     public void onMousePressedPinHeart() {
         //add this point to POI
-        POI poi = new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+        POI poi = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
         model.addPOI(poi);
         model.getPOITree().insert(poi);
+        String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
+        if (heartIconFilePath[heartIconFilePath.length-1].equals("heart-border.png")){
+            if (currentPOI == null){
+                currentPOI = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+            }
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
+            removePin.setVisible(false);
+            removePin.setManaged(false);
+            model.addPOI(currentPOI);
+        }
+        else{
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            model.removePOI(currentPOI);
+            changeType("pin", false);
+            currentPOI = null;
+        }
         canvas.setPin = false;
         canvas.repaint();
         updateUserPOI();
@@ -497,13 +573,23 @@ public class Controller {
     public void updateUserPOI() {
         userPOI.getChildren().clear();
         model.getPointsOfInterest().forEach(POI -> {
-            Button currentPOI = new Button(POI.getName());
-            userPOI.getChildren().add(currentPOI);
-            currentPOI.setOnAction(event -> {
+            Button currentPOILine = new Button(POI.getName());
+            userPOI.getChildren().add(currentPOILine);
+            currentPOILine.setOnAction(event -> {
+                currentPOI = POI;
+                changeType("pin",true);
+                removePin.setVisible(false);
+                removePin.setManaged(false);
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
                 canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
                 canvas.repaint();
             });
         });
+    }
+
+    public void toggleKDLines() {
+        canvas.kdLines = !canvas.kdLines;
+        canvas.repaint();
         hideRoute();
     }
 

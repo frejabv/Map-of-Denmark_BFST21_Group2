@@ -13,10 +13,13 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.List;
+
+import java.util.HashMap;
 
 public class MapCanvas extends Canvas {
     private Model model;
@@ -118,19 +121,12 @@ public class MapCanvas extends Canvas {
             paintPath(model.getAStarPath());
         }
 
-        if (showNames) {
-            gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            model.getAreaNames().forEach((areaName) -> {
-                areaName.drawType(gc, getDistanceWidth());
-            });
-        }
-
         model.getSystemPointsOfInterest().forEach(POI -> {
             gc.setFill(Color.rgb(52,152,219));
             double size = (30 / Math.sqrt(trans.determinant()));
             gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
-            String image = POI.getType();
-            gc.drawImage(new Image("bfst21/icons/" + image + ".png"), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
+            String image = POI.getImageType();
+            gc.drawImage(model.imageSet.get(image), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
 
             gc.setFill(Color.BLACK);
             gc.setFont(Font.font("Arial", FontWeight.BOLD,10 / Math.sqrt(trans.determinant())));
@@ -154,6 +150,13 @@ public class MapCanvas extends Canvas {
                     // draw generic icon
             }
         });
+
+        if (showNames) {
+            gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
+            model.getAreaNames().forEach((areaName) -> {
+                areaName.drawType(gc, getDistanceWidth());
+            });
+        }
 
         if (kdLines) {
             model.getPOITree().drawLines(gc);
@@ -209,7 +212,7 @@ public class MapCanvas extends Canvas {
             }
         } else {
             // TODO: make the boundry go to inital zoom position
-            if (getDistanceWidth() < mapZoomLimit) {
+            if (getDistanceWidth() < 1000) {
                 trans.prependScale(factor, factor, center);
             }
         }

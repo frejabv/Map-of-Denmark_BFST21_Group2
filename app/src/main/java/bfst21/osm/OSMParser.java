@@ -10,6 +10,9 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import java.util.ArrayList;
@@ -21,22 +24,22 @@ import java.net.URL;
 public class OSMParser {
     private static HashMap<String, List<String>> addresses = new HashMap<>();
     private static List<String> systemPOITags;
-    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall"));
+    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall", "windmill", "lighthouse", "bust", "statue", "sculpture"));
 
 
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
             throws IOException, XMLStreamException {
         switch (fileExtension) {
-        case OSM:
-            loadOSM(in, model);
-            break;
-        case ZIP:
-            loadZIP(in, model);
-            // saveOBJ(fileName, model);
-            break;
-        case OBJ:
-            loadOBJ(in, model);
-            break;
+            case OSM:
+                loadOSM(in, model);
+                break;
+            case ZIP:
+                loadZIP(in, model);
+                // saveOBJ(fileName, model);
+                break;
+            case OBJ:
+                loadOBJ(in, model);
+                break;
         }
     }
 
@@ -338,54 +341,63 @@ public class OSMParser {
         model.setIslands(mergeCoastlines(model.getCoastlines()));
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("No coastlines found");
-        System.out.println("coastlines: " + model.getCoastlines());
-        }
+    }
 
     private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
-        String type = "car";
-        String imageType = "car";
-        /*int priority = 10;
-        //List<String> systemPoi = new ArrayList<>(Arrays.asList("attraction", "viewpoint", "artwork", "building"));
-        //From specific tags to more general
-        for(String tag :systemPOITags) {
-            if (imageType.equals("")) {
-                switch (tag) {
-                    case "bust":
-                    case "statue":
-                    case "sculpture":
-                        imageType = "statue";
-                        priority = 10;
-                        break;
-                    case "theme_park":
-                        imageType = "theme_park";
-                        priority = 10;
-                        break;
-                    case "attraction":
-                        if (priority < 10){
-                            imageType = "attraction";
-                            priority = 5;
-                        }
-                        break;
+        String type = "default";
+        String imageType = "default";
+        int priority = 0;
+        for (String tag : systemPOITags) {
+            if (priority != 10) {
+                if (systemPOITags.contains("windmill")) {
+                    imageType = "mill";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")) {
+                    imageType = "museum";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("theme_park")) {
+                    imageType = "theme_park";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("aerodrome")) {
+                    imageType = "aerodrome";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")) {
+                    imageType = "cinema";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")) {
+                    imageType = "castle";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("lighthouse")) {
+                    imageType = "viewpoint";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust") || systemPOITags.contains("sculpture")) {
+                    imageType = "statue";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("zoo")) {
+                    imageType = "zoo";
+                    type = tag;
+                    priority = 10;
+                } else if (systemPOITags.contains("attraction")) {
+                    imageType = "suitcase";
+                    type = tag;
+                    priority = 5;
+                } else if (systemPOITags.contains("viewpoint")) {
+                    imageType = "viewpoint";
+                    type = tag;
+                    priority = 5;
                 }
             }
         }
-        else if (systemPOITags.contains("cinema") || systemPOITags.contains("theatre")){
-            imageType = "cinema";
-        } else if (systemPOITags.contains("gallery") || systemPOITags.contains("museum")){
-            imageType = "museum";
-        } else if (systemPOITags.contains("castle") || systemPOITags.contains("castle_wall")){
-            imageType = "castle";
-        } else if (systemPOITags.contains("aerodrome")){
-            imageType = "aerodrome";
-        } else if (systemPOITags.contains("zoo")){
-            imageType = "zoo";
-        } else if (systemPOITags.contains("aquarium")){
-            imageType = "aquarium";
-        } else if (systemPOITags.contains("theme_park")){
-            imageType = "theme_park";
-        }*/
         //sanitise type
-        POI result = new POI(systemPOIName,type, imageType,x,y);
+        POI result = new POI(systemPOIName, type, imageType, x, y);
         return result;
     }
 
