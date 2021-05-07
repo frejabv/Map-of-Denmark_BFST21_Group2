@@ -319,17 +319,6 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
-
-            //TODO add to fxml and make it look good
-            if (pinContainer.lookup("#nearest") != null) {
-                pinContainer.getChildren().remove(pinContainer.lookup("#nearest"));
-            }
-            Button nearestWay = new Button("Find nearest way");
-            nearestWay.setId("nearest");
-            nearestWay.setOnAction(event -> {
-                canvas.getNearestNodeOnNearestWay();
-            });
-            pinContainer.getChildren().add(nearestWay);
         } else {
             singleClick = true;
         }
@@ -607,6 +596,16 @@ public class Controller {
         canvas.repaint();
     }
 
+    public void toggleRoadRectangles() {
+        canvas.roadRectangles = !canvas.roadRectangles;
+        canvas.repaint();
+    }
+
+    public void toggleNearestNodeLine() {
+        canvas.nearestNodeLine = !canvas.nearestNodeLine;
+        canvas.repaint();
+    }
+
     public void updateClosestRoad(String text) {
         closestRoad.textProperty().setValue(text);
     }
@@ -614,9 +613,18 @@ public class Controller {
     public void onMouseMovedOnCanvas(MouseEvent e) {
         Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
         Way road = model.getRoadRTree().nearestWay(mousePoint);
-        // TODO make it print the name of the road, not  the ID
-        if (road != null)
-            updateClosestRoad(String.valueOf(road.getId()));
+
+        if (road.getName().equals("")) {
+            updateClosestRoad("ID: " + road.getId());
+        } else {
+            updateClosestRoad(road.getName());
+        }
+
+        model.setNearestNode(road.nearestNode(mousePoint));
+        if (canvas.nearestNodeLine) {
+            canvas.mousePoint = mousePoint;
+            canvas.repaint();
+        }
     }
 
     @FXML

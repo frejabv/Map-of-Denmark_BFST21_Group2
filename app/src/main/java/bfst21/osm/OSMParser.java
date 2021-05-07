@@ -19,16 +19,16 @@ public class OSMParser {
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
             throws IOException, XMLStreamException {
         switch (fileExtension) {
-            case OSM:
-                loadOSM(in, model);
-                break;
-            case ZIP:
-                loadZIP(in, model);
-                saveOBJ(fileName, model);
-                break;
-            case OBJ:
-                loadOBJ(in, model);
-                break;
+        case OSM:
+            loadOSM(in, model);
+            break;
+        case ZIP:
+            loadZIP(in, model);
+            // saveOBJ(fileName, model);
+            break;
+        case OBJ:
+            loadOBJ(in, model);
+            break;
         }
     }
 
@@ -294,7 +294,6 @@ public class OSMParser {
                     break;
             }
         }
-        // TODO: Please fix (kinda fixed)
         model.setIslands(mergeCoastlines(model.getCoastlines()));
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("you fool, you think it is that simple? hahahahah");
