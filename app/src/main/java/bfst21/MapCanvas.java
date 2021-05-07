@@ -77,6 +77,15 @@ public class MapCanvas extends Canvas {
         activeDrawList.addAll(model.getRoadRTree().query(viewport));
         activeDrawList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
 
+        //TODO - make part of R-tree
+        model.getRelationIndex().forEach(relation -> {
+            if (relation.getTag() != null) {
+                if (relation.getTag().zoomLimit > getDistanceWidth()) {
+                    relation.draw(gc, renderingStyle);
+                }
+            }
+        });
+
         gc.setFill(renderingStyle.sea);
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
@@ -101,15 +110,6 @@ public class MapCanvas extends Canvas {
             }
 
         }
-
-        //TODO - make part of R-tree
-        model.getRelationIndex().forEach(relation -> {
-            if (relation.getTag() != null) {
-                if (relation.getTag().zoomLimit > getDistanceWidth()) {
-                    relation.draw(gc, renderingStyle);
-                }
-            }
-        });
 
         // Draw dark
         if (doubleDraw) {
@@ -200,14 +200,8 @@ public class MapCanvas extends Canvas {
                     size);
         }
 
-        // TODO delete if redundant
-        gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
-        gc.setLineDashes(0);
-        if (smallerViewPort) {
-            gc.setStroke(Color.BLACK);
-            viewport.draw(gc);
-        }
 
+        gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
         if (RTreeLines) {
             gc.setStroke(Color.RED);
             model.getRoadRTree().drawRTree(viewport, gc);

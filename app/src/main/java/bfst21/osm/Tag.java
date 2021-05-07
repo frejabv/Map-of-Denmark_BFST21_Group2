@@ -1,6 +1,7 @@
 package bfst21.osm;
 
 public enum Tag{
+    //drawables
     TERTIARY_LINK(150,1),
     SECONDARY_LINK(150,2),
     PRIMARY_LINK(400,3),
@@ -23,15 +24,17 @@ public enum Tag{
     TRUNK(400,20),
     MOTORWAY(700,21),
     FERRY(700,22),
+
+    //fillables
     COASTLINE(100000000,1),
-    BEACH(200,2),
-    CITYBORDER(200,3),
-    GRASSLAND(200,4),
-    MEADOW(200,5),
+    BEACH(150,2),
+    CITYBORDER(150,3),
+    GRASSLAND(150,4),
+    MEADOW(150,5),
     FOREST(400,6),
     FARMYARD(7,7),
     PARK(100,8),
-    HEATH(200,9),
+    HEATH(150,9),
     CEMETERY(100,10),
     WOOD(400,11),
     GRASS(100,12),
