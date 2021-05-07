@@ -1,5 +1,6 @@
 package bfst21.POI;
 
+import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -14,7 +15,7 @@ public class POI implements Comparable<POI> {
 
     private POI left;
     private POI right;
-    private POI_KDTree.RECTANGLE_PLACEHOLDER rect;
+    private Rectangle rect;
     private double distTo;
 
     public POI(String name, String type, float x, float y) {
@@ -59,10 +60,10 @@ public class POI implements Comparable<POI> {
     public POI getLeft() { return left; }
     public POI getRight() { return right; }
 
-    public POI_KDTree.RECTANGLE_PLACEHOLDER getRect() {
+    public Rectangle getRect() {
         return rect;
     }
-    public void setRect(POI_KDTree.RECTANGLE_PLACEHOLDER rect) {
+    public void setRect(Rectangle rect) {
         this.rect = rect;
     }
 

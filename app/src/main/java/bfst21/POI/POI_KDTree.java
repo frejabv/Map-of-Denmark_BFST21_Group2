@@ -11,7 +11,7 @@ import java.util.Collections;
 
 public class POI_KDTree {
     Model model;
-    private RECTANGLE_PLACEHOLDER bounds;
+    private Rectangle bounds;
     private POI root;
     private int size;
 
@@ -27,7 +27,7 @@ public class POI_KDTree {
 
     public void setBounds(){
         //note: maxY and minY are swapped, such that the negative scaling constant has no effect on the tree
-        bounds = new RECTANGLE_PLACEHOLDER(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
+        bounds = new Rectangle(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
     }
 
     /**
@@ -58,7 +58,7 @@ public class POI_KDTree {
     private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
         //if space is available, fill space
         if (currentNode == null) {
-            RECTANGLE_PLACEHOLDER r = null;
+            Rectangle r = null;
 
             float minX = parent.getRect().getMinX();
             float minY = parent.getRect().getMinY();
@@ -78,7 +78,7 @@ public class POI_KDTree {
                     minX = parent.getX();
                 }
             }
-            r = new RECTANGLE_PLACEHOLDER(minX, minY, maxX, maxY);
+            r = new Rectangle(minX, minY, maxX, maxY);
             size++;
             qNode.setRect(r);
             return qNode;
@@ -243,52 +243,5 @@ public class POI_KDTree {
 
     public int getSize(){
         return size;
-    }
-
-    public static class RECTANGLE_PLACEHOLDER {
-        private final float minX, minY;
-        private final float maxX, maxY;
-
-        public RECTANGLE_PLACEHOLDER(float minX, float minY, float maxX, float maxY) {
-            this.minX = minX;
-            this.maxY = maxY;
-            this.maxX = maxX;
-            this.minY = minY;
-        }
-
-        public float getMinX() {
-            return minX;
-        }
-
-        public float getMinY() {
-            return minY;
-        }
-
-        public float getMaxX() {
-            return maxX;
-        }
-
-        public float getMaxY() {
-            return maxY;
-        }
-
-        public boolean intersects(RECTANGLE_PLACEHOLDER that) {
-            return this.maxX >= that.minX && this.maxY >= that.minY
-                    && that.maxX >= this.minX && that.maxY >= this.minY;
-        }
-
-        public boolean contains(Point2D p) {
-            return (p.getX() >= minX) && (p.getX() <= maxX)
-                    && (p.getY() >= minY) && (p.getY() <= maxY);
-        }
-
-        public double distanceSquaredTo(Point2D p) {
-            double dx = 0.0, dy = 0.0;
-            if (p.getX() < minX) dx = p.getX() - minX;
-            else if (p.getX() > maxX) dx = p.getX() - maxX;
-            if (p.getY() < minY) dy = p.getY() - minY;
-            else if (p.getY() > maxY) dy = p.getY() - maxY;
-            return dx * dx + dy * dy;
-        }
     }
 }
