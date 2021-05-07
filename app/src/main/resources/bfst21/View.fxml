@@ -85,7 +85,7 @@
           <VBox fx:id="routeDescription" styleClass="routeDescription">
             <Region styleClass="hr" />
             <HBox>
-              <ToggleButton id="car-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeRoute">
+              <ToggleButton fx:id="carRoute" id="car-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <ToggleGroup fx:id="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -95,7 +95,7 @@
                   </ImageView>
                 </graphic>
               </ToggleButton>
-              <ToggleButton id="bicycle-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
+              <ToggleButton fx:id="bicycleRoute" id="bicycle-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -105,7 +105,7 @@
                   </ImageView>
                 </graphic>
               </ToggleButton>
-              <ToggleButton id="walk-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
+              <ToggleButton fx:id="walkRoute" id="walk-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -188,7 +188,7 @@
                 <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
               </FlowPane>
               <HBox>
-                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
+                <ToggleButton id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <ToggleGroup fx:id="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -198,7 +198,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                <ToggleButton id="bicycle-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -208,7 +208,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                <ToggleButton id="walk-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -223,7 +223,7 @@
                 <Text styleClass="mainContainer-subheader">Map Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox selected="true" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
+              <CheckBox selected="true" fx:id="showNames" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Unit</Text>
               </FlowPane>
@@ -271,7 +271,9 @@
                 <Text styleClass="mainContainer-subheader">Dev Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show R-tree lines</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show Road-Rtree lines</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleRoadRectangles">Show Road-Rtree Way rectangles</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleNearestNodeLine">Show line from mouse to nearest node on nearest way</CheckBox>
               <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
               <FlowPane styleClass="header-margin">

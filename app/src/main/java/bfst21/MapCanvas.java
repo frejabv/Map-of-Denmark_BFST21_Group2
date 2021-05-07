@@ -2,6 +2,10 @@ package bfst21;
 
 import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
+import bfst21.osm.Node;
+import bfst21.osm.RenderingStyle;
+import bfst21.osm.Tag;
+import bfst21.osm.Way;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -22,23 +26,28 @@ public class MapCanvas extends Canvas {
     GraphicsContext gc;
     boolean setPin;
     boolean doubleDraw;
-    boolean RTreeLines;
+    boolean RTreeLines, roadRectangles;
+    boolean nearestNodeLine;
     public boolean debugAStar;
     private boolean showRoute;
     boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
+    Point2D mousePoint = new Point2D(0,0);
+    Rectangle debugViewport;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
+    private float mapZoomLimit;
 
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
         moveToInitialPosition();
+        mapZoomLimit = getDistanceWidth()*5;
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
         });
@@ -48,6 +57,8 @@ public class MapCanvas extends Canvas {
     }
 
     void repaint() {
+        //Rtree query
+
         long start = System.nanoTime();
         gc = getGraphicsContext2D();
         gc.setLineCap(StrokeLineCap.ROUND);
@@ -58,6 +69,7 @@ public class MapCanvas extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
+        gc.setStroke(Color.BLACK);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
 
         gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
@@ -131,7 +143,7 @@ public class MapCanvas extends Canvas {
                     }
                 });
             }
-        };
+        }
 
         if(model.existsAStarPath() && showRoute){
             gc.setLineDashes(0);
@@ -144,8 +156,8 @@ public class MapCanvas extends Canvas {
         if (showNames) {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            model.getCities().forEach((city) -> {
-                city.drawType(gc, getDistanceWidth(), renderingStyle);
+            model.getAreaNames().forEach((areaName) -> {
+                areaName.drawType(gc, getDistanceWidth(), renderingStyle);
             });
         }
 
@@ -156,14 +168,14 @@ public class MapCanvas extends Canvas {
             gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
                     size / 2, size / 2);
             switch (POI.getType().toLowerCase()) {
-            case "home":
-                // draw home icon
-                break;
-            case "work":
-                // draw briefcase icon
-                break;
-            default:
-                // draw generic icon
+                case "home":
+                    // draw home icon
+                    break;
+                case "work":
+                    // draw briefcase icon
+                    break;
+                default:
+                    // draw generic icon
             }
         });
 
@@ -174,16 +186,25 @@ public class MapCanvas extends Canvas {
         }
 
         if (RTreeLines) {
-            //display window
-            Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
-            maxPoint = mouseToModelCoords(maxPoint);
+            drawViewportWindow();
 
-            Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
-            minPoint = mouseToModelCoords(minPoint);
+            model.getRoadRTree().drawRTree(debugViewport, gc);
+        }
 
-            Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
-            gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-            model.getRoadRTree().drawRTree(window, gc);
+        if (roadRectangles) {
+            drawViewportWindow();
+
+            model.getRoadRTree().drawRoadRectangles(debugViewport, gc);
+        }
+
+        if (nearestNodeLine) {
+            gc.setStroke(Color.RED);
+            gc.setLineWidth((2 / Math.sqrt(trans.determinant())));
+
+            gc.beginPath();
+            gc.moveTo(mousePoint.getX(), mousePoint.getY());
+            gc.lineTo(model.getNearestNode().getX(), model.getNearestNode().getY());
+            gc.stroke();
         }
 
         gc.restore();
@@ -208,7 +229,7 @@ public class MapCanvas extends Canvas {
             }
         } else {
             // TODO: make the boundry go to inital zoom position
-            if (getDistanceWidth() < 1000000000) {
+            if (getDistanceWidth() < mapZoomLimit) {
                 trans.prependScale(factor, factor, center);
             }
         }
@@ -219,10 +240,10 @@ public class MapCanvas extends Canvas {
     public void drawDebugAStarPath() {
         List<Node> nodes = model.getAStarDebugPath();
         gc.setStroke(Color.CORNFLOWERBLUE);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant())*2);
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()) * 2);
         gc.beginPath();
-        for(Node n : nodes) {
-            for(Edge e : n.getAdjacencies()) {
+        for (Node n : nodes) {
+            for (Edge e : n.getAdjacencies()) {
                 Node child = e.target;
                 gc.moveTo(n.getX(), n.getY());
                 gc.lineTo(child.getX(), child.getY());
@@ -238,16 +259,16 @@ public class MapCanvas extends Canvas {
             gc.setLineWidth(0.000045);
         }
         gc.beginPath();
-        for (int i = 0;i < path.size()-1; i++){
+        for (int i = 0; i < path.size() - 1; i++) {
             Node current = path.get(i);
-            Node next = path.get(i+1);
-            gc.moveTo(current.getX(),current.getY());
-            gc.lineTo(next.getX(),next.getY());
+            Node next = path.get(i + 1);
+            gc.moveTo(current.getX(), current.getY());
+            gc.lineTo(next.getX(), next.getY());
         }
         gc.stroke();
     }
 
-    public String setPin(Point2D point){
+    public String setPin(Point2D point) {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
         pinPoint = canvasPoint;
@@ -324,21 +345,27 @@ public class MapCanvas extends Canvas {
         return pinPoint;
     }
 
-    //TODO make it return nearest node to mouse (needs UI)
-    public Node getNearestNodeOnNearestWay() {
-        Way nearestWay = model.getRoadRTree().nearestWay(pinPoint);
-        System.out.println("way ID: " + nearestWay.getId());
-        Node nearestNode = nearestWay.nearestNode(pinPoint);
-        System.out.println("Node ID: " + nearestNode.getId() + " coordinate: "+ nearestNode.getY() * -0.56f + " " + nearestNode.getX());
-        return nearestNode;
-    }
-
     public void showRoute(){
         showRoute = true;
         repaint();
     }
-    public void hideRoute(){
+
+    public void hideRoute() {
         showRoute = false;
         repaint();
+    }
+
+    public void drawViewportWindow() {
+        Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
+        maxPoint = mouseToModelCoords(maxPoint);
+
+        Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
+        minPoint = mouseToModelCoords(minPoint);
+
+        Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+        gc.setStroke(Color.BLACK);
+        debugViewport = window;
+        window.draw(gc);
     }
 }

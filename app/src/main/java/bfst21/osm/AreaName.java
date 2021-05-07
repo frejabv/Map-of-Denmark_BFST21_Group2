@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-enum CityTypes {
+enum AreaType {
     BOROUGH(30, 0),
     CITY(250, 0),
     HAMLET(20, 0),
@@ -21,38 +21,38 @@ enum CityTypes {
     public float zoomMax;
     public float zoomMin;
 
-    CityTypes(float zoomMax, float zoomMin) {
+    AreaType(float zoomMax, float zoomMin) {
         this.zoomMax = zoomMax;
         this.zoomMin = zoomMin;
     }
 }
 
-public class City implements Drawable {
+public class AreaName implements Drawable {
     String name;
-    CityTypes type;
+    AreaType type;
     float lat;
     float lon;
     Relation relation;
     Way way;
 
 
-    public City(String name, CityTypes type, Node node) {
+    public AreaName(String name, AreaType type, Node node) {
         setNameAndType(name, type);
         this.lat = node.getX();
         this.lon = node.getY();
     }
 
-    public City(String name, CityTypes type, Way way) {
+    public AreaName(String name, AreaType type, Way way) {
         setNameAndType(name, type);
         this.way = way;
     }
 
-    public City(String name, CityTypes type, Relation relation) {
+    public AreaName(String name, AreaType type, Relation relation) {
         setNameAndType(name, type);
         this.relation = relation;
     }
 
-    public void setNameAndType(String name, CityTypes type) {
+    public void setNameAndType(String name, AreaType type) {
         this.name = name;
         this.type = type;
     }
@@ -79,7 +79,7 @@ public class City implements Drawable {
 
         gc.setStroke(Color.rgb(236, 240, 241));
         gc.setFill(Color.rgb(45, 52, 54));
-        if (type.equals(CityTypes.ISLAND)) {
+        if (type.equals(AreaType.ISLAND)) {
             gc.setFont(Font.font("Arial", FontWeight.BOLD, gc.getFont().getSize() * 2));
             gc.setLineWidth(gc.getFont().getSize() / 6);
             gc.strokeText(name, lat, lon);
