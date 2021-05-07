@@ -204,17 +204,6 @@ public class OSMObjectsTest {
     }
 
     @Test
-    public void testRenderingStyleGetColor() {
-        RenderingStyle testStyle = new RenderingStyle();
-        testStyle.darkMode();
-        assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
-        assertEquals(Color.rgb(128, 142, 155), testStyle.getColorByTag(Tag.PRIMARY));
-        testStyle.defaultMode();
-        assertEquals(Color.LIGHTBLUE, testStyle.getColorByTag(Tag.WATER));
-        assertEquals(Color.rgb(253, 218, 118), testStyle.getColorByTag(Tag.PRIMARY));
-    }
-
-    @Test
     public void testRenderingStyleGetDrawStyle() {
         RenderingStyle testStyle = new RenderingStyle();
         assertEquals(DrawStyle.FILL, testStyle.getDrawStyleByTag(Tag.BUILDING));
