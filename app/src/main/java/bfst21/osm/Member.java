@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 //TODO remove Member class at some point
-public class Member implements Serializable, Drawable {
+public abstract class Member implements Serializable, Drawable {
     long id;
     Tag tag;
 
@@ -28,9 +28,7 @@ public class Member implements Serializable, Drawable {
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
-
-    }
+    public void draw(GraphicsContext gc, RenderingStyle renderingStyle) {}
 
     @Override
     public Rectangle getRect() {

@@ -205,7 +205,7 @@ public class MapCanvas extends Canvas {
         gc.setLineDashes(0);
         if (smallerViewPort) {
             gc.setStroke(Color.BLACK);
-            viewport.draw(gc, renderingStyle);
+            viewport.draw(gc);
         }
 
         if (RTreeLines) {
@@ -220,7 +220,7 @@ public class MapCanvas extends Canvas {
 
         if (smallerViewPort || RTreeLines || roadRectangles) {
             gc.setStroke(Color.BLACK);
-            viewport.draw(gc, renderingStyle);
+            viewport.draw(gc);
         }
 
         if (nearestNodeLine) {
