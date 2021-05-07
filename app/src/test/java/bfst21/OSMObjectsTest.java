@@ -123,15 +123,15 @@ public class OSMObjectsTest {
     }
 
     @Test
-    public void testMemberRoles() {
+    public void testWayRoles() {
         Relation testRelation1 = new Relation(111);
         Relation testRelation2 = new Relation(222);
-        Member testNode = new Node(10, 10, 123);
-        testNode.addRole(111, "inner");
-        testNode.addRole(222, "outer");
-        testRelation1.addMember(testNode);
-        testRelation2.addMember(testNode);
-        HashMap<Long, String> roles = testNode.getRoleMap();
+        Way testWay = new Way(123);
+        testWay.addRole(111, "inner");
+        testWay.addRole(222, "outer");
+        testRelation1.addMember(testWay);
+        testRelation2.addMember(testWay);
+        HashMap<Long, String> roles = testWay.getRoleMap();
         assertEquals("inner", roles.get(Long.valueOf(111)));
         assertEquals("outer", roles.get(Long.valueOf(222)));
     }
