@@ -316,15 +316,6 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
-
-            //TODO add to fxml and make it look good
-            if (pinContainer.lookup("#nearest") != null) {
-                pinContainer.getChildren().remove(pinContainer.lookup("#nearest"));
-            }
-            Button nearestWay = new Button("Find nearest way");
-            nearestWay.setId("nearest");
-            nearestWay.setOnAction(event -> canvas.getNearestNodeOnNearestWay());
-            pinContainer.getChildren().add(nearestWay);
         } else {
             singleClick = true;
         }
