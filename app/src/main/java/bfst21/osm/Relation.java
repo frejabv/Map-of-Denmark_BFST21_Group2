@@ -55,12 +55,11 @@ public class Relation extends Member implements Drawable {
             ArrayList<Way> mergedList;
             if (outerLines.size() > 1) {
                 mergedList = mergeOuter(outerLines);
-
             } else {
                 mergedList = outerLines;
             }
 
-            if (innerDrawn) {
+            if (innerDrawn || outerLines.size() != 0) {
                 for (Way way : mergedList) {
                     way.drawRelationPart(gc);
                 }
