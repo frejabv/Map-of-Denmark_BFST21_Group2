@@ -5,6 +5,7 @@ import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
+import com.sun.javafx.PlatformUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -70,6 +71,8 @@ public class Controller {
     private VBox leftContainer;
     @FXML
     private VBox rightContainer;
+    @FXML
+    private CheckBox showNames;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -80,6 +83,16 @@ public class Controller {
 
     public void init(Model model) {
         this.model = model;
+        System.out.println(System.getProperty("os.name"));
+        String OS = System.getProperty("os.name").toLowerCase();
+
+        //Check if OS is Linux
+        if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")){
+            canvas.showNames = false;
+            showNames.setVisible(false);
+            showNames.setManaged(false);
+        }
+
         canvas.init(model);
         canvas.setCurrentCanvasEdges();
         updateScaleBar();
@@ -541,17 +554,13 @@ public class Controller {
     }
 
     public void hideRoute() {
+        setCurrentTransportType(model.getDefaultTransportType());
         routeDescription.setVisible(false);
         routeDescription.setManaged(false);
     }
 
     @FXML
     private ToggleGroup selectTransportTypeSettings;
-
-    public void selectTransportType() {
-        ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
-        model.setCurrentTransportType(TransportType.valueOf(currentButton.getText().toUpperCase()));
-    }
 
     @FXML
     private CheckBox showAStarPath;
@@ -568,15 +577,33 @@ public class Controller {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
         if (currentButton != null) {
             String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
-            model.setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
+            setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
             model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
             showRouteDescription();
             canvas.repaint(); //To show the route after it has been calculated
         }
     }
 
+    public void selectTransportTypeSettings() {
+        ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
+        if (currentButton != null) {
+            String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
+            model.setDefaultTransportType(TransportType.valueOf(transportTypeCleaned));
+        }
+    }
+
     public void toggleRTreeLines() {
         canvas.RTreeLines = !canvas.RTreeLines;
+        canvas.repaint();
+    }
+
+    public void toggleRoadRectangles() {
+        canvas.roadRectangles = !canvas.roadRectangles;
+        canvas.repaint();
+    }
+
+    public void toggleNearestNodeLine() {
+        canvas.nearestNodeLine = !canvas.nearestNodeLine;
         canvas.repaint();
     }
 
@@ -587,8 +614,38 @@ public class Controller {
     public void onMouseMovedOnCanvas(MouseEvent e) {
         Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
         Way road = model.getRoadRTree().nearestWay(mousePoint);
-        // TODO make it print the name of the road, not  the ID
-        if (road != null)
-            updateClosestRoad(String.valueOf(road.getId()));
+
+        if (road.getName().equals("")) {
+            updateClosestRoad("ID: " + road.getId());
+        } else {
+            updateClosestRoad(road.getName());
+        }
+
+        model.setNearestNode(road.nearestNode(mousePoint));
+        if (canvas.nearestNodeLine) {
+            canvas.mousePoint = mousePoint;
+            canvas.repaint();
+        }
+    }
+
+    @FXML
+    private ToggleButton carRoute;
+    @FXML
+    private ToggleButton bicycleRoute;
+    @FXML
+    private ToggleButton walkRoute;
+
+    public void setCurrentTransportType(TransportType type){
+        model.setCurrentTransportType(type);
+        carRoute.setSelected(false);
+        bicycleRoute.setSelected(false);
+        walkRoute.setSelected(false);
+        if (type.equals(TransportType.CAR)){
+            carRoute.setSelected(true);
+        } else if (type.equals(TransportType.BICYCLE)){
+            bicycleRoute.setSelected(true);
+        } else if (type.equals(TransportType.WALK)){
+            walkRoute.setSelected(true);
+        }
     }
 }
