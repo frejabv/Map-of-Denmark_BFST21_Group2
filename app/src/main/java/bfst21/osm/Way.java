@@ -80,7 +80,7 @@ public class Way extends Member implements Drawable, Serializable {
                 maxSpeed = 130;
             } else if (tags.contains(Tag.SECONDARY) || tags.contains(Tag.TERTIARY) || tags.contains(Tag.TRUNK) || tags.contains(Tag.PRIMARY)) {
                 maxSpeed = 80;
-            } else if (tags.contains(Tag.JUNCTION) || tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
+            } else if (tags.contains(Tag.LIVING_STREET) || tags.contains(Tag.UNCLASSIFIED) || tags.contains(Tag.RESIDENTIAL) || tags.contains(Tag.ROAD) || tags.contains(Tag.SERVICE)) {
                 maxSpeed = 50;
             }
         }

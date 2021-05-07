@@ -50,7 +50,6 @@ public class RenderingStyle {
         styleMap.put(Tag.TRACK, DrawStyle.DASH);
         styleMap.put(Tag.FERRY,DrawStyle.DASH);
 
-        doubleDrawn.put(Tag.JUNCTION, true);
         doubleDrawn.put(Tag.LIVING_STREET, true);
         doubleDrawn.put(Tag.MOTORWAY, true);
         doubleDrawn.put(Tag.MOTORWAY_LINK, true);
@@ -132,7 +131,6 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.LIVING_STREET, Color.WHITE);
         defaultColorMap.put(Tag.RESIDENTIAL, Color.WHITE);
         defaultColorMap.put(Tag.SERVICE, Color.WHITE);
-        defaultColorMap.put(Tag.JUNCTION, Color.WHITE);
         defaultColorMap.put(Tag.TERTIARY, Color.WHITE);
         defaultColorMap.put(Tag.TERTIARY_LINK, Color.WHITE);
         defaultColorMap.put(Tag.SECONDARY, Color.rgb(246, 229, 141));
@@ -173,7 +171,6 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.LIVING_STREET, Color.rgb(63, 64, 66));
         darkModeColorMap.put(Tag.RESIDENTIAL, Color.rgb(63, 64, 66));
         darkModeColorMap.put(Tag.SERVICE, Color.rgb(63, 64, 66));
-        darkModeColorMap.put(Tag.JUNCTION, Color.rgb(63, 64, 66));
         darkModeColorMap.put(Tag.TERTIARY, Color.rgb(63, 64, 66));
         darkModeColorMap.put(Tag.TERTIARY_LINK, Color.rgb(63, 64, 66));
         darkModeColorMap.put(Tag.SECONDARY, Color.rgb(197, 183, 113));
