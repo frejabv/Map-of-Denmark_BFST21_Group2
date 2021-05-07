@@ -69,7 +69,7 @@ public class Relation extends Member implements Drawable {
                 //draw relation normally
                 gc.setFillRule(FillRule.NON_ZERO);
                 for (Way way : ways) {
-                    var drawStyle = renderingStyle.getDrawStyleByTag(tags.get(0));
+                    var drawStyle = style.getDrawStyleByTag(tag);
                     way.draw(gc, style);
                     if (drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();
