@@ -37,7 +37,7 @@ public class MapCanvas extends Canvas {
     Point2D pinPoint;
     Point2D mousePoint = new Point2D(0, 0);
     Rectangle viewport;
-    ArrayList<Drawable> activeFillList, activeDrawList;
+    ArrayList<Drawable> activeDrawList, activeFillList;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -67,24 +67,33 @@ public class MapCanvas extends Canvas {
         gc.save();
         gc.setTransform(new Affine());
 
+        float distanceWidth = getDistanceWidth();
+
         updateViewPort();
-        // Rtree queries
-        activeFillList = new ArrayList<>();
-        activeFillList.addAll(model.getFillRTree().query(viewport));
-        activeFillList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
-
+        // TODO Rtree queries
         activeDrawList = new ArrayList<>();
-        activeDrawList.addAll(model.getRoadRTree().query(viewport));
-        activeDrawList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
+        activeFillList = new ArrayList<>();
+        if (distanceWidth <= 700) {
+            activeDrawList.addAll(model.getDrawableRTree700().query(viewport));
+        }
+        if (distanceWidth <= 400) {
+            activeDrawList.addAll(model.getDrawableRTree400().query(viewport));
+            activeFillList.addAll(model.getFillableRTree400().query(viewport));
+        }
+        if (distanceWidth <= 150) {
+            activeDrawList.addAll(model.getDrawableRTree150().query(viewport));
+            activeFillList.addAll(model.getFillableRTree150().query(viewport));
+        }
+        if (distanceWidth <= 7) {
+            activeDrawList.addAll(model.getDrawableRTree7().query(viewport));
+            activeFillList.addAll(model.getFillableRTree7().query(viewport));
+        }
+        if (distanceWidth <= 3) {
+            activeDrawList.addAll(model.getDrawableRTree3().query(viewport));
+        }
 
-        //TODO - make part of R-tree
-        model.getRelationIndex().forEach(relation -> {
-            if (relation.getTag() != null) {
-                if (relation.getTag().zoomLimit > getDistanceWidth()) {
-                    relation.draw(gc, renderingStyle);
-                }
-            }
-        });
+        activeDrawList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
+        activeFillList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
 
         gc.setFill(renderingStyle.sea);
         gc.fillRect(0, 0, getWidth(), getHeight());
@@ -93,19 +102,19 @@ public class MapCanvas extends Canvas {
 
         gc.setStroke(Color.TRANSPARENT);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
+        gc.setFill(renderingStyle.getIslandColor(distanceWidth));
         for (var island : model.getIslands()) {
             island.draw(gc, renderingStyle);
             gc.fill();
         }
 
-        for (Drawable fillable : activeFillList) {
-            Tag tag = fillable.getTag();
+        for (Drawable drawable : activeFillList) {
+            Tag tag = drawable.getTag();
             gc.setStroke(renderingStyle.getColorByTag(tag));
             gc.setFill(renderingStyle.getColorByTag(tag));
 
-            if (tag.zoomLimit > getDistanceWidth()) {
-                fillable.draw(gc, renderingStyle);
+            if (tag.zoomLimit > distanceWidth) {
+                drawable.draw(gc, renderingStyle);
                 gc.fill();
             }
 
@@ -113,30 +122,30 @@ public class MapCanvas extends Canvas {
 
         // Draw dark
         if (doubleDraw) {
-            for (Drawable road : activeDrawList) {
-                Tag tag = road.getTag();
+            for (Drawable drawable : activeDrawList) {
+                Tag tag = drawable.getTag();
 
-                if (tag.zoomLimit > getDistanceWidth() && renderingStyle.getDoubleDrawn(tag)) {
+                if (tag.zoomLimit > distanceWidth && renderingStyle.getDoubleDrawn(tag)) {
                     Color c1 = renderingStyle.getColorByTag(tag);
                     int darkRed = (int) (c1.getRed() * 255 * 0.75);
                     int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
                     int darkBlue = (int) (c1.getBlue() * 255 * 0.75);
                     gc.setStroke(Color.rgb(darkRed, darkGreen, darkBlue));
                     gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
-                    if (getDistanceWidth() < 7.0) {
+                    if (distanceWidth < 7.0) {
                         gc.setLineWidth((renderingStyle.getWidthByTag(tag) / 13333));
                     }
                     var style = renderingStyle.getDrawStyleByTag(tag);
                     if (style != DrawStyle.DASH) {
-                        road.draw(gc, renderingStyle);
+                        drawable.draw(gc, renderingStyle);
                     }
                 }
             }
         }
 
         // Draw normal
-        for (Drawable road : activeDrawList) {
-            Tag tag = road.getTag();
+        for (Drawable drawable : activeDrawList) {
+            Tag tag = drawable.getTag();
             double innerRoadWidth = 1;
             if (doubleDraw) {
                 innerRoadWidth = 0.65;
@@ -149,14 +158,14 @@ public class MapCanvas extends Canvas {
             }
             setStyle(renderingStyle.getDrawStyleByTag(tag));
 
-            if (getDistanceWidth() < 7.0 && renderingStyle.getDrawStyleByTag(tag) != DrawStyle.DASH) {
+            if (distanceWidth < 7.0 && renderingStyle.getDrawStyleByTag(tag) != DrawStyle.DASH) {
                 gc.setLineWidth((renderingStyle.getWidthByTag(tag) / 13333) * innerRoadWidth);
             }
-            if (tag.zoomLimit > getDistanceWidth()) {
+            if (tag.zoomLimit > distanceWidth) {
                 if (renderingStyle.getDoubleDrawn(tag) && doubleDraw) {
-                    road.draw(gc, renderingStyle);
+                    drawable.draw(gc, renderingStyle);
                 }
-                road.draw(gc, renderingStyle);
+                drawable.draw(gc, renderingStyle);
             }
         }
 
@@ -172,7 +181,7 @@ public class MapCanvas extends Canvas {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
             model.getAreaNames().forEach((areaName) -> {
-                areaName.drawType(gc, getDistanceWidth(), renderingStyle);
+                areaName.drawType(gc, distanceWidth, renderingStyle);
             });
         }
 

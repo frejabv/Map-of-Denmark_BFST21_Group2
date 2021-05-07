@@ -138,6 +138,10 @@ public class OSMParser {
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
 
+                            if (v.equals("construction")) {
+                                break;
+                            }
+
                             if (k.equals("building")) {
                                 tag = Tag.BUILDING;
                                 break;
