@@ -113,6 +113,7 @@ public class Controller {
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
 
         model.setUpAStar();
+        model.addRelationsToDrawStyles();
     }
 
     @FXML
@@ -548,17 +549,12 @@ public class Controller {
     }
 
     public void hideRoute() {
+        setCurrentTransportType(model.getDefaultTransportType());
         routeDescription.setVisible(false);
         routeDescription.setManaged(false);
     }
 
-    @FXML
-    private ToggleGroup selectTransportTypeSettings;
 
-    public void selectTransportType() {
-        ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
-        model.setCurrentTransportType(TransportType.valueOf(currentButton.getText().toUpperCase()));
-    }
 
     @FXML
     private CheckBox showAStarPath;
@@ -580,10 +576,21 @@ public class Controller {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
         if (currentButton != null) {
             String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
-            model.setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
+            setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
             model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
             showRouteDescription();
             canvas.repaint(); //To show the route after it has been calculated
+        }
+    }
+
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
+
+    public void selectTransportTypeSettings() {
+        ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
+        if (currentButton != null) {
+            String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
+            model.setDefaultTransportType(TransportType.valueOf(transportTypeCleaned));
         }
     }
 
@@ -628,10 +635,29 @@ public class Controller {
         }
     }
 
+    @FXML
+    private ToggleButton carRoute;
+    @FXML
+    private ToggleButton bicycleRoute;
+    @FXML
+    private ToggleButton walkRoute;
+
+    public void setCurrentTransportType(TransportType type){
+        model.setCurrentTransportType(type);
+        carRoute.setSelected(false);
+        bicycleRoute.setSelected(false);
+        walkRoute.setSelected(false);
+        if (type.equals(TransportType.CAR)){
+            carRoute.setSelected(true);
+        } else if (type.equals(TransportType.BICYCLE)){
+            bicycleRoute.setSelected(true);
+        } else if (type.equals(TransportType.WALK)){
+            walkRoute.setSelected(true);
+        }
+    }
+
     public void toggleDoubleDraw() {
         canvas.doubleDraw = !canvas.doubleDraw;
         canvas.repaint();
     }
-
-
 }

@@ -85,7 +85,7 @@
           <VBox fx:id="routeDescription" styleClass="routeDescription">
             <Region styleClass="hr" />
             <HBox>
-              <ToggleButton id="car-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeRoute">
+              <ToggleButton fx:id="carRoute" id="car-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <ToggleGroup fx:id="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -95,7 +95,7 @@
                   </ImageView>
                 </graphic>
               </ToggleButton>
-              <ToggleButton id="bicycle-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
+              <ToggleButton fx:id="bicycleRoute" id="bicycle-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -105,7 +105,7 @@
                   </ImageView>
                 </graphic>
               </ToggleButton>
-              <ToggleButton id="walk-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
+              <ToggleButton fx:id="walkRoute" id="walk-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
                 <toggleGroup>
                   <fx:reference source="selectTransportTypeRoute"/>
                 </toggleGroup>
@@ -188,7 +188,7 @@
                 <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
               </FlowPane>
               <HBox>
-                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true">
+                <ToggleButton id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <ToggleGroup fx:id="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -198,7 +198,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                <ToggleButton id="bicycle-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -208,7 +208,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                <ToggleButton id="walk-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>

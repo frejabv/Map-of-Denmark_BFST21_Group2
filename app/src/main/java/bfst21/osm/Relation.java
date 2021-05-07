@@ -5,9 +5,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.FillRule;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-public class Relation extends Member {
+public class Relation extends Member implements Drawable {
     ArrayList<Member> members = new ArrayList<>();
     ArrayList<Way> ways = new ArrayList<>();
     Rectangle rect;
@@ -33,12 +35,41 @@ public class Relation extends Member {
             gc.setStroke(style.getColorByTag(tag));
             gc.setFill(style.getColorByTag(tag));
 
-            if (tag == Tag.BUILDING) {
-                drawBuilding(gc);
+            boolean innerDrawn = false;
+            ArrayList<Way> outerLines = new ArrayList<>();
+
+            gc.setFillRule(FillRule.EVEN_ODD);
+            gc.beginPath();
+
+            for (Way way : ways) {
+                String value = way.getRoleMap().get(id);
+                if (value.equals("inner")) {
+                    way.drawRelationPart(gc);
+                    innerDrawn = true;
+                }
+                if (value.equals("outer")) {
+                    outerLines.add(way);
+                }
+            }
+
+            ArrayList<Way> mergedList;
+            if (outerLines.size() > 1) {
+                mergedList = mergeOuter(outerLines);
             } else {
+                mergedList = outerLines;
+            }
+
+            if (innerDrawn || outerLines.size() != 0) {
+                for (Way way : mergedList) {
+                    way.drawRelationPart(gc);
+                }
+                gc.fill();
+            } else {
+                //draw relation normally
+                gc.setFillRule(FillRule.NON_ZERO);
                 for (Way way : ways) {
                     var drawStyle = style.getDrawStyleByTag(tag);
-                    way.draw(gc);
+                    way.draw(gc, style);
                     if (drawStyle.equals(DrawStyle.FILL)) {
                         gc.fill();
                     }
@@ -47,26 +78,27 @@ public class Relation extends Member {
         }
     }
 
-    public void drawBuilding(GraphicsContext gc) {
-        boolean innerDrawn = false;
-        gc.setFillRule(FillRule.EVEN_ODD);
-        gc.beginPath();
-        for (Way way : ways) {
-            String value = way.getRoleMap().get(id);
-            if (value.equals("inner")) {
-                way.drawRelationPart(gc);
-                innerDrawn = true;
+    public ArrayList<Way> mergeOuter(ArrayList<Way> outerLines) {
+        HashMap<Node, Way> pieces = new HashMap<>();
+        for (Way line : outerLines) {
+            Way before = pieces.remove(line.first());
+            Way after = pieces.remove(line.last());
+            if(after != null && line.last() != after.first()) {
+                Collections.reverse(after.getNodes());
             }
+            if (before == after)
+                after = null;
+            var merged = Way.merge(before, line, after);
+            pieces.put(merged.first(), merged);
+            pieces.put(merged.last(), merged);
         }
-        if (innerDrawn) {
-            for (Way way : ways) {
-                String value = way.getRoleMap().get(id);
-                if (value.equals("outer")) {
-                    way.drawRelationPart(gc);
-                }
+        ArrayList<Way> mergedList = new ArrayList<>();
+        pieces.forEach((node, way) -> {
+            if (way.last() == node) {
+                mergedList.add(way);
             }
-        }
-        gc.fill();
+        });
+        return mergedList;
     }
 
     public void createRectangle() {
@@ -74,6 +106,9 @@ public class Relation extends Member {
 
         for (Way w : ways) {
             //check min values
+            if (w.getRect() == null) {
+                continue;
+            }
             if (w.getRect().getMinX() < minX) {
                 minX = w.getRect().getMinX();
             }

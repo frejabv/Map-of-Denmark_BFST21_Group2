@@ -9,7 +9,6 @@ import java.util.HashMap;
 //TODO remove Member class at some point
 public class Member implements Serializable, Drawable {
     long id;
-    HashMap<Long, String> roleMap;
     Tag tag;
 
     public Member(long id) {
@@ -18,16 +17,6 @@ public class Member implements Serializable, Drawable {
 
     public long getId() {
         return id;
-    }
-
-    public HashMap<Long, String> getRoleMap() {
-        return roleMap;
-    }
-
-    public void addRole(long id, String role) {
-        if (roleMap == null)
-            roleMap = new HashMap<>();
-        roleMap.put(id, role);
     }
 
     public void setTag(Tag tag) {

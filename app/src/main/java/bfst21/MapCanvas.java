@@ -2,6 +2,11 @@ package bfst21;
 
 import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
+import bfst21.Rtree.Rectangle;
+import bfst21.osm.Node;
+import bfst21.osm.RenderingStyle;
+import bfst21.osm.Tag;
+import bfst21.osm.Way;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -18,13 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapCanvas extends Canvas {
-    public boolean debugAStar;
-    public long[] redrawAverage = new long[20];
+    private Model model;
+    private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    boolean doubleDraw;
     boolean smallerViewPort, RTreeLines, roadRectangles;
     boolean nearestNodeLine;
-    boolean doubleDraw;
+    public boolean debugAStar;
+    private boolean showRoute;
     boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
@@ -34,16 +41,16 @@ public class MapCanvas extends Canvas {
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
-    private Model model;
-    private Affine trans = new Affine();
-    private boolean showRoute;
+    public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
+    private float mapZoomLimit;
 
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
         moveToInitialPosition();
+        mapZoomLimit = getDistanceWidth()*5;
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
         });
@@ -75,12 +82,11 @@ public class MapCanvas extends Canvas {
         gc.setTransform(trans);
         gc.fill();
 
-        gc.setStroke(Color.BLACK);
+        gc.setStroke(Color.TRANSPARENT);
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-
         gc.setFill(renderingStyle.getIslandColor(getDistanceWidth()));
         for (var island : model.getIslands()) {
-            island.draw(gc);
+            island.draw(gc, renderingStyle);
             gc.fill();
         }
 
@@ -90,7 +96,7 @@ public class MapCanvas extends Canvas {
             gc.setFill(renderingStyle.getColorByTag(tag));
 
             if (tag.zoomLimit > getDistanceWidth()) {
-                fillable.draw(gc);
+                fillable.draw(gc, renderingStyle);
                 gc.fill();
             }
 
@@ -122,7 +128,7 @@ public class MapCanvas extends Canvas {
                     }
                     var style = renderingStyle.getDrawStyleByTag(tag);
                     if (style != DrawStyle.DASH) {
-                        road.draw(gc);
+                        road.draw(gc, renderingStyle);
                     }
                 }
             }
@@ -142,21 +148,20 @@ public class MapCanvas extends Canvas {
                 gc.setLineWidth(renderingStyle.getWidthByTag(tag) / Math.sqrt(trans.determinant()));
             }
             setStyle(renderingStyle.getDrawStyleByTag(tag));
-            //if (drawables != null) {
-            double finalInnerRoadWidth = innerRoadWidth;
 
             if (getDistanceWidth() < 7.0 && renderingStyle.getDrawStyleByTag(tag) != DrawStyle.DASH) {
-                gc.setLineWidth((renderingStyle.getWidthByTag(tag) / 13333) * finalInnerRoadWidth);
+                gc.setLineWidth((renderingStyle.getWidthByTag(tag) / 13333) * innerRoadWidth);
             }
             if (tag.zoomLimit > getDistanceWidth()) {
                 if (renderingStyle.getDoubleDrawn(tag) && doubleDraw) {
-                    road.draw(gc);
+                    road.draw(gc, renderingStyle);
                 }
-                road.draw(gc);
+                road.draw(gc, renderingStyle);
             }
         }
 
         if (model.existsAStarPath() && showRoute) {
+            gc.setLineDashes(0);
             if (debugAStar) {
                 drawDebugAStarPath();
             }
@@ -164,9 +169,10 @@ public class MapCanvas extends Canvas {
         }
 
         if (showNames) {
+            gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            model.getCities().forEach((city) -> {
-                city.drawType(gc, getDistanceWidth());
+            model.getAreaNames().forEach((areaName) -> {
+                areaName.drawType(gc, getDistanceWidth(), renderingStyle);
             });
         }
 
@@ -194,12 +200,12 @@ public class MapCanvas extends Canvas {
                     size);
         }
 
-
+        // TODO delete if redundant
         gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
         gc.setLineDashes(0);
         if (smallerViewPort) {
             gc.setStroke(Color.BLACK);
-            viewport.draw(gc);
+            viewport.draw(gc, renderingStyle);
         }
 
         if (RTreeLines) {
@@ -214,7 +220,7 @@ public class MapCanvas extends Canvas {
 
         if (smallerViewPort || RTreeLines || roadRectangles) {
             gc.setStroke(Color.BLACK);
-            viewport.draw(gc);
+            viewport.draw(gc, renderingStyle);
         }
 
         if (nearestNodeLine) {
@@ -264,7 +270,7 @@ public class MapCanvas extends Canvas {
             }
         } else {
             // TODO: make the boundry go to inital zoom position
-            if (getDistanceWidth() < 1000000000) {
+            if (getDistanceWidth() < mapZoomLimit) {
                 trans.prependScale(factor, factor, center);
             }
         }
@@ -287,9 +293,12 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public void paintPath(List<Node> path) {
-        gc.setStroke(Color.ORANGERED);
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()) * 3);
+    public void paintPath(List<Node> path){
+        gc.setStroke(Color.rgb(112,161,255));
+        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
+        if(getDistanceWidth() < 7.0){
+            gc.setLineWidth(0.000045);
+        }
         gc.beginPath();
         for (int i = 0; i < path.size() - 1; i++) {
             Node current = path.get(i);
@@ -317,14 +326,6 @@ public class MapCanvas extends Canvas {
         setPin = true;
         repaint();
         return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
-    }
-
-    private void setStyle(DrawStyle style) {
-        if (style == DrawStyle.DASH) {
-            gc.setLineDashes(5 / Math.sqrt(trans.determinant()));
-        } else {
-            gc.setLineDashes(0);
-        }
     }
 
     public Point2D mouseToModelCoords(Point2D point) {
@@ -358,6 +359,16 @@ public class MapCanvas extends Canvas {
             zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
             pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
         }
+    }
+
+    private void setStyle(DrawStyle style){
+        if(style == DrawStyle.DASH){
+            gc.setLineDashes(5/Math.sqrt(trans.determinant()));
+        }
+        else{
+            gc.setLineDashes(0);
+        }
+
     }
 
     public void setCurrentCanvasEdges() {

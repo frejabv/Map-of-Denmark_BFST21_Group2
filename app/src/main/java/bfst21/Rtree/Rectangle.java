@@ -3,8 +3,10 @@ package bfst21.Rtree;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.Serializable;
 
-public class Rectangle {
+
+public class Rectangle implements Serializable {
     protected float minX, minY, maxX, maxY;
 
     public Rectangle(float minX, float minY, float maxX, float maxY){
