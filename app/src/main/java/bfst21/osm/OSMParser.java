@@ -28,7 +28,7 @@ public class OSMParser {
             break;
         case ZIP:
             loadZIP(in, model);
-            saveOBJ(fileName, model);
+            //saveOBJ(fileName, model);
             break;
         case OBJ:
             loadOBJ(in, model);
@@ -137,6 +137,7 @@ public class OSMParser {
                                 break;
                             }
 
+
                             if (k.equals("service") || k.equals("surface")) {
                                 break;
                             }
@@ -197,7 +198,7 @@ public class OSMParser {
                             }
 
                             if (k.equals("landuse") && v.equals("residential")){
-                                tags.add(Tag.CITYBOARDER);
+                                tags.add(Tag.CITYBORDER);
                                 break;
                             }
 
@@ -206,8 +207,10 @@ public class OSMParser {
                                 break;
                             }
 
-                            if(k.equals("natural") && (v.equals("sand") || v.equals("beach"))){
-                                tags.add(Tag.BEACH);
+                            if(v.equals("sand") || v.equals("beach")){
+                                if(k.equals("natural")) {
+                                    tags.add(Tag.BEACH);
+                                }
                                 break;
                             }
 

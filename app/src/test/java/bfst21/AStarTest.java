@@ -18,7 +18,7 @@ public class AStarTest {
 
     @BeforeEach
     public void setUp() {
-        model = new Model("dk-AstarTest.osm",false);
+        model = new Model("/bfst21/data/dk-AstarTest.osm",false);
         model.setUpAStar();
     }
     

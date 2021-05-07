@@ -32,7 +32,7 @@ public class RenderingStyle {
         styleMap.put(Tag.BUILDING, DrawStyle.FILL);
         styleMap.put(Tag.WATER, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
-        styleMap.put(Tag.CITYBOARDER, DrawStyle.FILL);
+        styleMap.put(Tag.CITYBORDER, DrawStyle.FILL);
         styleMap.put(Tag.MEADOW,DrawStyle.FILL);
         styleMap.put(Tag.HEATH,DrawStyle.FILL);
         styleMap.put(Tag.LAKE, DrawStyle.FILL);
@@ -43,6 +43,7 @@ public class RenderingStyle {
         styleMap.put(Tag.FOREST, DrawStyle.FILL);
         styleMap.put(Tag.WOOD, DrawStyle.FILL);
         styleMap.put(Tag.BEACH, DrawStyle.FILL);
+        styleMap.put(Tag.GRASSLAND, DrawStyle.FILL);
         styleMap.put(Tag.CYCLEWAY, DrawStyle.DASH);
         styleMap.put(Tag.FOOTWAY, DrawStyle.DASH);
         styleMap.put(Tag.PATH, DrawStyle.DASH);
@@ -140,7 +141,7 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.PRIMARY_LINK, Color.rgb(255, 221, 89));
         defaultColorMap.put(Tag.TRUNK, Color.rgb(255, 221, 89));
         defaultColorMap.put(Tag.TRUNK_LINK, Color.rgb(255, 221, 89));
-        defaultColorMap.put(Tag.CITYBOARDER, Color.rgb(241,243,244));
+        defaultColorMap.put(Tag.CITYBORDER, Color.rgb(241,243,244));
         defaultColorMap.put(Tag.MEADOW, Color.rgb(198, 228, 207));
         defaultColorMap.put(Tag.HEATH, Color.rgb(190,217,170));
         defaultColorMap.put(Tag.CEMETERY, Color.rgb(168, 218, 181));
@@ -153,6 +154,7 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.FOREST, Color.rgb(175,221,187));
         defaultColorMap.put(Tag.WOOD,Color.rgb(175,221,187));
         defaultColorMap.put(Tag.BEACH,Color.rgb(254,239,195));
+        defaultColorMap.put(Tag.GRASSLAND, Color.rgb(198, 228, 207));
     }
 
     private void genDarkMode() {
@@ -180,7 +182,7 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.PRIMARY_LINK, Color.rgb(204, 177, 71));
         darkModeColorMap.put(Tag.TRUNK, Color.rgb(204, 177, 71));
         darkModeColorMap.put(Tag.TRUNK_LINK, Color.rgb(204, 177, 71));
-        darkModeColorMap.put(Tag.CITYBOARDER, Color.rgb(25,26,28));
+        darkModeColorMap.put(Tag.CITYBORDER, Color.rgb(25,26,28));
         darkModeColorMap.put(Tag.MEADOW, Color.rgb(51, 78, 63));
         darkModeColorMap.put(Tag.HEATH, Color.rgb(64,63,37));
         darkModeColorMap.put(Tag.CEMETERY, Color.rgb(34,58,45));
@@ -193,6 +195,7 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.FOREST, Color.rgb(35,60,47));
         darkModeColorMap.put(Tag.WOOD,Color.rgb(35,60,47));
         darkModeColorMap.put(Tag.BEACH,Color.rgb(56,54,48));
+        darkModeColorMap.put(Tag.GRASSLAND, Color.rgb(51, 78, 63));
     }
 
     public Color getColorByTag(Tag tag) {
