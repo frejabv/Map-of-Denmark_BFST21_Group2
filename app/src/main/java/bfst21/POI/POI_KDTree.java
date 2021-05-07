@@ -1,15 +1,13 @@
-package bfst21.osm;
+package bfst21.POI;
 
 import bfst21.Model;
-import bfst21.POI;
+import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public class POI_KDTree {
     Model model;
@@ -85,7 +83,7 @@ public class POI_KDTree {
             qNode.setRect(r);
             return qNode;
         }
-        
+
         //if space is taken, look for another
         boolean areCoordinatesLessThan = false;
         if (orientation) {
@@ -99,7 +97,7 @@ public class POI_KDTree {
         } else {
             currentNode.setRight(insert(currentNode.getRight(), currentNode, qNode, !orientation));
         }
-        
+
         return currentNode;
     }
 
@@ -140,7 +138,7 @@ public class POI_KDTree {
     /**
      * begins the recursive call to nearest.
      * @param p         the point we are querying about
-     * @param listSize  size of the created list of POI's  
+     * @param listSize  size of the created list of POI's
      * @return          the nearest Node
      */
     public ArrayList<POI> nearestK(Point2D p, int listSize) {
@@ -169,7 +167,7 @@ public class POI_KDTree {
         ArrayList<POI> closestList = currentList;
         POI worstClosest = closestList.get(closestList.size()-1);
         double worstDistance = worstClosest.getDistTo();
-        
+
         //does the currentNode exist?
         if (currentNode == null) {
             return closestList;

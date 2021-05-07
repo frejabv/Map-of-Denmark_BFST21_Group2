@@ -1,10 +1,13 @@
 package bfst21;
 
+import bfst21.POI.POI;
+import bfst21.POI.POI_KDTree;
 import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
+import javafx.scene.image.Image;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -308,17 +311,18 @@ public class Model {
 
     public void setNearestNode(Node nearestNode) {
         this.nearestNode = nearestNode;
-    public void addSystemPOI(POI poi) {systemPointsOfInterest.add(poi);}
-
-    public ArrayList<POI> getSystemPointsOfInterest() {return systemPointsOfInterest;}
-
-    public void addToCityIndex(City city) {
-        cities.add(city);
     }
 
     public Node getNearestNode() {
         return nearestNode;
     }
 
-    public List<City> getCities(){return cities;}
+    public void addSystemPOI(POI poi) {
+        systemPointsOfInterest.add(poi);
+    }
+
+    public ArrayList<POI> getSystemPointsOfInterest() {
+        return systemPointsOfInterest;
+    }
+
 }

@@ -1,11 +1,11 @@
 package bfst21;
 
+import bfst21.POI.POI;
 import bfst21.osm.Node;
 import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
-import com.sun.javafx.PlatformUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -16,7 +16,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -318,6 +317,9 @@ public class Controller {
     private void onMousePressedOnCanvas(MouseEvent e) {
         lastMouse = new Point2D(e.getX(), e.getY());
     }
+
+    @FXML
+    private Button removePin;
 
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
