@@ -259,24 +259,12 @@ public class OSMParser {
                             var type = xmlReader.getAttributeValue(null, "type");
                             var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
                             var role = xmlReader.getAttributeValue(null, "role");
-                            Member memberRef = null;
-                            switch (type) {
-                                case "node":
-                                    memberRef = model.getNodeIndex().getMember(ref);
-                                    break;
-                                case "way":
-                                    memberRef = model.getWayIndex().getMember(ref);
-                                    if (memberRef != null) {
-                                        relation.addWay((Way) memberRef);
-                                        ((Way) memberRef).addRole(relation.getId(), role);
-                                    }
-                                    break;
-                                case "relation":
-                                    memberRef = model.getRelationIndex().getMember(ref);
-                                    break;
-                            }
-                            if (memberRef != null) {
-                                relation.addMember(memberRef);
+                            if(type.equals("way")) {
+                                Way memberRef = model.getWayIndex().getMember(ref);
+                                if (memberRef != null) {
+                                    relation.addWay(memberRef);
+                                    memberRef.addRole(relation.getId(), role);
+                                }
                             }
                             break;
                     }
