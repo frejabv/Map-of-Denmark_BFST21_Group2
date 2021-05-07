@@ -1,8 +1,6 @@
 package bfst21.osm;
 
 public enum Tag{
-    JUNCTION(7,999),
-
     TERTIARY_LINK(150,1),
     SECONDARY_LINK(150,2),
     PRIMARY_LINK(400,3),
@@ -25,23 +23,22 @@ public enum Tag{
     TRUNK(400,20),
     MOTORWAY(700,21),
     FERRY(700,22),
-
     COASTLINE(100000000,1),
-    CITYBOARDER(200,2),
-    FOREST(400,3),
-    FARMYARD(7,4),
-    PARK(100,5),
-    MEADOW(200,6),
-    HEATH(200,7),
-    CEMETERY(100,8),
-    WOOD(400,9),
-    GRASS(100,10),
-    SCRUB(100,11),
-    LAKE(100,12),
-    WATER(400,13),
-    BUILDING(7,14),
-
-    TERRITORIALBORDER(100000000,5);
+    BEACH(200,2),
+    CITYBORDER(200,3),
+    GRASSLAND(200,4),
+    MEADOW(200,5),
+    FOREST(400,6),
+    FARMYARD(7,7),
+    PARK(100,8),
+    HEATH(200,9),
+    CEMETERY(100,10),
+    WOOD(400,11),
+    GRASS(100,12),
+    SCRUB(100,13),
+    LAKE(100,14),
+    WATER(400,15),
+    BUILDING(7,16);
 
 
 

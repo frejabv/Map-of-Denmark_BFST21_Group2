@@ -18,25 +18,25 @@ public class AStarTest {
 
     @BeforeEach
     public void setUp() {
-        model = new Model("/bfst21/data/dk-AstarTest.osm",false);
+        model = new Model("/bfst21/data/dk-AstarTest.osm", false);
         model.setUpAStar();
     }
-    
+
     @Test
     public void testCreateAStar() {
         Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(2,testNode.getAdjacencies().size());
+        assertEquals(2, testNode.getAdjacencies().size());
         testNode = model.getNodeIndex().getMember(2);
-        assertEquals(3,testNode.getAdjacencies().size());
+        assertEquals(3, testNode.getAdjacencies().size());
     }
 
     @Test
     public void testAdjecencies() {
         //for Odense, has Korsør and Vejle as adjecencies
         Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(2,testNode.getAdjacencies().size());
-        assertEquals(model.getNodeIndex().getMember(12),testNode.getAdjacencies().get(0).target);
-        assertEquals(model.getNodeIndex().getMember(8),testNode.getAdjacencies().get(1).target);
+        assertEquals(2, testNode.getAdjacencies().size());
+        assertEquals(model.getNodeIndex().getMember(12), testNode.getAdjacencies().get(0).target);
+        assertEquals(model.getNodeIndex().getMember(8), testNode.getAdjacencies().get(1).target);
     }
 
     @Test
@@ -51,11 +51,11 @@ public class AStarTest {
 
         double deltaX = Math.abs(skagen.getX() - aalborg.getX());
         double deltaY = Math.abs(skagen.getY() - aalborg.getY());
-        double distance1 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
+        double distance1 = (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))) * 111.320 * Model.scalingConstant;
 
         deltaX = Math.abs(aalborg.getX() - randers.getX());
         deltaY = Math.abs(aalborg.getY() - randers.getY());
-        double distance2 = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
+        double distance2 = (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))) * 111.320 * Model.scalingConstant;
 
         double totalDistance = Math.round((distance1 + distance2) * 10.0) / 10.0;
 
@@ -67,8 +67,8 @@ public class AStarTest {
     public void testDriveable() {
         //Odense to Korsør is a primary highway
         Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(true,testNode.getAdjacencies().get(0).isDriveable());
-        assertEquals(false,testNode.getAdjacencies().get(0).isWalkable());
+        assertEquals(true, testNode.getAdjacencies().get(0).isDriveable());
+        assertEquals(false, testNode.getAdjacencies().get(0).isWalkable());
     }
 
     @Test
@@ -78,12 +78,12 @@ public class AStarTest {
         Node århus = model.getNodeIndex().getMember(7);
         Node viborg = model.getNodeIndex().getMember(4);
 
-        astar.AStarSearch(århus,viborg, model.getCurrentTransportType());
+        astar.AStarSearch(århus, viborg, model.getCurrentTransportType());
         ArrayList<Step> steps = astar.getPathDescription();
         assertEquals(3, steps.size());
 
         model.setCurrentTransportType(TransportType.BICYCLE);
-        astar.AStarSearch(model.getNodeIndex().getMember(7),model.getNodeIndex().getMember(4), model.getCurrentTransportType());
+        astar.AStarSearch(model.getNodeIndex().getMember(7), model.getNodeIndex().getMember(4), model.getCurrentTransportType());
         steps = astar.getPathDescription();
         assertEquals(2, steps.size());
     }
@@ -117,7 +117,7 @@ public class AStarTest {
 
         float deltaX = Math.abs(testNode.getX() - destination.getX());
         float deltaY = Math.abs(testNode.getY() - destination.getY());
-        float step = (float) Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
+        float step = (float) Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         float distance = step * 111.320f * Model.scalingConstant;
 
         assertEquals(distance, testNode.getAdjacencies().get(0).weight);
@@ -132,7 +132,7 @@ public class AStarTest {
 
         double deltaX = Math.abs(testNode.getX() - destination.getX());
         double deltaY = Math.abs(testNode.getY() - destination.getY());
-        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
+        double distance = (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))) * 111.320 * Model.scalingConstant;
         double totalDistance = Math.round(distance * 10.0) / 10.0;
 
         astar.AStarSearch(testNode, destination, TransportType.CAR);
@@ -149,7 +149,7 @@ public class AStarTest {
 
         double deltaX = Math.abs(testNode.getX() - destination.getX());
         double deltaY = Math.abs(testNode.getY() - destination.getY());
-        double distance = (Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2))) * 111.320  * Model.scalingConstant;
+        double distance = (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))) * 111.320 * Model.scalingConstant;
         double totalDistance = Math.round(distance * 10.0) / 10.0;
         long wayID = 0;
         for (Edge e : testNode.getAdjacencies()) {
@@ -169,7 +169,7 @@ public class AStarTest {
 
     @Test
     public void testRoundaboutExitDescription() {
-        Model modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm",false);
+        Model modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm", false);
         modelRoundabout.setUpAStar();
         AStar astar = modelRoundabout.getAStar();
         Node testNode = modelRoundabout.getNodeIndex().getMember(12);
@@ -181,7 +181,7 @@ public class AStarTest {
 
     @Test
     public void testRoundaboutExitType() {
-        Model modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm",false);
+        Model modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm", false);
         modelRoundabout.setUpAStar();
         AStar astar = modelRoundabout.getAStar();
         Node testNode = modelRoundabout.getNodeIndex().getMember(12);

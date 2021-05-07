@@ -7,12 +7,14 @@ import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 import bfst21.osm.Tag;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.*;
-
-
-import javax.xml.stream.XMLStreamException;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -30,17 +32,19 @@ public class Model {
 
     private ArrayList<POI> pointsOfInterest;
     private Rtree roadRTree;
+    private Node nearestNode;
 
     private boolean ttiMode;
 
     private AStar aStar;
     private List<Node> AStarPath;
     private List<Node> AStarDebugPath;
-    private TransportType currentTransportType = TransportType.CAR;
+    private TransportType defaultTransportType = TransportType.CAR;
+    private TransportType currentTransportType = defaultTransportType;
     float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private float minX, minY, maxX, maxY;
-    private List<City> cities;
+    private List<AreaName> areaNames;
 
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
@@ -64,7 +68,7 @@ public class Model {
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
-        cities = new ArrayList<>();
+        areaNames = new ArrayList<>();
         drawableTagPriority = new ArrayList<>();
         fillableTagPriority = new ArrayList<>();
 
@@ -81,7 +85,7 @@ public class Model {
         }
 
         List<Drawable> roadList = new ArrayList<>();
-        for (Tag tag: drawableMap.keySet()) {
+        for (Tag tag : drawableMap.keySet()) {
             roadList.addAll(drawableMap.get(tag));
         }
         roadRTree = new Rtree(roadList);
@@ -247,8 +251,17 @@ public class Model {
         this.currentTransportType = type;
     }
 
+    public void setDefaultTransportType(TransportType type) {
+        this.defaultTransportType = type;
+        setCurrentTransportType(type);
+    }
+
     public TransportType getCurrentTransportType() {
         return currentTransportType;
+    }
+
+    public TransportType getDefaultTransportType() {
+        return defaultTransportType;
     }
 
     public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
@@ -266,16 +279,24 @@ public class Model {
         return pointsOfInterest;
     }
 
-    public void addToCityIndex(City city) {
-        cities.add(city);
+    public void addToAreaNamesIndex(AreaName areaName) {
+        areaNames.add(areaName);
     }
 
-    public List<City> getCities() {
-        return cities;
+    public List<AreaName> getAreaNames() {
+        return areaNames;
     }
 
     public Rtree getRoadRTree() {
         return roadRTree;
+    }
+
+    public void setNearestNode(Node nearestNode) {
+        this.nearestNode = nearestNode;
+    }
+
+    public Node getNearestNode() {
+        return nearestNode;
     }
 
     public ArrayList<Tag> getDrawableTagPriority(){
@@ -286,8 +307,8 @@ public class Model {
 
     public void addRelationsToDrawStyles(){
         for(Relation drawable: relationIndex){
-            if(drawable.getTags().size() != 0) {
-                Tag tag = drawable.getTags().get(0);
+            if(drawable.getTag() != null) {
+                Tag tag = drawable.getTag();
                 RenderingStyle renderingStyle = new RenderingStyle();
                 DrawStyle style = renderingStyle.getDrawStyleByTag(tag);
                 if (style == DrawStyle.FILL) {
