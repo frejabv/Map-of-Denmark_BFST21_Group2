@@ -265,6 +265,7 @@ public class OSMParser {
                                     memberRef = model.getWayIndex().getMember(ref);
                                     if (memberRef != null) {
                                         relation.addWay((Way) memberRef);
+                                        ((Way) memberRef).addRole(relation.getId(), role);
                                     }
                                     break;
                                 case "relation":
@@ -273,7 +274,6 @@ public class OSMParser {
                             }
                             if (memberRef != null) {
                                 relation.addMember(memberRef);
-                                memberRef.addRole(relation.getId(), role);
                             }
                             break;
                     }
