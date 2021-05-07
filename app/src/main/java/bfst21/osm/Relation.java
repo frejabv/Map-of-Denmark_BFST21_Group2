@@ -7,7 +7,6 @@ import javafx.scene.shape.FillRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 public class Relation extends Member implements Drawable {
     ArrayList<Way> ways = new ArrayList<>();
@@ -74,7 +73,7 @@ public class Relation extends Member implements Drawable {
         for (Way line : outerLines) {
             Way before = pieces.remove(line.first());
             Way after = pieces.remove(line.last());
-            if(after != null && line.last() != after.first()) {
+            if (after != null && line.last() != after.first()) {
                 Collections.reverse(after.getNodes());
             }
             if (before == after)

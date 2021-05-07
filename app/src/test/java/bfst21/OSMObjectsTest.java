@@ -2,12 +2,10 @@ package bfst21;
 
 import bfst21.osm.*;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -76,7 +74,7 @@ public class OSMObjectsTest {
     //Consider renaming to MemberIndex
     @Test
     public void testAddingNodeToNodeIndex() {
-        MemberIndex testNodeIndex = new MemberIndex();
+        MemberIndex<Node> testNodeIndex = new MemberIndex<>();
         Node testNode1 = new Node(1000, 560, 123);
         Node testNode2 = new Node(500, 600, 456);
         Node testNode3 = new Node(600, 700, 789);
@@ -89,7 +87,7 @@ public class OSMObjectsTest {
     //Consider renaming to MemberIndex
     @Test
     public void testGettingNodesFromNodeIndex() {
-        MemberIndex testNodeIndex = new MemberIndex();
+        MemberIndex<Node> testNodeIndex = new MemberIndex<>();
         Node testNode1 = new Node(1000, 560, 123);
         Node testNode2 = new Node(500, 600, 456);
         Node testNode3 = new Node(600, 700, 789);
@@ -217,7 +215,7 @@ public class OSMObjectsTest {
         testWay.createRectangle();
 
         Point2D p0 = new Point2D(0, 0);
-        Point2D p1 = new Point2D(5, 5/-Model.scalingConstant);
+        Point2D p1 = new Point2D(5, 5 / -Model.scalingConstant);
 
         assertEquals(n0, testWay.nearestNode(p0));
         assertEquals(n3, testWay.nearestNode(p1));
@@ -237,7 +235,7 @@ public class OSMObjectsTest {
         testWay.createRectangle();
 
         Point2D p0 = new Point2D(0, 0);
-        Point2D p1 = new Point2D(4, 2/-Model.scalingConstant);
+        Point2D p1 = new Point2D(4, 2 / -Model.scalingConstant);
         Point2D p2 = new Point2D(2, -7);
 
         //calculated with GeoGebra
