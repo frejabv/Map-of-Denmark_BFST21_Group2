@@ -33,11 +33,12 @@ public class Model {
     private AStar aStar;
     private List<Node> AStarPath;
     private List<Node> AStarDebugPath;
-    private TransportType currentTransportType = TransportType.CAR;
+    private TransportType defaultTransportType = TransportType.CAR;
+    private TransportType currentTransportType = defaultTransportType;
     float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
 
     private float minX, minY, maxX, maxY;
-    private List<City> cities;
+    private List<AreaName> areaNames;
 
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
@@ -61,7 +62,7 @@ public class Model {
         wayIndex = new MemberIndex<>();
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
-        cities = new ArrayList<>();
+        areaNames = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -235,8 +236,17 @@ public class Model {
         this.currentTransportType = type;
     }
 
+    public void setDefaultTransportType(TransportType type) {
+        this.defaultTransportType = type;
+        setCurrentTransportType(type);
+    }
+
     public TransportType getCurrentTransportType() {
         return currentTransportType;
+    }
+
+    public TransportType getDefaultTransportType() {
+        return defaultTransportType;
     }
 
     public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
@@ -254,12 +264,12 @@ public class Model {
         return pointsOfInterest;
     }
 
-    public void addToCityIndex(City city) {
-        cities.add(city);
+    public void addToAreaNamesIndex(AreaName areaName) {
+        areaNames.add(areaName);
     }
 
-    public List<City> getCities() {
-        return cities;
+    public List<AreaName> getAreaNames() {
+        return areaNames;
     }
 
     public Rtree getRoadRTree() {

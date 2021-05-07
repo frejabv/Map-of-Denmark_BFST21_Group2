@@ -33,12 +33,14 @@ public class MapCanvas extends Canvas {
     int redrawIndex = 0;
     public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
+    private float mapZoomLimit;
 
     public void init(Model model) {
         this.model = model;
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
         moveToInitialPosition();
+        mapZoomLimit = getDistanceWidth()*5;
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
         });
@@ -109,8 +111,8 @@ public class MapCanvas extends Canvas {
 
         if (showNames) {
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            model.getCities().forEach((city) -> {
-                city.drawType(gc, getDistanceWidth());
+            model.getAreaNames().forEach((areaName) -> {
+                areaName.drawType(gc, getDistanceWidth());
             });
         }
 
@@ -173,7 +175,7 @@ public class MapCanvas extends Canvas {
             }
         } else {
             // TODO: make the boundry go to inital zoom position
-            if (getDistanceWidth() < 1000) {
+            if (getDistanceWidth() < mapZoomLimit) {
                 trans.prependScale(factor, factor, center);
             }
         }
