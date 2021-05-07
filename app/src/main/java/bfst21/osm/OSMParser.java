@@ -10,10 +10,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -61,7 +57,8 @@ public class OSMParser {
         File file = new File(fileURL.getPath() + fileName);
 
         if (!file.createNewFile()) {
-            // Figure out whether or not we need to freak out if we are overwriting an existing obj file
+            // Figure out whether or not we need to freak out if we are overwriting an
+            // existing obj file
         }
 
         try (var output = new ObjectOutputStream(
@@ -87,7 +84,7 @@ public class OSMParser {
             throws XMLStreamException, FactoryConfigurationError {
         XMLStreamReader xmlReader = XMLInputFactory.newInstance()
                 .createXMLStreamReader(new BufferedInputStream(inputStream));
-        ArrayList<Tag> tags = new ArrayList<>();
+        Tag tag = null;
         Node node = null;
         Way way = null;
         Relation relation = null;
@@ -96,6 +93,11 @@ public class OSMParser {
         boolean isNode = false;
         String name = "";
 
+        String streetname = "";
+        String housenumber = "";
+        String postcode = "";
+        String city = "";
+
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
                 case XMLStreamReader.START_ELEMENT:
@@ -103,10 +105,10 @@ public class OSMParser {
                         case "bounds":
                             model.setMinX(Float.parseFloat(xmlReader.getAttributeValue(null, "minlon")));
                             model.setMaxX(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlon")));
-                            model.setMaxY(
-                                    Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat")) / -Model.scalingConstant);
-                            model.setMinY(
-                                    Float.parseFloat(xmlReader.getAttributeValue(null, "minlat")) / -Model.scalingConstant);
+                            model.setMaxY(Float.parseFloat(xmlReader.getAttributeValue(null, "maxlat"))
+                                    / -Model.scalingConstant);
+                            model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat"))
+                                    / -Model.scalingConstant);
                             break;
                         case "node":
                             var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -120,7 +122,6 @@ public class OSMParser {
                             var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             way = new Way(wayId);
                             model.addToWayIndex(way);
-                            tags = new ArrayList<>();
                             break;
                         case "nd":
                             if (isWay && way != null) {
@@ -133,7 +134,7 @@ public class OSMParser {
                             var v = xmlReader.getAttributeValue(null, "v");
 
                             if (k.equals("building")) {
-                                tags.add(Tag.BUILDING);
+                                tag = Tag.BUILDING;
                                 break;
                             }
 
@@ -153,20 +154,23 @@ public class OSMParser {
                                 if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
                                         || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
                                         || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
-                                    CityTypes cityType = CityTypes.valueOf(v.toUpperCase());
+                                    AreaType areaType = AreaType.valueOf(v.toUpperCase());
                                     if (isNode) {
-                                        model.addToCityIndex(new City(name, cityType, node));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, node));
                                     } else if (isWay && relation == null) {
-                                        model.addToCityIndex(new City(name, cityType, way));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, way));
                                     } else if (isWay && relation != null) {
-                                        model.addToCityIndex(new City(name, cityType, relation));
+                                        model.addToAreaNamesIndex(new AreaName(name, areaType, relation));
                                     }
                                 }
                             }
 
                             if (k.equals("maxspeed")) {
-                                v.replace(" km", "").replace(" mph", "");
-                                way.setMaxSpeed(Integer.parseInt(v));
+                                v.replaceAll("\\D+", "");
+                                if(!v.equals("")){
+                                    int speed = (int) Math.round(Double.parseDouble(v));
+                                    way.setMaxSpeed(speed);
+                                }
                             }
 
                             if (k.equals("oneway")) {
@@ -185,27 +189,25 @@ public class OSMParser {
                             }
 
                             if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
-                                if(!v.equals("no")) {
-                                    way.getTags().add(Tag.CYCLEWAY);
+                                if (!v.equals("no")) {
+                                    way.setIsCyclable();
                                 }
                                 break;
                             }
 
-                            if ((k.equals("sidewalk") || k.equals("foot")) && !v.equals("no")) {
-                                way.getTags().add(Tag.FOOTWAY);
+                            if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
+                                way.setIsWalkable();
                                 break;
                             }
 
                             try {
-                                var tag = Tag.valueOf(v.toUpperCase());
-                                tags.add(tag);
+                                tag = Tag.valueOf(v.toUpperCase());
                             } catch (IllegalArgumentException e) {
                                 // We don't care about tags not in our Tag enum
                             }
 
                             try {
-                                var tag = Tag.valueOf(k.toUpperCase());
-                                tags.add(tag);
+                                tag = Tag.valueOf(k.toUpperCase());
                             } catch (IllegalArgumentException e) {
                                 // We don't care about tags not in our Tag enum
                             }
@@ -214,7 +216,17 @@ public class OSMParser {
                                 // example from samsoe.osm of an addr tag:
                                 // <tag k="addr:street" v="havnevej"/>
                                 if (k.equals("addr:street")) {
-                                    model.getStreetTree().insert(v, node.getId());
+                                    streetname = v;
+                                }
+
+                                if (k.equals("addr:housenumber")) {
+                                    housenumber = v;
+                                }
+                                if (k.equals("addr:postcode")) {
+                                    postcode = v;
+                                }
+                                if (k.equals("addr:city")) {
+                                    city = v;
                                 }
                             }
                             break;
@@ -222,7 +234,6 @@ public class OSMParser {
                             var relationId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
                             relation = new Relation(relationId);
                             model.addToRelationIndex(relation);
-                            tags = new ArrayList<>();
                             break;
                         case "member":
                             var type = xmlReader.getAttributeValue(null, "type");
@@ -254,17 +265,30 @@ public class OSMParser {
                     switch (xmlReader.getLocalName()) {
                         case "node":
                             isNode = false;
+                            tag = null;
+                            if (!streetname.equals("") && !housenumber.equals("") && !postcode.equals("")
+                                    && !city.equals("")) {
+
+                                model.getStreetTree().insert(streetname,
+                                        " " + housenumber + " " + postcode + " " + city, node.getId());
+                            }
                             break;
                         case "way":
-                            way.getTags().addAll(tags);
+                            if (tag != null) {
+                                way.setTag(tag);
+                                addWayToList(way, tag, model);
+                            }
                             way.checkSpeed();
                             way.createRectangle();
-                            addWayToList(way, tags, model);
+                            tag = null;
                             break;
                         case "relation":
-                            relation.setTags(tags);
+                            if (tag != null) {
+                                relation.setTag(tag);
+                            }
                             relation.createRectangle();
                             relation = null;
+                            tag = null;
                             break;
                     }
                     break;
@@ -276,27 +300,25 @@ public class OSMParser {
         }
     }
 
-    public static void addWayToList(Way way, List<Tag> tags, Model model) {
+    public static void addWayToList(Way way, Tag tag, Model model) {
         var drawableMap = model.getDrawableMap();
         var fillMap = model.getFillMap();
         RenderingStyle renderingStyle = new RenderingStyle();
 
-        for (var tag : tags) {
-            if (tag == Tag.COASTLINE) {
-                model.addCoastline(way);
-            } else {
-                var drawStyle = renderingStyle.getDrawStyleByTag(tag);
+        if (tag == Tag.COASTLINE) {
+            model.addCoastline(way);
+        } else {
+            var drawStyle = renderingStyle.getDrawStyleByTag(tag);
 
-                if (drawStyle == DrawStyle.FILL) {
-                    fillMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, fillMap)) {
-                        fillMap.get(tag).add(way);
-                    }
-                } else {
-                    drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    if (!isDublet(way, tag, drawableMap)) {
-                        drawableMap.get(tag).add(way);
-                    }
+            if (drawStyle == DrawStyle.FILL) {
+                fillMap.putIfAbsent(tag, new ArrayList<>());
+                if (!isDublet(way, tag, fillMap)) {
+                    fillMap.get(tag).add(way);
+                }
+            } else {
+                drawableMap.putIfAbsent(tag, new ArrayList<>());
+                if (!isDublet(way, tag, drawableMap)) {
+                    drawableMap.get(tag).add(way);
                 }
             }
         }
@@ -343,17 +365,18 @@ public class OSMParser {
         FileExtension toReturn;
 
         switch (filePathParts[filePathParts.length - 1]) {
-        case "osm":
-            toReturn = FileExtension.OSM;
-            break;
-        case "zip":
-            toReturn = FileExtension.ZIP;
-            break;
-        case "obj":
-            toReturn = FileExtension.OBJ;
-            break;
-        default:
-            throw new UnsupportedFileTypeException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
+            case "osm":
+                toReturn = FileExtension.OSM;
+                break;
+            case "zip":
+                toReturn = FileExtension.ZIP;
+                break;
+            case "obj":
+                toReturn = FileExtension.OBJ;
+                break;
+            default:
+                throw new UnsupportedFileTypeException(
+                        "Unsupported file type: " + filePathParts[filePathParts.length - 1]);
         }
         return toReturn;
     }
