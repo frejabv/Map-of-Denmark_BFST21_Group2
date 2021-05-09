@@ -277,7 +277,7 @@ public class AStar {
         if (result > 0) result = 360 - result;
         result = Math.abs(result);
 
-        if (result > 190) {
+        if (result > 195) {
             direction = Direction.LEFT;
         } else if (result < 165) {
             for (Edge e : currentNode.getAdjacencies()) {
