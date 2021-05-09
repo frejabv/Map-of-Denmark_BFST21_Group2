@@ -7,4 +7,6 @@ public interface Drawable {
     void draw(GraphicsContext gc, RenderingStyle renderingStyle);
 
     Rectangle getRect();
+
+    Tag getTag();
 }

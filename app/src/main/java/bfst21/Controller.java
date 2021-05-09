@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.POI.POI;
 import bfst21.osm.Node;
 import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
@@ -16,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -72,6 +74,8 @@ public class Controller {
     private HBox rightContainer;
     @FXML
     private CheckBox showNames;
+    @FXML
+    private VBox NearbyPOI;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -86,11 +90,13 @@ public class Controller {
         String OS = System.getProperty("os.name").toLowerCase();
 
         //Check if OS is Linux
-        if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")){
+        if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) {
             canvas.showNames = false;
             showNames.setVisible(false);
             showNames.setManaged(false);
         }
+
+        model.initImageSet();
 
         canvas.init(model);
         canvas.setCurrentCanvasEdges();
@@ -111,7 +117,6 @@ public class Controller {
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
 
         model.setUpAStar();
-        model.addRelationsToDrawStyles();
     }
 
     @FXML
@@ -304,12 +309,19 @@ public class Controller {
     }
 
     @FXML
+    private Button removePin;
+
+    @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
             hideAll();
             pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
+            if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()) {
+                currentPOI = null;
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            }
             pinText.textProperty().setValue(coordinates);
             Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
@@ -317,8 +329,51 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
+
+            updateNearbyPOI();
         } else {
             singleClick = true;
+        }
+    }
+
+    private void updateNearbyPOI() {
+        NearbyPOI.setVisible(true);
+        NearbyPOI.setManaged(true);
+        Text nearbyAttractionsText = new Text("Nearby Attractions");
+        Region region = new Region();
+        region.getStyleClass().add("hr");
+        NearbyPOI.getChildren().clear();
+        NearbyPOI.getChildren().add(nearbyAttractionsText);
+        NearbyPOI.getChildren().add(region);
+        ArrayList<POI> poiArrayList = model.getPOITree().nearest(canvas.pinPoint, 5);
+        if (poiArrayList.size() > 0) {
+            for (POI poi : poiArrayList) {
+                HBox nearbyContainer = new HBox();
+                nearbyContainer.getStyleClass().add("nearbyPOIContainer");
+                StackPane stackPane = new StackPane();
+                if (poi.getImageType().equals("heart")) {
+                    stackPane.setStyle("-fx-background-color:WHITE;-fx-background-radius: 15;-fx-min-width: 30;-fx-border-width: 1px;-fx-border-color: black;-fx-border-radius: 15;");
+                } else {
+                    stackPane.setStyle("-fx-background-color:rgba(52,152,219,1);-fx-background-radius: 15;-fx-min-width: 30;");
+                }
+                Image image = model.imageSet.get(poi.getImageType());
+                ImageView imageview = new ImageView(image);
+                imageview.getStyleClass().add("imageView");
+                imageview.setFitHeight(16.0);
+                imageview.setFitWidth(16.0);
+                imageview.setPreserveRatio(true);
+                imageview.getStyleClass().add("nearbyPOIImage");
+                VBox textlines = new VBox();
+                Text attractionName = new Text(poi.getName());
+                Text attractionType = new Text(poi.getType().substring(0, 1).toUpperCase() + poi.getType().substring(1));
+                attractionType.getStyleClass().add("attractionType");
+                textlines.getChildren().add(attractionName);
+                textlines.getChildren().add(attractionType);
+                stackPane.getChildren().add(imageview);
+                nearbyContainer.getChildren().add(stackPane);
+                nearbyContainer.getChildren().add(textlines);
+                NearbyPOI.getChildren().add(nearbyContainer);
+            }
         }
     }
 
@@ -470,9 +525,33 @@ public class Controller {
         scaletext.textProperty().setValue(scaleValue + metric);
     }
 
+    @FXML
+    private ImageView heartIcon;
+
+    POI currentPOI = null;
+
     public void onMousePressedPinHeart() {
         //add this point to POI
-        model.addPOI(new POI("Near to #", "place", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY()));
+        Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(),canvas.getPinPoint().getY()));
+        String roadname = getClosestRoadString(road);
+        POI poi = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+        model.addPOI(poi);
+        model.getPOITree().insert(poi);
+        String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
+        if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
+            if (currentPOI == null) {
+                currentPOI = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+            }
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
+            removePin.setVisible(false);
+            removePin.setManaged(false);
+            model.addPOI(currentPOI);
+        } else {
+            heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
+            model.removePOI(currentPOI);
+            changeType("pin", false);
+            currentPOI = null;
+        }
         canvas.setPin = false;
         canvas.repaint();
         updateUserPOI();
@@ -483,14 +562,24 @@ public class Controller {
 
     public void updateUserPOI() {
         userPOI.getChildren().clear();
-        model.getPointsOfInterest().forEach(POI -> {
-            Button currentPOI = new Button(POI.getName());
-            userPOI.getChildren().add(currentPOI);
-            currentPOI.setOnAction(event -> {
-                canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
+        model.getPointsOfInterest().forEach(poi -> {
+            Button currentPOILine = new Button(poi.getName());
+            userPOI.getChildren().add(currentPOILine);
+            currentPOILine.setOnAction(event -> {
+                currentPOI = poi;
+                changeType("pin", true);
+                removePin.setVisible(false);
+                removePin.setManaged(false);
+                heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
+                canvas.goToPosition(poi.getX(), poi.getX() + 0.0002, poi.getY());
                 canvas.repaint();
             });
         });
+    }
+
+    public void toggleKDLines() {
+        canvas.kdLines = !canvas.kdLines;
+        canvas.repaint();
         hideRoute();
     }
 
@@ -557,8 +646,6 @@ public class Controller {
     }
 
     @FXML
-    private ToggleGroup selectTransportTypeSettings;
-    @FXML
     private ToggleGroup selectTransportTypeRoute;
 
     public void selectTransportTypeRoute() {
@@ -572,12 +659,20 @@ public class Controller {
         }
     }
 
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
+
     public void selectTransportTypeSettings() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
         if (currentButton != null) {
             String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
             model.setDefaultTransportType(TransportType.valueOf(transportTypeCleaned));
         }
+    }
+
+    public void toggleSmallerViewPort() {
+        canvas.smallerViewPort = !canvas.smallerViewPort;
+        canvas.repaint();
     }
 
     public void toggleRTreeLines() {
@@ -599,15 +694,19 @@ public class Controller {
         closestRoad.textProperty().setValue(text);
     }
 
+    public String getClosestRoadString(Way road){
+        if (road.getName().equals("")) {
+            return "ID: " + road.getId();
+        } else {
+            return road.getName();
+        }
+    }
+
     public void onMouseMovedOnCanvas(MouseEvent e) {
         Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
         Way road = model.getRoadRTree().nearestWay(mousePoint);
 
-        if (road.getName().equals("")) {
-            updateClosestRoad("ID: " + road.getId());
-        } else {
-            updateClosestRoad(road.getName());
-        }
+        updateClosestRoad(getClosestRoadString(road));
 
         model.setNearestNode(road.nearestNode(mousePoint));
         if (canvas.nearestNodeLine) {
@@ -623,16 +722,16 @@ public class Controller {
     @FXML
     private ToggleButton walkRoute;
 
-    public void setCurrentTransportType(TransportType type){
+    public void setCurrentTransportType(TransportType type) {
         model.setCurrentTransportType(type);
         carRoute.setSelected(false);
         bicycleRoute.setSelected(false);
         walkRoute.setSelected(false);
-        if (type.equals(TransportType.CAR)){
+        if (type.equals(TransportType.CAR)) {
             carRoute.setSelected(true);
-        } else if (type.equals(TransportType.BICYCLE)){
+        } else if (type.equals(TransportType.BICYCLE)) {
             bicycleRoute.setSelected(true);
-        } else if (type.equals(TransportType.WALK)){
+        } else if (type.equals(TransportType.WALK)) {
             walkRoute.setSelected(true);
         }
     }

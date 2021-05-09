@@ -70,7 +70,7 @@ public class Rtree {
         while (!explorationQueue.isEmpty()) {
             var current = explorationQueue.removeFirst();
 
-            if (current.children != null) {
+            if (current != null && current.children != null) {
                 for (var child : current.children) {
                     if (queryRect.contains(child.getRect())) {
                         result.addAll(getAllDrawables(child));
@@ -91,8 +91,6 @@ public class Rtree {
     }
 
     public void drawRTree(Rectangle window, GraphicsContext gc) {
-        gc.setStroke(Color.RED);
-
         LinkedList<RtreeNode> explorationQueue = new LinkedList<>();
         explorationQueue.add(root);
 
@@ -111,12 +109,9 @@ public class Rtree {
     }
 
     public void drawRoadRectangles(Rectangle window, GraphicsContext gc) {
-        gc.setStroke(Color.PURPLE);
         for (Drawable d: query(window)) {
             d.getRect().draw(gc);
         }
-        gc.setStroke(Color.BLACK);
-        window.draw(gc);
     }
 
     public List<Drawable> getAllDrawables(RtreeNode startNode) {

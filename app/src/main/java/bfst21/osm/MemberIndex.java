@@ -48,6 +48,15 @@ public class MemberIndex<T extends Member> implements Iterable<T>, Serializable 
             return members.size();
         }
 
+        //TODO
+        public List<Drawable> getDrawableMembers() {
+            List<Drawable> drawableMembers = new ArrayList<>();
+            for (Member member : members){
+                drawableMembers.add((Drawable) member);
+            }
+            return drawableMembers;
+        }
+
     @Override
     public Iterator<T> iterator() {
         return members.iterator();

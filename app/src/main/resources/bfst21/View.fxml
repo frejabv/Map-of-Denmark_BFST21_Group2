@@ -13,12 +13,10 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.BorderPane?>
@@ -46,7 +44,7 @@
         <ColumnConstraints hgrow="ALWAYS" halignment="LEFT"/>
         <ColumnConstraints hgrow="ALWAYS" halignment="RIGHT"/>
       </columnConstraints>
-      <VBox fx:id="leftContainer" alignment="TOP_LEFT" pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
+      <VBox fx:id="leftContainer" pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
         <HBox styleClass="buttonSpacing" pickOnBounds="false">
           <Button onMousePressed="#onMousePressedSearch" styleClass="roundedButton" fx:id="searchButton">
             <graphic>
@@ -120,10 +118,10 @@
             <ScrollPane fitToWidth="true">
               <VBox fx:id="routeStepsContainer">
                 <HBox alignment="CENTER" styleClass="stepContainer">
-                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                      <Image url="@icons/follow.png"/>
-                    </ImageView>
-                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/follow.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                 </HBox>
                 <HBox alignment="CENTER" styleClass="stepContainer">
                   <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -244,12 +242,20 @@
         </VBox>
         <VBox fx:id="pinContainer" styleClass="mainContainer">
           <HBox styleClass="pinBorderPane">
-              <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
+              <Button onMousePressed="#onMousePressedPinHeart" styleClass="heartIcon">
+                <graphic>
+                  <ImageView fx:id="heartIcon" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/heart-border.png"/>
+                  </ImageView>
+                </graphic>
+              </Button>
               <VBox>
                 <Text fx:id="pinText">Pin</Text>
                 <Button fx:id="removePin">Remove pin</Button>
               </VBox>
           </HBox>
+          <VBox fx:id="NearbyPOI" styleClass="nearbyPOI">
+          </VBox>
         </VBox>
       </VBox>
       <HBox fx:id="rightContainer" styleClass="rightContainer" alignment="TOP_RIGHT" pickOnBounds="false" GridPane.columnIndex="1" GridPane.rowIndex="0">
@@ -271,10 +277,12 @@
                 <Text styleClass="mainContainer-subheader">Dev Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleKDLines">Show KD-tree lines</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleSmallerViewPort">Reduce view port size</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show Road-Rtree lines</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRoadRectangles">Show Road-Rtree Way rectangles</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleNearestNodeLine">Show line from mouse to nearest node on nearest way</CheckBox>
-              <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleAStarDebugPath" fx:id="showAStarPath" >Show A* paths</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Regex Matcher</Text>

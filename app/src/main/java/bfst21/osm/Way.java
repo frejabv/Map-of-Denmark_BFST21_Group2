@@ -1,5 +1,9 @@
 package bfst21.osm;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
