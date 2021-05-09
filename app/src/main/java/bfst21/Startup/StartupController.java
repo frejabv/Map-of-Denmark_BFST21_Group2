@@ -43,6 +43,8 @@ public class StartupController {
             View view = new View(model, stage);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
