@@ -538,13 +538,15 @@ public class Controller {
 
     public void onMousePressedPinHeart() {
         //add this point to POI
-        POI poi = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+        Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(),canvas.getPinPoint().getY()));
+        String roadname = getClosestRoadString(road);
+        POI poi = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
         model.addPOI(poi);
         model.getPOITree().insert(poi);
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
         if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
             if (currentPOI == null) {
-                currentPOI = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+                currentPOI = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
             }
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
             removePin.setVisible(false);
@@ -701,15 +703,19 @@ public class Controller {
         closestRoad.textProperty().setValue(text);
     }
 
+    public String getClosestRoadString(Way road){
+        if (road.getName().equals("")) {
+            return "ID: " + road.getId();
+        } else {
+            return road.getName();
+        }
+    }
+
     public void onMouseMovedOnCanvas(MouseEvent e) {
         Point2D mousePoint = canvas.mouseToModelCoords(new Point2D(e.getX(), e.getY()));
         Way road = model.getRoadRTree().nearestWay(mousePoint);
 
-        if (road.getName().equals("")) {
-            updateClosestRoad("ID: " + road.getId());
-        } else {
-            updateClosestRoad(road.getName());
-        }
+        updateClosestRoad(getClosestRoadString(road));
 
         model.setNearestNode(road.nearestNode(mousePoint));
         if (canvas.nearestNodeLine) {
