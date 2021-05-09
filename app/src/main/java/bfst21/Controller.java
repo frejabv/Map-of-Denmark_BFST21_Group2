@@ -405,8 +405,10 @@ public class Controller {
     public void onMousePressedRoute() {
         if (routeContainer.isVisible()) {
             hideAll();
+            canvas.hideRoute();
         } else {
             changeType("route", true);
+            canvas.showRoute();
         }
     }
 
