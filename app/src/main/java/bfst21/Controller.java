@@ -20,6 +20,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,7 +90,7 @@ public class Controller {
         String OS = System.getProperty("os.name").toLowerCase();
 
         //Check if OS is Linux
-        if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")){
+        if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")) {
             canvas.showNames = false;
             showNames.setVisible(false);
             showNames.setManaged(false);
@@ -320,7 +321,7 @@ public class Controller {
             pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
             String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
-            if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()){
+            if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()) {
                 currentPOI = null;
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             }
@@ -348,14 +349,14 @@ public class Controller {
         NearbyPOI.getChildren().add(nearbyAttractionsText);
         NearbyPOI.getChildren().add(region);
         ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
-        if (poiArrayList.size() > 0){
+        if (poiArrayList.size() > 0) {
             for (POI poi : poiArrayList) {
                 HBox nearbyContainer = new HBox();
                 nearbyContainer.getStyleClass().add("nearbyPOIContainer");
                 StackPane stackPane = new StackPane();
-                if (poi.getImageType().equals("heart")){
+                if (poi.getImageType().equals("heart")) {
                     stackPane.setStyle("-fx-background-color:WHITE;-fx-background-radius: 15;-fx-min-width: 30;-fx-border-width: 1px;-fx-border-color: black;-fx-border-radius: 15;");
-                }else{
+                } else {
                     stackPane.setStyle("-fx-background-color:rgba(52,152,219,1);-fx-background-radius: 15;-fx-min-width: 30;");
                 }
                 Image image = model.imageSet.get(poi.getImageType());
@@ -534,22 +535,22 @@ public class Controller {
     private ImageView heartIcon;
 
     POI currentPOI = null;
+
     public void onMousePressedPinHeart() {
         //add this point to POI
         POI poi = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
         model.addPOI(poi);
         model.getPOITree().insert(poi);
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
-        if (heartIconFilePath[heartIconFilePath.length-1].equals("heart-border.png")){
-            if (currentPOI == null){
+        if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
+            if (currentPOI == null) {
                 currentPOI = new POI("Near to #", "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
             }
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
             removePin.setVisible(false);
             removePin.setManaged(false);
             model.addPOI(currentPOI);
-        }
-        else{
+        } else {
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             model.removePOI(currentPOI);
             changeType("pin", false);
@@ -570,7 +571,7 @@ public class Controller {
             userPOI.getChildren().add(currentPOILine);
             currentPOILine.setOnAction(event -> {
                 currentPOI = POI;
-                changeType("pin",true);
+                changeType("pin", true);
                 removePin.setVisible(false);
                 removePin.setManaged(false);
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
@@ -724,16 +725,16 @@ public class Controller {
     @FXML
     private ToggleButton walkRoute;
 
-    public void setCurrentTransportType(TransportType type){
+    public void setCurrentTransportType(TransportType type) {
         model.setCurrentTransportType(type);
         carRoute.setSelected(false);
         bicycleRoute.setSelected(false);
         walkRoute.setSelected(false);
-        if (type.equals(TransportType.CAR)){
+        if (type.equals(TransportType.CAR)) {
             carRoute.setSelected(true);
-        } else if (type.equals(TransportType.BICYCLE)){
+        } else if (type.equals(TransportType.BICYCLE)) {
             bicycleRoute.setSelected(true);
-        } else if (type.equals(TransportType.WALK)){
+        } else if (type.equals(TransportType.WALK)) {
             walkRoute.setSelected(true);
         }
     }
