@@ -109,7 +109,6 @@ public class Model {
             addDrawableToRTreeList("map", drawableMap.get(tag), tag.zoomLimit);
         }
 
-        System.out.println(relationIndex.getDrawableMembers());
         addDrawableToRTreeList("list", relationIndex.getDrawableMembers(), 0);
 
         roadTree = new Rtree(roadlist);
@@ -124,18 +123,6 @@ public class Model {
         fillableRTree150 = new Rtree(fillables150);
         fillableRTree7 = new Rtree(fillables7);
         fillableRTree3 = new Rtree(fillables3);
-
-        /*List<Drawable> roadList = new ArrayList<>();
-        for (Tag tag : drawableMap.keySet()) {
-            roadList.addAll(drawableMap.get(tag));
-        }
-        roadRTree = new Rtree(roadList);
-
-        List<Drawable> fillList = new ArrayList<>();
-        for (Tag tag: fillMap.keySet()) {
-            fillList.addAll(fillMap.get(tag));
-        }
-        fillRTree = new Rtree(fillList); */
     }
 
     /*
@@ -425,24 +412,6 @@ public class Model {
         return roadTree;
     }
 
-    //TODO delete
-    /*
-    public void addRelationsToDrawStyles() {
-        for (Relation drawable : relationIndex) {
-            if (drawable.getTag() != null) {
-                Tag tag = drawable.getTag();
-                RenderingStyle renderingStyle = new RenderingStyle();
-                DrawStyle style = renderingStyle.getDrawStyleByTag(tag);
-                if (style == DrawStyle.FILL) {
-                    fillMap.putIfAbsent(tag, new ArrayList<>());
-                    fillMap.get(tag).add(drawable);
-                } else {
-                    drawableMap.putIfAbsent(tag, new ArrayList<>());
-                    drawableMap.get(tag).add(drawable);
-                }
-            }
-        }
-    } */
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
 
     public void addDrawableToRTreeList(String type, List<Drawable> dList, int zoomLimit) {
