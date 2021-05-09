@@ -53,7 +53,7 @@ public class AStar {
     public void AStarSearch(Node start, Node end, TransportType type) {
         this.type = type;
         model.setAStarPath(null);
-        ArrayList<Node> listOfCheckedNodes = new ArrayList();
+        ArrayList<Node> listOfCheckedNodes = new ArrayList<>();
 
         PriorityQueue<Node> pq = new PriorityQueue<>(20, new NodeComparator());
 
