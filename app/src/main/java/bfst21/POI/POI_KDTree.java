@@ -50,10 +50,10 @@ public class POI_KDTree {
     /**
      * This is a recursive call that inserts a node into the correct empty spot.
      * @param currentNode is the node position we want to try and insert qNode into.
-     * @param parent      is the current parent of out element.
+     * @param parent      is the current parent of our element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
-     * @returns           the Node at with its correct parent and left/right rectangle/domain
+     * @returns           the currentNode with its' correct parent and left/right child/domain
      */
     private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
         //if space is available, fill space
