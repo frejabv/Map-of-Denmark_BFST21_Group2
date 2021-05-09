@@ -16,9 +16,6 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.BorderPane?>
@@ -46,7 +43,7 @@
         <ColumnConstraints hgrow="ALWAYS" halignment="LEFT"/>
         <ColumnConstraints hgrow="ALWAYS" halignment="RIGHT"/>
       </columnConstraints>
-      <VBox fx:id="leftContainer" alignment="TOP_LEFT" pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
+      <VBox fx:id="leftContainer" pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
         <HBox styleClass="buttonSpacing" pickOnBounds="false">
           <Button onMousePressed="#onMousePressedSearch" styleClass="roundedButton" fx:id="searchButton">
             <graphic>
@@ -120,10 +117,10 @@
             <ScrollPane fitToWidth="true">
               <VBox fx:id="routeStepsContainer">
                 <HBox alignment="CENTER" styleClass="stepContainer">
-                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                      <Image url="@icons/follow.png"/>
-                    </ImageView>
-                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/follow.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                 </HBox>
                 <HBox alignment="CENTER" styleClass="stepContainer">
                   <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
@@ -244,11 +241,11 @@
         </VBox>
         <VBox fx:id="pinContainer" styleClass="mainContainer">
           <HBox styleClass="pinBorderPane">
-              <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
-              <VBox>
-                <Text fx:id="pinText">Pin</Text>
-                <Button fx:id="removePin">Remove pin</Button>
-              </VBox>
+            <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
+            <VBox>
+              <Text fx:id="pinText">Pin</Text>
+              <Button fx:id="removePin">Remove pin</Button>
+            </VBox>
           </HBox>
         </VBox>
       </VBox>

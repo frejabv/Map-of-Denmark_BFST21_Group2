@@ -34,7 +34,7 @@ public class Debug {
     Runnable updateStats = new Runnable() {
         public void run() {
             cpuProcess.textProperty().setValue("CPU Process Load: " + bean.getProcessCpuLoad());
-            cpuSystem.textProperty().setValue("CPU System Load: " + bean.getSystemCpuLoad() + "( " + bean.getSystemLoadAverage() + " average)");
+            cpuSystem.textProperty().setValue("CPU System Load: " + bean.getCpuLoad() + "( " + bean.getSystemLoadAverage() + " average)");
             memoryUse.textProperty().setValue("Memory Use (Experimental): " + processMemory);
             long total = 0;
             for (long temp : canvas.redrawAverage){
