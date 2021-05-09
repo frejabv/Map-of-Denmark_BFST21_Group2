@@ -395,7 +395,6 @@ public class OSMParser {
                 }
             }
         }
-        //sanitise type
         POI result = new POI(systemPOIName, type, imageType, x, y);
         return result;
     }
