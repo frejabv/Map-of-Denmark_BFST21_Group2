@@ -159,7 +159,7 @@
     -fx-background-insets: 0 20px 0 10px;
 }
 
-.routeLabel{
+.labelTest{
     -fx-word-wrap: break-word;
     -fx-padding: 0 0 0 10px;
     -fx-border-insets: 0 0 0 10px;
