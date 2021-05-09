@@ -70,7 +70,7 @@ public class Rtree {
         while (!explorationQueue.isEmpty()) {
             var current = explorationQueue.removeFirst();
 
-            if (current.children != null) {
+            if (current != null && current.children != null) {
                 for (var child : current.children) {
                     if (queryRect.contains(child.getRect())) {
                         result.addAll(getAllDrawables(child));
