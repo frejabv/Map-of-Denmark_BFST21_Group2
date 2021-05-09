@@ -143,8 +143,8 @@ public class Way extends Member implements Drawable, Serializable {
         var firstNode = nodes.get(0);
         gc.moveTo(firstNode.getX(), firstNode.getY());
 
-        for (var node : nodes) {
-            gc.lineTo(node.getX(), node.getY());
+        for (int i = 1; i < nodes.size(); i++) {
+            gc.lineTo(nodes.get(i).getX(), nodes.get(i).getY());
         }
         gc.stroke();
     }
