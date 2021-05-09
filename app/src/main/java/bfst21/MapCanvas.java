@@ -185,9 +185,11 @@ public class MapCanvas extends Canvas {
                 String image = poi.getImageType();
                 gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
 
-                gc.setFill(Color.BLACK);
-                gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
-                gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                if (showNames) {
+                    gc.setFill(Color.BLACK);
+                    gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                    gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                }
             });
         }
 
