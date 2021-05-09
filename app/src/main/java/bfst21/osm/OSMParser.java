@@ -19,16 +19,16 @@ public class OSMParser {
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
             throws IOException, XMLStreamException {
         switch (fileExtension) {
-        case OSM:
-            loadOSM(in, model);
-            break;
-        case ZIP:
-            loadZIP(in, model);
-            //saveOBJ(fileName, model);
-            break;
-        case OBJ:
-            loadOBJ(in, model);
-            break;
+            case OSM:
+                loadOSM(in, model);
+                break;
+            case ZIP:
+                loadZIP(in, model);
+                //saveOBJ(fileName, model);
+                break;
+            case OBJ:
+                loadOBJ(in, model);
+                break;
         }
     }
 
@@ -166,10 +166,10 @@ public class OSMParser {
                                 }
                             }
 
-                            if(way != null) {
+                            if (way != null) {
                                 if (k.equals("maxspeed")) {
                                     v = v.replaceAll("\\D+", "");
-                                    if(!v.equals("")){
+                                    if (!v.equals("")) {
                                         int speed = (int) Math.round(Double.parseDouble(v));
                                         way.setMaxSpeed(speed);
                                     }
@@ -203,18 +203,18 @@ public class OSMParser {
                                 }
                             }
 
-                            if (k.equals("landuse") && v.equals("residential")){
+                            if (k.equals("landuse") && v.equals("residential")) {
                                 tag = Tag.CITYBORDER;
                                 break;
                             }
 
-                            if(k.equals("ferry")){
+                            if (k.equals("ferry")) {
                                 tag = Tag.FERRY;
                                 break;
                             }
 
-                            if(v.equals("sand") || v.equals("beach")){
-                                if(k.equals("natural")) {
+                            if (v.equals("sand") || v.equals("beach")) {
+                                if (k.equals("natural")) {
                                     tag = Tag.BEACH;
                                 }
                                 break;
@@ -259,24 +259,12 @@ public class OSMParser {
                             var type = xmlReader.getAttributeValue(null, "type");
                             var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
                             var role = xmlReader.getAttributeValue(null, "role");
-                            Member memberRef = null;
-                            switch (type) {
-                                case "node":
-                                    memberRef = model.getNodeIndex().getMember(ref);
-                                    break;
-                                case "way":
-                                    memberRef = model.getWayIndex().getMember(ref);
-                                    if (memberRef != null) {
-                                        relation.addWay((Way) memberRef);
-                                        ((Way) memberRef).addRole(relation.getId(), role);
-                                    }
-                                    break;
-                                case "relation":
-                                    memberRef = model.getRelationIndex().getMember(ref);
-                                    break;
-                            }
-                            if (memberRef != null) {
-                                relation.addMember(memberRef);
+                            if (type.equals("way")) {
+                                Way memberRef = model.getWayIndex().getMember(ref);
+                                if (memberRef != null) {
+                                    relation.addWay(memberRef);
+                                    memberRef.addRole(relation.getId(), role);
+                                }
                             }
                             break;
                     }

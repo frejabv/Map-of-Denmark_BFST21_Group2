@@ -7,10 +7,8 @@ import javafx.scene.shape.FillRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 public class Relation extends Member implements Drawable {
-    ArrayList<Member> members = new ArrayList<>();
     ArrayList<Way> ways = new ArrayList<>();
     Rectangle rect;
 
@@ -18,16 +16,8 @@ public class Relation extends Member implements Drawable {
         super(id);
     }
 
-    public void addMember(Member member) {
-        members.add(member);
-    }
-
     public void addWay(Way way) {
         ways.add(way);
-    }
-
-    public List<Member> getMembers() {
-        return members;
     }
 
     public void draw(GraphicsContext gc, RenderingStyle style) {
@@ -83,7 +73,7 @@ public class Relation extends Member implements Drawable {
         for (Way line : outerLines) {
             Way before = pieces.remove(line.first());
             Way after = pieces.remove(line.last());
-            if(after != null && line.last() != after.first()) {
+            if (after != null && line.last() != after.first()) {
                 Collections.reverse(after.getNodes());
             }
             if (before == after)
