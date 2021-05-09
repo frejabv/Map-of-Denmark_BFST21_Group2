@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import bfst21.MapCanvas?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.Scene?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
 <Scene xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        fx:controller="bfst21.Controller"
@@ -14,253 +31,214 @@
        onKeyPressed="#onKeyPressed"
        height="500"
 >
-    <StackPane>
-        <MapCanvas fx:id="canvas"
-                   width="${scene.width}"
-                   height="${scene.height}"
-                   onScroll="#onScrollOnCanvas"
-                   onMousePressed="#onMousePressedOnCanvas"
-                   onMouseDragged="#onMouseDraggedOnCanvas"
-                   onMouseReleased="#onMouseReleasedOnCanvas"
-                   onMouseMoved="#onMouseMovedOnCanvas"
-        />
-        <GridPane pickOnBounds="false">
-            <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" halignment="LEFT"/>
-                <ColumnConstraints hgrow="ALWAYS" halignment="RIGHT"/>
-            </columnConstraints>
-            <VBox fx:id="leftContainer" pickOnBounds="false" styleClass="leftContainer"
-                  GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <HBox styleClass="buttonSpacing" pickOnBounds="false">
-                    <Button onMousePressed="#onMousePressedSearch" styleClass="roundedButton" fx:id="searchButton">
-                        <graphic>
-                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@icons/search.png"/>
-                            </ImageView>
-                        </graphic>
-                    </Button>
-                    <Button onMousePressed="#onMousePressedRoute" styleClass="roundedButton" fx:id="routeButton">
-                        <graphic>
-                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@icons/route.png"/>
-                            </ImageView>
-                        </graphic>
-                    </Button>
-                    <Button onMousePressed="#onMousePressedSettings" styleClass="roundedButton" fx:id="settingsButton">
-                        <graphic>
-                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@icons/settings.png"/>
-                            </ImageView>
-                        </graphic>
-                    </Button>
+  <StackPane>
+    <MapCanvas fx:id="canvas"
+               width="${scene.width}"
+               height="${scene.height}"
+               onScroll="#onScrollOnCanvas"
+               onMousePressed="#onMousePressedOnCanvas"
+               onMouseDragged="#onMouseDraggedOnCanvas"
+               onMouseReleased="#onMouseReleasedOnCanvas"
+               onMouseMoved="#onMouseMovedOnCanvas"
+    />
+    <GridPane pickOnBounds="false">
+      <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" halignment="LEFT"/>
+        <ColumnConstraints hgrow="ALWAYS" halignment="RIGHT"/>
+      </columnConstraints>
+      <VBox fx:id="leftContainer" alignment="TOP_LEFT" pickOnBounds="false" styleClass="leftContainer" GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <HBox styleClass="buttonSpacing" pickOnBounds="false">
+          <Button onMousePressed="#onMousePressedSearch" styleClass="roundedButton" fx:id="searchButton">
+            <graphic>
+              <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@icons/search.png"/>
+              </ImageView>
+            </graphic>
+          </Button>
+          <Button onMousePressed="#onMousePressedRoute" styleClass="roundedButton" fx:id="routeButton">
+            <graphic>
+              <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@icons/route.png"/>
+              </ImageView>
+            </graphic>
+          </Button>
+          <Button onMousePressed="#onMousePressedSettings" styleClass="roundedButton" fx:id="settingsButton">
+            <graphic>
+              <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@icons/settings.png"/>
+              </ImageView>
+            </graphic>
+          </Button>
+        </HBox>
+        <VBox fx:id="searchContainer" styleClass="mainContainer">
+          <TextField fx:id="searchField" styleClass="textfield">
+            <promptText>Where would you like to go?</promptText>
+          </TextField>
+        </VBox>
+        <VBox fx:id="routeContainer" styleClass="mainContainer">
+          <TextField fx:id="routeFieldFrom" styleClass="textfield">
+            <promptText>Where from?</promptText>
+          </TextField>
+          <TextField fx:id="routeFieldTo" styleClass="textfield">
+            <promptText>Where to?</promptText>
+          </TextField>
+          <VBox fx:id="routeDescription" styleClass="routeDescription">
+            <Region styleClass="hr" />
+            <HBox>
+              <ToggleButton fx:id="carRoute" id="car-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
+                <toggleGroup>
+                  <ToggleGroup fx:id="selectTransportTypeRoute"/>
+                </toggleGroup>
+                <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/car.png"/>
+                  </ImageView>
+                </graphic>
+              </ToggleButton>
+              <ToggleButton fx:id="bicycleRoute" id="bicycle-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
+                <toggleGroup>
+                  <fx:reference source="selectTransportTypeRoute"/>
+                </toggleGroup>
+                <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/bicycle.png"/>
+                  </ImageView>
+                </graphic>
+              </ToggleButton>
+              <ToggleButton fx:id="walkRoute" id="walk-route" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
+                <toggleGroup>
+                  <fx:reference source="selectTransportTypeRoute"/>
+                </toggleGroup>
+                <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/walk.png"/>
+                  </ImageView>
+                </graphic>
+              </ToggleButton>
+            </HBox>
+            <Region styleClass="hr" />
+            <ScrollPane fitToWidth="true">
+              <VBox fx:id="routeStepsContainer">
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/follow.png"/>
+                    </ImageView>
+                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
                 </HBox>
-                <VBox fx:id="searchContainer" styleClass="mainContainer">
-                    <TextField fx:id="searchField" styleClass="textfield">
-                        <promptText>Where would you like to go?</promptText>
-                    </TextField>
-                </VBox>
-                <VBox fx:id="routeContainer" styleClass="mainContainer">
-                    <TextField fx:id="routeFieldFrom" styleClass="textfield">
-                        <promptText>Where from?</promptText>
-                    </TextField>
-                    <TextField fx:id="routeFieldTo" styleClass="textfield">
-                        <promptText>Where to?</promptText>
-                    </TextField>
-                    <VBox fx:id="routeDescription">
-                        <Region styleClass="hr"/>
-                        <HBox>
-                            <ToggleButton id="car-route" styleClass="selectTransportTypeButton" maxWidth="Infinity"
-                                          HBox.hgrow="ALWAYS" selected="true"
-                                          onMouseClicked="#selectTransportTypeRoute">
-                                <toggleGroup>
-                                    <ToggleGroup fx:id="selectTransportTypeRoute"/>
-                                </toggleGroup>
-                                <graphic>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true"
-                                               preserveRatio="true">
-                                        <Image url="@icons/car.png"/>
-                                    </ImageView>
-                                </graphic>
-                            </ToggleButton>
-                            <ToggleButton id="bicycle-route" styleClass="selectTransportTypeButton" maxWidth="Infinity"
-                                          HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
-                                <toggleGroup>
-                                    <fx:reference source="selectTransportTypeRoute"/>
-                                </toggleGroup>
-                                <graphic>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true"
-                                               preserveRatio="true">
-                                        <Image url="@icons/bicycle.png"/>
-                                    </ImageView>
-                                </graphic>
-                            </ToggleButton>
-                            <ToggleButton id="walk-route" styleClass="selectTransportTypeButton" maxWidth="Infinity"
-                                          HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeRoute">
-                                <toggleGroup>
-                                    <fx:reference source="selectTransportTypeRoute"/>
-                                </toggleGroup>
-                                <graphic>
-                                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true"
-                                               preserveRatio="true">
-                                        <Image url="@icons/walk.png"/>
-                                    </ImageView>
-                                </graphic>
-                            </ToggleButton>
-                        </HBox>
-                        <Region styleClass="hr"/>
-                        <ScrollPane fitToWidth="true">
-                            <VBox fx:id="routeStepsContainer">
-                                <HBox alignment="CENTER" styleClass="stepContainer">
-                                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0"
-                                               fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                        <Image url="@icons/follow.png"/>
-                                    </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
-                                           wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
-                                </HBox>
-                                <HBox alignment="CENTER" styleClass="stepContainer">
-                                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0"
-                                               fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                        <Image url="@icons/left.png"/>
-                                    </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
-                                           wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
-                                </HBox>
-                                <HBox alignment="CENTER" styleClass="stepContainer">
-                                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0"
-                                               fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                        <Image url="@icons/right.png"/>
-                                    </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
-                                           wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
-                                </HBox>
-                                <HBox alignment="CENTER" styleClass="stepContainer">
-                                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0"
-                                               fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                        <Image url="@icons/roundabout_first_exit.png"/>
-                                    </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
-                                           wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
-                                </HBox>
-                                <HBox alignment="CENTER" styleClass="stepContainer">
-                                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0"
-                                               fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                        <Image url="@icons/roundabout_second_exit.png"/>
-                                    </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
-                                           wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
-                                </HBox>
-                                <HBox alignment="CENTER" styleClass="stepContainer">
-                                    <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0"
-                                               fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                        <Image url="@icons/pin.png"/>
-                                    </ImageView>
-                                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="routeLabel"
-                                           wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
-                                </HBox>
-                            </VBox>
-                        </ScrollPane>
-                        <Region styleClass="hr"/>
-                        <Text fx:id="arrivalText" styleClass="arrivalText">0 min. (0,0km)</Text>
-                        <Text fx:id="arrivalSmallText" styleClass="arrivalSmallText">Arrives 00:00</Text>
-                    </VBox>
-                </VBox>
-                <VBox fx:id="settingsContainer" styleClass="mainContainer">
-                    <FlowPane styleClass="header-margin">
-                        <Text styleClass="mainContainer-header">Settings</Text>
-                    </FlowPane>
-                    <ScrollPane styleClass="scroll-pane" fitToWidth="true">
-                        <VBox>
-                            <FlowPane styleClass="header-margin">
-                                <Text styleClass="mainContainer-subheader">Color Modes</Text>
-                            </FlowPane>
-                            <FlowPane>
-                                <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode"
-                                              selected="true">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="selectColorMode"/>
-                                    </toggleGroup>
-                                </ToggleButton>
-                                <ToggleButton fx:id="darkColorMode" text="Dark Mode" onMousePressed="#darkColorMode">
-                                    <toggleGroup>
-                                        <fx:reference source="selectColorMode"/>
-                                    </toggleGroup>
-                                </ToggleButton>
-                            </FlowPane>
-                            <FlowPane styleClass="header-margin">
-                                <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
-                            </FlowPane>
-                            <HBox>
-                                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity"
-                                              HBox.hgrow="ALWAYS" selected="true">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="selectTransportTypeSettings"/>
-                                    </toggleGroup>
-                                    <graphic>
-                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <Image url="@icons/car.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </ToggleButton>
-                                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity"
-                                              HBox.hgrow="ALWAYS">
-                                    <toggleGroup>
-                                        <fx:reference source="selectTransportTypeSettings"/>
-                                    </toggleGroup>
-                                    <graphic>
-                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <Image url="@icons/bicycle.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </ToggleButton>
-                                <ToggleButton styleClass="selectTransportTypeButton" maxWidth="Infinity"
-                                              HBox.hgrow="ALWAYS">
-                                    <toggleGroup>
-                                        <fx:reference source="selectTransportTypeSettings"/>
-                                    </toggleGroup>
-                                    <graphic>
-                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true"
-                                                   preserveRatio="true">
-                                            <Image url="@icons/walk.png"/>
-                                        </ImageView>
-                                    </graphic>
-                                </ToggleButton>
-                            </HBox>
-                            <FlowPane styleClass="header-margin">
-                                <Text styleClass="mainContainer-subheader">Map Settings</Text>
-                            </FlowPane>
-                            <Region styleClass="hr"/>
-                            <CheckBox selected="true" onMouseClicked="#toggleShowNames" fx:id="showNames">Show names on map</CheckBox>
-                            <FlowPane styleClass="header-margin">
-                                <Text styleClass="mainContainer-subheader">Unit</Text>
-                            </FlowPane>
-                            <Region styleClass="hr"/>
-                            <FlowPane styleClass="header-margin">
-                                <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
-                            </FlowPane>
-                            <Region styleClass="hr"/>
-                            <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window
-                            </CheckBox>
-                            <FlowPane styleClass="header-margin">
-                                <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
-                            </FlowPane>
-                            <Region styleClass="hr"/>
-                            <VBox fx:id="userPOI">
-                            </VBox>
-                        </VBox>
-                    </ScrollPane>
-                </VBox>
-                <VBox fx:id="pinContainer" styleClass="mainContainer">
-                    <HBox styleClass="pinBorderPane">
-                        <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
-                        <VBox>
-                            <Text fx:id="pinText">Pin</Text>
-                            <Button>Remove pin</Button>
-                        </VBox>
-                    </HBox>
-                </VBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/left.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/right.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/roundabout_first_exit.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/roundabout_second_exit.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+                <HBox alignment="CENTER" styleClass="stepContainer">
+                  <ImageView HBox.hgrow="SOMETIMES" styleClass="stepIcon" fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/pin.png"/>
+                  </ImageView>
+                  <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="labelTest" wrapText="true" text="Lorem ipsum dolor sit amed lorem ipsum dolor"/>
+                </HBox>
+              </VBox>
+            </ScrollPane>
+            <Region styleClass="hr" />
+            <Text fx:id="arrivalText" styleClass="arrivalText">0 min. (0,0km)</Text>
+            <Text fx:id="arrivalSmallText" styleClass="arrivalSmallText">Arrives 00:00</Text>
+          </VBox>
+        </VBox>
+        <VBox fx:id="settingsContainer" styleClass="mainContainer">
+          <FlowPane styleClass="header-margin">
+            <Text styleClass="mainContainer-header">Settings</Text>
+          </FlowPane>
+          <ScrollPane styleClass="scroll-pane" fitToWidth="true">
+            <VBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Color Modes</Text>
+              </FlowPane>
+              <FlowPane>
+                <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode"
+                              selected="true">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="selectColorMode"/>
+                  </toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="darkColorMode" text="Dark Mode" onMousePressed="#darkColorMode">
+                  <toggleGroup>
+                    <fx:reference source="selectColorMode"/>
+                  </toggleGroup>
+                </ToggleButton>
+              </FlowPane>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
+              </FlowPane>
+              <HBox>
+                <ToggleButton id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="selectTransportTypeSettings"/>
+                  </toggleGroup>
+                  <graphic>
+                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/car.png"/>
+                    </ImageView>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton id="bicycle-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
+                  <toggleGroup>
+                    <fx:reference source="selectTransportTypeSettings"/>
+                  </toggleGroup>
+                  <graphic>
+                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/bicycle.png"/>
+                    </ImageView>
+                  </graphic>
+                </ToggleButton>
+                <ToggleButton id="walk-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
+                  <toggleGroup>
+                    <fx:reference source="selectTransportTypeSettings"/>
+                  </toggleGroup>
+                  <graphic>
+                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                      <Image url="@icons/walk.png"/>
+                    </ImageView>
+                  </graphic>
+                </ToggleButton>
+              </HBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Map Settings</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <CheckBox selected="true" fx:id="showNames" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Unit</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
+              <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <VBox fx:id="userPOI">
+              </VBox>
             </VBox>
             <VBox fx:id="rightContainer" styleClass="rightContainer" alignment="TOP_RIGHT" pickOnBounds="false"
                   GridPane.columnIndex="1" GridPane.rowIndex="0">
@@ -297,25 +275,28 @@
                     </ScrollPane>
                 </VBox>
             </VBox>
-        </GridPane>
-        <BorderPane pickOnBounds="false">
-            <bottom>
-                <HBox fx:id="scaleContainer" alignment="BOTTOM_RIGHT" pickOnBounds="false">
-                    <VBox fx:id="scale" styleClass="scale" pickOnBounds="false">
-                        <Text fx:id="scaletext" styleClass="scaletext" pickOnBounds="false">0</Text>
-                        <Region styleClass="scalebar" pickOnBounds="false"/>
-                    </VBox>
-                </HBox>
-            </bottom>
+          </ScrollPane>
+        </VBox>
+      </HBox>
+    </GridPane>
+    <BorderPane pickOnBounds="false">
+      <bottom>
+        <HBox fx:id="scaleContainer" alignment="BOTTOM_RIGHT" pickOnBounds="false">
+          <VBox fx:id="scale"  styleClass="scale" pickOnBounds="false">
+            <Text fx:id="scaletext" styleClass="scaletext" pickOnBounds="false"></Text>
+            <Region styleClass="scalebar" pickOnBounds="false"/>
+          </VBox>
+        </HBox>
+      </bottom>
+    </BorderPane>
+    <BorderPane pickOnBounds="false">
+      <bottom>
+        <BorderPane styleClass="nearestRoad" pickOnBounds="false">
+          <center>
+            <Text fx:id="closestRoad">Closest Road (0m)</Text>
+          </center>
         </BorderPane>
-        <BorderPane pickOnBounds="false">
-            <bottom>
-                <BorderPane styleClass="nearestRoad" pickOnBounds="false">
-                    <center>
-                        <Text fx:id="closestRoad">Closest Road (0m)</Text>
-                    </center>
-                </BorderPane>
-            </bottom>
-        </BorderPane>
-    </StackPane>
+      </bottom>
+    </BorderPane>
+  </StackPane>
 </Scene>
