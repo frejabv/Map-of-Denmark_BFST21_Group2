@@ -232,7 +232,7 @@
                                 <Text styleClass="mainContainer-subheader">Map Settings</Text>
                             </FlowPane>
                             <Region styleClass="hr"/>
-                            <CheckBox selected="true" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
+                            <CheckBox selected="true" onMouseClicked="#toggleShowNames" fx:id="showNames">Show names on map</CheckBox>
                             <FlowPane styleClass="header-margin">
                                 <Text styleClass="mainContainer-subheader">Unit</Text>
                             </FlowPane>
