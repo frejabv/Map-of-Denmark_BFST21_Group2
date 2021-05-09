@@ -6,6 +6,7 @@ import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
+import com.sun.javafx.PlatformUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -142,7 +143,6 @@ public class Controller {
 
     public void setUpSearchField(Regex regex) {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
-            //Run Regex Matcher
             regex.run(newText);
             addSuggestions(model, "search", null);
         });
@@ -405,8 +405,10 @@ public class Controller {
     public void onMousePressedRoute() {
         if (routeContainer.isVisible()) {
             hideAll();
+            canvas.hideRoute();
         } else {
             changeType("route", true);
+            canvas.showRoute();
         }
     }
 
@@ -487,11 +489,6 @@ public class Controller {
                 debugContainer.setManaged(state);
                 break;
             case "pin":
-                removePin.setVisible(true);
-                removePin.setManaged(true);
-                NearbyPOI.setVisible(false);
-                NearbyPOI.setManaged(false);
-                fadeButtons();
                 pinContainer.setVisible(state);
                 pinContainer.setManaged(state);
                 break;
@@ -646,8 +643,7 @@ public class Controller {
         routeDescription.setManaged(false);
     }
 
-    @FXML
-    private ToggleGroup selectTransportTypeSettings;
+
 
     @FXML
     private CheckBox showAStarPath;
@@ -676,12 +672,20 @@ public class Controller {
         }
     }
 
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
+
     public void selectTransportTypeSettings() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
         if (currentButton != null) {
             String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
             model.setDefaultTransportType(TransportType.valueOf(transportTypeCleaned));
         }
+    }
+
+    public void toggleSmallerViewPort() {
+        canvas.smallerViewPort = !canvas.smallerViewPort;
+        canvas.repaint();
     }
 
     public void toggleRTreeLines() {
@@ -743,5 +747,10 @@ public class Controller {
         } else if (type.equals(TransportType.WALK)) {
             walkRoute.setSelected(true);
         }
+    }
+
+    public void toggleDoubleDraw() {
+        canvas.doubleDraw = !canvas.doubleDraw;
+        canvas.repaint();
     }
 }

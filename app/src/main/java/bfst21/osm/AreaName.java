@@ -57,14 +57,14 @@ public class AreaName implements Drawable {
         this.type = type;
     }
 
-    public void drawType(GraphicsContext gc, float distanceWidth) {
+    public void drawType(GraphicsContext gc, float distanceWidth, RenderingStyle renderingStyle) {
         if (distanceWidth < type.zoomMax && distanceWidth > type.zoomMin) {
-            draw(gc);
+            draw(gc,renderingStyle);
         }
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc, RenderingStyle renderingStyle) {
         if (lon == 0.0 && lat == 0.0) {
             if (relation != null) {
                 lat = (relation.getRect().getMaxX() + relation.getRect().getMinX()) / 2;

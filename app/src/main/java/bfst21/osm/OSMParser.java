@@ -10,10 +10,13 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.*;
 import java.util.zip.ZipInputStream;
-
-import java.net.URL;
 
 public class OSMParser {
     private static List<String> systemPOITags;
@@ -28,7 +31,7 @@ public class OSMParser {
                 break;
             case ZIP:
                 loadZIP(in, model);
-                // saveOBJ(fileName, model);
+                //saveOBJ(fileName, model);
                 break;
             case OBJ:
                 loadOBJ(in, model);
@@ -58,7 +61,7 @@ public class OSMParser {
     public static void saveOBJ(String fileName, Model model) throws IOException {
         // Point java to the correct folder on the host machine
         URL fileURL = OSMParser.class.getResource("/bfst21/data/");
-        File file = new File(fileURL.getPath() + fileName);
+        File file = new File(fileURL.getPath() + "/" + fileName + ".obj");
 
         if (!file.createNewFile()) {
             // Figure out whether or not we need to freak out if we are overwriting an
@@ -140,8 +143,9 @@ public class OSMParser {
                         case "tag":
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
-                            if (k.equals("name")) {
-                                systemPOIName = v;
+
+                            if (v.equals("construction") || k.equals("construction")) {
+                                break;
                             }
 
                             if (k.equals("building")) {
@@ -149,7 +153,7 @@ public class OSMParser {
                                 break;
                             }
 
-                            if (k.equals("service")) {
+                            if (k.equals("service") || k.equals("surface")) {
                                 break;
                             }
 
@@ -161,9 +165,10 @@ public class OSMParser {
 
                             if (k.equals("name")) {
                                 name = v;
+                                systemPOIName = v;
                             }
 
-                            if (k.equals("name") && isWay) {
+                            if (k.equals("name") && isWay && way != null) {
                                 way.setName(v);
                             }
 
@@ -182,9 +187,9 @@ public class OSMParser {
                                 }
                             }
 
-                            if (isWay) {
+                            if (way != null) {
                                 if (k.equals("maxspeed")) {
-                                    v.replaceAll("\\D+", "");
+                                    v = v.replaceAll("\\D+", "");
                                     if (!v.equals("")) {
                                         int speed = (int) Math.round(Double.parseDouble(v));
                                         way.setMaxSpeed(speed);
@@ -217,6 +222,23 @@ public class OSMParser {
                                     way.setIsWalkable();
                                     break;
                                 }
+                            }
+
+                            if (k.equals("landuse") && v.equals("residential")) {
+                                tag = Tag.CITYBORDER;
+                                break;
+                            }
+
+                            if (k.equals("ferry")) {
+                                tag = Tag.FERRY;
+                                break;
+                            }
+
+                            if (v.equals("sand") || v.equals("beach")) {
+                                if (k.equals("natural")) {
+                                    tag = Tag.BEACH;
+                                }
+                                break;
                             }
 
                             try {
@@ -258,24 +280,12 @@ public class OSMParser {
                             var type = xmlReader.getAttributeValue(null, "type");
                             var ref = Long.parseLong(xmlReader.getAttributeValue(null, "ref"));
                             var role = xmlReader.getAttributeValue(null, "role");
-                            Member memberRef = null;
-                            switch (type) {
-                                case "node":
-                                    memberRef = model.getNodeIndex().getMember(ref);
-                                    break;
-                                case "way":
-                                    memberRef = model.getWayIndex().getMember(ref);
-                                    if (memberRef != null) {
-                                        relation.addWay((Way) memberRef);
-                                    }
-                                    break;
-                                case "relation":
-                                    memberRef = model.getRelationIndex().getMember(ref);
-                                    break;
-                            }
-                            if (memberRef != null) {
-                                relation.addMember(memberRef);
-                                memberRef.addRole(relation.getId(), role);
+                            if (type.equals("way")) {
+                                Way memberRef = model.getWayIndex().getMember(ref);
+                                if (memberRef != null) {
+                                    relation.addWay(memberRef);
+                                    memberRef.addRole(relation.getId(), role);
+                                }
                             }
                             break;
                     }
@@ -284,21 +294,21 @@ public class OSMParser {
                     switch (xmlReader.getLocalName()) {
                         case "node":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
-                                //POI list can be kd-tree only
                                 POI poi = createSystemPOI(systemPOIName, systemPOITags, node.getX(), node.getY());
                                 model.addSystemPOI(poi);
                                 model.getPOITree().insert(poi);
                             }
-                            isNode = false;
-                            tag = null;
-                            systemPOIName = "";
-                            systemPOITags = new ArrayList<>();
                             if (!streetname.equals("") && !housenumber.equals("") && !postcode.equals("")
                                     && !city.equals("")) {
 
                                 model.getStreetTree().insert(streetname,
                                         " " + housenumber + " " + postcode + " " + city, node.getId());
                             }
+                            isNode = false;
+                            tag = null;
+                            systemPOIName = "";
+                            systemPOITags = new ArrayList<>();
+                            name = "";
                             break;
                         case "way":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
@@ -315,6 +325,7 @@ public class OSMParser {
                             tag = null;
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
+                            name = "";
                             break;
                         case "relation":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
@@ -322,7 +333,6 @@ public class OSMParser {
                                 model.addSystemPOI(poi);
                                 model.getPOITree().insert(poi);
                             }
-
                             if (tag != null) {
                                 relation.setTag(tag);
                             }
@@ -331,6 +341,7 @@ public class OSMParser {
                             tag = null;
                             systemPOIName = "";
                             systemPOITags = new ArrayList<>();
+                            name = "";
                             break;
                     }
                     break;
