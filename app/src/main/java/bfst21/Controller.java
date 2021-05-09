@@ -332,8 +332,6 @@ public class Controller {
                 hideAll();
             });
 
-            NearbyPOI.setVisible(true);
-            NearbyPOI.setManaged(true);
             updateNearbyPOI();
         } else {
             singleClick = true;
