@@ -177,25 +177,29 @@ public class MapCanvas extends Canvas {
             paintPath(model.getAStarPath());
         }
 
-        model.getSystemPointsOfInterest().forEach(poi -> {
-            gc.setFill(Color.rgb(52,152,219));
-            double size = (30 / Math.sqrt(trans.determinant()));
-            gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
-            String image = poi.getImageType();
-            gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
+        if (distanceWidth <= 20) {
+            model.getSystemPointsOfInterest().forEach(poi -> {
+                gc.setFill(Color.rgb(52, 152, 219));
+                double size = (30 / Math.sqrt(trans.determinant()));
+                gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
+                String image = poi.getImageType();
+                gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
 
-            gc.setFill(Color.BLACK);
-            gc.setFont(Font.font("Arial", FontWeight.BOLD,10 / Math.sqrt(trans.determinant())));
-            gc.fillText(poi.getName(),poi.getX()+size,poi.getY());
-        });
+                gc.setFill(Color.BLACK);
+                gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+            });
+        }
 
-        model.getPointsOfInterest().forEach(POI -> {
-            gc.setFill(Color.WHITE);
-            double size = (30 / Math.sqrt(trans.determinant()));
-            gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
-            gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
-                    size / 2, size / 2);
-        });
+        if (distanceWidth <= 40){
+            model.getPointsOfInterest().forEach(POI -> {
+                gc.setFill(Color.WHITE);
+                double size = (30 / Math.sqrt(trans.determinant()));
+                gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+                gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
+                        size / 2, size / 2);
+            });
+        }
 
         if (showNames) {
             gc.setLineDashes(0);
