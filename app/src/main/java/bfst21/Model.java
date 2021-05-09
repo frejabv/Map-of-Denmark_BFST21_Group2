@@ -414,52 +414,52 @@ public class Model {
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
 
-    public void addDrawableToRTreeList(String type, List<Drawable> dList, int zoomLimit) {
+    public void addDrawableToRTreeList(String type, List<Drawable> drawableList, int zoomLimit) {
         if (type.equals("map")) {
             //if not fillable, it is drawable
-            boolean fillable = fillableTagList.contains(dList.get(0).getTag());
+            boolean fillable = fillableTagList.contains(drawableList.get(0).getTag());
             switch (zoomLimit) {
                 case 700:
                     if (fillable) {
-                        fillables700.addAll(dList);
+                        fillables700.addAll(drawableList);
                     } else {
-                        drawables700.addAll(dList);
+                        drawables700.addAll(drawableList);
                     }
                     break;
                 case 400:
                     if (fillable) {
-                        fillables400.addAll(dList);
+                        fillables400.addAll(drawableList);
                     } else {
-                        drawables400.addAll(dList);
+                        drawables400.addAll(drawableList);
                     }
                     break;
                 case 150:
                     if (fillable) {
-                        fillables150.addAll(dList);
+                        fillables150.addAll(drawableList);
                     } else {
-                        drawables150.addAll(dList);
+                        drawables150.addAll(drawableList);
                     }
                     break;
                 case 7:
                     if (fillable) {
-                        fillables7.addAll(dList);
+                        fillables7.addAll(drawableList);
                     } else {
-                        drawables7.addAll(dList);
+                        drawables7.addAll(drawableList);
                     }
                     break;
                 case 3:
                     if (fillable) {
-                        fillables3.addAll(dList);
+                        fillables3.addAll(drawableList);
                     } else {
-                        drawables3.addAll(dList);
+                        drawables3.addAll(drawableList);
                     }
                     break;
             }
-            if (driveable.contains(dList.get(0).getTag())){
-                roadlist.addAll(dList);
+            if (driveable.contains(drawableList.get(0).getTag())){
+                roadlist.addAll(drawableList);
             }
         } else {
-            for (Drawable d : dList) {
+            for (Drawable d : drawableList) {
                 boolean fillable = fillableTagList.contains(d.getTag());
                 if (d.getTag() != null) {
                     switch (d.getTag().zoomLimit) {
