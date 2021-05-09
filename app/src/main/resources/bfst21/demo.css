@@ -180,7 +180,7 @@
 .attractionType{
     -fx-font-size: 10px;
 }
-.testImageView{
+.imageView{
     -fx-background-color: red;
     -fx-min-width: 20;
     -fx-min-height: 20;

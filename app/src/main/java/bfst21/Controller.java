@@ -361,8 +361,8 @@ public class Controller {
                     stackPane.setStyle("-fx-background-color:rgba(52,152,219,1);-fx-background-radius: 15;-fx-min-width: 30;");
                 }
                 Image image = model.imageSet.get(poi.getImageType());
-                ImageView imageview = new ImageView(image); //poi.getImageType()
-                imageview.getStyleClass().add("testImageView");
+                ImageView imageview = new ImageView(image);
+                imageview.getStyleClass().add("imageView");
                 imageview.setFitHeight(16.0);
                 imageview.setFitWidth(16.0);
                 imageview.setPreserveRatio(true);
