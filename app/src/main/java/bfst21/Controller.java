@@ -6,7 +6,6 @@ import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
-import com.sun.javafx.PlatformUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -348,7 +347,7 @@ public class Controller {
         NearbyPOI.getChildren().clear();
         NearbyPOI.getChildren().add(nearbyAttractionsText);
         NearbyPOI.getChildren().add(region);
-        ArrayList<POI> poiArrayList = model.getPOITree().nearestK(canvas.pinPoint, 5);
+        ArrayList<POI> poiArrayList = model.getPOITree().nearest(canvas.pinPoint, 5);
         if (poiArrayList.size() > 0) {
             for (POI poi : poiArrayList) {
                 HBox nearbyContainer = new HBox();

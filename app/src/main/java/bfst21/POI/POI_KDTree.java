@@ -141,7 +141,7 @@ public class POI_KDTree {
      * @param listSize  size of the created list of POI's
      * @return          the nearest Node
      */
-    public ArrayList<POI> nearestK(Point2D p, int listSize) {
+    public ArrayList<POI> nearest(Point2D p, int listSize) {
         if (isEmpty()) {
             return null;
         }
@@ -163,7 +163,7 @@ public class POI_KDTree {
      * @param p                 the point we are querying about.
      * @return                  returns the closestList when there are no other candidates in this branch.
      */
-    private ArrayList<POI> nearest(POI currentNode, ArrayList<POI> currentList, Point2D p, boolean orientation, int listSize) {
+    private ArrayList<POI> nearest (POI currentNode, ArrayList<POI> currentList, Point2D p, boolean orientation, int listSize) {
         ArrayList<POI> closestList = currentList;
         POI worstClosest = closestList.get(closestList.size()-1);
         double worstDistance = worstClosest.getDistTo();
