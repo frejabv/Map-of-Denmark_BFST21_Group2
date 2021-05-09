@@ -151,7 +151,7 @@ public class OSMParser {
                                 way.setName(v);
                             }
 
-                            if (k.equals("place") && way != null) {
+                            if (k.equals("place")) {
                                 if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
                                         || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
                                         || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
@@ -292,6 +292,7 @@ public class OSMParser {
                                 model.getStreetTree().insert(streetname,
                                         " " + housenumber + " " + postcode + " " + city, node.getId());
                             }
+                            name = "";
                             break;
                         case "way":
                             if (tag != null) {
@@ -301,6 +302,7 @@ public class OSMParser {
                             way.checkSpeed();
                             way.createRectangle();
                             tag = null;
+                            name = "";
                             break;
                         case "relation":
                             if (tag != null) {
