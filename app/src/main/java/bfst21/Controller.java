@@ -113,8 +113,6 @@ public class Controller {
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
 
         model.setUpAStar();
-        //TODO delete
-        //model.addRelationsToDrawStyles();
     }
 
     @FXML

@@ -2,11 +2,9 @@ package bfst21;
 
 import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
-import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
 import bfst21.osm.Tag;
-import bfst21.osm.Way;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -70,7 +68,7 @@ public class MapCanvas extends Canvas {
         float distanceWidth = getDistanceWidth();
 
         updateViewPort();
-        // TODO Rtree queries
+
         activeDrawList = new ArrayList<>();
         activeFillList = new ArrayList<>();
         if (distanceWidth <= 700) {
