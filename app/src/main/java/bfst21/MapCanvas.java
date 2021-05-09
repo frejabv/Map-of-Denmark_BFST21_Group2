@@ -106,18 +106,19 @@ public class MapCanvas extends Canvas {
         });
 
 
+        if (20 >= getDistanceWidth()) {
+            model.getSystemPointsOfInterest().forEach(POI -> {
+                gc.setFill(Color.rgb(52, 152, 219));
+                double size = (30 / Math.sqrt(trans.determinant()));
+                gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+                String image = POI.getImageType();
+                gc.drawImage(model.imageSet.get(image), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
 
-        model.getSystemPointsOfInterest().forEach(POI -> {
-            gc.setFill(Color.rgb(52,152,219));
-            double size = (30 / Math.sqrt(trans.determinant()));
-            gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
-            String image = POI.getImageType();
-            gc.drawImage(model.imageSet.get(image), POI.getX() - (size / 4), POI.getY() - (size / 4), size / 2, size / 2);
-
-            gc.setFill(Color.BLACK);
-            gc.setFont(Font.font("Arial", FontWeight.BOLD,10 / Math.sqrt(trans.determinant())));
-            gc.fillText(POI.getName(),POI.getX()+size,POI.getY());
-        });
+                gc.setFill(Color.BLACK);
+                gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                gc.fillText(POI.getName(), POI.getX() + size, POI.getY());
+            });
+        }
 
         if (showNames) {
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
