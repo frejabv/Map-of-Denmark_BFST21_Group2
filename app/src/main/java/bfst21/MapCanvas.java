@@ -404,18 +404,4 @@ public class MapCanvas extends Canvas {
         showRoute = false;
         repaint();
     }
-
-    public void drawViewportWindow() {
-        Point2D maxPoint = new Point2D(getWidth() * 3/4, getHeight() * 3/4);
-        maxPoint = mouseToModelCoords(maxPoint);
-
-        Point2D minPoint = new Point2D(getWidth() * 1/4, getHeight() * 1/4);
-        minPoint = mouseToModelCoords(minPoint);
-
-        Rectangle window = new Rectangle((float) minPoint.getX(),(float) minPoint.getY(), (float) maxPoint.getX(), (float) maxPoint.getY());
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        gc.setStroke(Color.BLACK);
-        debugViewport = window;
-        window.draw(gc);
-    }
 }

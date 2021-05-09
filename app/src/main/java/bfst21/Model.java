@@ -449,12 +449,16 @@ public class Model {
 
     public Rtree getRoadRTree() {
         return roadTree;
+    }
+
     public void addSystemPOI(POI poi) {
         systemPointsOfInterest.add(poi);
     }
 
     public ArrayList<POI> getSystemPointsOfInterest() {
         return systemPointsOfInterest;
+    }
+
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
 
     public void addDrawableToRTreeList(String type, List<Drawable> drawableList, int zoomLimit) {
