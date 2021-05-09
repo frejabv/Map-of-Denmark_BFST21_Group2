@@ -262,48 +262,40 @@
                     </HBox>
                 </VBox>
             </VBox>
-          </ScrollPane>
-        </VBox>
-        <VBox fx:id="pinContainer" styleClass="mainContainer">
-          <HBox styleClass="pinBorderPane">
-              <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
-              <VBox>
-                <Text fx:id="pinText">Pin</Text>
-                <Button fx:id="removePin">Remove pin</Button>
-              </VBox>
-          </HBox>
-        </VBox>
-      </VBox>
-      <HBox fx:id="rightContainer" styleClass="rightContainer" alignment="TOP_RIGHT" pickOnBounds="false" GridPane.columnIndex="1" GridPane.rowIndex="0">
-        <VBox fx:id="debugContainer" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="mainContainer">
-          <FlowPane styleClass="header-margin">
-            <Text styleClass="mainContainer-header">Debug</Text>
-          </FlowPane>
-          <ScrollPane styleClass="scroll-pane" fitToWidth="true">
-            <VBox>
-              <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Data</Text>
-              </FlowPane>
-              <Region styleClass="hr"/>
-              <Text fx:id="ttd">Redraw time: 00:00</Text>
-              <Text fx:id="cpuProcess" >CPU Process Load: 0.00</Text>
-              <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
-              <Text fx:id="memoryUse">Memory Use: 0.00</Text>
-              <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Dev Settings</Text>
-              </FlowPane>
-              <Region styleClass="hr"/>
-              <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show Road-Rtree lines</CheckBox>
-              <CheckBox styleClass="checkBox" onMouseClicked="#toggleRoadRectangles">Show Road-Rtree Way rectangles</CheckBox>
-              <CheckBox styleClass="checkBox" onMouseClicked="#toggleNearestNodeLine">Show line from mouse to nearest node on nearest way</CheckBox>
-              <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
-              <CheckBox styleClass="checkBox" onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
-              <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
-              </FlowPane>
-              <Region styleClass="hr" />
-              <VBox fx:id="regexContainer">
-              </VBox>
+            <VBox fx:id="rightContainer" styleClass="rightContainer" alignment="TOP_RIGHT" pickOnBounds="false"
+                  GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <VBox fx:id="debugContainer" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="mainContainer">
+                    <FlowPane styleClass="header-margin">
+                        <Text styleClass="mainContainer-header">Debug</Text>
+                    </FlowPane>
+                    <ScrollPane styleClass="scroll-pane" fitToWidth="true">
+                        <VBox>
+                            <FlowPane styleClass="header-margin">
+                                <Text styleClass="mainContainer-subheader">Data</Text>
+                            </FlowPane>
+                            <Region styleClass="hr"/>
+                            <Text fx:id="ttd">Redraw time: 00:00</Text>
+                            <Text fx:id="cpuProcess">CPU Process Load: 0.00</Text>
+                            <Text fx:id="cpuSystem">CPU System Load: 0.00</Text>
+                            <Text fx:id="memoryUse">Memory Use: 0.00</Text>
+                            <FlowPane styleClass="header-margin">
+                                <Text styleClass="mainContainer-subheader">Dev Settings</Text>
+                            </FlowPane>
+                            <Region styleClass="hr"/>
+                            <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show Road-Rtree lines</CheckBox>
+                            <CheckBox styleClass="checkBox" onMouseClicked="#toggleRoadRectangles">Show Road-Rtree Way rectangles</CheckBox>
+                            <CheckBox styleClass="checkBox" onMouseClicked="#toggleNearestNodeLine">Show line from mouse to nearest node on nearest way</CheckBox>
+                            <CheckBox fx:id="showAStarPath" onMouseClicked="#toggleAStarDebugPath">Show A* paths</CheckBox>
+                            <CheckBox styleClass="checkBox" onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
+                            <FlowPane styleClass="header-margin">
+                                <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
+                            </FlowPane>
+                            <Region styleClass="hr"/>
+                            <VBox fx:id="regexContainer">
+                            </VBox>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
             </VBox>
         </GridPane>
         <BorderPane pickOnBounds="false">
