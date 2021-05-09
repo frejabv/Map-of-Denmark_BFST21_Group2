@@ -138,7 +138,7 @@ public class OSMParser {
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
 
-                            if (v.equals("construction")) {
+                            if (v.equals("construction") || k.equals("construction")) {
                                 break;
                             }
 
