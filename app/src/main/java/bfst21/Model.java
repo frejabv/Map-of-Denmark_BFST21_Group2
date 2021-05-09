@@ -91,8 +91,6 @@ public class Model {
             roadList.addAll(drawableMap.get(tag));
         }
         roadRTree = new Rtree(roadList);
-
-        System.out.println("here");
     }
 
     public void initImageSet() {
