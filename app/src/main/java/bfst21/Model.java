@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
@@ -90,12 +89,8 @@ public class Model {
         }
         roadRTree = new Rtree(roadList);
 
-        drawableMap.forEach((tag, drawables) -> {
-            drawableTagPriority.add(tag);
-        });
-        fillMap.forEach((tag, drawables) -> {
-            fillableTagPriority.add(tag);
-        });
+        drawableMap.forEach((tag, drawables) -> drawableTagPriority.add(tag));
+        fillMap.forEach((tag, drawables) -> fillableTagPriority.add(tag));
         drawableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
         fillableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
     }

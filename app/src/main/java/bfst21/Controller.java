@@ -5,7 +5,6 @@ import bfst21.osm.Way;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixNode;
-import com.sun.javafx.PlatformUtil;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -99,7 +98,6 @@ public class Controller {
         hideAll();
         debug = new Debug(canvas, cpuProcess, cpuSystem, ttd, memoryUse);
         changeType("debug", false);
-        Spelling autocorrector = new Spelling();
         Regex regex = new Regex(setupRegexView());
 
         setUpSearchField(regex);
@@ -245,11 +243,10 @@ public class Controller {
                         canvas.setPin(node.getX(), node.getY());
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
+                        Point2D p = new Point2D(node.getX(), node.getY());
                         if (fieldType.equals("from")) {
-                            Point2D p = new Point2D(node.getX(), node.getY());
                             fromNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                         } else {
-                            Point2D p = new Point2D(node.getX(), node.getY());
                             toNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                         }
                         if (fromNode != null && toNode != null) {
@@ -386,11 +383,11 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
-        if (canvas.setPin && type != "pin" && type != "debug") {
+        if (canvas.setPin && !type.equals("pin") && !type.equals("debug")) {
             canvas.setPin = false;
             canvas.repaint();
         }
-        if (type != "route" && type != "debug") {
+        if (!type.equals("route") && !type.equals("debug")) {
             canvas.hideRoute();
             canvas.repaint();
         }
@@ -470,7 +467,7 @@ public class Controller {
             scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
             metric = " KM";
         }
-        scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
+        scaletext.textProperty().setValue(scaleValue + metric);
     }
 
     public void onMousePressedPinHeart() {
@@ -554,22 +551,13 @@ public class Controller {
         routeDescription.setManaged(false);
     }
 
-    @FXML
-    private ToggleGroup selectTransportTypeSettings;
-
-    @FXML
-    private CheckBox showAStarPath;
-
     public void toggleAStarDebugPath() {
-        if (showAStarPath.isSelected()) {
-            canvas.debugAStar = true;
-            canvas.repaint();
-        } else {
-            canvas.debugAStar = false;
-            canvas.repaint();
-        }
+        canvas.debugAStar = !canvas.debugAStar;
+        canvas.repaint();
     }
 
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
     @FXML
     private ToggleGroup selectTransportTypeRoute;
 

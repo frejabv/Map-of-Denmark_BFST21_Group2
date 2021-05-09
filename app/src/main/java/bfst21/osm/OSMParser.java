@@ -14,8 +14,6 @@ import java.util.*;
 import java.util.zip.ZipInputStream;
 
 public class OSMParser {
-    private static HashMap<String, List<String>> addresses = new HashMap<>();
-
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
             throws IOException, XMLStreamException {
         switch (fileExtension) {
@@ -371,7 +369,7 @@ public class OSMParser {
     }
 
     private static boolean isDublet(Member drawable, Tag tag, Map<Tag, List<Drawable>> map) {
-        List listToCheck = map.get(tag);
+        List<Drawable> listToCheck = map.get(tag);
         boolean isDublet = true;
         if (listToCheck.size() == 0 || listToCheck.get(listToCheck.size() - 1) != drawable) {
             isDublet = false;

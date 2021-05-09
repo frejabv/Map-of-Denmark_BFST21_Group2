@@ -22,7 +22,7 @@ public class RenderingStyle {
     public Color islandClose;
 
     public RenderingStyle() {
-        doubleDrawn = new HashMap<Tag, Boolean>();
+        doubleDrawn = new HashMap<>();
         defaultColorMap = new HashMap<>();
         darkModeColorMap = new HashMap<>();
         styleMap = new HashMap<>();

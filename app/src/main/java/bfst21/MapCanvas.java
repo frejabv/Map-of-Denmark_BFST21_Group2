@@ -5,7 +5,6 @@ import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
 import bfst21.osm.Tag;
-import bfst21.osm.Way;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -88,7 +87,7 @@ public class MapCanvas extends Canvas {
                     gc.fill();
                 }
             });
-        };
+        }
 
         //Draw dark
         if (doubleDraw){
@@ -111,7 +110,7 @@ public class MapCanvas extends Canvas {
                         });
                     }
                 }
-            };
+            }
         }
 
         //Draw normal
@@ -309,12 +308,11 @@ public class MapCanvas extends Canvas {
         double deltaY = model.getMaxY() - model.getMinY();
         double deltaX = model.getMaxX() - model.getMinX();
         trans.setToIdentity();
+        pan(-model.getMinX(), -model.getMaxY());
         if (deltaX < deltaY) {
-            pan(-model.getMinX(), -model.getMaxY());
             zoom((getHeight() - getWidth() / (model.getMaxX() - model.getMinX())) * -1, new Point2D(0, 0));
             pan(-(model.getMinY() - (model.getMaxX())), 0);
         } else {
-            pan(-model.getMinX(), -model.getMaxY());
             zoom(((getWidth() / (model.getMinX() - model.getMaxX())) * -1), new Point2D(0, 0));
             pan(0, -(model.getMaxX() - (-model.getMinY() / 2)));
         }
