@@ -568,16 +568,16 @@ public class Controller {
 
     public void updateUserPOI() {
         userPOI.getChildren().clear();
-        model.getPointsOfInterest().forEach(POI -> {
-            Button currentPOILine = new Button(POI.getName());
+        model.getPointsOfInterest().forEach(poi -> {
+            Button currentPOILine = new Button(poi.getName());
             userPOI.getChildren().add(currentPOILine);
             currentPOILine.setOnAction(event -> {
-                currentPOI = POI;
+                currentPOI = poi;
                 changeType("pin", true);
                 removePin.setVisible(false);
                 removePin.setManaged(false);
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
-                canvas.goToPosition(POI.getX(), POI.getX() + 0.0002, POI.getY());
+                canvas.goToPosition(poi.getX(), poi.getX() + 0.0002, poi.getY());
                 canvas.repaint();
             });
         });
