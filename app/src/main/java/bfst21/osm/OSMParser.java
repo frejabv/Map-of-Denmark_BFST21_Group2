@@ -284,10 +284,7 @@ public class OSMParser {
                     switch (xmlReader.getLocalName()) {
                         case "node":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
-                                //POI list can be kd-tree only
-                                POI poi = createSystemPOI(systemPOIName, systemPOITags, node.getX(), node.getY());
-                                model.addSystemPOI(poi);
-                                model.getPOITree().insert(poi);
+                                newSystemPOI(model, systemPOIName, node.getX(), node.getY());
                             }
                             isNode = false;
                             tag = null;
@@ -302,9 +299,7 @@ public class OSMParser {
                             break;
                         case "way":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
-                                POI poi = createSystemPOI(systemPOIName, systemPOITags, way.first().getX(), way.first().getY());
-                                model.addSystemPOI(poi);
-                                model.getPOITree().insert(poi);
+                                newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
                             }
                             if (tag != null) {
                                 way.setTag(tag);
@@ -318,9 +313,7 @@ public class OSMParser {
                             break;
                         case "relation":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
-                                POI poi = createSystemPOI(systemPOIName, systemPOITags, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
-                                model.addSystemPOI(poi);
-                                model.getPOITree().insert(poi);
+                                newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
                             }
 
                             if (tag != null) {
@@ -340,6 +333,12 @@ public class OSMParser {
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("No coastlines found");
         }
+    }
+
+    private static void newSystemPOI(Model model,String systemPOIName, float x, float y) {
+        POI poi = createSystemPOI(systemPOIName, systemPOITags, x, y);
+        model.addSystemPOI(poi);
+        model.getPOITree().insert(poi);
     }
 
     private static POI createSystemPOI(String systemPOIName, List<String> systemPOITags, float x, float y) {
