@@ -70,7 +70,7 @@ public class Controller {
     @FXML
     private VBox leftContainer;
     @FXML
-    private HBox rightContainer;
+    private VBox rightContainer;
     @FXML
     private CheckBox showNames;
 
@@ -78,7 +78,7 @@ public class Controller {
     private Point2D lastMouse;
     private boolean singleClick = true;
     private Model model;
-    private ArrayList<Text> suggestionList = new ArrayList<>();
+    private final ArrayList<Text> suggestionList = new ArrayList<>();
     private Node fromNode, toNode;
 
     public void init(Model model) {
@@ -99,7 +99,6 @@ public class Controller {
         hideAll();
         debug = new Debug(canvas, cpuProcess, cpuSystem, ttd, memoryUse);
         changeType("debug", false);
-        Spelling autocorrector = new Spelling();
         Regex regex = new Regex(setupRegexView());
 
         setUpSearchField(regex);
@@ -122,12 +121,12 @@ public class Controller {
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
         List<String> regexString = Arrays.asList("[Postcode] [City]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
-        for (int i = 0; i < regexString.size(); i++) {
+        for (String regex : regexString) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");
             Text bullet = new Text("\u25CF");
             bullet.getStyleClass().add("regexMatch");
-            Text text = new Text(regexString.get(i));
+            Text text = new Text(regex);
             hbox.getChildren().add(bullet);
             hbox.getChildren().add(text);
             regexVisualisers.add(bullet);
@@ -173,7 +172,6 @@ public class Controller {
                 canvas.hideRoute();
             }
         });
-
         routeFieldFrom.setOnAction(e -> {
             if (!suggestionList.isEmpty()) {
                 routeFieldFrom.textProperty().setValue(suggestionList.get(0).getText());
@@ -245,11 +243,10 @@ public class Controller {
                         canvas.setPin(node.getX(), node.getY());
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
+                        Point2D p = new Point2D(node.getX(), node.getY());
                         if (fieldType.equals("from")) {
-                            Point2D p = new Point2D(node.getX(), node.getY());
                             fromNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                         } else {
-                            Point2D p = new Point2D(node.getX(), node.getY());
                             toNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
                         }
                         if (fromNode != null && toNode != null) {
@@ -386,11 +383,11 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
-        if (canvas.setPin && type != "pin" && type != "debug") {
+        if (canvas.setPin && !type.equals("pin") && !type.equals("debug")) {
             canvas.setPin = false;
             canvas.repaint();
         }
-        if (type != "route" && type != "debug") {
+        if (!type.equals("route") && !type.equals("debug")) {
             canvas.hideRoute();
             canvas.repaint();
         }
@@ -470,7 +467,7 @@ public class Controller {
             scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
             metric = " KM";
         }
-        scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
+        scaletext.textProperty().setValue(scaleValue + metric);
     }
 
     public void onMousePressedPinHeart() {
@@ -561,13 +558,8 @@ public class Controller {
     private CheckBox showAStarPath;
 
     public void toggleAStarDebugPath() {
-        if (showAStarPath.isSelected()) {
-            canvas.debugAStar = true;
-            canvas.repaint();
-        } else {
-            canvas.debugAStar = false;
-            canvas.repaint();
-        }
+        canvas.debugAStar = showAStarPath.isSelected();
+        canvas.repaint();
     }
 
     @FXML
