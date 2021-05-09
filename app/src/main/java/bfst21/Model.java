@@ -5,6 +5,7 @@ import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
+import bfst21.osm.Tag;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -13,10 +14,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
+
+    private ArrayList<Tag> drawableTagPriority;
+    private ArrayList<Tag> fillableTagPriority;
 
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
@@ -64,6 +69,8 @@ public class Model {
         relationIndex = new MemberIndex<>();
         streetTree = new RadixTree();
         areaNames = new ArrayList<>();
+        drawableTagPriority = new ArrayList<>();
+        fillableTagPriority = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
 
@@ -83,7 +90,14 @@ public class Model {
         }
         roadRTree = new Rtree(roadList);
 
-        System.out.println("here");
+        drawableMap.forEach((tag, drawables) -> {
+            drawableTagPriority.add(tag);
+        });
+        fillMap.forEach((tag, drawables) -> {
+            fillableTagPriority.add(tag);
+        });
+        drawableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
+        fillableTagPriority.sort((a, b) -> Integer.compare(a.layer, b.layer));
     }
 
     /*
@@ -283,5 +297,28 @@ public class Model {
 
     public Node getNearestNode() {
         return nearestNode;
+    }
+
+    public ArrayList<Tag> getDrawableTagPriority(){
+        return drawableTagPriority;
+    }
+
+    public ArrayList<Tag> getFillableTagPriority(){ return fillableTagPriority; }
+
+    public void addRelationsToDrawStyles(){
+        for(Relation drawable: relationIndex){
+            if(drawable.getTag() != null) {
+                Tag tag = drawable.getTag();
+                RenderingStyle renderingStyle = new RenderingStyle();
+                DrawStyle style = renderingStyle.getDrawStyleByTag(tag);
+                if (style == DrawStyle.FILL) {
+                    fillMap.putIfAbsent(tag, new ArrayList<>());
+                    fillMap.get(tag).add(drawable);
+                } else {
+                    drawableMap.putIfAbsent(tag, new ArrayList<>());
+                    drawableMap.get(tag).add(drawable);
+                }
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ public class OSMParser {
             break;
         case ZIP:
             loadZIP(in, model);
-            // saveOBJ(fileName, model);
+            //saveOBJ(fileName, model);
             break;
         case OBJ:
             loadOBJ(in, model);
@@ -54,7 +54,7 @@ public class OSMParser {
     public static void saveOBJ(String fileName, Model model) throws IOException {
         // Point java to the correct folder on the host machine
         URL fileURL = OSMParser.class.getResource("/bfst21/data/");
-        File file = new File(fileURL.getPath() + fileName);
+        File file = new File(fileURL.getPath() + "/" + fileName + ".obj");
 
         if (!file.createNewFile()) {
             // Figure out whether or not we need to freak out if we are overwriting an
@@ -117,6 +117,7 @@ public class OSMParser {
                             node = new Node(lon, lat, id);
                             model.addToNodeIndex(node);
                             isNode = true;
+                            break;
                         case "way":
                             isWay = true;
                             var wayId = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -138,7 +139,7 @@ public class OSMParser {
                                 break;
                             }
 
-                            if (k.equals("service")) {
+                            if (k.equals("service") || k.equals("surface")) {
                                 break;
                             }
 
@@ -146,11 +147,11 @@ public class OSMParser {
                                 name = v;
                             }
 
-                            if (k.equals("name") && isWay) {
+                            if (k.equals("name") && isWay && way != null) {
                                 way.setName(v);
                             }
 
-                            if (k.equals("place")) {
+                            if (k.equals("place") && way != null) {
                                 if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
                                         || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
                                         || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
@@ -165,38 +166,57 @@ public class OSMParser {
                                 }
                             }
 
-                            if (k.equals("maxspeed")) {
-                                v.replaceAll("\\D+", "");
-                                if(!v.equals("")){
-                                    int speed = (int) Math.round(Double.parseDouble(v));
-                                    way.setMaxSpeed(speed);
+                            if(way != null) {
+                                if (k.equals("maxspeed")) {
+                                    v = v.replaceAll("\\D+", "");
+                                    if(!v.equals("")){
+                                        int speed = (int) Math.round(Double.parseDouble(v));
+                                        way.setMaxSpeed(speed);
+                                    }
+                                }
+
+                                if (k.equals("oneway")) {
+                                    if (v.equals("yes") || v.equals("true") || v.equals("1")) {
+                                        way.setIsOneway();
+                                    }
+                                    if (v.equals("-1")) {
+                                        Collections.reverse(way.getNodes());
+                                        way.setIsOneway();
+                                    }
+                                }
+
+                                if (k.equals("junction") || v.equals("roundabout")) {
+                                    way.setIsJunction();
+                                    break;
+                                }
+
+                                if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
+                                    if (!v.equals("no")) {
+                                        way.setIsCyclable();
+                                    }
+                                    break;
+                                }
+
+                                if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
+                                    way.setIsWalkable();
+                                    break;
                                 }
                             }
 
-                            if (k.equals("oneway")) {
-                                if (v.equals("yes") || v.equals("true") || v.equals("1")) {
-                                    way.setIsOneway();
-                                }
-                                if (v.equals("-1")) {
-                                    Collections.reverse(way.getNodes());
-                                    way.setIsOneway();
-                                }
-                            }
-
-                            if (k.equals("junction") || v.equals("roundabout")) {
-                                way.setIsJunction();
+                            if (k.equals("landuse") && v.equals("residential")){
+                                tag = Tag.CITYBORDER;
                                 break;
                             }
 
-                            if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
-                                if (!v.equals("no")) {
-                                    way.setIsCyclable();
-                                }
+                            if(k.equals("ferry")){
+                                tag = Tag.FERRY;
                                 break;
                             }
 
-                            if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
-                                way.setIsWalkable();
+                            if(v.equals("sand") || v.equals("beach")){
+                                if(k.equals("natural")) {
+                                    tag = Tag.BEACH;
+                                }
                                 break;
                             }
 
@@ -248,6 +268,7 @@ public class OSMParser {
                                     memberRef = model.getWayIndex().getMember(ref);
                                     if (memberRef != null) {
                                         relation.addWay((Way) memberRef);
+                                        ((Way) memberRef).addRole(relation.getId(), role);
                                     }
                                     break;
                                 case "relation":
@@ -256,7 +277,6 @@ public class OSMParser {
                             }
                             if (memberRef != null) {
                                 relation.addMember(memberRef);
-                                memberRef.addRole(relation.getId(), role);
                             }
                             break;
                     }
