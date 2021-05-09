@@ -1,10 +1,13 @@
 package bfst21;
 
+import bfst21.POI.POI;
+import bfst21.POI.POI_KDTree;
 import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
+import javafx.scene.image.Image;
 import org.checkerframework.checker.units.qual.A;
 
 import javax.xml.stream.XMLStreamException;
@@ -18,24 +21,33 @@ public class Model {
     float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
+
     private ArrayList<Tag> drawableTagList;
     private ArrayList<Tag> fillableTagList;
+
+    private POI_KDTree POITree;
     private MemberIndex<Node> nodeIndex;
     private MemberIndex<Way> wayIndex;
     private MemberIndex<Relation> relationIndex;
     private RadixTree streetTree;
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
+    HashMap<String, Image> imageSet;
+
     private ArrayList<POI> pointsOfInterest;
+    private ArrayList<POI> systemPointsOfInterest;
+
     private ArrayList<Drawable> fillables700, fillables400, fillables150, fillables7, fillables3;
     private ArrayList<Drawable> drawables700, drawables400, drawables150, drawables7, drawables3;
     private Rtree fillableRTree700, fillableRTree400, fillableRTree150, fillableRTree7, fillableRTree3;
     private Rtree drawableRTree700, drawableRTree400, drawableRTree150, drawableRTree7, drawableRTree3;
     // roadtree can be optimized away
-    private Rtree roadTree;
     private ArrayList<Drawable> roadlist;
+    private Rtree roadTree;
     private Node nearestNode;
+
     private boolean ttiMode;
+
     private AStar aStar;
     private List<Node> AStarPath;
     private List<Node> AStarDebugPath;
@@ -58,6 +70,7 @@ public class Model {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
+        POITree = new POI_KDTree(this);
 
         nodeIndex = new MemberIndex<>();
         coastlines = new ArrayList<>();
@@ -69,6 +82,7 @@ public class Model {
         fillableTagList = new ArrayList<>();
 
         pointsOfInterest = new ArrayList<>();
+        systemPointsOfInterest = new ArrayList<>();
 
         this.ttiMode = ttiMode;
 
@@ -125,6 +139,23 @@ public class Model {
         fillableRTree3 = new Rtree(fillables3);
     }
 
+    public void initImageSet() {
+        imageSet = new HashMap<>();
+        imageSet.put("mill", new Image("bfst21/icons/" + "mill" + ".png"));
+        imageSet.put("museum", new Image("bfst21/icons/" + "museum" + ".png"));
+        imageSet.put("theme_park", new Image("bfst21/icons/" + "theme_park" + ".png"));
+        imageSet.put("aerodrome", new Image("bfst21/icons/" + "aerodrome" + ".png"));
+        imageSet.put("cinema", new Image("bfst21/icons/" + "cinema" + ".png"));
+        imageSet.put("castle", new Image("bfst21/icons/" + "castle" + ".png"));
+        imageSet.put("viewpoint", new Image("bfst21/icons/" + "viewpoint" + ".png"));
+        imageSet.put("statue", new Image("bfst21/icons/" + "statue" + ".png"));
+        imageSet.put("zoo", new Image("bfst21/icons/" + "zoo" + ".png"));
+        imageSet.put("suitcase", new Image("bfst21/icons/" + "suitcase" + ".png"));
+        imageSet.put("viewpoint", new Image("bfst21/icons/" + "viewpoint" + ".png"));
+        imageSet.put("default", new Image("bfst21/icons/" + "default" + ".png"));
+        imageSet.put("heart", new Image("bfst21/icons/" + "heart" + ".png"));
+    }
+
     /*
      * getters, setters and adders
      */
@@ -158,6 +189,10 @@ public class Model {
 
     public void setMaxY(float maxY) {
         this.maxY = maxY;
+    }
+
+    public POI_KDTree getPOITree(){
+        return POITree;
     }
 
     public MemberIndex<Node> getNodeIndex() {
@@ -300,6 +335,10 @@ public class Model {
         pointsOfInterest.add(poi);
     }
 
+    public void removePOI(POI poi) {
+        pointsOfInterest.remove(poi);
+    }
+
     public ArrayList<POI> getPointsOfInterest() {
         return pointsOfInterest;
     }
@@ -410,6 +449,14 @@ public class Model {
 
     public Rtree getRoadRTree() {
         return roadTree;
+    }
+
+    public void addSystemPOI(POI poi) {
+        systemPointsOfInterest.add(poi);
+    }
+
+    public ArrayList<POI> getSystemPointsOfInterest() {
+        return systemPointsOfInterest;
     }
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));

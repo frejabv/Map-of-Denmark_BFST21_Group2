@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -25,6 +26,7 @@ public class MapCanvas extends Canvas {
     private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    public boolean kdLines;
     boolean doubleDraw;
     boolean smallerViewPort, RTreeLines, roadRectangles;
     boolean nearestNodeLine;
@@ -106,13 +108,13 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
-        for (Drawable drawable : activeFillList) {
-            Tag tag = drawable.getTag();
+        for (Drawable fillable : activeFillList) {
+            Tag tag = fillable.getTag();
             gc.setStroke(renderingStyle.getColorByTag(tag));
             gc.setFill(renderingStyle.getColorByTag(tag));
 
             if (tag.zoomLimit > distanceWidth) {
-                drawable.draw(gc, renderingStyle);
+                fillable.draw(gc, renderingStyle);
                 gc.fill();
             }
 
@@ -175,6 +177,32 @@ public class MapCanvas extends Canvas {
             paintPath(model.getAStarPath());
         }
 
+        if (distanceWidth <= 20) {
+            model.getSystemPointsOfInterest().forEach(poi -> {
+                gc.setFill(Color.rgb(52, 152, 219));
+                double size = (30 / Math.sqrt(trans.determinant()));
+                gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
+                String image = poi.getImageType();
+                gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
+
+                if (showNames) {
+                    gc.setFill(Color.BLACK);
+                    gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                    gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                }
+            });
+        }
+
+        if (distanceWidth <= 40){
+            model.getPointsOfInterest().forEach(POI -> {
+                gc.setFill(Color.WHITE);
+                double size = (30 / Math.sqrt(trans.determinant()));
+                gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+                gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
+                        size / 2, size / 2);
+            });
+        }
+
         if (showNames) {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
@@ -182,24 +210,6 @@ public class MapCanvas extends Canvas {
                 areaName.drawType(gc, distanceWidth, renderingStyle);
             });
         }
-
-        model.getPointsOfInterest().forEach(POI -> {
-            gc.setFill(Color.WHITE);
-            double size = (30 / Math.sqrt(trans.determinant()));
-            gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
-            gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
-                    size / 2, size / 2);
-            switch (POI.getType().toLowerCase()) {
-                case "home":
-                    // draw home icon
-                    break;
-                case "work":
-                    // draw briefcase icon
-                    break;
-                default:
-                    // draw generic icon
-            }
-        });
 
         if (setPin) {
             double size = (30 / Math.sqrt(trans.determinant()));
@@ -209,6 +219,10 @@ public class MapCanvas extends Canvas {
 
 
         gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
+        if (kdLines) {
+            model.getPOITree().drawLines(gc);
+        }
+
         if (RTreeLines) {
             gc.setStroke(Color.RED);
             model.getRoadRTree().drawRTree(viewport, gc);
@@ -270,7 +284,6 @@ public class MapCanvas extends Canvas {
                 trans.prependScale(factor, factor, center);
             }
         } else {
-            // TODO: make the boundry go to inital zoom position
             if (getDistanceWidth() < mapZoomLimit) {
                 trans.prependScale(factor, factor, center);
             }
@@ -298,6 +311,7 @@ public class MapCanvas extends Canvas {
         gc.setStroke(Color.rgb(112,161,255));
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
         if(getDistanceWidth() < 7.0){
+            //TODO: make it not magic
             gc.setLineWidth(0.000045);
         }
         gc.beginPath();

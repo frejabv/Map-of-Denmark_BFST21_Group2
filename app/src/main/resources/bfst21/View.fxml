@@ -13,6 +13,7 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.Region?>
@@ -241,12 +242,20 @@
         </VBox>
         <VBox fx:id="pinContainer" styleClass="mainContainer">
           <HBox styleClass="pinBorderPane">
-            <Button onMousePressed="#onMousePressedPinHeart">Heart</Button>
-            <VBox>
-              <Text fx:id="pinText">Pin</Text>
-              <Button fx:id="removePin">Remove pin</Button>
-            </VBox>
+              <Button onMousePressed="#onMousePressedPinHeart" styleClass="heartIcon">
+                <graphic>
+                  <ImageView fx:id="heartIcon" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@icons/heart-border.png"/>
+                  </ImageView>
+                </graphic>
+              </Button>
+              <VBox>
+                <Text fx:id="pinText">Pin</Text>
+                <Button fx:id="removePin">Remove pin</Button>
+              </VBox>
           </HBox>
+          <VBox fx:id="NearbyPOI" styleClass="nearbyPOI">
+          </VBox>
         </VBox>
       </VBox>
       <HBox fx:id="rightContainer" styleClass="rightContainer" alignment="TOP_RIGHT" pickOnBounds="false" GridPane.columnIndex="1" GridPane.rowIndex="0">
@@ -268,6 +277,7 @@
                 <Text styleClass="mainContainer-subheader">Dev Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
+              <CheckBox styleClass="checkBox" onMouseClicked="#toggleKDLines">Show KD-tree lines</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleSmallerViewPort">Reduce view port size</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRTreeLines">Show Road-Rtree lines</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRoadRectangles">Show Road-Rtree Way rectangles</CheckBox>
