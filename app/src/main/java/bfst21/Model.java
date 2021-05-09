@@ -86,6 +86,16 @@ public class Model {
             e.printStackTrace();
         }
 
+        List<Drawable> roadList = new ArrayList<>();
+        for (Tag tag : drawableMap.keySet()) {
+            roadList.addAll(drawableMap.get(tag));
+        }
+        roadRTree = new Rtree(roadList);
+
+        System.out.println("here");
+    }
+
+    public void initImageSet() {
         imageSet = new HashMap<>();
         imageSet.put("mill", new Image("bfst21/icons/" + "mill" + ".png"));
         imageSet.put("museum", new Image("bfst21/icons/" + "museum" + ".png"));
@@ -100,14 +110,6 @@ public class Model {
         imageSet.put("viewpoint", new Image("bfst21/icons/" + "viewpoint" + ".png"));
         imageSet.put("default", new Image("bfst21/icons/" + "default" + ".png"));
         imageSet.put("heart", new Image("bfst21/icons/" + "heart" + ".png"));
-
-        List<Drawable> roadList = new ArrayList<>();
-        for (Tag tag : drawableMap.keySet()) {
-            roadList.addAll(drawableMap.get(tag));
-        }
-        roadRTree = new Rtree(roadList);
-
-        System.out.println("here");
     }
 
     /*

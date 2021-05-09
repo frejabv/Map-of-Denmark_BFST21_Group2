@@ -95,6 +95,8 @@ public class Controller {
             showNames.setManaged(false);
         }
 
+        model.initImageSet();
+
         canvas.init(model);
         canvas.setCurrentCanvasEdges();
         updateScaleBar();

@@ -8,9 +8,13 @@ import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.Edge;
 import bfst21.pathfinding.Step;
 import bfst21.pathfinding.TransportType;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class AStarTest {
