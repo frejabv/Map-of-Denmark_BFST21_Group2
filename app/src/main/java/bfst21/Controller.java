@@ -737,9 +737,4 @@ public class Controller {
             walkRoute.setSelected(true);
         }
     }
-
-    public void toggleKDLines(MouseEvent mouseEvent) {
-        canvas.kdLines = !canvas.kdLines;
-        canvas.repaint();
-    }
 }
