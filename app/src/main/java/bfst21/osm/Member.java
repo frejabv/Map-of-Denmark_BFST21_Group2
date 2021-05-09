@@ -1,9 +1,13 @@
 package bfst21.osm;
 
+import bfst21.Rtree.Rectangle;
+import javafx.scene.canvas.GraphicsContext;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class Member implements Serializable {
+//TODO remove Member class at some point
+public abstract class Member implements Serializable, Drawable {
     long id;
     Tag tag;
 
@@ -21,5 +25,13 @@ public class Member implements Serializable {
 
     public Tag getTag() {
         return tag;
+    }
+
+    @Override
+    public void draw(GraphicsContext gc, RenderingStyle renderingStyle) {}
+
+    @Override
+    public Rectangle getRect() {
+        return null;
     }
 }

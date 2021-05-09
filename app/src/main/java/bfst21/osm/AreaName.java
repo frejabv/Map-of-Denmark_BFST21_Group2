@@ -101,4 +101,10 @@ public class AreaName implements Drawable {
             return way.getRect();
         }
     }
+
+    //TODO remove when member class is removed
+    @Override
+    public Tag getTag() {
+        return null;
+    }
 }

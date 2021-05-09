@@ -113,7 +113,6 @@ public class Controller {
         rightContainer.setMaxWidth(canvas.getWidth() / 100 * 50);
 
         model.setUpAStar();
-        model.addRelationsToDrawStyles();
     }
 
     @FXML
@@ -554,8 +553,7 @@ public class Controller {
         routeDescription.setManaged(false);
     }
 
-    @FXML
-    private ToggleGroup selectTransportTypeSettings;
+
 
     @FXML
     private CheckBox showAStarPath;
@@ -584,12 +582,20 @@ public class Controller {
         }
     }
 
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
+
     public void selectTransportTypeSettings() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
         if (currentButton != null) {
             String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
             model.setDefaultTransportType(TransportType.valueOf(transportTypeCleaned));
         }
+    }
+
+    public void toggleSmallerViewPort() {
+        canvas.smallerViewPort = !canvas.smallerViewPort;
+        canvas.repaint();
     }
 
     public void toggleRTreeLines() {

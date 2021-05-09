@@ -10,6 +10,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -134,6 +138,10 @@ public class OSMParser {
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
 
+                            if (v.equals("construction") || k.equals("construction")) {
+                                break;
+                            }
+
                             if (k.equals("building")) {
                                 tag = Tag.BUILDING;
                                 break;
@@ -238,7 +246,6 @@ public class OSMParser {
                                 if (k.equals("addr:street")) {
                                     streetname = v;
                                 }
-
                                 if (k.equals("addr:housenumber")) {
                                     housenumber = v;
                                 }
