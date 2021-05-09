@@ -32,7 +32,7 @@ public class RenderingStyle {
         styleMap.put(Tag.BUILDING, DrawStyle.FILL);
         styleMap.put(Tag.WATER, DrawStyle.FILL);
         styleMap.put(Tag.PARK, DrawStyle.FILL);
-        styleMap.put(Tag.CITYBOARDER, DrawStyle.FILL);
+        styleMap.put(Tag.CITYBORDER, DrawStyle.FILL);
         styleMap.put(Tag.MEADOW,DrawStyle.FILL);
         styleMap.put(Tag.HEATH,DrawStyle.FILL);
         styleMap.put(Tag.CYCLEWAY, DrawStyle.DASH);
@@ -124,7 +124,7 @@ public class RenderingStyle {
         defaultColorMap.put(Tag.TRUNK_LINK, Color.WHITE);
 
         //TODO: fix colors
-        defaultColorMap.put(Tag.CITYBOARDER, Color.LIGHTGREY);
+        defaultColorMap.put(Tag.CITYBORDER, Color.LIGHTGREY);
         defaultColorMap.put(Tag.MEADOW, Color.rgb(168, 218, 181));
         defaultColorMap.put(Tag.HEATH, Color.GREEN);
     }
@@ -156,7 +156,7 @@ public class RenderingStyle {
         darkModeColorMap.put(Tag.TRUNK_LINK, Color.rgb(128, 142, 155));
 
         //TODO: fix colors
-        darkModeColorMap.put(Tag.CITYBOARDER, Color.LIGHTGREY);
+        darkModeColorMap.put(Tag.CITYBORDER, Color.LIGHTGREY);
         darkModeColorMap.put(Tag.MEADOW, Color.rgb(168, 218, 181));
         darkModeColorMap.put(Tag.HEATH, Color.GREEN);
     }

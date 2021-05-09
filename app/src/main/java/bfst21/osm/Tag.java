@@ -26,7 +26,7 @@ public enum Tag{
 
     WATER(100000000,0),
     COASTLINE(100000000,1),
-    CITYBOARDER(200,2),
+    CITYBORDER(200,2),
     PARK(100,3),
     MEADOW(200,4),
     HEATH(200,5),
