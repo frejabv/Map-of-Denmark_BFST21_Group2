@@ -541,7 +541,7 @@ public class Controller {
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
         if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
             if (currentPOI == null) {
-                currentPOI = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+                currentPOI = new POI("Near " + roadname, null, "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
             }
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
             removePin.setVisible(false);
