@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.POI.POI;
 import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
 import bfst21.osm.Node;
@@ -17,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class MapCanvas extends Canvas {
     Point2D mousePoint = new Point2D(0, 0);
     Rectangle viewport;
     ArrayList<Drawable> activeDrawList, activeFillList;
+    ArrayList<POI> activePOIList;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -177,29 +180,29 @@ public class MapCanvas extends Canvas {
             paintPath(model.getAStarPath());
         }
 
+        activePOIList = new ArrayList<>();
         if (distanceWidth <= 20) {
-            model.getSystemPointsOfInterest().forEach(poi -> {
-                gc.setFill(Color.rgb(52, 152, 219));
-                double size = (30 / Math.sqrt(trans.determinant()));
-                gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
-                String image = poi.getImageType();
-                gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
+            activePOIList.addAll(model.getPOITree().query(viewport));
+            activePOIList.forEach(poi -> {
+                if (poi.getType().equals("heart")) {
+                    gc.setFill(Color.WHITE);
+                    double size = (30 / Math.sqrt(trans.determinant()));
+                    gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
+                    gc.drawImage(new Image("bfst21/icons/heart.png"), poi.getX() - (size / 4), poi.getY() - (size / 4),
+                            size / 2, size / 2);
+                } else {
+                    gc.setFill(Color.rgb(52, 152, 219));
+                    double size = (30 / Math.sqrt(trans.determinant()));
+                    gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
+                    String image = poi.getImageType();
+                    gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
 
-                if (showNames) {
-                    gc.setFill(Color.BLACK);
-                    gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
-                    gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                    if (showNames) {
+                        gc.setFill(Color.BLACK);
+                        gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                        gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                    }
                 }
-            });
-        }
-
-        if (distanceWidth <= 40){
-            model.getPointsOfInterest().forEach(POI -> {
-                gc.setFill(Color.WHITE);
-                double size = (30 / Math.sqrt(trans.determinant()));
-                gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
-                gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
-                        size / 2, size / 2);
             });
         }
 
