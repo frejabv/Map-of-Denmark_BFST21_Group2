@@ -28,6 +28,7 @@ import java.util.List;
 import static javafx.scene.layout.Priority.SOMETIMES;
 
 public class Controller {
+    POI currentPOI = null;
     @FXML
     private MapCanvas canvas;
     @FXML
@@ -76,13 +77,44 @@ public class Controller {
     private CheckBox showNames;
     @FXML
     private VBox NearbyPOI;
-
     private Debug debug;
     private Point2D lastMouse;
     private boolean singleClick = true;
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
     private Node fromNode, toNode;
+    @FXML
+    private VBox regexContainer;
+    @FXML
+    private Button removePin;
+    @FXML
+    private HBox scaleContainer;
+    @FXML
+    private VBox scale;
+    @FXML
+    private ImageView heartIcon;
+    @FXML
+    private VBox userPOI;
+    @FXML
+    private VBox routeDescription;
+    @FXML
+    private VBox routeStepsContainer;
+    @FXML
+    private Text arrivalText;
+    @FXML
+    private Text arrivalSmallText;
+    @FXML
+    private CheckBox showAStarPath;
+    @FXML
+    private ToggleGroup selectTransportTypeRoute;
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
+    @FXML
+    private ToggleButton carRoute;
+    @FXML
+    private ToggleButton bicycleRoute;
+    @FXML
+    private ToggleButton walkRoute;
 
     public void init(Model model) {
         this.model = model;
@@ -119,9 +151,6 @@ public class Controller {
 
         model.setUpAStar();
     }
-
-    @FXML
-    private VBox regexContainer;
 
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
@@ -309,9 +338,6 @@ public class Controller {
     private void onMousePressedOnCanvas(MouseEvent e) {
         lastMouse = new Point2D(e.getX(), e.getY());
     }
-
-    @FXML
-    private Button removePin;
 
     @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
@@ -505,11 +531,6 @@ public class Controller {
         debug.shutdownExecutor();
     }
 
-    @FXML
-    private HBox scaleContainer;
-    @FXML
-    private VBox scale;
-
     public void updateScaleBar() {
         double scaleWidth = (canvas.getWidth() / 10) + 40;
         scaleContainer.setPrefWidth(scaleWidth);
@@ -527,14 +548,9 @@ public class Controller {
         scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
     }
 
-    @FXML
-    private ImageView heartIcon;
-
-    POI currentPOI = null;
-
     public void onMousePressedPinHeart() {
         //add this point to POI
-        Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(),canvas.getPinPoint().getY()));
+        Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(), canvas.getPinPoint().getY()));
         String roadname = getClosestRoadString(road);
         POI poi = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
         model.addPOI(poi);
@@ -558,9 +574,6 @@ public class Controller {
         canvas.repaint();
         updateUserPOI();
     }
-
-    @FXML
-    private VBox userPOI;
 
     public void updateUserPOI() {
         userPOI.getChildren().clear();
@@ -589,15 +602,6 @@ public class Controller {
         canvas.showNames = !canvas.showNames;
         canvas.repaint();
     }
-
-    @FXML
-    private VBox routeDescription;
-    @FXML
-    private VBox routeStepsContainer;
-    @FXML
-    private Text arrivalText;
-    @FXML
-    private Text arrivalSmallText;
 
     public void showRouteDescription() {
         routeDescription.setVisible(true);
@@ -642,11 +646,6 @@ public class Controller {
         routeDescription.setManaged(false);
     }
 
-
-
-    @FXML
-    private CheckBox showAStarPath;
-
     public void toggleAStarDebugPath() {
         if (showAStarPath.isSelected()) {
             canvas.debugAStar = true;
@@ -656,9 +655,6 @@ public class Controller {
             canvas.repaint();
         }
     }
-
-    @FXML
-    private ToggleGroup selectTransportTypeRoute;
 
     public void selectTransportTypeRoute() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
@@ -670,9 +666,6 @@ public class Controller {
             canvas.repaint(); //To show the route after it has been calculated
         }
     }
-
-    @FXML
-    private ToggleGroup selectTransportTypeSettings;
 
     public void selectTransportTypeSettings() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
@@ -706,7 +699,7 @@ public class Controller {
         closestRoad.textProperty().setValue(text);
     }
 
-    public String getClosestRoadString(Way road){
+    public String getClosestRoadString(Way road) {
         if (road.getName().equals("")) {
             return "ID: " + road.getId();
         } else {
@@ -726,13 +719,6 @@ public class Controller {
             canvas.repaint();
         }
     }
-
-    @FXML
-    private ToggleButton carRoute;
-    @FXML
-    private ToggleButton bicycleRoute;
-    @FXML
-    private ToggleButton walkRoute;
 
     public void setCurrentTransportType(TransportType type) {
         model.setCurrentTransportType(type);
