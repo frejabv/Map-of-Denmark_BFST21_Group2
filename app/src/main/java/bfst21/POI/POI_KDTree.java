@@ -53,7 +53,7 @@ public class POI_KDTree {
      * @param parent      is the current parent of our element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
-     * @returns           the currentNode with its' correct parent and left/right child/domain
+     * @return           the currentNode with its' correct parent and left/right child/domain
      */
     private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
         //if space is available, fill space
@@ -85,7 +85,7 @@ public class POI_KDTree {
         }
 
         //if space is taken, look for another
-        boolean areCoordinatesLessThan = false;
+        boolean areCoordinatesLessThan;
         if (orientation) {
             areCoordinatesLessThan = qNode.getX() < currentNode.getX();
         } else {
@@ -121,7 +121,7 @@ public class POI_KDTree {
             return true;
         }
 
-        boolean areCoordinatesLessThan = false;
+        boolean areCoordinatesLessThan;
         if (orientation) {
             areCoordinatesLessThan = qNode.getX() < currentNode.getX();
         } else {
@@ -189,7 +189,7 @@ public class POI_KDTree {
         }
 
         //move further down the tree
-        boolean areCoordinatesLessThan = false;
+        boolean areCoordinatesLessThan;
         if (orientation) {
             areCoordinatesLessThan = p.getX() < currentNode.getX();
         } else {

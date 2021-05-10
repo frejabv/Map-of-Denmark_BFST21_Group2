@@ -8,7 +8,6 @@ import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
 import bfst21.search.RadixTree;
 import javafx.scene.image.Image;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -94,12 +93,8 @@ public class Model {
             e.printStackTrace();
         }
 
-        drawableMap.forEach((tag, drawables) -> {
-            drawableTagList.add(tag);
-        });
-        fillMap.forEach((tag, drawables) -> {
-            fillableTagList.add(tag);
-        });
+        drawableMap.forEach((tag, drawables) -> drawableTagList.add(tag));
+        fillMap.forEach((tag, drawables) -> fillableTagList.add(tag));
 
         roadlist = new ArrayList<>();
         drawables700 = new ArrayList<>();
@@ -147,7 +142,6 @@ public class Model {
         imageSet.put("aerodrome", new Image("bfst21/icons/" + "aerodrome" + ".png"));
         imageSet.put("cinema", new Image("bfst21/icons/" + "cinema" + ".png"));
         imageSet.put("castle", new Image("bfst21/icons/" + "castle" + ".png"));
-        imageSet.put("viewpoint", new Image("bfst21/icons/" + "viewpoint" + ".png"));
         imageSet.put("statue", new Image("bfst21/icons/" + "statue" + ".png"));
         imageSet.put("zoo", new Image("bfst21/icons/" + "zoo" + ".png"));
         imageSet.put("suitcase", new Image("bfst21/icons/" + "suitcase" + ".png"));

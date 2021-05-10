@@ -14,7 +14,7 @@ public class RtreeNode implements Comparable<RtreeNode>{
 
     public RtreeNode(List<Drawable> descendants) {
         rect = createBoundingBox(descendants);
-    };
+    }
 
     public RtreeNode(List<Drawable> descendants, boolean vertical) {
         this(descendants, vertical, Rtree.maxChildren);

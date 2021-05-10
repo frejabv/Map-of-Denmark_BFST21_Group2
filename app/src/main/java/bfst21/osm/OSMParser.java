@@ -149,7 +149,7 @@ public class OSMParser {
                                 break;
                             }
 
-                            if (v.equals("construction") || k.equals("construction") || k.equals("service") || k.equals("surface") || k.equals("destination")) {
+                            if (v.equals("construction") || k.equals("construction") || k.equals("service") || k.equals("surface") || k.startsWith("destination")) {
                                 break;
                             }
 
@@ -289,7 +289,7 @@ public class OSMParser {
                 case XMLStreamReader.END_ELEMENT:
                     switch (xmlReader.getLocalName()) {
                         case "node":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 newSystemPOI(model, systemPOIName, node.getX(), node.getY());
                             }
                             if (!streetname.equals("") && !housenumber.equals("") && !postcode.equals("")
@@ -305,7 +305,7 @@ public class OSMParser {
                             name = "";
                             break;
                         case "way":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
                             }
                             if (tag != null) {
@@ -320,7 +320,7 @@ public class OSMParser {
                             name = "";
                             break;
                         case "relation":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
                             }
                             if (tag != null) {

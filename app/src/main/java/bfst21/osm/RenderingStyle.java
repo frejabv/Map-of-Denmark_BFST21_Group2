@@ -27,7 +27,7 @@ public class RenderingStyle {
         darkModeColorMap = new HashMap<>();
         styleMap = new HashMap<>();
         widthMap = new HashMap<>();
-        theme = theme.DEFAULT;
+        theme = Theme.DEFAULT;
 
         styleMap.put(Tag.BUILDING, DrawStyle.FILL);
         styleMap.put(Tag.WATER, DrawStyle.FILL);
@@ -105,14 +105,14 @@ public class RenderingStyle {
         sea = Color.rgb(156, 192, 249);
         islandFar = Color.rgb(187, 226, 197);
         islandClose = Color.rgb(241, 243, 244);
-        theme = theme.DEFAULT;
+        theme = Theme.DEFAULT;
     }
 
     public void darkMode() {
         sea = Color.rgb(58, 64, 93);
         islandFar = Color.rgb(40, 68, 53);
         islandClose = Color.rgb(25, 26, 28);
-        theme = theme.DARK;
+        theme = Theme.DARK;
     }
 
     private void genDefaultMode() {
@@ -220,6 +220,6 @@ public class RenderingStyle {
 
     public boolean getDoubleDrawn(Tag tag){
         Boolean drawnDouble = doubleDrawn.get(tag);
-        return drawnDouble == null ? false : drawnDouble;
+        return drawnDouble != null && drawnDouble;
     }
 }

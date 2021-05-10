@@ -1,5 +1,7 @@
 package bfst21.osm;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,15 +52,12 @@ public class MemberIndex<T extends Member> implements Iterable<T>, Serializable 
 
         //TODO
         public List<Drawable> getDrawableMembers() {
-            List<Drawable> drawableMembers = new ArrayList<>();
-            for (Member member : members){
-                drawableMembers.add((Drawable) member);
-            }
+            List<Drawable> drawableMembers = new ArrayList<>(members);
             return drawableMembers;
         }
 
     @Override
-    public Iterator<T> iterator() {
+    public @NotNull Iterator<T> iterator() {
         return members.iterator();
     }
 }
