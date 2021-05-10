@@ -106,7 +106,7 @@ public class POI_KDTree {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
 
-        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())))
+        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || qNode.isDeleted())
             return false;
 
         return contains(root, qNode, true);
@@ -177,15 +177,17 @@ public class POI_KDTree {
             return closestList;
         }
 
-        //is currentNode closer than worstClosest?
-        currentNode.setDistTo(p);
-        if (closestList.size() < listSize && !closestList.contains(currentNode)) {
-            closestList.add(currentNode);
-            Collections.sort(closestList);
-        } else if (currentNode.getDistTo() < worstDistance) {
-            closestList.remove(worstClosest);
-            closestList.add(currentNode);
-            Collections.sort(closestList);
+        //if currentNode is not deleted, is it closer than worstClosest?
+        if (!currentNode.isDeleted()) {
+            currentNode.setDistTo(p);
+            if (closestList.size() < listSize && !closestList.contains(currentNode)) {
+                closestList.add(currentNode);
+                Collections.sort(closestList);
+            } else if (currentNode.getDistTo() < worstDistance) {
+                closestList.remove(worstClosest);
+                closestList.add(currentNode);
+                Collections.sort(closestList);
+            }
         }
 
         //move further down the tree
