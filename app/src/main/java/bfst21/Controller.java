@@ -536,12 +536,8 @@ public class Controller {
     POI currentPOI = null;
 
     public void onMousePressedPinHeart() {
-        //add this point to POI
         Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(),canvas.getPinPoint().getY()));
         String roadname = getClosestRoadString(road);
-        POI poi = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
-        model.addPOI(poi);
-        model.getPOITree().insert(poi);
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
         if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
             if (currentPOI == null) {
@@ -551,9 +547,12 @@ public class Controller {
             removePin.setVisible(false);
             removePin.setManaged(false);
             model.addPOI(currentPOI);
+            model.getPOITree().insert(currentPOI);
         } else {
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             model.removePOI(currentPOI);
+            //TODO add remove to kd tree and uncomment line below
+            //model.getPOITree().remove(currentPOI);
             changeType("pin", false);
             currentPOI = null;
         }
