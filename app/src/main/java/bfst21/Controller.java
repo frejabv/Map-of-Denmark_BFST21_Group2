@@ -348,7 +348,7 @@ public class Controller {
         NearbyPOI.getChildren().add(nearbyAttractionsText);
         NearbyPOI.getChildren().add(region);
         ArrayList<POI> poiArrayList = model.getPOITree().nearest(canvas.pinPoint, 5);
-        if (poiArrayList.size() > 0) {
+        if (poiArrayList != null && poiArrayList.size() > 0) {
             for (POI poi : poiArrayList) {
                 HBox nearbyContainer = new HBox();
                 nearbyContainer.getStyleClass().add("nearbyPOIContainer");
