@@ -76,6 +76,8 @@ public class Controller {
     private CheckBox showNames;
     @FXML
     private VBox NearbyPOI;
+    @FXML
+    private VBox removePinContainer;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -317,9 +319,9 @@ public class Controller {
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
             hideAll();
-            pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
-            String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
+            removePinContainer.getChildren().removeAll(removePinContainer.lookup(".button"));
+            String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()) {
                 currentPOI = null;
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
@@ -331,6 +333,7 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
+            removePinContainer.getChildren().add(removePin);
 
             updateNearbyPOI();
         } else {

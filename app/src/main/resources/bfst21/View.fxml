@@ -249,9 +249,9 @@
                   </ImageView>
                 </graphic>
               </Button>
-              <VBox>
+              <VBox fx:id="removePinContainer">
                 <Text fx:id="pinText">Pin</Text>
-                <Button fx:id="removePin">Remove pin</Button>
+                <Button fx:id="removePin">Remove pin hej!</Button>
               </VBox>
           </HBox>
           <VBox fx:id="NearbyPOI" styleClass="nearbyPOI">
