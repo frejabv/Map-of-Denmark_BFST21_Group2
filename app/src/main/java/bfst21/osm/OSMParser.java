@@ -144,16 +144,12 @@ public class OSMParser {
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
 
-                            if (v.equals("construction") || k.equals("construction")) {
-                                break;
-                            }
-
                             if (k.equals("building")) {
                                 tag = Tag.BUILDING;
                                 break;
                             }
 
-                            if (k.equals("service") || k.equals("surface")) {
+                            if (v.equals("construction") || k.equals("construction") || k.equals("service") || k.equals("surface") || k.equals("destination")) {
                                 break;
                             }
 
