@@ -46,9 +46,6 @@ public class Model {
     private Rtree roadTree;
     private Node nearestNode;
 
-    private List<Drawable> areaNames;
-    private Rtree areaTree;
-
     private boolean ttiMode;
 
     private AStar aStar;
@@ -57,6 +54,7 @@ public class Model {
     private TransportType defaultTransportType = TransportType.CAR;
     private TransportType currentTransportType = defaultTransportType;
     private float minX, minY, maxX, maxY;
+    private List<AreaName> areaNames;
 
     public Model(String filePath, boolean ttiMode) {
         // Java wouldn't let me expand this into variables. Im very sorry about the mess
@@ -139,8 +137,6 @@ public class Model {
         fillableRTree150 = new Rtree(fillables150);
         fillableRTree7 = new Rtree(fillables7);
         fillableRTree3 = new Rtree(fillables3);
-
-        areaTree = new Rtree(areaNames);
     }
 
     public void initImageSet() {
@@ -351,7 +347,7 @@ public class Model {
         areaNames.add(areaName);
     }
 
-    public List<Drawable> getAreaNames() {
+    public List<AreaName> getAreaNames() {
         return areaNames;
     }
 
@@ -441,10 +437,6 @@ public class Model {
 
     public void setNearestNode(Node nearestNode) {
         this.nearestNode = nearestNode;
-    }
-
-    public Rtree getAreaTree() {
-        return areaTree;
     }
 
     public ArrayList<Tag> getDrawableTagList() {

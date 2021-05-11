@@ -37,7 +37,7 @@ public class MapCanvas extends Canvas {
     Point2D pinPoint;
     Point2D mousePoint = new Point2D(0, 0);
     Rectangle viewport;
-    ArrayList<Drawable> activeDrawList, activeFillList, activeAreaList;
+    ArrayList<Drawable> activeDrawList, activeFillList;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -94,9 +94,6 @@ public class MapCanvas extends Canvas {
 
         activeDrawList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
         activeFillList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
-
-        activeAreaList = new ArrayList<>();
-        activeAreaList.addAll(model.getAreaTree().query(viewport));
 
         gc.setFill(renderingStyle.sea);
         gc.fillRect(0, 0, getWidth(), getHeight());
@@ -209,9 +206,9 @@ public class MapCanvas extends Canvas {
         if (showNames) {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            for (Drawable area: activeAreaList) {
-                ((AreaName) area).drawType(gc, mapZoomLimit, renderingStyle);
-            }
+            model.getAreaNames().forEach((areaName) -> {
+                areaName.drawType(gc, distanceWidth, renderingStyle);
+            });
         }
 
         if (setPin) {
