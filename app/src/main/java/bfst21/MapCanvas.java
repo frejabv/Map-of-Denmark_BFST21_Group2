@@ -6,6 +6,7 @@ import bfst21.osm.Node;
 import bfst21.osm.RenderingStyle;
 import bfst21.osm.Tag;
 import bfst21.pathfinding.Edge;
+import bfst21.pathfinding.Vertex;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -296,13 +297,13 @@ public class MapCanvas extends Canvas {
     }
 
     public void drawDebugAStarPath() {
-        List<Node> nodes = model.getAStarDebugPath();
+        List<Vertex> nodes = model.getAStarDebugPath();
         gc.setStroke(Color.CORNFLOWERBLUE);
         gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
         gc.beginPath();
-        for (Node n : nodes) {
+        for (Vertex n : nodes) {
             for (Edge e : n.getAdjacencies()) {
-                Node child = e.target;
+                Vertex child = e.target;
                 gc.moveTo(n.getX(), n.getY());
                 gc.lineTo(child.getX(), child.getY());
             }
@@ -310,7 +311,7 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public void paintPath(List<Node> path){
+    public void paintPath(List<Vertex> path){
         gc.setStroke(Color.rgb(112,161,255));
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
         if(getDistanceWidth() < 7.0){
@@ -319,8 +320,8 @@ public class MapCanvas extends Canvas {
         }
         gc.beginPath();
         for (int i = 0; i < path.size() - 1; i++) {
-            Node current = path.get(i);
-            Node next = path.get(i + 1);
+            Vertex current = path.get(i);
+            Vertex next = path.get(i + 1);
             gc.moveTo(current.getX(), current.getY());
             gc.lineTo(next.getX(), next.getY());
         }

@@ -6,9 +6,9 @@ import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
+import bfst21.pathfinding.Vertex;
 import bfst21.search.RadixTree;
 import javafx.scene.image.Image;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -52,8 +52,8 @@ public class Model {
     private boolean ttiMode;
 
     private AStar aStar;
-    private List<Node> AStarPath;
-    private List<Node> AStarDebugPath;
+    private List<Vertex> AStarPath;
+    private List<Vertex> AStarDebugPath;
     private TransportType defaultTransportType = TransportType.CAR;
     private TransportType currentTransportType = defaultTransportType;
     private float minX, minY, maxX, maxY;
@@ -295,19 +295,19 @@ public class Model {
         return AStarPath != null;
     }
 
-    public List<Node> getAStarPath() {
+    public List<Vertex> getAStarPath() {
         return AStarPath;
     }
 
-    public void setAStarPath(List<Node> AStarPath) {
+    public void setAStarPath(List<Vertex> AStarPath) {
         this.AStarPath = AStarPath;
     }
 
-    public List<Node> getAStarDebugPath() {
+    public List<Vertex> getAStarDebugPath() {
         return AStarDebugPath;
     }
 
-    public void setAStarDebugPath(List<Node> AStarDebugPath) {
+    public void setAStarDebugPath(List<Vertex> AStarDebugPath) {
         this.AStarDebugPath = AStarDebugPath;
     }
 

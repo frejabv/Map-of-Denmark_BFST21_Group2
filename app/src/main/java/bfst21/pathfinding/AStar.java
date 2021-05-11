@@ -14,7 +14,8 @@ public class AStar {
     double totalDistance = 0;
     double totalTime = 0;
     int exits = 0;
-    List<Node> path;
+    List<Vertex> path;
+    VertexIndex<Vertex> vertices = new VertexIndex();
     TransportType type;
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
@@ -33,29 +34,48 @@ public class AStar {
                 Way tempWay = (Way) way;
                 for (int i = 0; i < tempWay.getNodes().size(); i++) {
                     Node node = tempWay.getNodes().get(i);
+                    Vertex vertex = new Vertex(node.getX(), node.getY(), node.getId());
+                    //vertices.addVertex(vertex);
                     if (i != (tempWay.getNodes().size() - 1)) {
                         Node nextNode = tempWay.getNodes().get(i + 1);
-                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId());
+                        Vertex nextVertex = new Vertex(nextNode.getX(), nextNode.getY(), nextNode.getId());
+                        Edge edge = new Edge(nextVertex, distanceToNode(vertex, nextVertex), tempWay.getId());
                         edge.setPathTypes(tempWay, this);
-                        node.addAdjacencies(edge);
+                        vertex.addAdjacencies(edge);
+                        vertices.addVertex(nextVertex);
                     }
                     if (i > 0 && !tempWay.isOneway()) {
                         Node previousNode = tempWay.getNodes().get(i - 1);
-                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId());
+                        Vertex previousVertex = new Vertex(previousNode.getX(), previousNode.getY(), previousNode.getId());
+                        Edge edge = new Edge(previousVertex, distanceToNode(vertex, previousVertex), tempWay.getId());
                         edge.setPathTypes(tempWay, this);
-                        node.addAdjacencies(edge);
+                        vertex.addAdjacencies(edge);
+                        vertices.addVertex(previousVertex);
                     }
+                    vertices.addVertex(vertex);
                 }
             }
         }
+        int old = vertices.size();
+        vertices = vertices.mergeVertices();
+        System.out.println("old " + old + " new " + vertices.size());
+        System.out.println(vertices.getVertex(32835162).getAdjacencies().size());
+        System.out.println(vertices.getVertex(499137630).getAdjacencies().size());
+        System.out.println(vertices.getVertex(499129320).getAdjacencies().size());
+        System.out.println(vertices.getVertex(499137633).getAdjacencies().size());
     }
 
-    public void AStarSearch(Node start, Node end, TransportType type) {
+    public void AStarSearch(Node nodeStart, Node nodeEnd, TransportType type) {
+        Vertex start = vertices.getVertex(nodeStart.getId());
+        Vertex end = vertices.getVertex(nodeEnd.getId());
+        System.out.println(nodeStart.getId() + " " + start.getAdjacencies().size());
+        System.out.println(nodeEnd.getId() + " " + end.getAdjacencies().size());
+
         this.type = type;
         model.setAStarPath(null);
-        ArrayList<Node> listOfCheckedNodes = new ArrayList<>();
+        ArrayList<Vertex> listOfCheckedNodes = new ArrayList<>();
 
-        PriorityQueue<Node> pq = new PriorityQueue<>(20, new NodeComparator());
+        PriorityQueue<Vertex> pq = new PriorityQueue<>(20, new VertexComparator());
 
         //cost from start
         start.g_scores = 0;
@@ -66,7 +86,7 @@ public class AStar {
 
         while ((!pq.isEmpty()) && (!found)) { //While content in PQ and goal not found
             //the node in having the lowest f_score value
-            Node current = pq.poll(); //Gets the first element in the PQ
+            Vertex current = pq.poll(); //Gets the first element in the PQ
 
             current.explored = true; //Adds current to the explored set to remember that it is explored
             listOfCheckedNodes.add(current);
@@ -76,40 +96,49 @@ public class AStar {
                 found = true;
             }
 
+            System.out.println("in the pq loop on node: " + current.getId());
             //Checks every child of current node
-            for (Edge e : current.getAdjacencies()) {
-                if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
-                    Node child = e.target;
-                    child.setHScores(distanceToNode(child, end) / type.maxSpeed);
-                    float cost = e.getWeight(type, model.getWayIndex().getMember(e.getWayID()).getSpeed());
-                    float temp_g_scores = current.g_scores + cost;
-                    float temp_f_scores = temp_g_scores + child.h_scores;
+            if(current.getAdjacencies() != null) {
+                System.out.println("Adjacencies is not null!");
+                for (Edge e : current.getAdjacencies()) {
+                    if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
+                        Vertex child = e.target;
+                        //Vertex child = vertices.getVertex(e.targetId);
+                        child.setHScores(distanceToNode(child, end) / type.maxSpeed);
+                        float cost = e.getWeight(type, model.getWayIndex().getMember(e.getWayID()).getSpeed());
+                        float temp_g_scores = current.g_scores + cost;
+                        float temp_f_scores = temp_g_scores + child.h_scores;
 
 
-                    //Checks if child node has been evaluated and the newer f_score is higher, skip
-                    if ((child.explored) && (temp_f_scores >= child.f_scores)) {
-                        continue;
-                    }
-
-                    //else if child node is not in queue (add it) or newer f_score is lower (Update them)
-                    else if ((!pq.contains(child)) || (temp_f_scores < child.f_scores)) {
-                        child.parent = current;
-                        child.g_scores = temp_g_scores;
-                        child.f_scores = temp_f_scores;
-
-                        if (pq.contains(child)) {
-                            pq.remove(child);
+                        //Checks if child node has been evaluated and the newer f_score is higher, skip
+                        if ((child.explored) && (temp_f_scores >= child.f_scores)) {
+                            continue;
                         }
-                        pq.add(child);
+
+                        //else if child node is not in queue (add it) or newer f_score is lower (Update them)
+                        else if ((!pq.contains(child)) || (temp_f_scores < child.f_scores)) {
+                            child.parent = current;
+                            child.g_scores = temp_g_scores;
+                            child.f_scores = temp_f_scores;
+
+                            if (pq.contains(child)) {
+                                pq.remove(child);
+                            }
+                            pq.add(child);
+                        }
                     }
                 }
+            } else {
+                System.out.println("Get adjacencies was null");
+                System.out.println(vertices.getVertex(current.getId()).getAdjacencies().size());
             }
         }
 
         createPath(end);
 
-        List<Node> debugPath = new ArrayList<>();
-        for (Node node : listOfCheckedNodes) {
+        //todo maybe we still want this as nodes
+        List<Vertex> debugPath = new ArrayList<>();
+        for (Vertex node : listOfCheckedNodes) {
             debugPath.add(node);
             node.h_scores = 0;
             node.f_scores = 0;
@@ -120,13 +149,13 @@ public class AStar {
         model.setAStarDebugPath(debugPath);
     }
 
-    public void createPath(Node target) {
+    public void createPath(Vertex target) {
         float minX = 100;
         float maxX = -100;
         float minY = 100;
         float maxY = -100;
         path = new ArrayList<>();
-        for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
+        for (Vertex node = target; node != null; node = node.parent) { //Starts on the target and work back to start
             if (node.getX() < minX) {
                 minX = node.getX();
             }
@@ -144,6 +173,7 @@ public class AStar {
         Collections.reverse(path);
         model.setAStarPath(path);
         model.setAStarBounds(minX, minY, maxX, maxY);
+        System.out.println("path: " + path.size());
     }
 
     public ArrayList<Step> getPathDescription() {
@@ -155,9 +185,9 @@ public class AStar {
         Direction direction = Direction.FOLLOW;
 
         for (int i = 1; i < path.size() - 1; i++) {
-            Node node = path.get(i);
-            Node nextNode = path.get(i + 1);
-            Node previousNode = path.get(i - 1);
+            Vertex node = path.get(i);
+            Vertex nextNode = path.get(i + 1);
+            Vertex previousNode = path.get(i - 1);
             currentDistance += distanceToNode(previousNode, node);
 
             long firstId = 0;
@@ -266,7 +296,7 @@ public class AStar {
         return routeDescription;
     }
 
-    private Direction getDirection(Node currentNode, Node previousNode, Node nextNode) {
+    private Direction getDirection(Vertex currentNode, Vertex previousNode, Vertex nextNode) {
         Direction direction = null;
         double theta = Math.atan2(nextNode.getY() - currentNode.getY(), nextNode.getX() - currentNode.getX()) -
                 Math.atan2(previousNode.getY() - currentNode.getY(), previousNode.getX() - currentNode.getX());
@@ -308,9 +338,9 @@ public class AStar {
         return direction;
     }
 
-    private static class NodeComparator implements Comparator<Node> {
+    private static class VertexComparator implements Comparator<Vertex> {
         //override compare method
-        public int compare(Node i, Node j) {
+        public int compare(Vertex i, Vertex j) {
             if (i.f_scores > j.f_scores) {
                 return 1;
             } else if (i.f_scores < j.f_scores) {
@@ -321,7 +351,7 @@ public class AStar {
         }
     }
 
-    private float distanceToNode(Node current, Node destination) {
+    private float distanceToNode(Vertex current, Vertex destination) {
         float distance = 0;
         if (current != destination) {
             float deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
