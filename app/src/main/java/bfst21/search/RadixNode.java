@@ -8,7 +8,6 @@ public class RadixNode implements Serializable {
     boolean isPlace;
     boolean secondary;
     String value;
-    String fullName;
     long id;
 
     public RadixNode(String value) {
@@ -17,9 +16,8 @@ public class RadixNode implements Serializable {
         this.value = value;
     }
 
-    public RadixNode(String value, String fullName, long id, boolean secondary) {
+    public RadixNode(String value, long id, boolean secondary) {
         this(value);
-        this.fullName = fullName;
         this.id = id;
         isPlace = true;
         this.secondary = secondary;
@@ -39,10 +37,6 @@ public class RadixNode implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public String getFullName() {
-        return fullName;
     }
 
     public boolean isPlace() {

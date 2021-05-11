@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static javafx.scene.layout.Priority.SOMETIMES;
 
@@ -237,8 +238,42 @@ public class Controller {
         suggestionList.clear();
 
         if (selectedField.textProperty().getValue().length() > 2) {
-            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
-            for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
+            String searchString = selectedField.textProperty().getValue();
+            Map<Long, String> suggestions = model.getStreetTree().getSuggestions(searchString);
+
+            suggestions.forEach((id, name) -> {
+                Text newSuggestion = new Text(name);
+                newSuggestion.getStyleClass().add("suggestion");
+                newSuggestion.setOnMouseClicked(e -> {
+                    selectedField.textProperty().setValue(name);
+                    Node node = model.getNodeIndex().getMember(id);
+                    if (containerType.equals("search")) {
+                        canvas.setPin(node.getX(), node.getY());
+                        canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                    } else {
+                        if (fieldType.equals("from")) {
+                            Point2D p = new Point2D(node.getX(), node.getY());
+                            fromNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
+                        } else {
+                            Point2D p = new Point2D(node.getX(), node.getY());
+                            toNode = model.getRoadRTree().nearestWay(p).nearestNode(p);
+                        }
+                        if (fromNode != null && toNode != null) {
+                            model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+                            showRouteDescription();
+                            canvas.showRoute();
+                            canvas.repaint();
+                        }
+                    }
+                    selectedContainer.getChildren().removeAll(suggestionList);
+                    suggestionList.clear();
+                    selectedContainer.getChildren().removeAll(selectedContainer.lookup("#suggestionsHr"));
+                });
+                suggestionList.add(newSuggestion);
+            });
+
+
+           /* for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
                 RadixNode suggestion = suggestions.get(i);
                 Text newSuggestion = new Text(suggestion.getFullName());
                 newSuggestion.getStyleClass().add("suggestion");
@@ -268,7 +303,7 @@ public class Controller {
                     selectedContainer.getChildren().removeAll(selectedContainer.lookup("#suggestionsHr"));
                 });
                 suggestionList.add(newSuggestion);
-            }
+            } */
         }
         if (suggestionList.size() > 0) {
             Region hr = new Region();

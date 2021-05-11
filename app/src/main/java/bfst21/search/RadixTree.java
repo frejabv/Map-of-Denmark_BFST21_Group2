@@ -2,13 +2,16 @@ package bfst21.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class RadixTree implements Serializable {
     private final RadixNode root;
     private int size;
     private int places;
     private String fullName;
+    private String result = "";
 
     public RadixTree() {
         root = new RadixNode("");
@@ -32,9 +35,9 @@ public class RadixTree implements Serializable {
      * @return A list of RadixNodes which are places and children of the searchTerm
      *         node.
      */
-    public ArrayList<RadixNode> getSuggestions(String searchTerm) {
+    public Map<Long, String> getSuggestions(String searchTerm) {
         searchTerm = searchTerm.substring(0, 1).toUpperCase() + searchTerm.substring(1);
-        ArrayList<RadixNode> suggestions = new ArrayList<>();
+        HashMap<Long, String> suggestions = new HashMap<>();
         LinkedList<RadixNode> queue = new LinkedList<>();
         int listItems = 0;
         boolean first = true;
@@ -49,7 +52,11 @@ public class RadixTree implements Serializable {
             currentNode = queue.remove();
 
             if (first && currentNode.isPlace()) {
-                suggestions.add(currentNode);
+                suggestions.put(currentNode.id, result);
+            }
+
+            if (!first) {
+                result += currentNode.getValue();
             }
 
             ArrayList<RadixNode> children = currentNode.getChildren();
@@ -57,10 +64,15 @@ public class RadixTree implements Serializable {
                 queue.add(child);
 
                 if (child.isPlace()) {
-                    suggestions.add(child);
+                    suggestions.put(child.id, result + child.value);
                     listItems++;
                 }
             }
+
+            if (!first) {
+                result = result.substring(0, result.length() - currentNode.getValue().length());
+            }
+
             first = false;
         }
         return suggestions;
@@ -79,8 +91,28 @@ public class RadixTree implements Serializable {
     public RadixNode lookupNode(String searchTerm) {
         RadixNode currentNode = root;
         int charLength = 0;
-        String result = "";
         RadixNode safeNode = null;
+        result = "";
+
+
+        /*
+            queue
+            while(queue.hasItems()):
+                first item of queue
+
+                if result + item.getValue == searchTerm
+                    return
+
+                if result + item.getValue prefix of searchTerm:
+                    safeNode = item;
+                    queue.add(item.children);
+
+                result += item.getValue
+
+
+            Margrethecenteret
+            Mar-rgethecenteret
+         */
 
         while (!result.equals(searchTerm)) {
             boolean foundChild = false;
@@ -141,13 +173,20 @@ public class RadixTree implements Serializable {
      * stringToInsert.
      */
     private void insert(String stringToInsert, long id, RadixNode currentNode, boolean secondary) {
+        // insert leaf node
+        // If leaf node 5 < leaf.content.length
+        // Amagerfælled -  1-72 - 2300 København S
+
+
+
+
         if (currentNode != root
                 && (currentNode == null || currentNode.getValue().equals("") || stringToInsert.equals(""))) {
             return;
         }
 
         if (currentNode.getChildren().size() == 0) {
-            RadixNode node = new RadixNode(stringToInsert, fullName, id, secondary);
+            RadixNode node = new RadixNode(stringToInsert, id, secondary);
             currentNode.getChildren().add(node);
             size++;
             places++;
@@ -165,7 +204,7 @@ public class RadixTree implements Serializable {
                                                                                 // like child: tester and
                                                                                 // stringToInsert: test
                 RadixNode originalNode = children.get(i);
-                RadixNode newParentNode = new RadixNode(stringToInsert, fullName, id, secondary);
+                RadixNode newParentNode = new RadixNode(stringToInsert, id, secondary);
                 children.set(i, newParentNode);
                 originalNode.setValue(originalNode.getValue().substring(stringToInsert.length()));
                 children.get(i).addChild(originalNode);
@@ -184,7 +223,7 @@ public class RadixTree implements Serializable {
                          */
                         RadixNode originalNode = children.get(i);
                         originalNode.setValue(nodeContent.substring(j));
-                        RadixNode newChildNode = new RadixNode(stringToInsert.substring(j), fullName, id, secondary);
+                        RadixNode newChildNode = new RadixNode(stringToInsert.substring(j), id, secondary);
                         RadixNode newParentNode = new RadixNode(stringToInsert.substring(0, j));
                         children.set(i, newParentNode);
                         children.get(i).addChild(originalNode);
@@ -195,7 +234,7 @@ public class RadixTree implements Serializable {
                     }
                 }
             } else if (i == children.size() - 1) { // none of the children contain stringToInsert
-                RadixNode node = new RadixNode(stringToInsert, fullName, id, secondary);
+                RadixNode node = new RadixNode(stringToInsert, id, secondary);
                 currentNode.getChildren().add(node);
                 size++;
                 places++;
