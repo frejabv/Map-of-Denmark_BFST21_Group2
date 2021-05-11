@@ -324,7 +324,7 @@ public class OSMParser {
                             name = "";
                             break;
                         case "relation":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && systemPOIName != "" && relation.ways.size() > 0) {
                                 newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
                             }
                             if (tag != null) {
