@@ -210,7 +210,7 @@ public class MapCanvas extends Canvas {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
             for (Drawable area: activeAreaList) {
-                ((AreaName) area).drawType(gc, mapZoomLimit, renderingStyle);
+                ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
             }
         }
 
