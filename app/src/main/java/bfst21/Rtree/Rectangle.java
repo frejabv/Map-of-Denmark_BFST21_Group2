@@ -59,10 +59,6 @@ public class Rectangle implements Serializable {
         return dx * dx + dy * dy;
     }
 
-    public double getArea() {
-        return (maxX - minX) * (maxY - minY);
-    }
-
     public void draw(GraphicsContext gc) {
         gc.beginPath();
         gc.moveTo(minX, minY);
