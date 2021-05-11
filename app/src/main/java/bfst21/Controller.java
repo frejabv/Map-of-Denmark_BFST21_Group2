@@ -261,7 +261,10 @@ public class Controller {
                             showRouteDescription();
                             canvas.showRoute();
                             canvas.repaint();
-                            canvas.goToPositionAstar(model.aStarMinX, model.aStarMinY, model.aStarMaxX, model.aStarMaxY);
+                            if(model.aStarMinX != 100 && model.aStarMinY != 100 && model.aStarMaxX != -100 && model.aStarMaxY != -100) {
+                                System.out.println("Astar values have been set");
+                                canvas.goToPositionAstar(model.aStarMinX, model.aStarMinY, model.aStarMaxX, model.aStarMaxY);
+                            }
                         }
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);

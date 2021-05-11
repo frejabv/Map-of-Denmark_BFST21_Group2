@@ -364,6 +364,8 @@ public class MapCanvas extends Canvas {
     public void goToPositionAstar(double minX, double minY, double maxX, double maxY) {
         trans.setToIdentity();
 
+        System.out.println("go to position is called");
+
         double deltaY = maxY - minY;
         double deltaX = maxX - minX;
 
