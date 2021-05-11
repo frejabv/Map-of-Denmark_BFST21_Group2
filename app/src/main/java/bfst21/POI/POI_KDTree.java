@@ -193,7 +193,7 @@ public class POI_KDTree {
         }
 
         //if currentNode is not deleted, is it closer than worstClosest?
-        if (removedPOIList.contains(currentNode)) {
+        if (!removedPOIList.contains(currentNode)) {
             currentNode.setDistTo(p);
             if (closestList.size() < listSize && !closestList.contains(currentNode)) {
                 closestList.add(currentNode);

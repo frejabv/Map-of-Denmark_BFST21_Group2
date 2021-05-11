@@ -541,7 +541,7 @@ public class Controller {
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
         if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
             if (currentPOI == null) {
-                currentPOI = new POI("Near " + roadname, null, "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+                currentPOI = new POI("Near " + roadname, "user defined", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
             }
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
             removePin.setVisible(false);
@@ -551,8 +551,7 @@ public class Controller {
         } else {
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             model.removePOI(currentPOI);
-            //TODO add remove to kd tree and uncomment line below
-            //model.getPOITree().remove(currentPOI);
+            model.getPOITree().remove(currentPOI);
             changeType("pin", false);
             currentPOI = null;
         }
