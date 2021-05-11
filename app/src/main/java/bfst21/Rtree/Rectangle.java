@@ -60,7 +60,7 @@ public class Rectangle implements Serializable {
     }
 
     public double getArea() {
-        return (maxX - minX) * (maxY - minY);
+        return Math.abs(maxX - minX) * Math.abs(maxY - minY);
     }
     public void draw(GraphicsContext gc) {
         gc.beginPath();
