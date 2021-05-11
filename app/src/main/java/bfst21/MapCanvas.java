@@ -38,6 +38,7 @@ public class MapCanvas extends Canvas {
     Point2D mousePoint = new Point2D(0, 0);
     Rectangle viewport;
     ArrayList<Drawable> activeDrawList, activeFillList;
+    ArrayList<Tag> requiresMinimumAreaTagList;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -49,6 +50,7 @@ public class MapCanvas extends Canvas {
         this.model = model;
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
+        initRequiresMinimumAreaTagList();
         moveToInitialPosition();
         mapZoomLimit = getDistanceWidth()*5;
         widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -108,16 +110,18 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
+        double minimumArea = viewport.getArea()/50000;
         for (Drawable fillable : activeFillList) {
-            Tag tag = fillable.getTag();
-            gc.setStroke(renderingStyle.getColorByTag(tag));
-            gc.setFill(renderingStyle.getColorByTag(tag));
+            if (!requiresMinimumAreaTagList.contains(fillable.getTag()) || fillable.getRect().getArea() > minimumArea) {
+                Tag tag = fillable.getTag();
+                gc.setStroke(renderingStyle.getColorByTag(tag));
+                gc.setFill(renderingStyle.getColorByTag(tag));
 
-            if (tag.zoomLimit > distanceWidth) {
-                fillable.draw(gc, renderingStyle);
-                gc.fill();
+                if (tag.zoomLimit > distanceWidth) {
+                    fillable.draw(gc, renderingStyle);
+                    gc.fill();
+                }
             }
-
         }
 
         // Draw dark
@@ -410,4 +414,20 @@ public class MapCanvas extends Canvas {
         showRoute = false;
         repaint();
     }
+
+    private void initRequiresMinimumAreaTagList() {
+        requiresMinimumAreaTagList = new ArrayList<>();
+        requiresMinimumAreaTagList.add(Tag.MEADOW);
+        requiresMinimumAreaTagList.add(Tag.FOREST);
+        requiresMinimumAreaTagList.add(Tag.WOOD);
+        requiresMinimumAreaTagList.add(Tag.GRASS);
+        requiresMinimumAreaTagList.add(Tag.PARK);
+        requiresMinimumAreaTagList.add(Tag.SCRUB);
+        requiresMinimumAreaTagList.add(Tag.GRASSLAND);
+        requiresMinimumAreaTagList.add(Tag.LAKE);
+        requiresMinimumAreaTagList.add(Tag.WATER);
+        requiresMinimumAreaTagList.add(Tag.HEATH);
+        requiresMinimumAreaTagList.add(Tag.CEMETERY);
+    }
+
 }
