@@ -261,7 +261,7 @@ public class Controller {
                             showRouteDescription();
                             canvas.showRoute();
                             canvas.repaint();
-                            canvas.goToPositionAstar(model.aStarMinX, model.aStarMaxX, model.aStarMaxY);
+                            canvas.goToPositionAstar(model.aStarMinX, model.aStarMinY, model.aStarMaxX, model.aStarMaxY);
                         }
                     }
                     selectedContainer.getChildren().removeAll(suggestionList);
