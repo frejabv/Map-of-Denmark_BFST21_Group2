@@ -193,7 +193,7 @@ public class MapCanvas extends Canvas {
             });
         }
 
-        if (distanceWidth <= 40){
+        if (distanceWidth <= 150){
             model.getPointsOfInterest().forEach(POI -> {
                 gc.setFill(Color.WHITE);
                 double size = (30 / Math.sqrt(trans.determinant()));
