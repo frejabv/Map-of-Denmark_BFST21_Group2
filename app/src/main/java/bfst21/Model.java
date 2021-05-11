@@ -18,7 +18,7 @@ import java.util.*;
 public class Model {
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
-    float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
+    public float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
 

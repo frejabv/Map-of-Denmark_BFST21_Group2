@@ -361,6 +361,20 @@ public class MapCanvas extends Canvas {
         }
     }
 
+    public void goToPositionAstar(double minX, double maxX, double maxY) {
+        trans.setToIdentity();
+        System.out.println("min x: " + minX + " max X: " + maxX + " max Y: " + maxX);
+        pan(-minX, -maxY);
+        System.out.println("pan to: " + -minX + ", " + -maxY);
+        //zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(maxX / 2, maxY / 2));
+        zoom(((getHeight() - getWidth() / (maxX - minX)) * -1), new Point2D(0, 0));
+        System.out.println("zoom with factor: " + ((getHeight() - getWidth() / (maxX - minX)) * -1));
+        if (maxX - minX < 0.1) {
+            zoom(0.01, new Point2D(maxX / 2, maxY / 2));
+            System.out.println("zoom with middle point: " + maxX / 2 + ", " + maxY / 2);
+        }
+    }
+
     private void moveToInitialPosition() {
         double deltaY = model.getMaxY() - model.getMinY();
         double deltaX = model.getMaxX() - model.getMinX();
