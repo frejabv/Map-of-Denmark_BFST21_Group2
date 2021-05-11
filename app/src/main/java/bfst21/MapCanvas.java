@@ -1,7 +1,10 @@
 package bfst21;
 
-import bfst21.Rtree.Rectangle;
 import bfst21.osm.*;
+import bfst21.Rtree.Rectangle;
+import bfst21.osm.Node;
+import bfst21.osm.RenderingStyle;
+import bfst21.osm.Tag;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -19,27 +22,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapCanvas extends Canvas {
-    public boolean kdLines;
-    public boolean debugAStar;
-    public long[] redrawAverage = new long[20];
+    private Model model;
+    private Affine trans = new Affine();
     GraphicsContext gc;
     boolean setPin;
+    public boolean kdLines;
     boolean doubleDraw;
     boolean smallerViewPort, RTreeLines, roadRectangles;
     boolean nearestNodeLine;
+    public boolean debugAStar;
+    private boolean showRoute;
     boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
     Point2D mousePoint = new Point2D(0, 0);
     Rectangle viewport;
-    ArrayList<Drawable> activeDrawList, activeFillList;
+    ArrayList<Drawable> activeDrawList, activeFillList, activeAreaList;
     ArrayList<Tag> requiresMinimumAreaTagList;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
-    private Model model;
-    private Affine trans = new Affine();
-    private boolean showRoute;
+    public long[] redrawAverage = new long[20];
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     private float mapZoomLimit;
 
@@ -93,6 +96,9 @@ public class MapCanvas extends Canvas {
 
         activeDrawList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
         activeFillList.sort((a, b) -> Integer.compare(a.getTag().layer, b.getTag().layer));
+
+        activeAreaList = new ArrayList<>();
+        activeAreaList.addAll(model.getAreaTree().query(viewport));
 
         gc.setFill(renderingStyle.sea);
         gc.fillRect(0, 0, getWidth(), getHeight());
@@ -207,9 +213,9 @@ public class MapCanvas extends Canvas {
         if (showNames) {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            model.getAreaNames().forEach((areaName) -> {
-                areaName.drawType(gc, distanceWidth, renderingStyle);
-            });
+            for (Drawable area: activeAreaList) {
+                ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
+            }
         }
 
         if (setPin) {
@@ -263,8 +269,8 @@ public class MapCanvas extends Canvas {
         Point2D origo;
         Point2D limit;
         if (smallerViewPort || RTreeLines || roadRectangles) {
-            origo = mouseToModelCoords(new Point2D(getWidth() * 1 / 4, getHeight() * 1 / 4));
-            limit = mouseToModelCoords(new Point2D(getWidth() * 3 / 4, getHeight() * 3 / 4));
+            origo = mouseToModelCoords(new Point2D(getWidth() * 1/4, getHeight()* 1/4));
+            limit = mouseToModelCoords(new Point2D(getWidth() * 3/4, getHeight() * 3/4));
         } else {
             origo = mouseToModelCoords(new Point2D(0, 0));
             limit = mouseToModelCoords(new Point2D(getWidth(), getHeight()));

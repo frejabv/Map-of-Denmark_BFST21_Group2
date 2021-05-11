@@ -97,8 +97,10 @@ public class AreaName implements Drawable {
     public Rectangle getRect() {
         if (relation != null) {
             return relation.getRect();
-        } else {
+        } else if (way != null) {
             return way.getRect();
+        } else {
+            return new Rectangle(lon, lat, lon, lat);
         }
     }
 
