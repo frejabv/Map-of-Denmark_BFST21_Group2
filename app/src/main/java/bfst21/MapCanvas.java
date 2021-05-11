@@ -1,11 +1,8 @@
 package bfst21;
 
 import bfst21.POI.POI;
-import bfst21.osm.*;
 import bfst21.Rtree.Rectangle;
-import bfst21.osm.Node;
-import bfst21.osm.RenderingStyle;
-import bfst21.osm.Tag;
+import bfst21.osm.*;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -18,22 +15,19 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapCanvas extends Canvas {
-    private Model model;
-    private Affine trans = new Affine();
+    public boolean kdLines;
+    public boolean debugAStar;
+    public long[] redrawAverage = new long[20];
     GraphicsContext gc;
     boolean setPin;
-    public boolean kdLines;
     boolean doubleDraw;
     boolean smallerViewPort, RTreeLines, roadRectangles;
     boolean nearestNodeLine;
-    public boolean debugAStar;
-    private boolean showRoute;
     boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
@@ -44,7 +38,9 @@ public class MapCanvas extends Canvas {
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
-    public long[] redrawAverage = new long[20];
+    private Model model;
+    private Affine trans = new Affine();
+    private boolean showRoute;
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     private float mapZoomLimit;
 
@@ -53,7 +49,7 @@ public class MapCanvas extends Canvas {
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
         moveToInitialPosition();
-        mapZoomLimit = getDistanceWidth()*5;
+        mapZoomLimit = getDistanceWidth() * 5;
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
         });
@@ -266,8 +262,8 @@ public class MapCanvas extends Canvas {
         Point2D origo;
         Point2D limit;
         if (smallerViewPort || RTreeLines || roadRectangles) {
-            origo = mouseToModelCoords(new Point2D(getWidth() * 1/4, getHeight()* 1/4));
-            limit = mouseToModelCoords(new Point2D(getWidth() * 3/4, getHeight() * 3/4));
+            origo = mouseToModelCoords(new Point2D(getWidth() * 1 / 4, getHeight() * 1 / 4));
+            limit = mouseToModelCoords(new Point2D(getWidth() * 3 / 4, getHeight() * 3 / 4));
         } else {
             origo = mouseToModelCoords(new Point2D(0, 0));
             limit = mouseToModelCoords(new Point2D(getWidth(), getHeight()));
@@ -311,10 +307,10 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public void paintPath(List<Node> path){
-        gc.setStroke(Color.rgb(112,161,255));
+    public void paintPath(List<Node> path) {
+        gc.setStroke(Color.rgb(112, 161, 255));
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        if(getDistanceWidth() < 7.0){
+        if (getDistanceWidth() < 7.0) {
             //TODO: make it not magic
             gc.setLineWidth(0.000045);
         }
@@ -380,11 +376,10 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    private void setStyle(DrawStyle style){
-        if(style == DrawStyle.DASH){
-            gc.setLineDashes(5/Math.sqrt(trans.determinant()));
-        }
-        else{
+    private void setStyle(DrawStyle style) {
+        if (style == DrawStyle.DASH) {
+            gc.setLineDashes(5 / Math.sqrt(trans.determinant()));
+        } else {
             gc.setLineDashes(0);
         }
 
