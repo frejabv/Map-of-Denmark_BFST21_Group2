@@ -58,14 +58,9 @@ public class Model {
     private TransportType currentTransportType = defaultTransportType;
     private float minX, minY, maxX, maxY;
 
-    public Model(String filePath, boolean ttiMode) {
+    public Model(String filePath, boolean ttiMode) throws IOException {
         // Java wouldn't let me expand this into variables. Im very sorry about the mess
-        this(
-                Model.class.getResourceAsStream(filePath),
-                OSMParser.genFileExtension(filePath),
-                filePath,
-                ttiMode
-        );
+        this(Model.class.getResourceAsStream(filePath), OSMParser.genFileExtension(filePath), filePath, ttiMode);
     }
 
     public Model(InputStream in, FileExtension fileExtension, String fileName, boolean ttiMode) {
