@@ -18,8 +18,6 @@ public class POI implements Comparable<POI> {
     private Rectangle rect;
     private double distTo;
 
-    boolean deleted;
-
     public POI(String name, String type, float x, float y) {
         this.name = name;
         this.type = type;
@@ -102,8 +100,4 @@ public class POI implements Comparable<POI> {
     public String getImageType() {
         return imageType;
     }
-
-    public boolean isDeleted() { return deleted; }
-
-    public void setDeleted() { deleted = true; }
 }
