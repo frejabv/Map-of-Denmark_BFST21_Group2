@@ -66,7 +66,7 @@ public class AStar {
 
         this.type = type;
         model.setAStarPath(null);
-        ArrayList<Vertex> listOfCheckedNodes = new ArrayList<>();
+        ArrayList<Vertex> listOfCheckedVertices = new ArrayList<>();
 
         PriorityQueue<Vertex> pq = new PriorityQueue<>(20, new VertexComparator());
 
@@ -82,7 +82,7 @@ public class AStar {
             Vertex current = pq.poll(); //Gets the first element in the PQ
 
             current.explored = true; //Adds current to the explored set to remember that it is explored
-            listOfCheckedNodes.add(current);
+            listOfCheckedVertices.add(current);
 
             //Checks if current is goal
             if (current.getId() == end.getId()) {
@@ -91,30 +91,24 @@ public class AStar {
 
             //Checks every child of current node
             for (Edge e : current.getAdjacencies()) {
-                if ((type == TransportType.CAR && e.isDriveable()) || (type == TransportType.BICYCLE && e.isCyclable()) || (type == TransportType.WALK && e.isWalkable())) {
+                if (type == TransportType.CAR && e.isDriveable()
+                        || type == TransportType.BICYCLE && e.isCyclable()
+                        || type == TransportType.WALK && e.isWalkable()) {
                     Vertex child = e.target;
+                    //if we have already looked at child node we skip
+                    if (child.explored) {
+                        continue;
+                    }
                     child.setHScores(distanceToNode(child, end) / type.maxSpeed);
                     float cost = e.getWeight(type, model.getWayIndex().getMember(e.getWayID()).getSpeed());
                     float temp_g_scores = current.g_scores + cost;
                     float temp_f_scores = temp_g_scores + child.h_scores;
 
-
-                    //Checks if child node has been evaluated and the newer f_score is higher, skip
-                    if ((child.explored) && (temp_f_scores >= child.f_scores)) {
-                        continue;
-                    }
-
-                    //else if child node is not in queue (add it) or newer f_score is lower (Update them)
-                    else if ((!pq.contains(child)) || (temp_f_scores < child.f_scores)) {
-                        child.parent = current;
-                        child.g_scores = temp_g_scores;
-                        child.f_scores = temp_f_scores;
-
-                        if (pq.contains(child)) {
-                            pq.remove(child);
-                        }
-                        pq.add(child);
-                    }
+                    //add child node to queue and update f_score
+                    child.g_scores = temp_g_scores;
+                    child.f_scores = temp_f_scores;
+                    child.parent = current;
+                    pq.add(child);
                 }
             }
         }
@@ -122,13 +116,13 @@ public class AStar {
         createPath(end);
 
         List<Vertex> debugPath = new ArrayList<>();
-        for (Vertex node : listOfCheckedNodes) {
-            debugPath.add(node);
-            node.h_scores = 0;
-            node.f_scores = 0;
-            node.g_scores = 0;
-            node.parent = null;
-            node.explored = false;
+        for (Vertex vertex : listOfCheckedVertices) {
+            debugPath.add(vertex);
+            vertex.h_scores = 0;
+            vertex.f_scores = 0;
+            vertex.g_scores = 0;
+            vertex.parent = null;
+            vertex.explored = false;
         }
         model.setAStarDebugPath(debugPath);
     }
