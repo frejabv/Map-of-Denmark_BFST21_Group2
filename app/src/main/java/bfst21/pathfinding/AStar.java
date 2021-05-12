@@ -24,10 +24,10 @@ public class AStar {
 
     public AStar(Model model) {
         this.model = model;
-        readDataTest();
+        readData();
     }
 
-    private void readDataTest() {
+    private void readData() {
         for (Map.Entry<Tag, List<Drawable>> entry : model.getDrawableMap().entrySet()) {
             List<Drawable> value = entry.getValue();
             for (Drawable way : value) {
