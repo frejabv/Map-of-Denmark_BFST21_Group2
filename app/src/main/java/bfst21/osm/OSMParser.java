@@ -325,7 +325,11 @@ public class OSMParser {
                             break;
                         case "relation":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
-                                newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                try {
+                                    newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                } catch (RuntimeException e) {
+                                    //SystemPOI's that result in nullPointer or indexOutOfBounds are ignored
+                                }
                             }
                             if (tag != null) {
                                 relation.setTag(tag);
