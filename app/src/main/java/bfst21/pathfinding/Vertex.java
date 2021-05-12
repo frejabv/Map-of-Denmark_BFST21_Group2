@@ -21,10 +21,6 @@ public class Vertex {
         this.id = id;
     }
 
-    public Vertex(float hVal) {
-        h_scores = hVal;
-    }
-
     public long getId() {
         return id;
     }

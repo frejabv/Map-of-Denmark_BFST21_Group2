@@ -431,7 +431,7 @@ public class OSMParser {
                 if (!isDublet(way, tag, drawableMap)) {
                     drawableMap.get(tag).add(way);
                     for (Node node : way.getNodes()){
-                        model.getVertexIndex().putIfAbsent(node, new Vertex(node.getX(), node.getY(), node.id));
+                        model.getVertexMap().putIfAbsent(node, new Vertex(node.getX(), node.getY(), node.id));
                     }
                 }
             }

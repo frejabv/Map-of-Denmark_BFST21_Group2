@@ -16,7 +16,7 @@ public class AStar {
     int exits = 0;
     List<Vertex> path;
     TransportType type;
-    ArrayList<Vertex> vertices;
+    ArrayList<Vertex> vertexIndex;
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
     private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
@@ -33,15 +33,15 @@ public class AStar {
             for (Drawable way : value) {
                 Way tempWay = (Way) way;
                 for (int i = 0; i < tempWay.getNodes().size(); i++) {
-                    Vertex node = model.getVertexIndex().get(tempWay.getNodes().get(i));
+                    Vertex node = model.getVertexMap().get(tempWay.getNodes().get(i));
                     if (i != (tempWay.getNodes().size() - 1)) {
-                        Vertex nextNode = model.getVertexIndex().get(tempWay.getNodes().get(i + 1));
+                        Vertex nextNode = model.getVertexMap().get(tempWay.getNodes().get(i + 1));
                         Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId());
                         edge.setPathTypes(tempWay, this);
                         node.addAdjacencies(edge);
                     }
                     if (i > 0 && !tempWay.isOneway()) {
-                        Vertex previousNode = model.getVertexIndex().get(tempWay.getNodes().get(i - 1));
+                        Vertex previousNode = model.getVertexMap().get(tempWay.getNodes().get(i - 1));
                         Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId());
                         edge.setPathTypes(tempWay, this);
                         node.addAdjacencies(edge);
@@ -49,8 +49,9 @@ public class AStar {
                 }
             }
         }
-        vertices = new ArrayList<>(model.getVertexIndex().values());
-        vertices.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+        vertexIndex = new ArrayList<>(model.getVertexMap().values());
+        model.nullifyVertexMap();
+        vertexIndex.sort((a, b) -> Long.compare(a.getId(), b.getId()));
     }
 
     public void AStarSearch(Node startNode, Node endNode, TransportType type) {
@@ -368,16 +369,16 @@ public class AStar {
 
     public Vertex getVertex(long id) {
         long lo = 0;
-        long hi = vertices.size();
+        long hi = vertexIndex.size();
         while (lo + 1 < hi) {
             long mid = (lo + hi) / 2;
-            if (vertices.get((int) mid).getId() <= id) {
+            if (vertexIndex.get((int) mid).getId() <= id) {
                 lo = mid;
             } else {
                 hi = mid;
             }
         }
-        Vertex vertex = vertices.get((int) lo);
+        Vertex vertex = vertexIndex.get((int) lo);
 
         if (vertex.getId() == id) {
             return vertex;
