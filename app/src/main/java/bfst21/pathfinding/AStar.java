@@ -82,7 +82,8 @@ public class AStar {
                         || type == TransportType.BICYCLE && e.isCyclable()
                         || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
-                    if(child.explored) {
+                    //if we have already looked at child node we skip
+                    if (child.explored) {
                         continue;
                     }
                     child.setHScores(distanceToNode(child, end) / type.maxSpeed);
@@ -90,7 +91,7 @@ public class AStar {
                     float temp_g_scores = current.g_scores + cost;
                     float temp_f_scores = temp_g_scores + child.h_scores;
 
-                    //else if child node is not in queue (add it) and update f_score
+                    //add child node to queue and update f_score
                     child.g_scores = temp_g_scores;
                     child.f_scores = temp_f_scores;
                     child.parent = current;
