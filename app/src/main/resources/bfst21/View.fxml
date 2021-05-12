@@ -254,7 +254,7 @@
                   </ImageView>
                 </graphic>
               </Button>
-              <VBox>
+              <VBox fx:id="removePinContainer">
                 <Text fx:id="pinText">Pin</Text>
                 <Button fx:id="removePin">Remove pin</Button>
               </VBox>
