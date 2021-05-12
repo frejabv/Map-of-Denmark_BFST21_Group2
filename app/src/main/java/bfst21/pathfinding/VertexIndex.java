@@ -44,31 +44,26 @@ public class VertexIndex<T extends Vertex> implements Iterable<T>{
         }
 
         public VertexIndex<T> mergeVertices() {
-            if (!isSorted) {
-                vertices.sort((a, b) -> Long.compare(a.getId(), b.getId()));
-                isSorted = true;
-            }
+            vertices.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+            isSorted = true;
 
-            List<T> newVertices = new ArrayList<>();
-
-            Vertex previous = vertices.get(0);
+            //List<T> newVertices = new ArrayList<>();
+            int count = 0;
             for(int i = 1; i < vertices.size(); i++) {
+                Vertex previous = vertices.get(count);
                 Vertex current = vertices.get(i);
                 long valueOnPreviousVertex = previous.getId();
                 long valueOnCurrentVertex = current.getId();
                 if(valueOnCurrentVertex == valueOnPreviousVertex){
-                    //System.out.println("They're the same");
                     if(current.getAdjacencies() != null) {
                         for (Edge adjecentEdge : current.getAdjacencies()) {
                             previous.addAdjacencies(adjecentEdge);
                         }
-                    } else {
-                        System.out.println("Adjacencies is null");
-                        System.out.println(valueOnCurrentVertex);
                     }
+                    current = previous;
                 } else {
-                    newVertices.add((T) previous);
-                    previous = current;
+                    //newVertices.add((T) previous);
+                    count = i;
                 }
             }
 
@@ -104,13 +99,15 @@ public class VertexIndex<T extends Vertex> implements Iterable<T>{
                     previous = current;
                 }
             }*/
-
-            vertices = newVertices;
             return this;
         }
 
         public int size() {
             return vertices.size();
+        }
+
+        public List<T> getVertices(){
+            return vertices;
         }
 
         @Override
