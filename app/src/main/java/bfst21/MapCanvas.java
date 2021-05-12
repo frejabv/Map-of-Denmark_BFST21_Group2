@@ -297,17 +297,17 @@ public class MapCanvas extends Canvas {
     }
 
     public void drawDebugAStarPath() {
-        List<Vertex> nodes = model.getAStarDebugPath();
+        List<Vertex> vertices = model.getAStarDebugPath();
         gc.setStroke(Color.CORNFLOWERBLUE);
         gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
         gc.beginPath();
-        for (Vertex n : nodes) {
-            if (n.getAdjacencies() == null) {
+        for (Vertex v : vertices) {
+            if (v.getAdjacencies() == null) {
                 continue;
             }
-            for (Edge e : n.getAdjacencies()) {
+            for (Edge e : v.getAdjacencies()) {
                 Vertex child = e.target;
-                gc.moveTo(n.getX(), n.getY());
+                gc.moveTo(v.getX(), v.getY());
                 gc.lineTo(child.getX(), child.getY());
             }
         }

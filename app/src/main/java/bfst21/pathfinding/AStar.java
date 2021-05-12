@@ -33,18 +33,18 @@ public class AStar {
             for (Drawable way : value) {
                 Way tempWay = (Way) way;
                 for (int i = 0; i < tempWay.getNodes().size(); i++) {
-                    Vertex node = model.getVertexMap().get(tempWay.getNodes().get(i));
+                    Vertex vertex = model.getVertexMap().get(tempWay.getNodes().get(i));
                     if (i != (tempWay.getNodes().size() - 1)) {
-                        Vertex nextNode = model.getVertexMap().get(tempWay.getNodes().get(i + 1));
-                        Edge edge = new Edge(nextNode, distanceToNode(node, nextNode), tempWay.getId());
+                        Vertex nextVertex = model.getVertexMap().get(tempWay.getNodes().get(i + 1));
+                        Edge edge = new Edge(nextVertex, distanceToVertex(vertex, nextVertex), tempWay.getId());
                         edge.setPathTypes(tempWay, this);
-                        node.addAdjacencies(edge);
+                        vertex.addAdjacencies(edge);
                     }
                     if (i > 0 && !tempWay.isOneway()) {
-                        Vertex previousNode = model.getVertexMap().get(tempWay.getNodes().get(i - 1));
-                        Edge edge = new Edge(previousNode, distanceToNode(node, previousNode), tempWay.getId());
+                        Vertex previousVertex = model.getVertexMap().get(tempWay.getNodes().get(i - 1));
+                        Edge edge = new Edge(previousVertex, distanceToVertex(vertex, previousVertex), tempWay.getId());
                         edge.setPathTypes(tempWay, this);
-                        node.addAdjacencies(edge);
+                        vertex.addAdjacencies(edge);
                     }
                 }
             }
@@ -72,7 +72,7 @@ public class AStar {
         boolean found = false;
 
         while ((!pq.isEmpty()) && (!found)) { //While content in PQ and goal not found
-            //the node in having the lowest f_score value
+            //the vertex in having the lowest f_score value
             Vertex current = pq.poll(); //Gets the first element in the PQ
 
             current.explored = true; //Adds current to the explored set to remember that it is explored
@@ -87,22 +87,22 @@ public class AStar {
                 continue;
             }
 
-            //Checks every child of current node
+            //Checks every child of current vertex
             for (Edge e : current.getAdjacencies()) {
                 if (type == TransportType.CAR && e.isDriveable()
                         || type == TransportType.BICYCLE && e.isCyclable()
                         || type == TransportType.WALK && e.isWalkable()) {
                     Vertex child = e.target;
-                    //if we have already looked at child node we skip
+                    //if we have already looked at the child vertex we skip
                     if (child.explored) {
                         continue;
                     }
-                    child.setHScores(distanceToNode(child, end) / type.maxSpeed);
+                    child.setHScores(distanceToVertex(child, end) / type.maxSpeed);
                     float cost = e.getWeight(type, model.getWayIndex().getMember(e.getWayID()).getSpeed());
                     float temp_g_scores = current.g_scores + cost;
                     float temp_f_scores = temp_g_scores + child.h_scores;
 
-                    //add child node to queue and update f_score
+                    //add child vertex to queue and update f_score
                     child.g_scores = temp_g_scores;
                     child.f_scores = temp_f_scores;
                     child.parent = current;
@@ -160,21 +160,21 @@ public class AStar {
         Direction direction = Direction.FOLLOW;
 
         for (int i = 1; i < path.size() - 1; i++) {
-            Vertex node = path.get(i);
-            Vertex nextNode = path.get(i + 1);
-            Vertex previousNode = path.get(i - 1);
-            currentDistance += distanceToNode(previousNode, node);
+            Vertex vertex = path.get(i);
+            Vertex nextVertex = path.get(i + 1);
+            Vertex previousVertex = path.get(i - 1);
+            currentDistance += distanceToVertex(previousVertex, vertex);
 
             long firstId = 0;
             long secondId = 0;
 
-            for (Edge e : previousNode.getAdjacencies()) {
-                if (e.target == node && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
+            for (Edge e : previousVertex.getAdjacencies()) {
+                if (e.target == vertex && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
                     firstId = e.getWayID();
                 }
             }
-            for (Edge e : node.getAdjacencies()) {
-                if (e.target == nextNode && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
+            for (Edge e : vertex.getAdjacencies()) {
+                if (e.target == nextVertex && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
                     secondId = e.getWayID();
                 }
             }
@@ -187,7 +187,7 @@ public class AStar {
             }
 
             //count exits in roundabout
-            if (isRoundabout && node.getAdjacencies().size() > 1) {
+            if (isRoundabout && vertex.getAdjacencies().size() > 1) {
                 exits++;
             }
 
@@ -211,13 +211,13 @@ public class AStar {
                 totalDistance += currentDistance;
                 totalTime += currentDistance / currentMaxSpeed;
                 currentDistance = 0;
-                direction = getDirection(node, previousNode, nextNode);
+                direction = getDirection(vertex, previousVertex, nextVertex);
             }
 
             //we handle the last piece of road
             if (i == path.size() - 2) {
                 currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
-                currentDistance += distanceToNode(node, nextNode);
+                currentDistance += distanceToVertex(vertex, nextVertex);
                 totalDistance += currentDistance;
                 totalTime += currentDistance / currentMaxSpeed;
                 String roadName;
@@ -245,7 +245,7 @@ public class AStar {
             }
 
             currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
-            currentDistance += distanceToNode(path.get(0), path.get(1));
+            currentDistance += distanceToVertex(path.get(0), path.get(1));
             totalDistance += currentDistance;
             totalTime += currentDistance / currentMaxSpeed;
 
@@ -271,10 +271,10 @@ public class AStar {
         return routeDescription;
     }
 
-    private Direction getDirection(Vertex currentNode, Vertex previousNode, Vertex nextNode) {
+    private Direction getDirection(Vertex currentVertex, Vertex previousVertex, Vertex nextVertex) {
         Direction direction = null;
-        double theta = Math.atan2(nextNode.getY() - currentNode.getY(), nextNode.getX() - currentNode.getX()) -
-                Math.atan2(previousNode.getY() - currentNode.getY(), previousNode.getX() - currentNode.getX());
+        double theta = Math.atan2(nextVertex.getY() - currentVertex.getY(), nextVertex.getX() - currentVertex.getX()) -
+                Math.atan2(previousVertex.getY() - currentVertex.getY(), previousVertex.getX() - currentVertex.getX());
 
         double result = Math.toDegrees(theta); //the same as multiplying theta by 180/pi
 
@@ -285,8 +285,8 @@ public class AStar {
         if (result > 190) {
             direction = Direction.LEFT;
         } else if (result < 165) {
-            for (Edge e : currentNode.getAdjacencies()) {
-                if (e.target == nextNode) {
+            for (Edge e : currentVertex.getAdjacencies()) {
+                if (e.target == nextVertex) {
                     if (model.getWayIndex().getMember(e.getWayID()).isJunction()) {
                         isRoundabout = true;
                         exits = 0;
@@ -326,7 +326,7 @@ public class AStar {
         }
     }
 
-    private float distanceToNode(Vertex current, Vertex destination) {
+    private float distanceToVertex(Vertex current, Vertex destination) {
         float distance = 0;
         if (current != destination) {
             float deltaX = Math.abs(destination.getX()) - Math.abs(current.getX());
