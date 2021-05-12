@@ -302,6 +302,9 @@ public class MapCanvas extends Canvas {
         gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
         gc.beginPath();
         for (Vertex n : nodes) {
+            if (n.getAdjacencies() == null) {
+                continue;
+            }
             for (Edge e : n.getAdjacencies()) {
                 Vertex child = e.target;
                 gc.moveTo(n.getX(), n.getY());
