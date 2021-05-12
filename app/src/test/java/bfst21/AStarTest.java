@@ -4,10 +4,7 @@ import bfst21.osm.Node;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import bfst21.pathfinding.AStar;
-import bfst21.pathfinding.Edge;
-import bfst21.pathfinding.Step;
-import bfst21.pathfinding.TransportType;
+import bfst21.pathfinding.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,19 +21,19 @@ public class AStarTest {
 
     @Test
     public void testCreateAStar() {
-        Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(2, testNode.getAdjacencies().size());
-        testNode = model.getNodeIndex().getMember(2);
-        assertEquals(3, testNode.getAdjacencies().size());
+        Vertex testVertex = model.getAStar().getVertex(11);
+        assertEquals(2, testVertex.getAdjacencies().size());
+        testVertex = model.getAStar().getVertex(2);
+        assertEquals(3, testVertex.getAdjacencies().size());
     }
 
     @Test
     public void testAdjecencies() {
         //for Odense, has Korsør and Vejle as adjecencies
-        Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(2, testNode.getAdjacencies().size());
-        assertEquals(model.getNodeIndex().getMember(12), testNode.getAdjacencies().get(0).target);
-        assertEquals(model.getNodeIndex().getMember(8), testNode.getAdjacencies().get(1).target);
+        Vertex testVertex = model.getAStar().getVertex(11);
+        assertEquals(2, testVertex.getAdjacencies().size());
+        assertEquals(model.getAStar().getVertex(12), testVertex.getAdjacencies().get(0).target);
+        assertEquals(model.getAStar().getVertex(8), testVertex.getAdjacencies().get(1).target);
     }
 
     @Test
@@ -66,9 +63,9 @@ public class AStarTest {
     @Test
     public void testDriveable() {
         //Odense to Korsør is a primary highway
-        Node testNode = model.getNodeIndex().getMember(11);
-        assertEquals(true, testNode.getAdjacencies().get(0).isDriveable());
-        assertEquals(false, testNode.getAdjacencies().get(0).isWalkable());
+        Vertex testVertex = model.getAStar().getVertex(11);
+        assertEquals(true, testVertex.getAdjacencies().get(0).isDriveable());
+        assertEquals(false, testVertex.getAdjacencies().get(0).isWalkable());
     }
 
     @Test
@@ -112,15 +109,15 @@ public class AStarTest {
     @Test
     public void testDistance() {
         //distance from Odense to Korsør
-        Node testNode = model.getNodeIndex().getMember(11);
-        Node destination = model.getNodeIndex().getMember(12);
+        Vertex testVertex = model.getAStar().getVertex(11);
+        Vertex destination = model.getAStar().getVertex(12);
 
-        float deltaX = Math.abs(testNode.getX() - destination.getX());
-        float deltaY = Math.abs(testNode.getY() - destination.getY());
+        float deltaX = Math.abs(testVertex.getX() - destination.getX());
+        float deltaY = Math.abs(testVertex.getY() - destination.getY());
         float step = (float) Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         float distance = step * 111.320f * Model.scalingConstant;
 
-        assertEquals(distance, testNode.getAdjacencies().get(0).weight);
+        assertEquals(distance, testVertex.getAdjacencies().get(0).weight);
     }
 
     @Test
@@ -144,15 +141,15 @@ public class AStarTest {
     public void testTotalTime() {
         //distance from Odense to Korsør
         AStar astar = model.getAStar();
-        Node testNode = model.getNodeIndex().getMember(11);
-        Node destination = model.getNodeIndex().getMember(12);
+        Vertex testVertex = model.getAStar().getVertex(11);
+        Vertex destination = model.getAStar().getVertex(12);
 
-        double deltaX = Math.abs(testNode.getX() - destination.getX());
-        double deltaY = Math.abs(testNode.getY() - destination.getY());
+        double deltaX = Math.abs(testVertex.getX() - destination.getX());
+        double deltaY = Math.abs(testVertex.getY() - destination.getY());
         double distance = (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2))) * 111.320 * Model.scalingConstant;
         double totalDistance = Math.round(distance * 10.0) / 10.0;
         long wayID = 0;
-        for (Edge e : testNode.getAdjacencies()) {
+        for (Edge e : testVertex.getAdjacencies()) {
             if (e.target == destination) {
                 wayID = e.getWayID();
             }
@@ -162,7 +159,7 @@ public class AStarTest {
         int minutes = time % 60;
         int hours = time / 60;
 
-        astar.AStarSearch(testNode, destination, TransportType.CAR);
+        astar.AStarSearch(model.getNodeIndex().getMember(testVertex.getId()), model.getNodeIndex().getMember(destination.getId()), TransportType.CAR);
         astar.getPathDescription();
         assertEquals("Estimated Time: " + hours + " hours and " + minutes + " min", astar.getTotalTime());
     }
