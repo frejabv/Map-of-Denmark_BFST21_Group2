@@ -33,6 +33,7 @@ public class Model {
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
     HashMap<String, Image> imageSet;
+    HashMap<Node,Vertex> vertexIndex = new HashMap<>();
 
     private ArrayList<POI> pointsOfInterest;
     private ArrayList<POI> systemPointsOfInterest;
@@ -457,6 +458,10 @@ public class Model {
 
     public Rtree getRoadRTree() {
         return roadTree;
+    }
+
+    public HashMap<Node, Vertex> getVertexIndex() {
+        return vertexIndex;
     }
 
     public void addSystemPOI(POI poi) {

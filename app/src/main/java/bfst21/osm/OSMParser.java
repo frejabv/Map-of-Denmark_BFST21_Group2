@@ -3,6 +3,7 @@ package bfst21.osm;
 import bfst21.Model;
 import bfst21.POI.POI;
 import bfst21.exceptions.UnsupportedFileTypeException;
+import bfst21.pathfinding.Vertex;
 import bfst21.search.RadixTree;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -429,6 +430,9 @@ public class OSMParser {
                 drawableMap.putIfAbsent(tag, new ArrayList<>());
                 if (!isDublet(way, tag, drawableMap)) {
                     drawableMap.get(tag).add(way);
+                    for (Node node : way.getNodes()){
+                        model.getVertexIndex().putIfAbsent(node, new Vertex(node.getX(), node.getY(), node.id));
+                    }
                 }
             }
         }
