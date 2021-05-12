@@ -364,15 +364,14 @@ public class MapCanvas extends Canvas {
     public void goToPositionAstar(double minX, double minY, double maxX, double maxY) {
         trans.setToIdentity();
 
-        System.out.println("go to position is called");
-
         double deltaY = maxY - minY;
         double deltaX = maxX - minX;
 
         if (deltaX < deltaY) {
             double extra = deltaY / 2; //adjust this
             if(deltaY > 0.1) {
-                pan(-minX+0.1, -maxY + extra);
+                System.out.println("y " + deltaY);
+                pan(-minX, -maxY + extra); //+0.1
             } else {
                 pan(-minX, -maxY + extra);
             }
@@ -381,9 +380,10 @@ public class MapCanvas extends Canvas {
         } else {
             double extra = deltaX / 2; //adjust this
             if(deltaX > 0.1) {
-                pan(-minX+0.1, -maxY+extra);
+                System.out.println("x " + deltaX);
+                pan(-minX, -maxY + extra); //+0.1
             } else {
-                pan(-minX, -maxY+extra);
+                pan(-minX, -maxY + extra);
             }
             zoom(((getHeight() - getWidth() / deltaX) * -1), new Point2D(0, 0));
             pan(0, -(maxX - (-minY / 2)));

@@ -129,22 +129,17 @@ public class AStar {
         float maxY = -100;
         path = new ArrayList<>();
         for (Node node = target; node != null; node = node.parent) { //Starts on the target and work back to start
-            System.out.println("We are in the astar node loop");
             if (node.getX() < minX) {
                 minX = node.getX();
-                System.out.println("A value has been set");
             }
             if (node.getX() > maxX) {
                 maxX = node.getX();
-                System.out.println("A value has been set");
             }
             if (node.getY() < minY) {
                 minY = node.getY();
-                System.out.println("A value has been set");
             }
             if (node.getY() > maxY) {
                 maxY = node.getY();
-                System.out.println("A value has been set");
             }
             path.add(node);
         }
