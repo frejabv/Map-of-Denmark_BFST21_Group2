@@ -312,18 +312,35 @@ public class MapCanvas extends Canvas {
     }
 
     public void paintPath(List<Vertex> path){
+        double innerRoadWidth = 1;
+        if (doubleDraw) {
+            innerRoadWidth = 0.65;
+            Color c1 = Color.rgb(112,161,255);
+            int darkRed = (int) (c1.getRed() * 255 * 0.75);
+            int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
+            int darkBlue = (int) (c1.getBlue() * 255 * 0.75);
+            gc.setStroke(Color.rgb(darkRed, darkGreen, darkBlue));
+            gc.setLineWidth(0.8 / Math.sqrt(trans.determinant())*10);
+            if (getDistanceWidth() < .5) {
+                gc.setLineWidth(0.8 / 13333);
+            }
+            gc.beginPath();
+            gc.moveTo(path.get(0).getX(), path.get(0).getY());
+            for (int i = 1; i < path.size(); i++) {
+                gc.lineTo(path.get(i).getX(), path.get(i).getY());
+            }
+            gc.stroke();
+        }
+        double finalInnerRoadWidth = innerRoadWidth;
         gc.setStroke(Color.rgb(112,161,255));
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        if(getDistanceWidth() < 7.0){
-            //TODO: make it not magic
-            gc.setLineWidth(0.000045);
+        gc.setLineWidth(0.8 / Math.sqrt(trans.determinant())* 10 * finalInnerRoadWidth);
+        if (getDistanceWidth() < .5) {
+            gc.setLineWidth((0.8 / 13333) * finalInnerRoadWidth);
         }
         gc.beginPath();
-        for (int i = 0; i < path.size() - 1; i++) {
-            Vertex current = path.get(i);
-            Vertex next = path.get(i + 1);
-            gc.moveTo(current.getX(), current.getY());
-            gc.lineTo(next.getX(), next.getY());
+        gc.moveTo(path.get(0).getX(), path.get(0).getY());
+        for (int i = 1; i < path.size(); i++) {
+            gc.lineTo(path.get(i).getX(), path.get(i).getY());
         }
         gc.stroke();
     }

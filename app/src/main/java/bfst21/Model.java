@@ -42,7 +42,7 @@ public class Model {
     private ArrayList<Drawable> drawables700, drawables400, drawables150, drawables7, drawables3;
     private Rtree fillableRTree700, fillableRTree400, fillableRTree150, fillableRTree7, fillableRTree3;
     private Rtree drawableRTree700, drawableRTree400, drawableRTree150, drawableRTree7, drawableRTree3;
-    // roadtree can be optimized away
+
     private ArrayList<Drawable> roadlist;
     private Rtree roadTree;
     private Node nearestNode;
