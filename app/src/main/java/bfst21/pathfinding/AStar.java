@@ -83,6 +83,10 @@ public class AStar {
                 found = true;
             }
 
+            if (current.getAdjacencies() == null) {
+                continue;
+            }
+
             //Checks every child of current node
             for (Edge e : current.getAdjacencies()) {
                 if (type == TransportType.CAR && e.isDriveable()
