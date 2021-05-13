@@ -14,11 +14,6 @@ public class POITest {
         assertEquals("name", testPOI.getName());
         assertEquals("type", testPOI.getType());
         assertEquals("imageType", testPOI.getImageType());
-
-        testPOI.changeType("new type");
-        assertEquals("new type", testPOI.getType());
-        testPOI.changeName("new Name");
-        assertEquals("new Name", testPOI.getName());
     }
 
     @Test
