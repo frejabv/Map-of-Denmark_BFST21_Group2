@@ -159,11 +159,11 @@ public class POI_KDTree {
      */
     public ArrayList<POI> nearest(Point2D p, int listSize) {
         if (isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
 
         if (!bounds.contains(p)){
-            return null;
+            return new ArrayList<>();
         }
 
         ArrayList<POI> closestList = new ArrayList<>();
