@@ -85,6 +85,8 @@ public class Controller {
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
     private Node fromNode, toNode;
+    private POI currentPOI;
+
     @FXML
     private VBox regexContainer;
     @FXML

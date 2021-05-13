@@ -202,69 +202,71 @@ public class MapCanvas extends Canvas {
                         gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
                     }
                 }
-
-        if (distanceWidth <= 150 && distanceWidth > 20){
-            model.getPointsOfInterest().forEach(POI -> {
-                gc.setFill(Color.WHITE);
-                double size = (30 / Math.sqrt(trans.determinant()));
-                gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
-                gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
-                        size / 2, size / 2);
             });
-        }
 
-        if (showNames) {
-            gc.setLineDashes(0);
-            gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            for (Drawable area: activeAreaList) {
-                ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
+            if (distanceWidth <= 150 && distanceWidth > 20) {
+                model.getPointsOfInterest().forEach(POI -> {
+                    gc.setFill(Color.WHITE);
+                    double size = (30 / Math.sqrt(trans.determinant()));
+                    gc.fillOval(POI.getX() - (size / 2), POI.getY() - (size / 2), size, size);
+                    gc.drawImage(new Image("bfst21/icons/heart.png"), POI.getX() - (size / 4), POI.getY() - (size / 4),
+                            size / 2, size / 2);
+                });
             }
-        }
 
-        if (setPin) {
-            double size = (30 / Math.sqrt(trans.determinant()));
-            gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size,
-                    size);
-        }
+            if (showNames) {
+                gc.setLineDashes(0);
+                gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
+                for (Drawable area : activeAreaList) {
+                    ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
+                }
+            }
+
+            if (setPin) {
+                double size = (30 / Math.sqrt(trans.determinant()));
+                gc.drawImage(new Image("bfst21/icons/pin.png"), pinPoint.getX() - (size / 2), pinPoint.getY() - size, size,
+                        size);
+            }
 
 
-        gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
-        if (kdLines) {
-            model.getPOITree().drawLines(gc);
-        }
+            gc.setLineWidth((1 / Math.sqrt(trans.determinant())));
+            if (kdLines) {
+                model.getPOITree().drawLines(gc);
+            }
 
-        if (RTreeLines) {
-            gc.setStroke(Color.RED);
-            model.getRoadRTree().drawRTree(viewport, gc);
-        }
+            if (RTreeLines) {
+                gc.setStroke(Color.RED);
+                model.getRoadRTree().drawRTree(viewport, gc);
+            }
 
-        if (roadRectangles) {
-            gc.setStroke(Color.PURPLE);
-            model.getRoadRTree().drawRoadRectangles(viewport, gc);
-        }
+            if (roadRectangles) {
+                gc.setStroke(Color.PURPLE);
+                model.getRoadRTree().drawRoadRectangles(viewport, gc);
+            }
 
-        if (smallerViewPort || RTreeLines || roadRectangles) {
-            gc.setStroke(Color.BLACK);
-            viewport.draw(gc);
-        }
+            if (smallerViewPort || RTreeLines || roadRectangles) {
+                gc.setStroke(Color.BLACK);
+                viewport.draw(gc);
+            }
 
-        if (nearestNodeLine) {
-            gc.setStroke(Color.RED);
-            gc.setLineWidth((2 / Math.sqrt(trans.determinant())));
+            if (nearestNodeLine) {
+                gc.setStroke(Color.RED);
+                gc.setLineWidth((2 / Math.sqrt(trans.determinant())));
 
-            gc.beginPath();
-            gc.moveTo(mousePoint.getX(), mousePoint.getY());
-            gc.lineTo(model.getNearestNode().getX(), model.getNearestNode().getY());
-            gc.stroke();
-        }
+                gc.beginPath();
+                gc.moveTo(mousePoint.getX(), mousePoint.getY());
+                gc.lineTo(model.getNearestNode().getX(), model.getNearestNode().getY());
+                gc.stroke();
+            }
 
-        gc.restore();
-        long elapsedTime = System.nanoTime() - start;
-        if (redrawIndex < 20) {
-            redrawAverage[redrawIndex] = elapsedTime;
-            redrawIndex++;
-        } else {
-            redrawIndex = 0;
+            gc.restore();
+            long elapsedTime = System.nanoTime() - start;
+            if (redrawIndex < 20) {
+                redrawAverage[redrawIndex] = elapsedTime;
+                redrawIndex++;
+            } else {
+                redrawIndex = 0;
+            }
         }
     }
 
