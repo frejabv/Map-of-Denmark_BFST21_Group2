@@ -48,10 +48,10 @@ public class OSMParserTest {
     public void testInputFileSjaelsoe(){ assertEquals(41017, sjaelsoeModel.getNodeIndex().size()); }
 
     @Test
-    public void testSamsoeCoastlines(){ assertEquals(27,samsoeModel.getCoastlines().size()); }
+    public void testSamsoeCoastlines(){ assertThrows(NullPointerException.class, () -> samsoeModel.getCoastlines().size()); }
 
     @Test
-    public void testSjaelsoeCoastlines(){ assertEquals(0,sjaelsoeModel.getCoastlines().size()); }
+    public void testSjaelsoeCoastlines(){ assertThrows(NullPointerException.class, () -> sjaelsoeModel.getCoastlines().size()); }
 
     @Test
     public void testSamsoeIslands(){ assertEquals(20, samsoeModel.getIslands().size()); }

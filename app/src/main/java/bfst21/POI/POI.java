@@ -33,17 +33,10 @@ public class POI implements Comparable<POI> {
         this.y = y;
     }
 
-    public void changeName(String newName) {
-        name = newName + " " + type;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void changeType (String newType) {
-        type = newType;
-    }
 
     public String getType() {
         return type;

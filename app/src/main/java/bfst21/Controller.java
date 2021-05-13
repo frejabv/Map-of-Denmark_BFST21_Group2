@@ -28,7 +28,6 @@ import java.util.List;
 import static javafx.scene.layout.Priority.SOMETIMES;
 
 public class Controller {
-    POI currentPOI = null;
     @FXML
     private MapCanvas canvas;
     @FXML
@@ -77,6 +76,9 @@ public class Controller {
     private CheckBox showNames;
     @FXML
     private VBox NearbyPOI;
+    @FXML
+    private VBox removePinContainer;
+
     private Debug debug;
     private Point2D lastMouse;
     private boolean singleClick = true;
@@ -343,9 +345,9 @@ public class Controller {
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
             hideAll();
-            pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
-            String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
+            removePinContainer.getChildren().removeAll(removePinContainer.lookup(".button"));
+            String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()) {
                 currentPOI = null;
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
@@ -357,6 +359,7 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
+            removePinContainer.getChildren().add(removePin);
 
             updateNearbyPOI();
         } else {
@@ -552,9 +555,6 @@ public class Controller {
         //add this point to POI
         Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(), canvas.getPinPoint().getY()));
         String roadname = getClosestRoadString(road);
-        POI poi = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
-        model.addPOI(poi);
-        model.getPOITree().insert(poi);
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
         if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
             if (currentPOI == null) {
@@ -564,9 +564,12 @@ public class Controller {
             removePin.setVisible(false);
             removePin.setManaged(false);
             model.addPOI(currentPOI);
+            model.getPOITree().insert(currentPOI);
         } else {
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             model.removePOI(currentPOI);
+            //TODO add remove to kd tree and uncomment line below
+            //model.getPOITree().remove(currentPOI);
             changeType("pin", false);
             currentPOI = null;
         }
