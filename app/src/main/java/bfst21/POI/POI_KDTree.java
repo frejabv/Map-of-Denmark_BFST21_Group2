@@ -30,6 +30,10 @@ public class POI_KDTree {
         bounds = new Rectangle(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
     }
 
+    public Rectangle getBounds(){
+        return bounds;
+    }
+
     /**
      * insert query Node into the tree, if it is not null and does not exist in the tree already.
      */
@@ -37,13 +41,16 @@ public class POI_KDTree {
         if (qNode == null) {
             throw new NullPointerException("Query Node is null upon insertion into KDTree");
         }
-        //create root if tree is empty
-        if (isEmpty()) {
-            root = qNode;
-            root.setRect(bounds);
-            size++;
-        } else {
-            insert(root, null, qNode, true);
+        //insert only if new node is in bounds
+        if (bounds.contains(new Point2D(qNode.getX(), qNode.getY()))) {
+            //create root if tree is empty
+            if (isEmpty()) {
+                root = qNode;
+                root.setRect(bounds);
+                size++;
+            } else {
+                insert(root, null, qNode, true);
+            }
         }
     }
 
@@ -135,6 +142,15 @@ public class POI_KDTree {
         }
     }
 
+
+    public POI nearest(Point2D p) {
+        ArrayList<POI> momentaryList = nearest(p, 1);
+        if (momentaryList == null) {
+            return null;
+        } else {
+            return momentaryList.get(0);
+        }
+    }
     /**
      * begins the recursive call to nearest.
      * @param p         the point we are querying about
