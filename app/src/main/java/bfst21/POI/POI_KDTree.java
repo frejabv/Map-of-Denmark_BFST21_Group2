@@ -15,14 +15,25 @@ public class POI_KDTree {
     private POI root;
     private int size;
 
+    private ArrayList<POI> removedPOIList;
+
     public POI_KDTree(Model model) {
         this.model = model;
         this.root = null;
         size = 0;
+        removedPOIList = new ArrayList<>();
     }
 
     public boolean isEmpty() {
         return size == 0;
+    }
+
+    public boolean isRemoved(POI poi) {
+        return removedPOIList.contains(poi);
+    }
+
+    public ArrayList<POI> getRemovedPOIList() {
+        return removedPOIList;
     }
 
     public void setBounds(){
@@ -106,7 +117,7 @@ public class POI_KDTree {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
 
-        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())))
+        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || removedPOIList.contains(qNode))
             return false;
 
         return contains(root, qNode, true);
@@ -133,6 +144,10 @@ public class POI_KDTree {
         } else {
             return contains(currentNode.getRight(), qNode, !orientation);
         }
+    }
+
+    public void remove(POI poi) {
+        removedPOIList.add(poi);
     }
 
     /**
@@ -177,15 +192,17 @@ public class POI_KDTree {
             return closestList;
         }
 
-        //is currentNode closer than worstClosest?
-        currentNode.setDistTo(p);
-        if (closestList.size() < listSize && !closestList.contains(currentNode)) {
-            closestList.add(currentNode);
-            Collections.sort(closestList);
-        } else if (currentNode.getDistTo() < worstDistance) {
-            closestList.remove(worstClosest);
-            closestList.add(currentNode);
-            Collections.sort(closestList);
+        //if currentNode is not deleted, is it closer than worstClosest?
+        if (!removedPOIList.contains(currentNode)) {
+            currentNode.setDistTo(p);
+            if (closestList.size() < listSize && !closestList.contains(currentNode)) {
+                closestList.add(currentNode);
+                Collections.sort(closestList);
+            } else if (currentNode.getDistTo() < worstDistance) {
+                closestList.remove(worstClosest);
+                closestList.add(currentNode);
+                Collections.sort(closestList);
+            }
         }
 
         //move further down the tree
@@ -211,6 +228,7 @@ public class POI_KDTree {
         ArrayList<POI> result = new ArrayList<>();
         result = query(root, viewport, result);
 
+        result.removeAll(removedPOIList);
         return result;
     }
 
