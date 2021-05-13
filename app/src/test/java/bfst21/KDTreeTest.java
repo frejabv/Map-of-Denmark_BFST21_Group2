@@ -1,113 +1,109 @@
 package bfst21;
 
-public class KDTreeTest {/*
+import bfst21.POI.POI;
+import bfst21.POI.POI_KDTree;
+import bfst21.Rtree.Rectangle;
+import javafx.geometry.Point2D;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class KDTreeTest {
     private final Model model = new Model("data/kdTreeTest.osm", false);
 
     @Test
-    public void testNodeInit(){
-        Node testNode = new Node(1,2,3);
-        assertEquals(1,testNode.getX());
-        assertEquals(2/-0.56f, testNode.getY());
-        assertEquals(3, testNode.getId());
-        assertNull(testNode.getLeft());
-        assertNull(testNode.getRight());
-        assertNull(testNode.getRect());
+    public void testPOIInit(){
+        POI testPOI = new POI("tesPOI", "test", 1, 2);
+        assertEquals(1,testPOI.getX());
+        assertEquals(2, testPOI.getY());
+        assertEquals("test", testPOI.getType());
+        assertNull(testPOI.getLeft());
+        assertNull(testPOI.getRight());
+        assertNull(testPOI.getRect());
     }
 
     @Test
     public void testBounds(){
-        KDTree kdTree = new KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree(model);
         assertNull(kdTree.getBounds());
         kdTree.setBounds();
         assertNotNull(kdTree.getBounds());
         //Bounds are [(0,0) -> (10, 10)]
 
-        Node node = new Node(5, 5, 0);
+        POI node = new POI("1", "test", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node);
-        Node node1 = new Node(0, 0, 1);
+        POI node1 = new POI("2", "test", 0, 0 / -Model.scalingConstant);
         kdTree.insert(node1);
-        Node node2 = new Node(0, 10, 2);
+        POI node2 = new POI("3", "test",0, 10 / -Model.scalingConstant);
         kdTree.insert(node2);
-        Node node3 = new Node(10, 10, 3);
+        POI node3 = new POI("4", "test",10, 10 / -Model.scalingConstant);
         kdTree.insert(node3);
-        Node node4 = new Node(10, 0, 4);
+        POI node4 = new POI("5", "test",10, 0 / -Model.scalingConstant);
         kdTree.insert(node4);
         assertEquals(5, kdTree.getSize());
-        assertEquals(0, kdTree.outOfBoundsCounter);
 
         //Test each corner to assert that bounds work
-        Node node5 = new Node(0, -1, 5);
+        POI node5 = new POI("6", "test",0, -1  / -Model.scalingConstant);
         kdTree.insert(node5);
-        Node node6 = new Node(-1, 0, 6);
+        POI node6 = new POI("7", "test", -1, 0  / -Model.scalingConstant);
         kdTree.insert(node6);
-        Node node7 = new Node(-1, -1, 7);
+        POI node7 = new POI("8", "test", -1, -1  / -Model.scalingConstant);
         kdTree.insert(node7);
         assertEquals(5, kdTree.getSize());
-        assertEquals(3, kdTree.outOfBoundsCounter);
 
-        Node node8 = new Node(0, 11, 8);
+        POI node8 = new POI("9", "test", 0, 11 / -Model.scalingConstant);
         kdTree.insert(node8);
-        Node node9 = new Node(-1, 10, 9);
+        POI node9 = new POI("10", "test", -1, 10 / -Model.scalingConstant);
         kdTree.insert(node9);
-        Node node10 = new Node(-1, 11, 10);
+        POI node10 = new POI("11", "test", -1, 11 / -Model.scalingConstant);
         kdTree.insert(node10);
         assertEquals(5, kdTree.getSize());
-        assertEquals(6, kdTree.outOfBoundsCounter);
 
-        Node node11 = new Node(11, 0, 11);
+        POI node11 = new POI("12", "test", 11, 0 / -Model.scalingConstant);
         kdTree.insert(node11);
-        Node node12 = new Node(10, -1, 12);
+        POI node12 = new POI("13", "test", 10, -1 / -Model.scalingConstant);
         kdTree.insert(node12);
-        Node node13 = new Node(11, -1, 13);
+        POI node13 = new POI("14", "test", 11, -1 / -Model.scalingConstant);
         kdTree.insert(node13);
         assertEquals(5, kdTree.getSize());
-        assertEquals(9, kdTree.outOfBoundsCounter);
 
-        Node node14 = new Node(10, 11, 14);
+        POI node14 = new POI("15", "test", 10, 11 / -Model.scalingConstant);
         kdTree.insert(node14);
-        Node node15 = new Node(11, 10, 15);
+        POI node15 = new POI("16", "test", 11, 10 / -Model.scalingConstant);
         kdTree.insert(node15);
-        Node node16 = new Node(11, 11, 16);
+        POI node16 = new POI("17", "test", 11, 11 / -Model.scalingConstant);
         kdTree.insert(node16);
         assertEquals(5, kdTree.getSize());
-        assertEquals(12, kdTree.outOfBoundsCounter);
-
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
     }
 
     @Test
-    public void testKDTreeRoot(){
+    public void testPOI_KDTreeRoot(){
         //assert that root is null, and then set to first node inserted, and not second node.
-        KDTree kdTree = model.getKdTree();
+        POI_KDTree kdTree = model.getPOITree();
         kdTree.setBounds();
         assertTrue(kdTree.isEmpty());
-        Node node = new Node(1, 2, 3);
+        POI node = new POI("test node", "test", 1, 2 / -Model.scalingConstant);
         kdTree.insert(node);
         assertTrue(kdTree.contains(node));
-        //assert that the size is correct and that there are no exceptions
         assertEquals(1, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
     public void testContains(){
-        KDTree kdTree = new KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree(model);
         kdTree.setBounds();
 
-        Node node = new Node(1, 1, 0);
+        POI node = new POI("1", "test", 1, 1 / -Model.scalingConstant);
         kdTree.insert(node);
-        Node node1 = new Node(2, 2, 1);
+        POI node1 = new POI("2", "test", 2, 2 / -Model.scalingConstant);
         kdTree.insert(node1);
-        Node node2 = new Node(100, 100, 2);
+        POI node2 = new POI("3", "test", 100, 100 / -Model.scalingConstant);
         kdTree.insert(node2);
-        Node node3 = new Node(2, 4, 3);
+        POI node3 = new POI("4", "test", 2, 4 / -Model.scalingConstant);
         kdTree.insert(node3);
-        Node node4 = new Node(6,7,4);
+        POI node4 = new POI("5", "test", 6, 7 / -Model.scalingConstant);
         kdTree.insert(node4);
-        Node node5 = new Node(5,5,5);
+        POI node5 = new POI("6", "test", 5, 5 / -Model.scalingConstant);
 
         assertTrue(kdTree.contains(node));
         assertTrue(kdTree.contains(node1));
@@ -117,24 +113,21 @@ public class KDTreeTest {/*
         assertFalse(kdTree.contains(node5)); //not added to tree
 
         assertEquals(4, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(1, kdTree.outOfBoundsCounter);
     }
 
     @Test
     public void testInsertPosition(){
         //assert that children are placed correctly
-        KDTree kdTree = new KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree(model);
         kdTree.setBounds();
 
-        Node node = new Node(5, 5, 1);
+        POI node = new POI("1", "test", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node);
-        Node node1 = new Node(1, 3, 2);
+        POI node1 = new POI("2", "test", 1, 3 / -Model.scalingConstant);
         kdTree.insert(node1); //should be left of root
-        Node node2 = new Node(6, 2, 3);
+        POI node2 = new POI("3", "test", 6, 2 / -Model.scalingConstant);
         kdTree.insert(node2); //should be right of root
-        Node node3 = new Node(4, 2, 4);
+        POI node3 = new POI("4", "test", 4, 2 / -Model.scalingConstant);
         kdTree.insert(node3); //should be right on left child
 
         assertEquals(node1, node.getLeft());
@@ -142,23 +135,20 @@ public class KDTreeTest {/*
         assertEquals(node3, node1.getRight());
 
         assertEquals(4, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
-    public void testKDTreeInsertLinkedList(){
+    public void testPOI_KDTreeInsertLinkedList(){
         //assert that output is a linked list
-        KDTree kdTree = new KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree(model);
         kdTree.setBounds();
-        Node node = new Node(10, 10, 1);
+        POI node = new POI("1", "test", 10, 10 / -Model.scalingConstant);
         kdTree.insert(node);
-        Node node1 = new Node(9, 1, 2);
+        POI node1 = new POI("2", "test", 9, 1 / -Model.scalingConstant);
         kdTree.insert(node1);
-        Node node2 = new Node(8, 2, 3);
+        POI node2 = new POI("3", "test", 8, 2 / -Model.scalingConstant);
         kdTree.insert(node2);
-        Node node3 = new Node(7, 3, 4);
+        POI node3 = new POI("4", "test", 7, 3 / -Model.scalingConstant);
         kdTree.insert(node3);
 
         assertEquals(node1, node.getLeft());
@@ -166,14 +156,11 @@ public class KDTreeTest {/*
         assertEquals(node3, node2.getLeft());
 
         assertEquals(4, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
-    public void testInsertNullNode(){
-        KDTree kdTree = new KDTree(model);
+    public void testInsertNullPOI(){
+        POI_KDTree kdTree = new POI_KDTree(model);
         kdTree.setBounds();
 
         boolean success = false;
@@ -185,27 +172,24 @@ public class KDTreeTest {/*
         assertTrue(success);
 
         assertEquals(0, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
     public void testRectContains(){
-        KDTree kdTree = new KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree(model);
         kdTree.setBounds();
 
-        Node node = new Node(5, 5, 1);
+        POI node = new POI("1", "test", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node); //root
-        Node node1 = new Node(3, 3, 2);
+        POI node1 = new POI("2", "test", 3, 3 / -Model.scalingConstant);
         kdTree.insert(node1); // left of root
-        Node node2 = new Node(1, 9, 3);
+        POI node2 = new POI("3", "test", 1, 9 / -Model.scalingConstant);
         kdTree.insert(node2); // left of node1
-        Node node3 = new Node(3, 6, 4);
+        POI node3 = new POI("4", "test", 3, 6 / -Model.scalingConstant);
         kdTree.insert(node3); // right of node2
-        Node node4 = new Node(2, 4, 5);
+        POI node4 = new POI("5", "test", 2, 4 / -Model.scalingConstant);
         kdTree.insert(node4); // right of node3
-        Node node5 = new Node(6,7,6);
+        POI node5 = new POI("6", "test", 6, 7 / -Model.scalingConstant);
         kdTree.insert(node5); // right of root
 
         Point2D p1 = new Point2D(2,5/-0.56f); //within node4's square
@@ -225,14 +209,11 @@ public class KDTreeTest {/*
         assertFalse(node5.getRect().contains(p2));
 
         assertEquals(6, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
     public void testContainsNull(){
-        KDTree kdTree = new KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree(model);
         kdTree.setBounds();
 
         boolean nullContainsSuccess = false;
@@ -244,126 +225,57 @@ public class KDTreeTest {/*
         assertTrue(nullContainsSuccess);
 
         assertEquals(0, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
     }
 
     @Test
     public void testNearest(){
-        KDTree kdTree = new KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree(model);
         kdTree.setBounds();
 
         Point2D testEmpty = new Point2D(1,1);
         assertNull(kdTree.nearest(testEmpty));
 
-        Node node = new Node(5, 5, 1);
+        POI node = new POI("1", "test", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node);
-        Node node1 = new Node(3, 3, 2);
+        POI node1 = new POI("2", "test", 3, 3 / -Model.scalingConstant);
         kdTree.insert(node1);
-        Node node2 = new Node(1, 9, 3);
+        POI node2 = new POI("3", "test", 1, 9 / -Model.scalingConstant);
         kdTree.insert(node2);
-        Node node3 = new Node(3, 6, 4);
+        POI node3 = new POI("4", "test", 3, 6 / -Model.scalingConstant);
         kdTree.insert(node3);
-        Node node4 = new Node(2, 4, 5);
+        POI node4 = new POI("5", "test", 2, 4 / -Model.scalingConstant);
         kdTree.insert(node4);
-        Node node5 = new Node(6, 7, 6);
+        POI node5 = new POI("6", "test", 6, 7 / -Model.scalingConstant);
         kdTree.insert(node5);
-        Node node6 = new Node(9, 1, 7);
+        POI node6 = new POI("7", "test", 9, 1 / -Model.scalingConstant);
         kdTree.insert(node6);
-        Node node7 = new Node(5.1f, 10, 8);
+        POI node7 = new POI("8", "test", 5.1f, 10 / -Model.scalingConstant);
         kdTree.insert(node7);
-        Node node8 = new Node(0,0, 9);
+        POI node8 = new POI("9", "test", 0, 0 / -Model.scalingConstant);
         kdTree.insert(node8);
-        Node node9 = new Node(1,0,10);
+        POI node9 = new POI("10", "test", 1, 0 / -Model.scalingConstant);
         kdTree.insert(node9);
 
         //right beside node7, but to the left of root
-        Point2D test1 = new Point2D(4.9, 10/-0.56f);
+        Point2D test1 = new Point2D(4.9, 10 / -Model.scalingConstant);
         assertEquals(node7, kdTree.nearest(test1));
 
-        //Node that is equally close to node8 and node9, should return node8
+        //POI that is equally close to node8 and node9, should return node8
         Point2D test2 = new Point2D(0.5,0);
         assertEquals(node8, kdTree.nearest(test2));
 
         //out of bounds
-        Point2D test3 = new Point2D(-1,-1/-0.56f);
+        Point2D test3 = new Point2D(-1,-1 / -Model.scalingConstant);
         assertNull(kdTree.nearest(test3));
 
         //next to node 4
-        Point2D test4 = new Point2D(2.7,3.7/-0.56f);
+        Point2D test4 = new Point2D(2.7,3.7 / -Model.scalingConstant);
         assertEquals(node4, kdTree.nearest(test4));
 
         //next to node 6
-        Point2D test5 = new Point2D(8,2/-0.56f);
+        Point2D test5 = new Point2D(8,2 / -Model.scalingConstant);
         assertEquals(node6, kdTree.nearest(test5));
 
         assertEquals(10, kdTree.getSize());
-        assertEquals(0, kdTree.IAE3Counter);
-        assertEquals(0, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
     }
-
-    @Test
-    public void testRectExceptions(){
-        KDTree kdTree = new KDTree(model);
-        kdTree.setBounds();
-
-        boolean minXNaN = false;
-        boolean maxXNaN = false;
-        boolean minYNaN = false;
-        boolean maxYNaN = false;
-
-        try {
-            RectHV r1 = new RectHV((float) Math.sqrt(-1), 0, 1,1);
-        } catch (IllegalArgumentException e) {
-            minXNaN = true;
-        }
-        assertTrue(minXNaN);
-
-        try {
-            RectHV r2 = new RectHV(0,0, (float) Math.sqrt(-1),0);
-        } catch (IllegalArgumentException e) {
-            maxXNaN = true;
-        }
-        assertTrue(maxXNaN);
-
-        try {
-            RectHV r3 = new RectHV(0, (float) Math.sqrt(-1), 1, 1);
-        } catch (IllegalArgumentException e) {
-            minYNaN = true;
-        }
-        assertTrue(minYNaN);
-
-        try {
-            RectHV r4 = new RectHV(0,0,0, (float) Math.sqrt(-1));
-        } catch (IllegalArgumentException e) {
-            maxYNaN = true;
-        }
-        assertTrue(maxYNaN);
-
-        RectHV r5 = new RectHV(1,0,0,1);
-        RectHV r6 = new RectHV(0,1,1,0);
-
-        assertEquals(1, kdTree.IAE3Counter);
-        assertEquals(1, kdTree.IAE4Counter);
-        assertEquals(0, kdTree.outOfBoundsCounter);
-    }
-
-    @Test
-    public void testRectIntersects(){
-        RectHV r1 = new RectHV(0,0,2,2);
-        RectHV r2 = new RectHV(1,1,3,3);
-        RectHV r3 = new RectHV(5,5,10,10);
-
-        assertTrue(r1.intersects(r2));
-        assertTrue(r2.intersects(r1));
-
-        assertFalse(r1.intersects(r3));
-        assertFalse(r3.intersects(r1));
-
-        assertFalse(r2.intersects(r3));
-        assertFalse(r3.intersects(r2));
-
-    }
-*/}
+}
