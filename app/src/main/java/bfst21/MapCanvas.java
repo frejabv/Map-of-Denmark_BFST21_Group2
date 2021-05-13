@@ -188,13 +188,7 @@ public class MapCanvas extends Canvas {
             activePOIList.addAll(model.getPOITree().query(viewport));
             activePOIList.forEach(poi -> {
                 //TODO we will reduce this to poi.getType() == null in the future
-                if (poi.getType().equals("place")) {
-                    gc.setFill(Color.WHITE);
-                    double size = (30 / Math.sqrt(trans.determinant()));
-                    gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
-                    gc.drawImage(new Image("bfst21/icons/heart.png"), poi.getX() - (size / 4), poi.getY() - (size / 4),
-                            size / 2, size / 2);
-                } else {
+                if (!poi.getType().equals("place")) {
                     gc.setFill(Color.rgb(52, 152, 219));
                     double size = (30 / Math.sqrt(trans.determinant()));
                     gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
@@ -210,7 +204,7 @@ public class MapCanvas extends Canvas {
             });
         }
 
-        if (distanceWidth <= 150 && distanceWidth > 20) {
+        if (distanceWidth <= 150) {
             model.getPointsOfInterest().forEach(POI -> {
                 gc.setFill(Color.WHITE);
                 double size = (30 / Math.sqrt(trans.determinant()));
