@@ -37,6 +37,7 @@ public class MapCanvas extends Canvas {
     Rectangle viewport;
     ArrayList<Drawable> activeDrawList, activeFillList, activeAreaList;
     ArrayList<POI> activePOIList;
+    ArrayList<Tag> requiresMinimumAreaTagList;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
@@ -48,6 +49,7 @@ public class MapCanvas extends Canvas {
         this.model = model;
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
+        initRequiresMinimumAreaTagList();
         moveToInitialPosition();
         mapZoomLimit = getDistanceWidth() * 5;
         widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -110,16 +112,18 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
+        double minimumArea = viewport.getArea() / 50000;
         for (Drawable fillable : activeFillList) {
-            Tag tag = fillable.getTag();
-            gc.setStroke(renderingStyle.getColorByTag(tag));
-            gc.setFill(renderingStyle.getColorByTag(tag));
+            if (!requiresMinimumAreaTagList.contains(fillable.getTag()) || fillable.getRect().getArea() > minimumArea) {
+                Tag tag = fillable.getTag();
+                gc.setStroke(renderingStyle.getColorByTag(tag));
+                gc.setFill(renderingStyle.getColorByTag(tag));
 
-            if (tag.zoomLimit > distanceWidth) {
-                fillable.draw(gc, renderingStyle);
-                gc.fill();
+                if (tag.zoomLimit > distanceWidth) {
+                    fillable.draw(gc, renderingStyle);
+                    gc.fill();
+                }
             }
-
         }
 
         // Draw dark
@@ -215,11 +219,14 @@ public class MapCanvas extends Canvas {
                 });
             }
 
+            minimumArea = viewport.getArea() / 1000;
             if (showNames) {
                 gc.setLineDashes(0);
                 gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
                 for (Drawable area : activeAreaList) {
-                    ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
+                    if (((AreaName) area).getType() != AreaType.ISLAND || area.getRect().getArea() > minimumArea) {
+                        ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
+                    }
                 }
             }
 
@@ -422,4 +429,20 @@ public class MapCanvas extends Canvas {
         showRoute = false;
         repaint();
     }
+
+    private void initRequiresMinimumAreaTagList() {
+        requiresMinimumAreaTagList = new ArrayList<>();
+        requiresMinimumAreaTagList.add(Tag.MEADOW);
+        requiresMinimumAreaTagList.add(Tag.FOREST);
+        requiresMinimumAreaTagList.add(Tag.WOOD);
+        requiresMinimumAreaTagList.add(Tag.GRASS);
+        requiresMinimumAreaTagList.add(Tag.PARK);
+        requiresMinimumAreaTagList.add(Tag.SCRUB);
+        requiresMinimumAreaTagList.add(Tag.GRASSLAND);
+        requiresMinimumAreaTagList.add(Tag.LAKE);
+        requiresMinimumAreaTagList.add(Tag.WATER);
+        requiresMinimumAreaTagList.add(Tag.HEATH);
+        requiresMinimumAreaTagList.add(Tag.CEMETERY);
+    }
+
 }
