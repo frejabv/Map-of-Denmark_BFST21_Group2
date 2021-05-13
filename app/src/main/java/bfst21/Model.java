@@ -469,7 +469,7 @@ public class Model {
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(
             Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN,
             Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE,
-            Tag.TERTIARY, Tag.TRUNK, Tag.UNCLASSIFIED));
+            Tag.TERTIARY, Tag.TRUNK, Tag.TRACK, Tag.UNCLASSIFIED));
 
     public void addDrawableToRTreeList(String type, List<Drawable> drawableList, int zoomLimit) {
         if (type.equals("map")) {
