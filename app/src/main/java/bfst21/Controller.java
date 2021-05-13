@@ -706,7 +706,7 @@ public class Controller {
 
     public String getClosestRoadString(Way road) {
         if (road.getName().equals("")) {
-            return "ID: " + road.getId();
+            return "Unnamed " + String.valueOf(road.getTag()).toLowerCase() + " road";
         } else {
             return road.getName();
         }
