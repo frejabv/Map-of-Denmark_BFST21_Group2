@@ -9,13 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class POITest {
 
     @Test
-    public void testType() {
-        POI testPOI = new POI("test", "type", "imageType", 1, 1);
+    public void testTypesAndName() {
+        POI testPOI = new POI("name", "type", "imageType", 1, 1);
+        assertEquals("name", testPOI.getName());
         assertEquals("type", testPOI.getType());
         assertEquals("imageType", testPOI.getImageType());
 
         testPOI.changeType("new type");
         assertEquals("new type", testPOI.getType());
+        testPOI.changeName("new Name");
+        assertEquals("new Name", testPOI.getName());
     }
 
     @Test
