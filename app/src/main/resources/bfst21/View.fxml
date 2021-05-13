@@ -232,6 +232,11 @@
               <Region styleClass="hr"/>
               <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
               <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Enable Double Draw</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <CheckBox onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
+              <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
               </FlowPane>
               <Region styleClass="hr"/>
@@ -283,7 +288,6 @@
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleRoadRectangles">Show Road-Rtree Way rectangles</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleNearestNodeLine">Show line from mouse to nearest node on nearest way</CheckBox>
               <CheckBox styleClass="checkBox" onMouseClicked="#toggleAStarDebugPath" fx:id="showAStarPath" >Show A* paths</CheckBox>
-              <CheckBox styleClass="checkBox" onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Regex Matcher</Text>
               </FlowPane>
