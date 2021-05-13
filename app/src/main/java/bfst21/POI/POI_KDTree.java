@@ -228,6 +228,7 @@ public class POI_KDTree {
         ArrayList<POI> result = new ArrayList<>();
         result = query(root, viewport, result);
 
+        result.removeAll(removedPOIList);
         return result;
     }
 
