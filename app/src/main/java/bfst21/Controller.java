@@ -565,13 +565,10 @@ public class Controller {
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
             removePin.setVisible(false);
             removePin.setManaged(false);
-            //TODO addPOI
             model.addPOI(currentPOI);
-            // model.getPOITree().insert(currentPOI);
         } else {
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             model.removePOI(currentPOI);
-            model.getPOITree().remove(currentPOI);
             changeType("pin", false);
             currentPOI = null;
         }

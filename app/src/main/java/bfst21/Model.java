@@ -336,10 +336,12 @@ public class Model {
 
     public void addPOI(POI poi) {
         pointsOfInterest.add(poi);
+        POITree.insert(poi);
     }
 
     public void removePOI(POI poi) {
         pointsOfInterest.remove(poi);
+        POITree.remove(poi);
     }
 
     public ArrayList<POI> getPointsOfInterest() {
