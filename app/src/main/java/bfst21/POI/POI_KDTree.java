@@ -163,7 +163,7 @@ public class POI_KDTree {
      * @param p                 the point we are querying about.
      * @return                  returns the closestList when there are no other candidates in this branch.
      */
-    private ArrayList<POI> nearest (POI currentNode, ArrayList<POI> currentList, Point2D p, boolean orientation, int listSize) {
+    private ArrayList<POI> nearest(POI currentNode, ArrayList<POI> currentList, Point2D p, boolean orientation, int listSize) {
         ArrayList<POI> closestList = currentList;
         POI worstClosest = closestList.get(closestList.size()-1);
         double worstDistance = worstClosest.getDistTo();
@@ -205,6 +205,30 @@ public class POI_KDTree {
         }
 
         return closestList;
+    }
+
+    public ArrayList<POI> query(final Rectangle viewport) {
+        ArrayList<POI> result = new ArrayList<>();
+        result = query(root, viewport, result);
+
+        return result;
+    }
+
+    public ArrayList<POI> query(POI qNode, Rectangle viewport, ArrayList<POI> result){
+        if (qNode == null) {
+            return result;
+        }
+
+        if (qNode.getRect().intersects(viewport)) {
+            Point2D p = new Point2D(qNode.getX(), qNode.getY());
+            if (viewport.contains(p)) {
+                result.add(qNode);
+            }
+            result = query(qNode.getLeft(), viewport, result);
+            result = query(qNode.getRight(), viewport, result);
+        }
+
+        return result;
     }
 
     public void drawLines(GraphicsContext gc) {

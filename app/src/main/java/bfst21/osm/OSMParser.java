@@ -47,7 +47,6 @@ public class OSMParser {
             model.setRelationIndex((MemberIndex<Relation>) input.readObject());
             model.setStreetTree((RadixTree) input.readObject());
             model.setIslands((ArrayList<Drawable>) input.readObject());
-            model.setCoastlines((ArrayList<Way>) input.readObject());
             model.setMinX(input.readFloat());
             model.setMinY(input.readFloat());
             model.setMaxX(input.readFloat());
@@ -76,7 +75,6 @@ public class OSMParser {
             output.writeObject(model.getRelationIndex());
             output.writeObject(model.getStreetTree());
             output.writeObject(model.getIslands());
-            output.writeObject(model.getCoastlines());
             output.writeFloat(model.getMinX());
             output.writeFloat(model.getMinY());
             output.writeFloat(model.getMaxX());
@@ -323,7 +321,9 @@ public class OSMParser {
                             break;
                         case "relation":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
-                                newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                if (relation.ways != null) {
+                                    newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                }
                             }
                             if (tag != null) {
                                 relation.setTag(tag);
@@ -343,6 +343,7 @@ public class OSMParser {
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("No coastlines found");
         }
+        model.setCoastlines(null);
     }
 
     private static void newSystemPOI(Model model,String systemPOIName, float x, float y) {
