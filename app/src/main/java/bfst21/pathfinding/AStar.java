@@ -54,6 +54,26 @@ public class AStar {
         vertexIndex.sort((a, b) -> Long.compare(a.getId(), b.getId()));
     }
 
+    /**
+     * AStarSearch creates a priority queue with the start vertex being inserted. We take out the first element of
+     * the queue and check if it is our end node, if not we add all the children that our current vertex's edges are
+     * pointing to. We take into account that the edge matches the transport type of the path. Like this we continue
+     * until we find the end or there are no more vertices to be explored, in which case no path was found.
+     *
+     * Here we set their scores.
+     * The h-score is the heuristic, a measure of how far the node is from the goal (in our case
+     * distance in a straight line from the current vertex to the end, divided by max speed for the type of edge).
+     * The g-score is the weight of the path taken so far.
+     * The f-score is the result of the g- and h-score and therefore the lowest f-score will be the best path, as it
+     * will be short and closer to the goal.
+     *
+     * After we have created the path we reset all values for the vertices that were explored, so that these values
+     * don't faultily affect the next traversal through the graph.
+     *
+     * @param startNode The node on which the path is taken from
+     * @param endNode The node on which the path should end, the goal.
+     * @param type The transport type, affecting which edges can be taken.
+     * */
     public void AStarSearch(Node startNode, Node endNode, TransportType type) {
         Vertex start = getVertex(startNode.getId());
         Vertex end = getVertex(endNode.getId());
@@ -151,6 +171,22 @@ public class AStar {
         model.setAStarBounds(minX, minY, maxX, maxY);
     }
 
+    /**
+     * This method creates the description of the Astar path. This is done by looping through every vertex in the path
+     * and detecting when a change on the path happens, then creating a new @link{Step} with the roadname, direction
+     * and distance driven. A Step can also have exits added if we are going out of a roundabout.
+     *
+     * We have to handle the last piece of road differently as our method looks back and creates a step when we detect
+     * the next change. Therefore we create two steps when we get to the end in @link{createArrivalStep()}
+     *
+     * We also handle the paths that would not be part of the for loop, that is a very short path or no path.
+     *
+     * The method runs through the whole path and therefore sums up the distance driven and the time this took.
+     * In the end we return the list with all the steps created when going through the path.
+     *
+     * @return ArrayList of Step objects which include the direction of the change in path, the road name of the road
+     * which the change goes onto and the distance of which you have to follow said road.
+     * */
     public ArrayList<Step> getPathDescription() {
         ArrayList<Step> routeDescription = new ArrayList<>();
         double currentDistance = 0;
