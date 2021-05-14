@@ -76,6 +76,8 @@ public class Controller {
     private CheckBox showNames;
     @FXML
     private VBox NearbyPOI;
+    @FXML
+    private VBox removePinContainer;
 
     private Debug debug;
     private Point2D lastMouse;
@@ -83,6 +85,40 @@ public class Controller {
     private Model model;
     private ArrayList<Text> suggestionList = new ArrayList<>();
     private Node fromNode, toNode;
+    private POI currentPOI;
+
+    @FXML
+    private VBox regexContainer;
+    @FXML
+    private Button removePin;
+    @FXML
+    private HBox scaleContainer;
+    @FXML
+    private VBox scale;
+    @FXML
+    private ImageView heartIcon;
+    @FXML
+    private VBox userPOI;
+    @FXML
+    private VBox routeDescription;
+    @FXML
+    private VBox routeStepsContainer;
+    @FXML
+    private Text arrivalText;
+    @FXML
+    private Text arrivalSmallText;
+    @FXML
+    private CheckBox showAStarPath;
+    @FXML
+    private ToggleGroup selectTransportTypeRoute;
+    @FXML
+    private ToggleGroup selectTransportTypeSettings;
+    @FXML
+    private ToggleButton carRoute;
+    @FXML
+    private ToggleButton bicycleRoute;
+    @FXML
+    private ToggleButton walkRoute;
 
     public void init(Model model) {
         this.model = model;
@@ -119,9 +155,6 @@ public class Controller {
 
         model.setUpAStar();
     }
-
-    @FXML
-    private VBox regexContainer;
 
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
@@ -311,15 +344,12 @@ public class Controller {
     }
 
     @FXML
-    private Button removePin;
-
-    @FXML
     private void onMouseReleasedOnCanvas(MouseEvent e) {
         if (singleClick) {
             hideAll();
-            pinContainer.getChildren().removeAll(pinContainer.lookup(".button"));
-            String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             changeType("pin", true);
+            removePinContainer.getChildren().removeAll(removePinContainer.lookup(".button"));
+            String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()) {
                 currentPOI = null;
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
@@ -331,6 +361,7 @@ public class Controller {
                 canvas.repaint();
                 hideAll();
             });
+            removePinContainer.getChildren().add(removePin);
 
             updateNearbyPOI();
         } else {
@@ -348,7 +379,7 @@ public class Controller {
         NearbyPOI.getChildren().add(nearbyAttractionsText);
         NearbyPOI.getChildren().add(region);
         ArrayList<POI> poiArrayList = model.getPOITree().nearest(canvas.pinPoint, 5);
-        if (poiArrayList.size() > 0) {
+        if (poiArrayList != null && poiArrayList.size() > 0) {
             for (POI poi : poiArrayList) {
                 HBox nearbyContainer = new HBox();
                 nearbyContainer.getStyleClass().add("nearbyPOIContainer");
@@ -505,11 +536,6 @@ public class Controller {
         debug.shutdownExecutor();
     }
 
-    @FXML
-    private HBox scaleContainer;
-    @FXML
-    private VBox scale;
-
     public void updateScaleBar() {
         double scaleWidth = (canvas.getWidth() / 10) + 40;
         scaleContainer.setPrefWidth(scaleWidth);
@@ -527,22 +553,14 @@ public class Controller {
         scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
     }
 
-    @FXML
-    private ImageView heartIcon;
-
-    POI currentPOI = null;
-
     public void onMousePressedPinHeart() {
         //add this point to POI
-        Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(),canvas.getPinPoint().getY()));
+        Way road = model.getRoadRTree().nearestWay(new Point2D(canvas.getPinPoint().getX(), canvas.getPinPoint().getY()));
         String roadname = getClosestRoadString(road);
-        POI poi = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
-        model.addPOI(poi);
-        model.getPOITree().insert(poi);
         String[] heartIconFilePath = heartIcon.getImage().getUrl().split("/");
         if (heartIconFilePath[heartIconFilePath.length - 1].equals("heart-border.png")) {
             if (currentPOI == null) {
-                currentPOI = new POI("Near " + roadname, "place", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
+                currentPOI = new POI("Near " + roadname, "user-defined", "heart", (float) canvas.getPinPoint().getX(), (float) canvas.getPinPoint().getY());
             }
             heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
             removePin.setVisible(false);
@@ -558,9 +576,6 @@ public class Controller {
         canvas.repaint();
         updateUserPOI();
     }
-
-    @FXML
-    private VBox userPOI;
 
     public void updateUserPOI() {
         userPOI.getChildren().clear();
@@ -589,15 +604,6 @@ public class Controller {
         canvas.showNames = !canvas.showNames;
         canvas.repaint();
     }
-
-    @FXML
-    private VBox routeDescription;
-    @FXML
-    private VBox routeStepsContainer;
-    @FXML
-    private Text arrivalText;
-    @FXML
-    private Text arrivalSmallText;
 
     public void showRouteDescription() {
         routeDescription.setVisible(true);
@@ -642,11 +648,6 @@ public class Controller {
         routeDescription.setManaged(false);
     }
 
-
-
-    @FXML
-    private CheckBox showAStarPath;
-
     public void toggleAStarDebugPath() {
         if (showAStarPath.isSelected()) {
             canvas.debugAStar = true;
@@ -656,9 +657,6 @@ public class Controller {
             canvas.repaint();
         }
     }
-
-    @FXML
-    private ToggleGroup selectTransportTypeRoute;
 
     public void selectTransportTypeRoute() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
@@ -670,9 +668,6 @@ public class Controller {
             canvas.repaint(); //To show the route after it has been calculated
         }
     }
-
-    @FXML
-    private ToggleGroup selectTransportTypeSettings;
 
     public void selectTransportTypeSettings() {
         ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
@@ -706,9 +701,9 @@ public class Controller {
         closestRoad.textProperty().setValue(text);
     }
 
-    public String getClosestRoadString(Way road){
+    public String getClosestRoadString(Way road) {
         if (road.getName().equals("")) {
-            return "ID: " + road.getId();
+            return "Unnamed " + String.valueOf(road.getTag()).toLowerCase() + " road";
         } else {
             return road.getName();
         }
@@ -726,13 +721,6 @@ public class Controller {
             canvas.repaint();
         }
     }
-
-    @FXML
-    private ToggleButton carRoute;
-    @FXML
-    private ToggleButton bicycleRoute;
-    @FXML
-    private ToggleButton walkRoute;
 
     public void setCurrentTransportType(TransportType type) {
         model.setCurrentTransportType(type);

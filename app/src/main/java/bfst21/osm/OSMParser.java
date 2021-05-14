@@ -47,7 +47,6 @@ public class OSMParser {
             model.setRelationIndex((MemberIndex<Relation>) input.readObject());
             model.setStreetTree((RadixTree) input.readObject());
             model.setIslands((ArrayList<Drawable>) input.readObject());
-            model.setCoastlines((ArrayList<Way>) input.readObject());
             model.setMinX(input.readFloat());
             model.setMinY(input.readFloat());
             model.setMaxX(input.readFloat());
@@ -76,7 +75,6 @@ public class OSMParser {
             output.writeObject(model.getRelationIndex());
             output.writeObject(model.getStreetTree());
             output.writeObject(model.getIslands());
-            output.writeObject(model.getCoastlines());
             output.writeFloat(model.getMinX());
             output.writeFloat(model.getMinY());
             output.writeFloat(model.getMaxX());
@@ -144,16 +142,14 @@ public class OSMParser {
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
 
-                            if (v.equals("construction") || k.equals("construction")) {
+                            if (k.equals("service") || k.equals("surface") || v.equals("construction")
+                                    || k.equals("construction") || v.equals("proposed") || k.equals("proposed")
+                                    || k.startsWith("destination")) {
                                 break;
                             }
 
                             if (k.equals("building")) {
                                 tag = Tag.BUILDING;
-                                break;
-                            }
-
-                            if (k.equals("service") || k.equals("surface")) {
                                 break;
                             }
 
@@ -324,8 +320,13 @@ public class OSMParser {
                             name = "";
                             break;
                         case "relation":
-                            if (systemPOITags.size() > 0 && systemPOIName != "" && relation.ways.size() > 0) {
-                                newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                                try {
+                                    newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                } catch (RuntimeException e) {
+                                    //TODO talk about how this should be handled
+                                    //SystemPOI's that result in nullPointer or indexOutOfBounds are ignored
+                                }
                             }
                             if (tag != null) {
                                 relation.setTag(tag);
@@ -345,6 +346,7 @@ public class OSMParser {
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("No coastlines found");
         }
+        model.setCoastlines(null);
     }
 
     private static void newSystemPOI(Model model,String systemPOIName, float x, float y) {
