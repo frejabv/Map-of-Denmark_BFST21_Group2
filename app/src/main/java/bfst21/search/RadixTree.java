@@ -30,7 +30,7 @@ public class RadixTree implements Serializable {
      * list of suggestions if they are valid nodes (isPlace = true).
      *
      * @return A list of RadixNodes which are places and children of the searchTerm
-     *         node.
+     * node.
      */
     public ArrayList<RadixNode> getSuggestions(String searchTerm) {
         searchTerm = searchTerm.substring(0, 1).toUpperCase() + searchTerm.substring(1);
@@ -74,7 +74,7 @@ public class RadixTree implements Serializable {
      * null.
      *
      * @return A RadixNode which perfectly or partly matches the searchTerm, else
-     *         null.
+     * null.
      */
     public RadixNode lookupNode(String searchTerm) {
         RadixNode currentNode = root;
