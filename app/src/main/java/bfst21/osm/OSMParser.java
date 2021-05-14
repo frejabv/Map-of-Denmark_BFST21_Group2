@@ -21,8 +21,9 @@ import java.util.zip.ZipInputStream;
 
 public class OSMParser {
     private static List<String> systemPOITags;
-    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue", "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork", "building", "castle", "castle_wall", "windmill", "lighthouse", "bust", "statue", "sculpture"));
-
+    static List<String> systemPoi = new ArrayList<>(Arrays.asList("cinema", "theatre", "sculpture", "statue",
+            "aerodrome", "zoo", "aquarium", "attraction", "gallery", "museum", "theme_park", "viewpoint", "artwork",
+            "building", "castle", "castle_wall", "windmill", "lighthouse", "bust", "statue", "sculpture"));
 
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
             throws IOException, XMLStreamException {
@@ -79,11 +80,23 @@ public class OSMParser {
                 model.setDrawableMap((Map<Tag, List<Drawable>>) drawableMap);
             }
 
-            model.setPOITree((POI_KDTree) input.readObject());
-            model.setAreaNames((List<Drawable>) input.readObject());
-            model.setVertexMap((HashMap<Node, Vertex>)  input.readObject());
-        } catch (ClassCastException e){
-           //TODO please handle this by displaying an obj-file error message and going back to the fileselector
+            Object poiTree = input.readObject();
+            if (poiTree instanceof POI_KDTree) {
+                model.setPOITree((POI_KDTree) poiTree);
+            }
+
+            Object areaNames = input.readObject();
+            if (areaNames instanceof ArrayList) {
+                model.setAreaNames((List<Drawable>) areaNames);
+            }
+
+            Object vertexIndex = input.readObject();
+            if (vertexIndex instanceof List) {
+                model.setVertexIndex((ArrayList<Vertex>) vertexIndex);
+            }
+        } catch (ClassCastException e) {
+            // TODO please handle this by displaying an obj-file error message and going
+            // back to the fileselector
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -114,7 +127,7 @@ public class OSMParser {
             output.writeObject(model.getDrawableMap());
             output.writeObject(model.getPOITree());
             output.writeObject(model.getAreaNames());
-            output.writeObject(model.getVertexMap());
+            output.writeObject(model.getVertexIndex());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -151,7 +164,8 @@ public class OSMParser {
                                     / -Model.scalingConstant);
                             model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat"))
                                     / -Model.scalingConstant);
-                            model.getPOITree().setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
+                            model.getPOITree().setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(),
+                                    model.getMinY());
                             break;
                         case "node":
                             var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
@@ -188,7 +202,8 @@ public class OSMParser {
                                 break;
                             }
 
-                            if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway") || k.equals("tourism") || k.equals("historic")) {
+                            if (k.equals("amenity") || k.equals("artwork_type") || k.equals("aeroway")
+                                    || k.equals("tourism") || k.equals("historic")) {
                                 if (systemPoi.contains(v)) {
                                     systemPOITags.add(v);
                                 }
@@ -357,10 +372,11 @@ public class OSMParser {
                         case "relation":
                             if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 try {
-                                    newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                    newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(),
+                                            relation.ways.get(0).first().getY());
                                 } catch (RuntimeException e) {
-                                    //TODO talk about how this should be handled
-                                    //SystemPOI's that result in nullPointer or indexOutOfBounds are ignored
+                                    // TODO talk about how this should be handled
+                                    // SystemPOI's that result in nullPointer or indexOutOfBounds are ignored
                                 }
                             }
                             if (tag != null) {
@@ -384,7 +400,7 @@ public class OSMParser {
         model.setCoastlines(null);
     }
 
-    private static void newSystemPOI(Model model,String systemPOIName, float x, float y) {
+    private static void newSystemPOI(Model model, String systemPOIName, float x, float y) {
         POI poi = createSystemPOI(systemPOIName, systemPOITags, x, y);
         model.addSystemPOI(poi);
         model.getPOITree().insert(poi);
@@ -424,7 +440,8 @@ public class OSMParser {
                     imageType = "viewpoint";
                     type = tag;
                     priority = 10;
-                } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust") || systemPOITags.contains("sculpture")) {
+                } else if (systemPOITags.contains("statue") || systemPOITags.contains("bust")
+                        || systemPOITags.contains("sculpture")) {
                     imageType = "statue";
                     type = tag;
                     priority = 10;
@@ -465,7 +482,7 @@ public class OSMParser {
                 drawableMap.putIfAbsent(tag, new ArrayList<>());
                 if (!isDublet(way, tag, drawableMap)) {
                     drawableMap.get(tag).add(way);
-                    for (Node node : way.getNodes()){
+                    for (Node node : way.getNodes()) {
                         model.getVertexMap().putIfAbsent(node, new Vertex(node.getX(), node.getY(), node.id));
                     }
                 }
