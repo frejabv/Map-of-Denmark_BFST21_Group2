@@ -18,8 +18,8 @@ public class POITest {
 
     @Test
     public void testCompareTo() {
-        POI p1 = new POI("closest", "test", 1, 1);
-        POI p2 = new POI("furthest", "test", 2, 1);
+        POI p1 = new POI("closest", "test", "none", 1, 1);
+        POI p2 = new POI("furthest", "test", "none", 2, 1);
 
         Point2D testPoint = new Point2D(0,1);
 

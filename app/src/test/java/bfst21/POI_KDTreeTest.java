@@ -22,7 +22,8 @@ public class POI_KDTreeTest {
         POI testPOI = new POI("testPOI", "test", "none", 1, 2);
         assertEquals(1, testPOI.getX());
         assertEquals(2, testPOI.getY());
-        assertEquals("test", "none", testPOI.getType());
+        assertEquals("test", testPOI.getType());
+        assertEquals("none", testPOI.getImageType());
         assertNull(testPOI.getLeft());
         assertNull(testPOI.getRight());
         assertNull(testPOI.getRect());
