@@ -5,7 +5,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
 
-//TODO remove Member class at some point
 public abstract class Member implements Serializable, Drawable {
     long id;
     Tag tag;

@@ -50,7 +50,6 @@ public class MemberIndex<T extends Member> implements Iterable<T>, Serializable 
             return members.size();
         }
 
-        //TODO
         public List<Drawable> getDrawableMembers() {
             return new ArrayList<>(members);
         }

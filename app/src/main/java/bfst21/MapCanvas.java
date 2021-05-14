@@ -188,7 +188,6 @@ public class MapCanvas extends Canvas {
         if (distanceWidth <= 20) {
             activePOIList.addAll(model.getPOITree().query(viewport));
             activePOIList.forEach(poi -> {
-                //TODO we will reduce this to poi.getType() == null in the future
                 if (!poi.getType().equals("place")) {
                     gc.setFill(Color.rgb(52, 152, 219));
                     double size = (30 / Math.sqrt(trans.determinant()));
