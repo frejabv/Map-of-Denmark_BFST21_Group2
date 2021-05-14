@@ -156,14 +156,13 @@ public class RadixTree implements Serializable {
 
         ArrayList<RadixNode> children = currentNode.getChildren();
         for (int i = 0; i < children.size(); i++) {
-            if (stringToInsert.startsWith(children.get(i).getValue())) { // the child is a prefix to stringToInsert,
-                                                                         // like child: test and stringToInsert: tester
+            if (stringToInsert.startsWith(children.get(i).getValue())) {
+                // the child is a prefix to stringToInsert, like child: test and stringToInsert: tester
                 insert(stringToInsert.substring(children.get(i).getValue().length()), id,
                         currentNode.getChildren().get(i), secondary);
                 return;
-            } else if (children.get(i).getValue().startsWith(stringToInsert)) { // stringToInsert is a prefix to child,
-                                                                                // like child: tester and
-                                                                                // stringToInsert: test
+            } else if (children.get(i).getValue().startsWith(stringToInsert)) {
+                // stringToInsert is a prefix to child, like child: tester and stringToInsert: test
                 RadixNode originalNode = children.get(i);
                 RadixNode newParentNode = new RadixNode(stringToInsert, fullName, id, secondary);
                 children.set(i, newParentNode);
@@ -172,8 +171,8 @@ public class RadixTree implements Serializable {
                 size++;
                 places++;
                 return;
-            } else if (children.get(i).getValue().charAt(0) == stringToInsert.charAt(0)) { // they are partly equal like
-                                                                                           // test and team
+            } else if (children.get(i).getValue().charAt(0) == stringToInsert.charAt(0)) {
+                // they are partly equal like test and team
                 String nodeContent = children.get(i).getValue();
                 for (int j = 0; j < (Math.min(stringToInsert.length(), nodeContent.length())); j++) {
                     if (stringToInsert.charAt(j) != nodeContent.charAt(j) && j > 0) {
