@@ -121,7 +121,7 @@ public class OSMParser {
                                     / -Model.scalingConstant);
                             model.setMinY(Float.parseFloat(xmlReader.getAttributeValue(null, "minlat"))
                                     / -Model.scalingConstant);
-                            model.getPOITree().setBounds();
+                            model.getPOITree().setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
                             break;
                         case "node":
                             var id = Long.parseLong(xmlReader.getAttributeValue(null, "id"));
