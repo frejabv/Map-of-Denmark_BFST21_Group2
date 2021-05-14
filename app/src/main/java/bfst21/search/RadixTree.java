@@ -118,15 +118,15 @@ public class RadixTree implements Serializable {
         insert(stringToInsert, id, root, true);
     }
 
-    public void insert(String roadName, String restOfAdress, long id) {
+    public void insert(String roadName, String restOfAddress, long id) {
         fullName = roadName;
         insert(roadName, id, root, false);
         var roadNameNode = lookupNode(roadName);
-        fullName = roadName + restOfAdress;
+        fullName = roadName + restOfAddress;
         if (roadNameNode != null) {
-            insert(restOfAdress, id, roadNameNode, true);
+            insert(restOfAddress, id, roadNameNode, true);
         } else {
-            insert(roadName + restOfAdress, id);
+            insert(roadName + restOfAddress, id);
         }
     }
 
