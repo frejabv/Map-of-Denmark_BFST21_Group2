@@ -32,7 +32,7 @@ public class StartupController {
 
     public void defaultFile() {
         try {
-            var model = new Model("/bfst21/data/bornholm.osm.zip", false);
+            var model = new Model("/bfst21/data/bornholm.osm", false);
             new View(model, stage);
         } catch (Exception e) {
             new AlertMessage();
