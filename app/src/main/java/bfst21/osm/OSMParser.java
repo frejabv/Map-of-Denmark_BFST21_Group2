@@ -338,7 +338,7 @@ public class OSMParser {
                             name = "";
                             break;
                         case "way":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
                             }
                             if (tag != null) {
@@ -353,7 +353,7 @@ public class OSMParser {
                             name = "";
                             break;
                         case "relation":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 try {
                                     newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
                                 } catch (RuntimeException e) {
@@ -441,8 +441,7 @@ public class OSMParser {
                 }
             }
         }
-        POI result = new POI(systemPOIName, type, imageType, x, y);
-        return result;
+        return new POI(systemPOIName, type, imageType, x, y);
     }
 
     public static void addWayToList(Way way, Tag tag, Model model) {
