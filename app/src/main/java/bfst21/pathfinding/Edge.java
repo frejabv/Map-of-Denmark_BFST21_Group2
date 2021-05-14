@@ -6,11 +6,11 @@ import bfst21.osm.Way;
 
 public class Edge {
     public final float weight;
-    public final Node target;
+    public final Vertex target;
     private boolean isDriveable, isCyclable, isWalkable;
     private final long wayID;
 
-    public Edge(Node targetNode, float costVal, long wayID) {
+    public Edge(Vertex targetNode, float costVal, long wayID) {
         target = targetNode;
         weight = costVal;
         this.wayID = wayID;

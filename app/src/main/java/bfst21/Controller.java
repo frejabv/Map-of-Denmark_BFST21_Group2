@@ -199,6 +199,8 @@ public class Controller {
             addSuggestions(model, "route", "from");
             if (newText.length() < oldText.length()) {
                 canvas.hideRoute();
+                fromNode = null;
+                model.setAStarPath(null);
             }
         });
 
@@ -208,6 +210,8 @@ public class Controller {
             addSuggestions(model, "route", "to");
             if (newText.length() < oldText.length()) {
                 canvas.hideRoute();
+                toNode = null;
+                model.setAStarPath(null);
             }
         });
 

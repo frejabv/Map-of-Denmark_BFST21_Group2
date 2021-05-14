@@ -4,6 +4,7 @@ import bfst21.POI.POI;
 import bfst21.Rtree.Rectangle;
 import bfst21.osm.*;
 import bfst21.pathfinding.Edge;
+import bfst21.pathfinding.Vertex;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -28,6 +29,7 @@ public class MapCanvas extends Canvas {
     boolean doubleDraw;
     boolean smallerViewPort, RTreeLines, roadRectangles;
     boolean nearestNodeLine;
+    private boolean showRoute;
     boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
@@ -41,7 +43,6 @@ public class MapCanvas extends Canvas {
     int redrawIndex = 0;
     private Model model;
     private Affine trans = new Affine();
-    private boolean showRoute;
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     private float mapZoomLimit;
 
@@ -270,7 +271,6 @@ public class MapCanvas extends Canvas {
         } else {
             redrawIndex = 0;
         }
-
     }
 
     private void updateViewPort() {
@@ -308,36 +308,53 @@ public class MapCanvas extends Canvas {
     }
 
     public void drawDebugAStarPath() {
-        List<Node> nodes = model.getAStarDebugPath();
+        List<Vertex> vertices = model.getAStarDebugPath();
         gc.setStroke(Color.CORNFLOWERBLUE);
         gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
         gc.beginPath();
-        for (Node n : nodes) {
-            if (n.getAdjacencies() == null) {
+        for (Vertex v : vertices) {
+            if (v.getAdjacencies() == null) {
                 continue;
             }
-            for (Edge e : n.getAdjacencies()) {
-                Node child = e.target;
-                gc.moveTo(n.getX(), n.getY());
+            for (Edge e : v.getAdjacencies()) {
+                Vertex child = e.target;
+                gc.moveTo(v.getX(), v.getY());
                 gc.lineTo(child.getX(), child.getY());
             }
         }
         gc.stroke();
     }
 
-    public void paintPath(List<Node> path) {
-        gc.setStroke(Color.rgb(112, 161, 255));
-        gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        if (getDistanceWidth() < 7.0) {
-            //TODO: make it not magic
-            gc.setLineWidth(0.000045);
+    public void paintPath(List<Vertex> path){
+        double innerRoadWidth = 1;
+        if (doubleDraw) {
+            innerRoadWidth = 0.65;
+            Color c1 = Color.rgb(112,161,255);
+            int darkRed = (int) (c1.getRed() * 255 * 0.75);
+            int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
+            int darkBlue = (int) (c1.getBlue() * 255 * 0.75);
+            gc.setStroke(Color.rgb(darkRed, darkGreen, darkBlue));
+            gc.setLineWidth(0.8 / Math.sqrt(trans.determinant())*10);
+            if (getDistanceWidth() < .5) {
+                gc.setLineWidth(0.8 / 13333);
+            }
+            gc.beginPath();
+            gc.moveTo(path.get(0).getX(), path.get(0).getY());
+            for (int i = 1; i < path.size(); i++) {
+                gc.lineTo(path.get(i).getX(), path.get(i).getY());
+            }
+            gc.stroke();
+        }
+        double finalInnerRoadWidth = innerRoadWidth;
+        gc.setStroke(Color.rgb(112,161,255));
+        gc.setLineWidth(0.8 / Math.sqrt(trans.determinant())* 10 * finalInnerRoadWidth);
+        if (getDistanceWidth() < .5) {
+            gc.setLineWidth((0.8 / 13333) * finalInnerRoadWidth);
         }
         gc.beginPath();
-        for (int i = 0; i < path.size() - 1; i++) {
-            Node current = path.get(i);
-            Node next = path.get(i + 1);
-            gc.moveTo(current.getX(), current.getY());
-            gc.lineTo(next.getX(), next.getY());
+        gc.moveTo(path.get(0).getX(), path.get(0).getY());
+        for (int i = 1; i < path.size(); i++) {
+            gc.lineTo(path.get(i).getX(), path.get(i).getY());
         }
         gc.stroke();
     }
