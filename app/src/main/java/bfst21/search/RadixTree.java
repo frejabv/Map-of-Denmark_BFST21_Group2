@@ -132,13 +132,14 @@ public class RadixTree implements Serializable {
 
     /**
      * There are several cases for the insertion of a new node, they are represented
-     * in if-statements. Case 0: The currentNode we are looking at is null or
-     * contains nothing, or what we are trying to insert is nothing. Case 1: No
-     * children exist. Case 2: The child node we are looking at is a prefix to
-     * stringToInsert. Case 3: stringToInsert is a prefix to the child node we are
-     * looking at. Case 4: The child node we are looking at and stringToInsert are
-     * partly equal. Case 5: None of the children have something in common with
-     * stringToInsert.
+     * in if-statements.
+     * Case 0: The currentNode we are looking at is null or
+     * contains nothing, or what we are trying to insert is nothing.
+     * Case 1: No children exist.
+     * Case 2: The child node we are looking at is a prefix to stringToInsert.
+     * Case 3: stringToInsert is a prefix to the child node we are looking at.
+     * Case 4: The child node we are looking at and stringToInsert are partly equal.
+     * Case 5: None of the children have something in common with stringToInsert.
      */
     private void insert(String stringToInsert, long id, RadixNode currentNode, boolean secondary) {
         if (currentNode != root
