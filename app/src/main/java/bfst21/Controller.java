@@ -140,7 +140,6 @@ public class Controller {
         hideAll();
         debug = new Debug(canvas, cpuProcess, cpuSystem, ttd, memoryUse);
         changeType("debug", false);
-        Spelling autocorrector = new Spelling();
         Regex regex = new Regex(setupRegexView());
 
         setUpSearchField(regex);
@@ -158,7 +157,7 @@ public class Controller {
 
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
-        List<String> regexString = Arrays.asList("[Postcode] [City]", "[Street] [Number], [Floor] [Side], [Postal Code] [City]");
+        List<String> regexString = Arrays.asList("[Street] [House] [Floor] [Side] [Postcode] [More]", "[Street] [House] [Floor] [Postcode] [More]", "[Roadname] [Number] [Postcode] ([More])", "[Roadname] [Number] [Floor] [Side] ([More])", "[Roadname] [Number] ([More])", "[Roadname] ([More])");
         for (int i = 0; i < regexString.size(); i++) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");
@@ -167,7 +166,8 @@ public class Controller {
             Text text = new Text(regexString.get(i));
             hbox.getChildren().add(bullet);
             hbox.getChildren().add(text);
-            regexVisualisers.add(bullet);
+            regexVisualisers
+                    .add(bullet);
             regexContainer.getChildren().add(hbox);
         }
         return regexVisualisers;
@@ -175,8 +175,8 @@ public class Controller {
 
     public void setUpSearchField(Regex regex) {
         searchField.textProperty().addListener((obs, oldText, newText) -> {
-            regex.run(newText);
-            addSuggestions(model, "search", null);
+            String cleanedInput = regex.run(newText);
+            addSuggestions(model, "search", null, cleanedInput);
         });
 
         searchField.setOnAction(e -> {
@@ -195,8 +195,8 @@ public class Controller {
     public void setUpRouteFields(Regex regex) {
         routeFieldFrom.textProperty().addListener((obs, oldText, newText) -> {
             hideRoute();
-            regex.run(newText);
-            addSuggestions(model, "route", "from");
+            String cleanedInput = regex.run(newText);
+            addSuggestions(model, "route", "from", cleanedInput);
             if (newText.length() < oldText.length()) {
                 canvas.hideRoute();
                 fromNode = null;
@@ -206,8 +206,8 @@ public class Controller {
 
         routeFieldTo.textProperty().addListener((obs, oldText, newText) -> {
             hideRoute();
-            regex.run(newText);
-            addSuggestions(model, "route", "to");
+            String cleanedInput = regex.run(newText);
+            addSuggestions(model, "route", "to", cleanedInput);
             if (newText.length() < oldText.length()) {
                 canvas.hideRoute();
                 toNode = null;
@@ -256,7 +256,7 @@ public class Controller {
         });
     }
 
-    public void addSuggestions(Model model, String containerType, String fieldType) {
+    public void addSuggestions(Model model, String containerType, String fieldType, String cleanedInput) {
         VBox selectedContainer;
         TextField selectedField;
         if (containerType.equals("search")) {
@@ -274,7 +274,7 @@ public class Controller {
         suggestionList.clear();
 
         if (selectedField.textProperty().getValue().length() > 2) {
-            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(selectedField.textProperty().getValue());
+            ArrayList<RadixNode> suggestions = model.getStreetTree().getSuggestions(cleanedInput);
             for (int i = 0; i < Math.min(8, suggestions.size()); i++) {
                 RadixNode suggestion = suggestions.get(i);
                 Text newSuggestion = new Text(suggestion.getFullName());
