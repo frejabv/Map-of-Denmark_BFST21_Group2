@@ -8,13 +8,7 @@ import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import javafx.scene.shape.StrokeLineCap;
-import org.jetbrains.annotations.NotNull;
-import javafx.scene.paint.Color;
 
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;

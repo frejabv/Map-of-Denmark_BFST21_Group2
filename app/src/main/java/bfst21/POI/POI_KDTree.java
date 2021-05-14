@@ -39,6 +39,10 @@ public class POI_KDTree implements Serializable {
         bounds = new Rectangle(minX, maxY, maxX, minY);
     }
 
+    public Rectangle getBounds(){
+        return bounds;
+    }
+
     /**
      * insert query Node into the tree, if it is not null and does not exist in the tree already.
      */
@@ -46,13 +50,16 @@ public class POI_KDTree implements Serializable {
         if (qNode == null) {
             throw new NullPointerException("Query Node is null upon insertion into KDTree");
         }
-        //create root if tree is empty
-        if (isEmpty()) {
-            root = qNode;
-            root.setRect(bounds);
-            size++;
-        } else {
-            insert(root, null, qNode, true);
+        //insert only if new node is in bounds
+        if (bounds.contains(new Point2D(qNode.getX(), qNode.getY()))) {
+            //create root if tree is empty
+            if (isEmpty()) {
+                root = qNode;
+                root.setRect(bounds);
+                size++;
+            } else {
+                insert(root, null, qNode, true);
+            }
         }
     }
 
@@ -62,12 +69,12 @@ public class POI_KDTree implements Serializable {
      * @param parent      is the current parent of our element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
-     * @returns           the currentNode with its' correct parent and left/right child/domain
+     * @return           the currentNode with its' correct parent and left/right child/domain
      */
     private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
         //if space is available, fill space
         if (currentNode == null) {
-            Rectangle r = null;
+            Rectangle r;
 
             float minX = parent.getRect().getMinX();
             float minY = parent.getRect().getMinY();
@@ -94,7 +101,7 @@ public class POI_KDTree implements Serializable {
         }
 
         //if space is taken, look for another
-        boolean areCoordinatesLessThan = false;
+        boolean areCoordinatesLessThan;
         if (orientation) {
             areCoordinatesLessThan = qNode.getX() < currentNode.getX();
         } else {
@@ -115,7 +122,7 @@ public class POI_KDTree implements Serializable {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
 
-        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || removedPOIList.contains(qNode))
+        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || isRemoved(qNode))
             return false;
 
         return contains(root, qNode, true);
@@ -130,7 +137,7 @@ public class POI_KDTree implements Serializable {
             return true;
         }
 
-        boolean areCoordinatesLessThan = false;
+        boolean areCoordinatesLessThan;
         if (orientation) {
             areCoordinatesLessThan = qNode.getX() < currentNode.getX();
         } else {
@@ -148,6 +155,15 @@ public class POI_KDTree implements Serializable {
         removedPOIList.add(poi);
     }
 
+
+    public POI nearest(Point2D p) {
+        ArrayList<POI> momentaryList = nearest(p, 1);
+        if (momentaryList == null || momentaryList.isEmpty()) {
+            return null;
+        } else {
+            return momentaryList.get(0);
+        }
+    }
     /**
      * begins the recursive call to nearest.
      * @param p         the point we are querying about
@@ -160,7 +176,7 @@ public class POI_KDTree implements Serializable {
         }
 
         if (!bounds.contains(p)){
-            return null;
+            return new ArrayList<>();
         }
 
         ArrayList<POI> closestList = new ArrayList<>();
@@ -191,7 +207,7 @@ public class POI_KDTree implements Serializable {
         }
 
         //if currentNode is not deleted, is it closer than worstClosest?
-        if (!removedPOIList.contains(currentNode)) {
+        if (!isRemoved(currentNode)) {
             currentNode.setDistTo(p);
             if (closestList.size() < listSize && !closestList.contains(currentNode)) {
                 closestList.add(currentNode);
@@ -204,7 +220,7 @@ public class POI_KDTree implements Serializable {
         }
 
         //move further down the tree
-        boolean areCoordinatesLessThan = false;
+        boolean areCoordinatesLessThan;
         if (orientation) {
             areCoordinatesLessThan = p.getX() < currentNode.getX();
         } else {

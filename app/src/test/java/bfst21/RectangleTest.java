@@ -232,4 +232,13 @@ public class RectangleTest {
 
         assertFalse(testSmallRect.contains((Rectangle) null));
     }
+
+    @Test
+    public void testGetArea() {
+        Rectangle testRect1 = new Rectangle(0, 0, 2, 2);
+        assertEquals(4, testRect1.getArea());
+
+        Rectangle testRect2 = new Rectangle(0, 0, 5, 5);
+        assertEquals(25, testRect2.getArea());
+    }
 }

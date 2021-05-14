@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class RadixNode implements Serializable {
-    private ArrayList<RadixNode> children;
+    private final ArrayList<RadixNode> children;
     boolean isPlace;
     boolean secondary;
     String value;

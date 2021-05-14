@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RtreeNode implements Comparable<RtreeNode>{
-    private Rectangle rect;
+    private final Rectangle rect;
     protected List<RtreeNode> children;
     private double distTo;
 
     public RtreeNode(List<Drawable> descendants) {
         rect = createBoundingBox(descendants);
-    };
+    }
 
     public RtreeNode(List<Drawable> descendants, boolean vertical) {
         this(descendants, vertical, Rtree.maxChildren);

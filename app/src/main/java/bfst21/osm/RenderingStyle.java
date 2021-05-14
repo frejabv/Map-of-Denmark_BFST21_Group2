@@ -10,11 +10,11 @@ enum Theme {
 }
 
 public class RenderingStyle {
-    private Map<Tag, Boolean> doubleDrawn;
-    private Map<Tag, Color> defaultColorMap;
-    private Map<Tag, Color> darkModeColorMap;
-    private Map<Tag, DrawStyle> styleMap;
-    private Map<Tag, Double> widthMap;
+    private final Map<Tag, Boolean> doubleDrawn;
+    private final Map<Tag, Color> defaultColorMap;
+    private final Map<Tag, Color> darkModeColorMap;
+    private final Map<Tag, DrawStyle> styleMap;
+    private final Map<Tag, Double> widthMap;
     private Theme theme;
 
     public Color sea;
@@ -22,12 +22,12 @@ public class RenderingStyle {
     public Color islandClose;
 
     public RenderingStyle() {
-        doubleDrawn = new HashMap<Tag, Boolean>();
+        doubleDrawn = new HashMap<>();
         defaultColorMap = new HashMap<>();
         darkModeColorMap = new HashMap<>();
         styleMap = new HashMap<>();
         widthMap = new HashMap<>();
-        theme = theme.DEFAULT;
+        theme = Theme.DEFAULT;
 
         styleMap.put(Tag.BUILDING, DrawStyle.FILL);
         styleMap.put(Tag.WATER, DrawStyle.FILL);
@@ -105,14 +105,14 @@ public class RenderingStyle {
         sea = Color.rgb(156, 192, 249);
         islandFar = Color.rgb(187, 226, 197);
         islandClose = Color.rgb(241, 243, 244);
-        theme = theme.DEFAULT;
+        theme = Theme.DEFAULT;
     }
 
     public void darkMode() {
         sea = Color.rgb(58, 64, 93);
         islandFar = Color.rgb(40, 68, 53);
         islandClose = Color.rgb(25, 26, 28);
-        theme = theme.DARK;
+        theme = Theme.DARK;
     }
 
     private void genDefaultMode() {
