@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class POI_KDTreeTest {
-    private final Model model;
+    private Model model;
 
     public POI_KDTreeTest() throws Exception {
         model = new Model("data/kdTreeTest.osm", false);

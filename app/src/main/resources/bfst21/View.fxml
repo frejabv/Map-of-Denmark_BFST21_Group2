@@ -235,7 +235,7 @@
                 <Text styleClass="mainContainer-subheader">Enable Double Draw</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox onMouseClicked="#toggleDoubleDraw">Double Draw Roads</CheckBox>
+              <CheckBox onMouseClicked="#toggleDoubleDraw">Disable Double Draw Roads</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
               </FlowPane>
