@@ -160,7 +160,7 @@ public class POI_KDTree {
 
     public POI nearest(Point2D p) {
         ArrayList<POI> momentaryList = nearest(p, 1);
-        if (momentaryList == null) {
+        if (momentaryList == null || momentaryList.isEmpty()) {
             return null;
         } else {
             return momentaryList.get(0);
@@ -174,7 +174,7 @@ public class POI_KDTree {
      */
     public ArrayList<POI> nearest(Point2D p, int listSize) {
         if (isEmpty()) {
-            return new ArrayList<>();
+            return null;
         }
 
         if (!bounds.contains(p)){
