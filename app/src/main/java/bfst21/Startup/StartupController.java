@@ -30,8 +30,14 @@ public class StartupController {
     }
 
     public void defaultFile() {
-        startMapView("bornholm.osm.zip.obj");
+        try {
+            var model = new Model("/bfst21/data/bornholm.osm", false);
+            new View(model, stage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public void startMapView(String filePath) {
         try {

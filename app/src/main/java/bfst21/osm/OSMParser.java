@@ -2,7 +2,8 @@ package bfst21.osm;
 
 import bfst21.Model;
 import bfst21.POI.POI;
-import bfst21.exceptions.UnsupportedFileTypeException;
+import bfst21.POI.POI_KDTree;
+import bfst21.pathfinding.Vertex;
 import bfst21.search.RadixTree;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -52,6 +53,8 @@ public class OSMParser {
             model.setMaxX(input.readFloat());
             model.setMaxY(input.readFloat());
             model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
+            model.setPOITree((POI_KDTree) input.readObject());
+            model.setAreaNames((List<Drawable>) input.readObject());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,6 +83,8 @@ public class OSMParser {
             output.writeFloat(model.getMaxX());
             output.writeFloat(model.getMaxY());
             output.writeObject(model.getDrawableMap());
+            output.writeObject(model.getPOITree());
+            output.writeObject(model.getAreaNames());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,16 +147,14 @@ public class OSMParser {
                             var k = xmlReader.getAttributeValue(null, "k");
                             var v = xmlReader.getAttributeValue(null, "v");
 
-                            if (v.equals("construction") || k.equals("construction")) {
+                            if (k.equals("service") || k.equals("surface") || v.equals("construction")
+                                    || k.equals("construction") || v.equals("proposed") || k.equals("proposed")
+                                    || k.startsWith("destination")) {
                                 break;
                             }
 
                             if (k.equals("building")) {
                                 tag = Tag.BUILDING;
-                                break;
-                            }
-
-                            if (k.equals("service") || k.equals("surface")) {
                                 break;
                             }
 
@@ -323,8 +326,11 @@ public class OSMParser {
                             break;
                         case "relation":
                             if (systemPOITags.size() > 0 && systemPOIName != "") {
-                                if (relation.ways != null) {
+                                try {
                                     newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                } catch (RuntimeException e) {
+                                    //TODO talk about how this should be handled
+                                    //SystemPOI's that result in nullPointer or indexOutOfBounds are ignored
                                 }
                             }
                             if (tag != null) {
@@ -430,6 +436,9 @@ public class OSMParser {
                 drawableMap.putIfAbsent(tag, new ArrayList<>());
                 if (!isDublet(way, tag, drawableMap)) {
                     drawableMap.get(tag).add(way);
+                    for (Node node : way.getNodes()){
+                        model.getVertexMap().putIfAbsent(node, new Vertex(node.getX(), node.getY(), node.id));
+                    }
                 }
             }
         }
@@ -470,7 +479,7 @@ public class OSMParser {
         return isDublet;
     }
 
-    public static FileExtension genFileExtension(String filePath) {
+    public static FileExtension genFileExtension(String filePath) throws IOException {
         String[] filePathParts = filePath.split("\\.");
 
         FileExtension toReturn;
@@ -486,8 +495,7 @@ public class OSMParser {
                 toReturn = FileExtension.OBJ;
                 break;
             default:
-                throw new UnsupportedFileTypeException(
-                        "Unsupported file type: " + filePathParts[filePathParts.length - 1]);
+                throw new IOException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
         }
         return toReturn;
     }

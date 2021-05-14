@@ -6,9 +6,9 @@ import bfst21.Rtree.Rtree;
 import bfst21.osm.*;
 import bfst21.pathfinding.AStar;
 import bfst21.pathfinding.TransportType;
+import bfst21.pathfinding.Vertex;
 import bfst21.search.RadixTree;
 import javafx.scene.image.Image;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
@@ -33,6 +33,7 @@ public class Model {
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
     HashMap<String, Image> imageSet;
+    HashMap<Node,Vertex> vertexMap = new HashMap<>();
 
     private ArrayList<POI> pointsOfInterest;
     private ArrayList<POI> systemPointsOfInterest;
@@ -41,7 +42,7 @@ public class Model {
     private ArrayList<Drawable> drawables700, drawables400, drawables150, drawables7, drawables3;
     private Rtree fillableRTree700, fillableRTree400, fillableRTree150, fillableRTree7, fillableRTree3;
     private Rtree drawableRTree700, drawableRTree400, drawableRTree150, drawableRTree7, drawableRTree3;
-    // roadtree can be optimized away
+
     private ArrayList<Drawable> roadlist;
     private Rtree roadTree;
     private Node nearestNode;
@@ -52,20 +53,15 @@ public class Model {
     private boolean ttiMode;
 
     private AStar aStar;
-    private List<Node> AStarPath;
-    private List<Node> AStarDebugPath;
+    private List<Vertex> AStarPath;
+    private List<Vertex> AStarDebugPath;
     private TransportType defaultTransportType = TransportType.CAR;
     private TransportType currentTransportType = defaultTransportType;
     private float minX, minY, maxX, maxY;
 
-    public Model(String filePath, boolean ttiMode) {
+    public Model(String filePath, boolean ttiMode) throws IOException {
         // Java wouldn't let me expand this into variables. Im very sorry about the mess
-        this(
-                Model.class.getResourceAsStream(filePath),
-                OSMParser.genFileExtension(filePath),
-                filePath,
-                ttiMode
-        );
+        this(Model.class.getResourceAsStream(filePath), OSMParser.genFileExtension(filePath), filePath, ttiMode);
     }
 
     public Model(InputStream in, FileExtension fileExtension, String fileName, boolean ttiMode) {
@@ -199,6 +195,10 @@ public class Model {
         return POITree;
     }
 
+    public void setPOITree(POI_KDTree POITree){
+        this.POITree = POITree;
+    }
+
     public MemberIndex<Node> getNodeIndex() {
         return nodeIndex;
     }
@@ -295,19 +295,19 @@ public class Model {
         return AStarPath != null;
     }
 
-    public List<Node> getAStarPath() {
+    public List<Vertex> getAStarPath() {
         return AStarPath;
     }
 
-    public void setAStarPath(List<Node> AStarPath) {
+    public void setAStarPath(List<Vertex> AStarPath) {
         this.AStarPath = AStarPath;
     }
 
-    public List<Node> getAStarDebugPath() {
+    public List<Vertex> getAStarDebugPath() {
         return AStarDebugPath;
     }
 
-    public void setAStarDebugPath(List<Node> AStarDebugPath) {
+    public void setAStarDebugPath(List<Vertex> AStarDebugPath) {
         this.AStarDebugPath = AStarDebugPath;
     }
 
@@ -337,10 +337,12 @@ public class Model {
 
     public void addPOI(POI poi) {
         pointsOfInterest.add(poi);
+        POITree.insert(poi);
     }
 
     public void removePOI(POI poi) {
         pointsOfInterest.remove(poi);
+        POITree.remove(poi);
     }
 
     public ArrayList<POI> getPointsOfInterest() {
@@ -353,6 +355,10 @@ public class Model {
 
     public List<Drawable> getAreaNames() {
         return areaNames;
+    }
+
+    public void setAreaNames(List<Drawable> areaNames) {
+        this.areaNames = areaNames;
     }
 
     public ArrayList<Drawable> getFillables700() {
@@ -459,6 +465,14 @@ public class Model {
         return roadTree;
     }
 
+    public HashMap<Node, Vertex> getVertexMap() {
+        return vertexMap;
+    }
+
+    public void nullifyVertexMap(){
+        vertexMap = null;
+    }
+
     public void addSystemPOI(POI poi) {
         systemPointsOfInterest.add(poi);
     }
@@ -467,7 +481,10 @@ public class Model {
         return systemPointsOfInterest;
     }
 
-    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(
+            Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN,
+            Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE,
+            Tag.TERTIARY, Tag.TRUNK, Tag.TRACK, Tag.UNCLASSIFIED));
 
     public void addDrawableToRTreeList(String type, List<Drawable> drawableList, int zoomLimit) {
         if (type.equals("map")) {

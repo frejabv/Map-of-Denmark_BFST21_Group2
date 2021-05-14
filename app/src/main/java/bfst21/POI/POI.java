@@ -25,7 +25,7 @@ public class POI implements Comparable<POI> {
         this.y = y;
     }
 
-    public POI(String name, String type, String imageType, float x, float y){
+    public POI(String name, String type, String imageType, float x, float y) {
         this.name = name;
         this.type = type;
         this.imageType = imageType;
