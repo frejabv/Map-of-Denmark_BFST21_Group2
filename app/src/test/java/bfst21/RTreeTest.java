@@ -16,8 +16,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RTreeTest {
-    private final Model model = new Model("data/TEST_RTREE_STRUCTURE.osm", false);
+    private final Model model;
 
+    public RTreeTest() throws Exception {
+        model = new Model("data/TEST_RTREE_STRUCTURE.osm", false);
+    }
     @Test
     public void RTreeLeafTest(){
         ArrayList<Drawable> drawableList = new ArrayList<>();

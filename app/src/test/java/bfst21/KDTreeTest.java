@@ -9,7 +9,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class KDTreeTest {
-    private final Model model = new Model("data/kdTreeTest.osm", false);
+    private final Model model;
+
+    public KDTreeTest() throws Exception {
+        model = new Model("data/kdTreeTest.osm", false);
+    }
 
     @Test
     public void testPOIInit(){
