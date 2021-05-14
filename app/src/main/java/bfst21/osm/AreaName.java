@@ -1,12 +1,14 @@
 package bfst21.osm;
 
+import java.io.Serializable;
+
 import bfst21.Rtree.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class AreaName implements Drawable {
+public class AreaName implements Drawable, Serializable {
     String name;
     AreaType type;
     float lat;
