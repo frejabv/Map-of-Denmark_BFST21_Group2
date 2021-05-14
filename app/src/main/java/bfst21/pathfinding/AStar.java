@@ -60,19 +60,19 @@ public class AStar {
      * pointing to. We take into account that the edge matches the transport type of the path. Like this we continue
      * until we find the end or there are no more vertices to be explored, in which case no path was found.
      *
-     * Here we set their scores.
-     * The h-score is the heuristic, a measure of how far the node is from the goal (in our case
-     * distance in a straight line from the current vertex to the end, divided by max speed for the type of edge).
+     * Here we set the scores of each child vertex.
+     * The h-score is the heuristic, a measure of how far the node is from the goal (in our case distance in a straight
+     * line from the current vertex to the end, divided by max speed for the type of edge).
      * The g-score is the weight of the path taken so far.
      * The f-score is the result of the g- and h-score and therefore the lowest f-score will be the best path, as it
-     * will be short and closer to the goal.
+     * will be short, fast and closer to the goal.
      *
      * After we have created the path we reset all values for the vertices that were explored, so that these values
      * don't faultily affect the next traversal through the graph.
      *
      * @param startNode The node on which the path is taken from
      * @param endNode The node on which the path should end, the goal.
-     * @param type The transport type, affecting which edges can be taken.
+     * @param type The transport type, affecting which edges can be taken and the scores.
      * */
     public void AStarSearch(Node startNode, Node endNode, TransportType type) {
         Vertex start = getVertex(startNode.getId());
@@ -172,12 +172,13 @@ public class AStar {
     }
 
     /**
-     * This method creates the description of the Astar path. This is done by looping through every vertex in the path
-     * and detecting when a change on the path happens, then creating a new @link{Step} with the roadname, direction
+     * This method creates the description of the AStar path. This is done by looping through every vertex in the path
+     * and detecting when a change on the path happens, then creating a new {@link Step} with the roadname, direction
      * and distance driven. A Step can also have exits added if we are going out of a roundabout.
      *
      * We have to handle the last piece of road differently as our method looks back and creates a step when we detect
-     * the next change. Therefore we create two steps when we get to the end in @link{createArrivalStep()}
+     * the next change. Therefore we create two steps when we get to the end in
+     * {@link #createArrivalStep(ArrayList, double, int, Direction, long)}
      *
      * We also handle the paths that would not be part of the for loop, that is a very short path or no path.
      *
