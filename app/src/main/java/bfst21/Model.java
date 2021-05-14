@@ -34,6 +34,7 @@ public class Model {
     private ArrayList<Way> coastlines;
     HashMap<String, Image> imageSet;
     HashMap<Node,Vertex> vertexMap = new HashMap<>();
+    ArrayList<Vertex> vertexIndex;
 
     private final ArrayList<POI> pointsOfInterest;
     private final ArrayList<POI> systemPointsOfInterest;
@@ -410,8 +411,12 @@ public class Model {
         vertexMap = null;
     }
 
-    public void setVertexMap(HashMap<Node, Vertex> vertexMap) {
-        this.vertexMap = vertexMap;
+    public void setVertexIndex(ArrayList<Vertex> vertexIndex){
+        this.vertexIndex = vertexIndex;
+    }
+
+    public ArrayList<Vertex> getVertexIndex(){
+        return vertexIndex;
     }
 
     public void addSystemPOI(POI poi) {
