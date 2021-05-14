@@ -2,6 +2,8 @@ package bfst21.osm;
 
 import bfst21.Model;
 import bfst21.POI.POI;
+import bfst21.POI.POI_KDTree;
+import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.pathfinding.Vertex;
 import bfst21.search.RadixTree;
 
@@ -52,6 +54,8 @@ public class OSMParser {
             model.setMaxX(input.readFloat());
             model.setMaxY(input.readFloat());
             model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
+            model.setPOITree((POI_KDTree) input.readObject());
+            model.setAreaNames((List<AreaName>) input.readObject());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,6 +84,8 @@ public class OSMParser {
             output.writeFloat(model.getMaxX());
             output.writeFloat(model.getMaxY());
             output.writeObject(model.getDrawableMap());
+            output.writeObject(model.getPOITree());
+            output.writeObject(model.getAreaNames());
         } catch (Exception e) {
             e.printStackTrace();
         }

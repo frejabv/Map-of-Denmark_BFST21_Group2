@@ -195,6 +195,10 @@ public class Model {
         return POITree;
     }
 
+    public void setPOITree(POI_KDTree POITree){
+        this.POITree = POITree;
+    }
+
     public MemberIndex<Node> getNodeIndex() {
         return nodeIndex;
     }
@@ -351,6 +355,10 @@ public class Model {
 
     public List<Drawable> getAreaNames() {
         return areaNames;
+    }
+
+    public void setAreaNames(List<AreaName> areaNames) {
+        this.areaNames = areaNames;
     }
 
     public ArrayList<Drawable> getFillables700() {
