@@ -357,7 +357,7 @@ public class Model {
         return areaNames;
     }
 
-    public void setAreaNames(List<AreaName> areaNames) {
+    public void setAreaNames(List<Drawable> areaNames) {
         this.areaNames = areaNames;
     }
 

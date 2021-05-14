@@ -54,7 +54,7 @@ public class OSMParser {
             model.setMaxY(input.readFloat());
             model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
             model.setPOITree((POI_KDTree) input.readObject());
-            model.setAreaNames((List<AreaName>) input.readObject());
+            model.setAreaNames((List<Drawable>) input.readObject());
         } catch (Exception e) {
             e.printStackTrace();
         }
