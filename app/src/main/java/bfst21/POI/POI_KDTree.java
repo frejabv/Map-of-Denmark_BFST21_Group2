@@ -124,7 +124,7 @@ public class POI_KDTree {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
 
-        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || removedPOIList.contains(qNode))
+        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || isRemoved(qNode))
             return false;
 
         return contains(root, qNode, true);
@@ -209,7 +209,7 @@ public class POI_KDTree {
         }
 
         //if currentNode is not deleted, is it closer than worstClosest?
-        if (!removedPOIList.contains(currentNode)) {
+        if (!isRemoved(currentNode)) {
             currentNode.setDistTo(p);
             if (closestList.size() < listSize && !closestList.contains(currentNode)) {
                 closestList.add(currentNode);
