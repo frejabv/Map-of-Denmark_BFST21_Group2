@@ -6,12 +6,15 @@ import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class KDTreeTest {
+public class POI_KDTreeTest {
     private final Model model;
 
-    public KDTreeTest() throws Exception {
+    public POI_KDTreeTest() throws Exception {
         model = new Model("data/kdTreeTest.osm", false);
     }
 
@@ -280,6 +283,97 @@ public class KDTreeTest {
         Point2D test5 = new Point2D(8,2 / -Model.scalingConstant);
         assertEquals(node6, kdTree.nearest(test5));
 
+        //between nodes 9 and 10
+        Point2D test6 = new Point2D(0.5, 0);
+        ArrayList<POI> result = kdTree.nearest(test6, 2);
+        assertTrue(result.contains(node8));
+        assertTrue(result.contains(node9));
+
         assertEquals(10, kdTree.getSize());
+    }
+
+    @Test
+    public void testQuery() {
+        POI_KDTree kdTree = new POI_KDTree(model);
+        kdTree.setBounds();
+
+        POI node = new POI("1", "test", 5, 5 / -Model.scalingConstant);
+        kdTree.insert(node); // inside query
+        POI node1 = new POI("2", "test", 3, 3 / -Model.scalingConstant);
+        kdTree.insert(node1); // inside query
+        POI node2 = new POI("3", "test", 1, 9 / -Model.scalingConstant);
+        kdTree.insert(node2); // outside query
+        POI node3 = new POI("4", "test", 3, 6 / -Model.scalingConstant);
+        kdTree.insert(node3); // inside query
+        POI node4 = new POI("5", "test", 2, 4 / -Model.scalingConstant);
+        kdTree.insert(node4); // inside query
+        POI node5 = new POI("6", "test", 6, 7 / -Model.scalingConstant);
+        kdTree.insert(node5); //outside query
+
+        ArrayList<POI> expectedResult = new ArrayList<>();
+
+        //test query can get everything in bounds
+        Rectangle kdTreeBounds = kdTree.getBounds();
+        expectedResult.add(node);
+        expectedResult.add(node1);
+        expectedResult.add(node2);
+        expectedResult.add(node3);
+        expectedResult.add(node4);
+        expectedResult.add(node5);
+        ArrayList<POI> result1 = kdTree.query(kdTreeBounds);
+        for (POI p: expectedResult) {
+            assertTrue(result1.contains(p));
+        }
+
+        //test query can get everything in a smaller viewport
+        Rectangle testViewport = new Rectangle(2, 6/ -Model.scalingConstant, 6, 2 / -Model.scalingConstant);
+        expectedResult.remove(node5);
+        expectedResult.remove(node2);
+        ArrayList<POI> result2 = kdTree.query(testViewport);
+        for (POI p: expectedResult) {
+            assertTrue(result2.contains(p));
+        }
+
+        //test that POI's can be added and show up in query
+        POI node6 = new POI("7", "test", 4, 4 / -Model.scalingConstant);
+        kdTree.insert(node6);
+        assertTrue(kdTree.query(testViewport).contains(node6));
+
+        //test for only 1 element
+        Rectangle onlyRoot = new Rectangle(4.9f, 5.1f / -Model.scalingConstant, 5.1f, 4.9f / -Model.scalingConstant);
+        ArrayList<POI> result3 = kdTree.query(onlyRoot);
+        assertEquals(1, result3.size());
+        assertTrue(result3.contains(node));
+    }
+
+    @Test
+    public void testRemoveMethods() {
+        POI_KDTree kdTree = new POI_KDTree(model);
+        kdTree.setBounds();
+
+        POI node = new POI("1", "test", 5, 5 / -Model.scalingConstant);
+        kdTree.insert(node);
+        POI node1 = new POI("2", "test", 3, 3 / -Model.scalingConstant);
+        kdTree.insert(node1);
+        POI node2 = new POI("3", "test", 1, 9 / -Model.scalingConstant);
+        kdTree.insert(node2); // closest node to testPoint
+        POI node3 = new POI("4", "test", 3, 6 / -Model.scalingConstant);
+        kdTree.insert(node3);
+        POI node4 = new POI("5", "test", 2, 4 / -Model.scalingConstant);
+        kdTree.insert(node4);
+        POI node5 = new POI("6", "test", 6, 7 / -Model.scalingConstant);
+        kdTree.insert(node5); // second closest to testPoint
+
+        Point2D testPoint = new Point2D(1.5, 9.5 / -Model.scalingConstant);
+        assertFalse(kdTree.isRemoved(node2));
+        assertTrue(kdTree.contains(node2));
+        assertEquals(node2, kdTree.nearest(testPoint));
+        assertTrue(kdTree.query(kdTree.getBounds()).contains(node2));
+
+        kdTree.remove(node2);
+        assertTrue(kdTree.isRemoved(node2));
+        assertFalse(kdTree.contains(node2));
+        assertEquals(node5, kdTree.nearest(testPoint));
+        assertFalse(kdTree.query(kdTree.getBounds()).contains(node2));
     }
 }
