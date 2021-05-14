@@ -370,6 +370,7 @@ public class POI_KDTreeTest {
         assertTrue(kdTree.query(kdTree.getBounds()).contains(node2));
 
         kdTree.remove(node2);
+        assertEquals(1, kdTree.getRemovedPOIList().size());
         assertTrue(kdTree.isRemoved(node2));
         assertFalse(kdTree.contains(node2));
         assertEquals(node5, kdTree.nearest(testPoint));
