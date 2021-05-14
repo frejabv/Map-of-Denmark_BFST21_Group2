@@ -338,10 +338,12 @@ public class Model {
 
     public void addPOI(POI poi) {
         pointsOfInterest.add(poi);
+        POITree.insert(poi);
     }
 
     public void removePOI(POI poi) {
         pointsOfInterest.remove(poi);
+        POITree.remove(poi);
     }
 
     public ArrayList<POI> getPointsOfInterest() {
@@ -476,7 +478,10 @@ public class Model {
         return systemPointsOfInterest;
     }
 
-    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
+    private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(
+            Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN,
+            Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE,
+            Tag.TERTIARY, Tag.TRUNK, Tag.TRACK, Tag.UNCLASSIFIED));
 
     public void addDrawableToRTreeList(String type, List<Drawable> drawableList, int zoomLimit) {
         if (type.equals("map")) {
