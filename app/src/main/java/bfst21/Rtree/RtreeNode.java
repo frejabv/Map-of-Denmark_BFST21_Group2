@@ -12,14 +12,27 @@ public class RtreeNode implements Comparable<RtreeNode>{
     protected List<RtreeNode> children;
     private double distTo;
 
+
+    /**
+     * @param descendants
+     */
     public RtreeNode(List<Drawable> descendants) {
         rect = createBoundingBox(descendants);
     }
 
+    /**
+     * @param descendants
+     * @param vertical
+     */
     public RtreeNode(List<Drawable> descendants, boolean vertical) {
         this(descendants, vertical, Rtree.maxChildren);
     }
 
+    /**
+     * @param descendants
+     * @param vertical
+     * @param sliceSize
+     */
     public RtreeNode(List<Drawable> descendants, boolean vertical, int sliceSize) {
         children = new ArrayList<>();
 

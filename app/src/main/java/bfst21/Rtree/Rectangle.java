@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class Rectangle implements Serializable {
     protected float minX, minY, maxX, maxY;
 
-    public Rectangle(float minX, float minY, float maxX, float maxY){
+    public Rectangle(float minX, float minY, float maxX, float maxY) {
         this.minX = minX;
         this.minY = minY;
         this.maxX = maxX;
@@ -62,6 +62,7 @@ public class Rectangle implements Serializable {
     public double getArea() {
         return Math.abs(maxX - minX) * Math.abs(maxY - minY);
     }
+
     public void draw(GraphicsContext gc) {
         gc.beginPath();
         gc.moveTo(minX, minY);

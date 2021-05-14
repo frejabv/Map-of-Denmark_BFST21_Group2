@@ -10,17 +10,37 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+/**
+ * The Rtree class is an R-tree with bulk loading.
+ * The R-tree generally works by giving it a list, and then letting the Nodes of the Rtree split
+ * the list into smaller and smaller lists, that then repeat the process. Effectively this creates
+ * the tree structure.
+ * The amount of "splits" that are made (the amount of children a node can have) is defined by the
+ * "maxChildren" field. This field is hard coded in our version, and is 5 due to it being good enough,
+ * and also small enough for us to visually be able to analyse.
+ */
 public class Rtree {
     public final static int maxChildren = 5;
-    private RtreeNode root;
     private final boolean vertical = false;
+    private RtreeNode root;
 
+    /**
+     * Rtree Constructor. Works by simply giving it a list of Drawables.
+     * @param drawables The list of drawables that are given to the root, which then starts the
+     *                  splitting process.
+     */
     public Rtree(@org.jetbrains.annotations.NotNull List<Drawable> drawables) {
         if (!drawables.isEmpty()) {
             root = new RtreeNode(drawables, vertical, maxChildren);
         }
     }
 
+    /**
+     * Nearest way starts works by moving down the Rtree, much like Prim's algorithm, where it looks further
+     * down the closest branch/node. This is done via a priority queue, where each node and
+     * @param p The Point of which we want to find the nearest way in the current RTree.
+     * @return
+     */
     public Way nearestWay(Point2D p) {
         Way nearest = null;
         double currentNearestDist = Double.POSITIVE_INFINITY;
@@ -108,7 +128,7 @@ public class Rtree {
     }
 
     public void drawRoadRectangles(Rectangle window, GraphicsContext gc) {
-        for (Drawable d: query(window)) {
+        for (Drawable d : query(window)) {
             d.getRect().draw(gc);
         }
     }
