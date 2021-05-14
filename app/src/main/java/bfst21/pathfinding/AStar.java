@@ -24,10 +24,19 @@ public class AStar {
 
     public AStar(Model model) {
         this.model = model;
-        readData();
+        createGraph();
     }
 
-    private void readData() {
+    /**
+     * CreateGraph iterates through the drawableMap adding weighted directed Edges to vertices.
+     * The Edges are given one or more pathtypes (driveable, walkable and cyclable) depending on the properties
+     * of the Way the Vertex belongs to.
+     *
+     * The vertices are stored in an ArrayList sorted by the id of the vertices, so it can be
+     * used for binary searches when initialising a new AStarSearch.
+     */
+
+    private void createGraph() {
         for (Map.Entry<Tag, List<Drawable>> entry : model.getDrawableMap().entrySet()) {
             List<Drawable> value = entry.getValue();
             for (Drawable way : value) {
@@ -145,30 +154,24 @@ public class AStar {
         model.setAStarDebugPath(debugPath);
     }
 
-    public void createPath(Vertex target) {
-        float minX = 100;
-        float maxX = -100;
-        float minY = 100;
-        float maxY = -100;
+    /**
+     * CreatePath iterates through the vertices by starting at the destination Vertex and adding
+     * the parent vertex to an ArrayList until we find a null reference. Since our starting node has no parent node,
+     * finding a null reference means that we found our starting point. The ArrayList is reversed to store
+     * the path from start to end instead of end to start.
+     *
+     * The ArrayList with the path is added to Model.
+     *
+     * @param destination the destination Vertex of the AStarSearch.
+     */
+
+    public void createPath(Vertex destination) {
         path = new ArrayList<>();
-        for (Vertex vertex = target; vertex != null; vertex = vertex.parent) { //Starts on the target and work back to start
-            if (vertex.getX() < minX) {
-                minX = vertex.getX();
-            }
-            if (vertex.getX() > maxX) {
-                maxX = vertex.getX();
-            }
-            if (vertex.getY() < minY) {
-                minY = vertex.getY();
-            }
-            if (vertex.getY() > maxY) {
-                maxY = vertex.getY();
-            }
+        for (Vertex vertex = destination; vertex != null; vertex = vertex.parent) { //Starts on the target and work back to start
             path.add(vertex);
         }
         Collections.reverse(path);
         model.setAStarPath(path);
-        model.setAStarBounds(minX, minY, maxX, maxY);
     }
 
     /**
@@ -299,6 +302,22 @@ public class AStar {
         routeDescription.add(step);
         routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
     }
+
+    /**
+     * GetDirection determines which direction we are going when going in to an intersection or a roundabout.
+     * The method uses the three input vertices to determine the angle from the previousVertex to the nextVertex,
+     * with the currentVertex as orego.
+     *
+     * If the angle is above 190 degrees we need to go left
+     * If the angle is under 165 degrees we check if we intersect with a roundabout. If we intersect with a
+     * roundabout we count exits otherwise we just need to turn right.
+     * If the angle is between 165 and 190 we need to continue straight ahead.
+     *
+     * @param currentVertex the intersection Vertex
+     * @param previousVertex the first Vertex before the intersection
+     * @param nextVertex the first Vertex after the intersection
+     * @return enum Direction
+     */
 
     private Direction getDirection(Vertex currentVertex, Vertex previousVertex, Vertex nextVertex) {
         Direction direction = null;
