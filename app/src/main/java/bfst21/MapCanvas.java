@@ -42,7 +42,7 @@ public class MapCanvas extends Canvas {
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
     private Model model;
-    private Affine trans = new Affine();
+    private final Affine trans = new Affine();
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     private float mapZoomLimit;
 
@@ -188,7 +188,6 @@ public class MapCanvas extends Canvas {
         if (distanceWidth <= 20) {
             activePOIList.addAll(model.getPOITree().query(viewport));
             activePOIList.forEach(poi -> {
-                //TODO we will reduce this to poi.getType() == null in the future
                 if (!poi.getType().equals("place")) {
                     gc.setFill(Color.rgb(52, 152, 219));
                     double size = (30 / Math.sqrt(trans.determinant()));
@@ -284,8 +283,7 @@ public class MapCanvas extends Canvas {
             limit = mouseToModelCoords(new Point2D(getWidth(), getHeight()));
         }
 
-        Rectangle vp = new Rectangle((float) origo.getX(), (float) origo.getY(), (float) limit.getX(), (float) limit.getY());
-        viewport = vp;
+        viewport = new Rectangle((float) origo.getX(), (float) origo.getY(), (float) limit.getX(), (float) limit.getY());
     }
 
     public void pan(double dx, double dy) {

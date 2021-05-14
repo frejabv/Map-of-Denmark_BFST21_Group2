@@ -4,9 +4,7 @@ import bfst21.Rtree.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.io.Serializable;
-import java.util.HashMap;
 
-//TODO remove Member class at some point
 public abstract class Member implements Serializable, Drawable {
     long id;
     Tag tag;

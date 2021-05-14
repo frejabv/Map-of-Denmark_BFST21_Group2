@@ -85,7 +85,6 @@ public class AreaName implements Drawable {
         return type;
     }
 
-    //TODO remove when member class is removed
     @Override
     public Tag getTag() {
         return null;

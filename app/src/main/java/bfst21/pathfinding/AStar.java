@@ -168,16 +168,8 @@ public class AStar {
             long firstId = 0;
             long secondId = 0;
 
-            for (Edge e : previousVertex.getAdjacencies()) {
-                if (e.target == vertex && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
-                    firstId = e.getWayID();
-                }
-            }
-            for (Edge e : vertex.getAdjacencies()) {
-                if (e.target == nextVertex && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
-                    secondId = e.getWayID();
-                }
-            }
+            firstId = getWayId(previousVertex, vertex, firstId);
+            secondId = getWayId(vertex, nextVertex, secondId);
 
             String lastRoadName;
             if (model.getWayIndex().getMember(firstId).getName().equals("")) {
@@ -218,20 +210,7 @@ public class AStar {
             if (i == path.size() - 2) {
                 currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
                 currentDistance += distanceToVertex(vertex, nextVertex);
-                totalDistance += currentDistance;
-                totalTime += currentDistance / currentMaxSpeed;
-                String roadName;
-                if (model.getWayIndex().getMember(secondId).getName().equals("")) {
-                    roadName = "unknown road";
-                } else {
-                    roadName = model.getWayIndex().getMember(secondId).getName();
-                }
-                Step step = new Step(direction, roadName, currentDistance);
-                if (exits > 0) {
-                    step.setExits(exits);
-                }
-                routeDescription.add(step);
-                routeDescription.add(new Step(Direction.ARRIVAL, roadName, 0));
+                createArrivalStep(routeDescription, currentDistance, currentMaxSpeed, direction, secondId);
             }
         }
 
@@ -246,22 +225,7 @@ public class AStar {
 
             currentMaxSpeed = model.getWayIndex().getMember(firstId).getSpeed();
             currentDistance += distanceToVertex(path.get(0), path.get(1));
-            totalDistance += currentDistance;
-            totalTime += currentDistance / currentMaxSpeed;
-
-            String lastRoadName;
-            if (model.getWayIndex().getMember(firstId).getName().equals("")) {
-                lastRoadName = "unknown road";
-            } else {
-                lastRoadName = model.getWayIndex().getMember(firstId).getName();
-            }
-
-            Step step = new Step(direction, lastRoadName, currentDistance);
-            if (exits > 0) {
-                step.setExits(exits);
-            }
-            routeDescription.add(step);
-            routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
+            createArrivalStep(routeDescription, currentDistance, currentMaxSpeed, direction, firstId);
         }
 
         if (routeDescription.size() == 0) {
@@ -269,6 +233,34 @@ public class AStar {
         }
 
         return routeDescription;
+    }
+
+    private long getWayId(Vertex vertex, Vertex nextVertex, long wayId) {
+        for (Edge e : vertex.getAdjacencies()) {
+            if (e.target == nextVertex && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
+                wayId = e.getWayID();
+            }
+        }
+        return wayId;
+    }
+
+    private void createArrivalStep(ArrayList<Step> routeDescription, double currentDistance, int currentMaxSpeed, Direction direction, long firstId) {
+        totalDistance += currentDistance;
+        totalTime += currentDistance / currentMaxSpeed;
+
+        String lastRoadName;
+        if (model.getWayIndex().getMember(firstId).getName().equals("")) {
+            lastRoadName = "unknown road";
+        } else {
+            lastRoadName = model.getWayIndex().getMember(firstId).getName();
+        }
+
+        Step step = new Step(direction, lastRoadName, currentDistance);
+        if (exits > 0) {
+            step.setExits(exits);
+        }
+        routeDescription.add(step);
+        routeDescription.add(new Step(Direction.ARRIVAL, lastRoadName, 0));
     }
 
     private Direction getDirection(Vertex currentVertex, Vertex previousVertex, Vertex nextVertex) {
@@ -316,13 +308,7 @@ public class AStar {
     private static class VertexComparator implements Comparator<Vertex> {
         //override compare method
         public int compare(Vertex i, Vertex j) {
-            if (i.f_scores > j.f_scores) {
-                return 1;
-            } else if (i.f_scores < j.f_scores) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return Float.compare(i.f_scores, j.f_scores);
         }
     }
 

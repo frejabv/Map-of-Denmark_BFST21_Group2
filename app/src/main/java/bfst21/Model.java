@@ -22,8 +22,8 @@ public class Model {
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
 
-    private ArrayList<Tag> drawableTagList;
-    private ArrayList<Tag> fillableTagList;
+    private final ArrayList<Tag> drawableTagList;
+    private final ArrayList<Tag> fillableTagList;
 
     private POI_KDTree POITree;
     private MemberIndex<Node> nodeIndex;
@@ -35,22 +35,22 @@ public class Model {
     HashMap<String, Image> imageSet;
     HashMap<Node,Vertex> vertexMap = new HashMap<>();
 
-    private ArrayList<POI> pointsOfInterest;
-    private ArrayList<POI> systemPointsOfInterest;
+    private final ArrayList<POI> pointsOfInterest;
+    private final ArrayList<POI> systemPointsOfInterest;
 
-    private ArrayList<Drawable> fillables700, fillables400, fillables150, fillables7, fillables3;
-    private ArrayList<Drawable> drawables700, drawables400, drawables150, drawables7, drawables3;
-    private Rtree fillableRTree700, fillableRTree400, fillableRTree150, fillableRTree7, fillableRTree3;
-    private Rtree drawableRTree700, drawableRTree400, drawableRTree150, drawableRTree7, drawableRTree3;
+    private final ArrayList<Drawable> fillables400, fillables150, fillables7;
+    private final ArrayList<Drawable> drawables700, drawables400, drawables150, drawables7, drawables3;
+    private final Rtree fillableRTree400, fillableRTree150, fillableRTree7;
+    private final Rtree drawableRTree700, drawableRTree400, drawableRTree150, drawableRTree7, drawableRTree3;
 
-    private ArrayList<Drawable> roadlist;
-    private Rtree roadTree;
+    private final ArrayList<Drawable> roadlist;
+    private final Rtree roadTree;
     private Node nearestNode;
 
     private List<Drawable> areaNames;
-    private Rtree areaTree;
+    private final Rtree areaTree;
 
-    private boolean ttiMode;
+    private final boolean ttiMode;
 
     private AStar aStar;
     private List<Vertex> AStarPath;
@@ -89,12 +89,8 @@ public class Model {
         OSMParser.readMapElements(in, fileExtension, fileNameParts[fileNameParts.length - 1], this);
 
 
-        drawableMap.forEach((tag, drawables) -> {
-            drawableTagList.add(tag);
-        });
-        fillMap.forEach((tag, drawables) -> {
-            fillableTagList.add(tag);
-        });
+        drawableMap.forEach((tag, drawables) -> drawableTagList.add(tag));
+        fillMap.forEach((tag, drawables) -> fillableTagList.add(tag));
 
         roadlist = new ArrayList<>();
         drawables700 = new ArrayList<>();
@@ -103,11 +99,9 @@ public class Model {
         drawables7 = new ArrayList<>();
         drawables3 = new ArrayList<>();
 
-        fillables700 = new ArrayList<>();
         fillables400 = new ArrayList<>();
         fillables150 = new ArrayList<>();
         fillables7 = new ArrayList<>();
-        fillables3 = new ArrayList<>();
 
 
         for (Tag tag : fillMap.keySet()) {
@@ -127,11 +121,9 @@ public class Model {
         drawableRTree7 = new Rtree(drawables7);
         drawableRTree3 = new Rtree(drawables3);
 
-        fillableRTree700 = new Rtree(fillables700);
         fillableRTree400 = new Rtree(fillables400);
         fillableRTree150 = new Rtree(fillables150);
         fillableRTree7 = new Rtree(fillables7);
-        fillableRTree3 = new Rtree(fillables3);
 
         areaTree = new Rtree(areaNames);
     }
@@ -144,7 +136,6 @@ public class Model {
         imageSet.put("aerodrome", new Image("bfst21/icons/" + "aerodrome" + ".png"));
         imageSet.put("cinema", new Image("bfst21/icons/" + "cinema" + ".png"));
         imageSet.put("castle", new Image("bfst21/icons/" + "castle" + ".png"));
-        imageSet.put("viewpoint", new Image("bfst21/icons/" + "viewpoint" + ".png"));
         imageSet.put("statue", new Image("bfst21/icons/" + "statue" + ".png"));
         imageSet.put("zoo", new Image("bfst21/icons/" + "zoo" + ".png"));
         imageSet.put("suitcase", new Image("bfst21/icons/" + "suitcase" + ".png"));
@@ -358,49 +349,7 @@ public class Model {
         this.areaNames = areaNames;
     }
 
-    public ArrayList<Drawable> getFillables700() {
-        return fillables700;
-    }
 
-    public ArrayList<Drawable> getFillables400() {
-        return fillables400;
-    }
-
-    public ArrayList<Drawable> getFillables150() {
-        return fillables150;
-    }
-
-    public ArrayList<Drawable> getFillables7() {
-        return fillables7;
-    }
-
-    public ArrayList<Drawable> getFillables3() {
-        return fillables3;
-    }
-
-    public ArrayList<Drawable> getDrawables700() {
-        return drawables700;
-    }
-
-    public ArrayList<Drawable> getDrawables400() {
-        return drawables400;
-    }
-
-    public ArrayList<Drawable> getDrawables150() {
-        return drawables150;
-    }
-
-    public ArrayList<Drawable> getDrawables7() {
-        return drawables7;
-    }
-
-    public ArrayList<Drawable> getDrawables3() {
-        return drawables3;
-    }
-
-    public Rtree getFillableRTree700() {
-        return fillableRTree700;
-    }
 
     public Rtree getFillableRTree400() {
         return fillableRTree400;
@@ -412,10 +361,6 @@ public class Model {
 
     public Rtree getFillableRTree7() {
         return fillableRTree7;
-    }
-
-    public Rtree getFillableRTree3() {
-        return fillableRTree3;
     }
 
     public Rtree getDrawableRTree700() {
@@ -450,14 +395,6 @@ public class Model {
         return areaTree;
     }
 
-    public ArrayList<Tag> getDrawableTagList() {
-        return drawableTagList;
-    }
-
-    public ArrayList<Tag> getFillableTagList() {
-        return fillableTagList;
-    }
-
     public Rtree getRoadRTree() {
         return roadTree;
     }
@@ -489,11 +426,7 @@ public class Model {
             boolean fillable = fillableTagList.contains(drawableList.get(0).getTag());
             switch (zoomLimit) {
                 case 700:
-                    if (fillable) {
-                        fillables700.addAll(drawableList);
-                    } else {
                         drawables700.addAll(drawableList);
-                    }
                     break;
                 case 400:
                     if (fillable) {
@@ -517,11 +450,7 @@ public class Model {
                     }
                     break;
                 case 3:
-                    if (fillable) {
-                        fillables3.addAll(drawableList);
-                    } else {
-                        drawables3.addAll(drawableList);
-                    }
+                    drawables3.addAll(drawableList);
                     break;
             }
             if (driveable.contains(drawableList.get(0).getTag())){
@@ -533,11 +462,7 @@ public class Model {
                 if (d.getTag() != null) {
                     switch (d.getTag().zoomLimit) {
                         case 700:
-                            if (fillable) {
-                                fillables700.add(d);
-                            } else {
-                                drawables700.add(d);
-                            }
+                            drawables700.add(d);
                             break;
                         case 400:
                             if (fillable) {
@@ -561,11 +486,7 @@ public class Model {
                             }
                             break;
                         case 3:
-                            if (fillable) {
-                                fillables3.add(d);
-                            } else {
-                                drawables3.add(d);
-                            }
+                            drawables3.add(d);
                             break;
                     }
                 }
