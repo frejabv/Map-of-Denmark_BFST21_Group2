@@ -30,7 +30,7 @@ public class RadixTree implements Serializable {
      * list of suggestions if they are valid nodes (isPlace = true).
      *
      * @return A list of RadixNodes which are places and children of the searchTerm
-     *         node.
+     * node.
      */
     public ArrayList<RadixNode> getSuggestions(String searchTerm) {
         searchTerm = searchTerm.substring(0, 1).toUpperCase() + searchTerm.substring(1);
@@ -74,7 +74,7 @@ public class RadixTree implements Serializable {
      * null.
      *
      * @return A RadixNode which perfectly or partly matches the searchTerm, else
-     *         null.
+     * null.
      */
     public RadixNode lookupNode(String searchTerm) {
         RadixNode currentNode = root;
@@ -118,27 +118,28 @@ public class RadixTree implements Serializable {
         insert(stringToInsert, id, root, true);
     }
 
-    public void insert(String roadName, String restOfAdress, long id) {
+    public void insert(String roadName, String restOfAddress, long id) {
         fullName = roadName;
         insert(roadName, id, root, false);
         var roadNameNode = lookupNode(roadName);
-        fullName = roadName + restOfAdress;
+        fullName = roadName + restOfAddress;
         if (roadNameNode != null) {
-            insert(restOfAdress, id, roadNameNode, true);
+            insert(restOfAddress, id, roadNameNode, true);
         } else {
-            insert(roadName + restOfAdress, id);
+            insert(roadName + restOfAddress, id);
         }
     }
 
     /**
      * There are several cases for the insertion of a new node, they are represented
-     * in if-statements. Case 0: The currentNode we are looking at is null or
-     * contains nothing, or what we are trying to insert is nothing. Case 1: No
-     * children exist. Case 2: The child node we are looking at is a prefix to
-     * stringToInsert. Case 3: stringToInsert is a prefix to the child node we are
-     * looking at. Case 4: The child node we are looking at and stringToInsert are
-     * partly equal. Case 5: None of the children have something in common with
-     * stringToInsert.
+     * in if-statements.
+     * Case 0: The currentNode we are looking at is null or
+     * contains nothing, or what we are trying to insert is nothing.
+     * Case 1: No children exist.
+     * Case 2: The child node we are looking at is a prefix to stringToInsert.
+     * Case 3: stringToInsert is a prefix to the child node we are looking at.
+     * Case 4: The child node we are looking at and stringToInsert are partly equal.
+     * Case 5: None of the children have something in common with stringToInsert.
      */
     private void insert(String stringToInsert, long id, RadixNode currentNode, boolean secondary) {
         if (currentNode != root
@@ -156,14 +157,13 @@ public class RadixTree implements Serializable {
 
         ArrayList<RadixNode> children = currentNode.getChildren();
         for (int i = 0; i < children.size(); i++) {
-            if (stringToInsert.startsWith(children.get(i).getValue())) { // the child is a prefix to stringToInsert,
-                                                                         // like child: test and stringToInsert: tester
+            if (stringToInsert.startsWith(children.get(i).getValue())) {
+                // the child is a prefix to stringToInsert, like child: test and stringToInsert: tester
                 insert(stringToInsert.substring(children.get(i).getValue().length()), id,
                         currentNode.getChildren().get(i), secondary);
                 return;
-            } else if (children.get(i).getValue().startsWith(stringToInsert)) { // stringToInsert is a prefix to child,
-                                                                                // like child: tester and
-                                                                                // stringToInsert: test
+            } else if (children.get(i).getValue().startsWith(stringToInsert)) {
+                // stringToInsert is a prefix to child, like child: tester and stringToInsert: test
                 RadixNode originalNode = children.get(i);
                 RadixNode newParentNode = new RadixNode(stringToInsert, fullName, id, secondary);
                 children.set(i, newParentNode);
@@ -172,8 +172,8 @@ public class RadixTree implements Serializable {
                 size++;
                 places++;
                 return;
-            } else if (children.get(i).getValue().charAt(0) == stringToInsert.charAt(0)) { // they are partly equal like
-                                                                                           // test and team
+            } else if (children.get(i).getValue().charAt(0) == stringToInsert.charAt(0)) {
+                // they are partly equal like test and team
                 String nodeContent = children.get(i).getValue();
                 for (int j = 0; j < (Math.min(stringToInsert.length(), nodeContent.length())); j++) {
                     if (stringToInsert.charAt(j) != nodeContent.charAt(j) && j > 0) {
