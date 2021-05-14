@@ -1,13 +1,14 @@
 package bfst21.POI;
 
+import java.io.Serializable;
+
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 
-public class POI implements Comparable<POI> {
-
+public class POI implements Comparable<POI>, Serializable {
     private String name;
     private String type;
     private String imageType;
