@@ -42,19 +42,47 @@ public class OSMParser {
 
     public static void loadOBJ(InputStream in, Model model) {
         try (var input = new ObjectInputStream(new BufferedInputStream(in))) {
-            model.setFillMap((Map<Tag, List<Drawable>>) input.readObject());
-            model.setNodeIndex((MemberIndex<Node>) input.readObject());
-            model.setWayIndex((MemberIndex<Way>) input.readObject());
-            model.setRelationIndex((MemberIndex<Relation>) input.readObject());
-            model.setStreetTree((RadixTree) input.readObject());
-            model.setIslands((ArrayList<Drawable>) input.readObject());
+            Object fillMap = input.readObject();
+            if (fillMap instanceof Map) {
+                model.setFillMap((Map<Tag, List<Drawable>>) fillMap);
+            }
+            Object nodeIndex = input.readObject();
+            if (nodeIndex instanceof MemberIndex) {
+                model.setNodeIndex((MemberIndex<Node>) nodeIndex);
+            }
+            Object wayIndex = input.readObject();
+            if (wayIndex instanceof MemberIndex) {
+                model.setWayIndex((MemberIndex<Way>) wayIndex);
+            }
+            Object relationIndex = input.readObject();
+            if (relationIndex instanceof MemberIndex) {
+                model.setRelationIndex((MemberIndex<Relation>) relationIndex);
+            }
+            Object streetTree = input.readObject();
+            if (streetTree instanceof RadixTree) {
+                model.setStreetTree((RadixTree) streetTree);
+            }
+            Object islands = input.readObject();
+            if (islands instanceof ArrayList) {
+                model.setIslands((ArrayList<Drawable>) islands);
+            }
+            Object coastlines = input.readObject();
+            if (coastlines instanceof ArrayList) {
+                model.setCoastlines((ArrayList<Way>) coastlines);
+            }
             model.setMinX(input.readFloat());
             model.setMinY(input.readFloat());
             model.setMaxX(input.readFloat());
             model.setMaxY(input.readFloat());
-            model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
+            Object drawableMap = input.readObject();
+            if (drawableMap instanceof Map) {
+                model.setDrawableMap((Map<Tag, List<Drawable>>) drawableMap);
+            }
+
             model.setPOITree((POI_KDTree) input.readObject());
             model.setAreaNames((List<Drawable>) input.readObject());
+        } catch (ClassCastException e){
+           //TODO please handle this by displaying an obj-file error message and going back to the fileselector
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -310,7 +338,7 @@ public class OSMParser {
                             name = "";
                             break;
                         case "way":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
                             }
                             if (tag != null) {
@@ -325,7 +353,7 @@ public class OSMParser {
                             name = "";
                             break;
                         case "relation":
-                            if (systemPOITags.size() > 0 && systemPOIName != "") {
+                            if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
                                 try {
                                     newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
                                 } catch (RuntimeException e) {
@@ -413,8 +441,7 @@ public class OSMParser {
                 }
             }
         }
-        POI result = new POI(systemPOIName, type, imageType, x, y);
-        return result;
+        return new POI(systemPOIName, type, imageType, x, y);
     }
 
     public static void addWayToList(Way way, Tag tag, Model model) {
