@@ -2,12 +2,11 @@ package bfst21;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import bfst21.exceptions.UnsupportedFileTypeException;
-import bfst21.osm.OSMParser;
 import bfst21.osm.Tag;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 public class OSMParserTest {
     private Model samsoeModel;
@@ -36,7 +35,7 @@ public class OSMParserTest {
 
     @Test
     public void testUnsupportedFileTypeException(){
-        Assertions.assertThrows(UnsupportedFileTypeException.class,()-> {
+        Assertions.assertThrows(IOException.class,()-> {
             new Model("TEST_MAP_SAMSOE.osm.png", false);
         });
     }

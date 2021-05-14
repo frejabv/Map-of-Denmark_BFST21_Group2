@@ -2,7 +2,6 @@ package bfst21.osm;
 
 import bfst21.Model;
 import bfst21.POI.POI;
-import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.search.RadixTree;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -471,7 +470,7 @@ public class OSMParser {
         return isDublet;
     }
 
-    public static FileExtension genFileExtension(String filePath) {
+    public static FileExtension genFileExtension(String filePath) throws IOException {
         String[] filePathParts = filePath.split("\\.");
 
         FileExtension toReturn;
@@ -487,8 +486,7 @@ public class OSMParser {
                 toReturn = FileExtension.OBJ;
                 break;
             default:
-                throw new UnsupportedFileTypeException(
-                        "Unsupported file type: " + filePathParts[filePathParts.length - 1]);
+                throw new IOException("Unsupported file type: " + filePathParts[filePathParts.length - 1]);
         }
         return toReturn;
     }
