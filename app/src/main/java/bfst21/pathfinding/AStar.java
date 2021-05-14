@@ -16,7 +16,6 @@ public class AStar {
     int exits = 0;
     List<Vertex> path;
     TransportType type;
-    ArrayList<Vertex> vertexIndex;
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
     private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
@@ -24,7 +23,9 @@ public class AStar {
 
     public AStar(Model model) {
         this.model = model;
-        readData();
+        if(model.getVertexIndex() == null) {
+            readData();
+        }
     }
 
     private void readData() {
@@ -49,9 +50,10 @@ public class AStar {
                 }
             }
         }
-        vertexIndex = new ArrayList<>(model.getVertexMap().values());
+        ArrayList<Vertex> tempListOfVertices = new ArrayList<>(model.getVertexMap().values());
         model.nullifyVertexMap();
-        vertexIndex.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+        tempListOfVertices.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+        model.setVertexIndex(tempListOfVertices);
     }
 
     public void AStarSearch(Node startNode, Node endNode, TransportType type) {
@@ -359,16 +361,16 @@ public class AStar {
 
     public Vertex getVertex(long id) {
         long lo = 0;
-        long hi = vertexIndex.size();
+        long hi = model.getVertexIndex().size();
         while (lo + 1 < hi) {
             long mid = (lo + hi) / 2;
-            if (vertexIndex.get((int) mid).getId() <= id) {
+            if (model.getVertexIndex().get((int) mid).getId() <= id) {
                 lo = mid;
             } else {
                 hi = mid;
             }
         }
-        Vertex vertex = vertexIndex.get((int) lo);
+        Vertex vertex = model.getVertexIndex().get((int) lo);
 
         if (vertex.getId() == id) {
             return vertex;

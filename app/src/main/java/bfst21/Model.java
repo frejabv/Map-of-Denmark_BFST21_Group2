@@ -34,6 +34,7 @@ public class Model {
     private ArrayList<Way> coastlines;
     HashMap<String, Image> imageSet;
     HashMap<Node,Vertex> vertexMap = new HashMap<>();
+    ArrayList<Vertex> vertexIndex;
 
     private final ArrayList<POI> pointsOfInterest;
     private final ArrayList<POI> systemPointsOfInterest;
@@ -68,7 +69,7 @@ public class Model {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
-        POITree = new POI_KDTree(this);
+        POITree = new POI_KDTree();
 
         nodeIndex = new MemberIndex<>();
         coastlines = new ArrayList<>();
@@ -408,6 +409,14 @@ public class Model {
 
     public void nullifyVertexMap(){
         vertexMap = null;
+    }
+
+    public void setVertexIndex(ArrayList<Vertex> vertexIndex){
+        this.vertexIndex = vertexIndex;
+    }
+
+    public ArrayList<Vertex> getVertexIndex(){
+        return vertexIndex;
     }
 
     public void addSystemPOI(POI poi) {
