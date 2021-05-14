@@ -8,14 +8,14 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         boolean ttiMode = getParameters().getRaw().size() > 0 && getParameters().getRaw().get(0).equals("ttiMode");
-        boolean fileSelectorMode = getParameters().getRaw().size() > 0
-                && getParameters().getRaw().get(0).equals("fileSelector");
+        boolean disableFileSelectorMode = getParameters().getRaw().size() > 0
+                && getParameters().getRaw().get(0).equals("disableFileSelector");
 
-        if (fileSelectorMode) {
-            new StartupScreen(primaryStage);
-        } else {
-            var model = new Model("/bfst21/data/samsoe.osm.zip", ttiMode);
+        if (disableFileSelectorMode) {
+            var model = new Model("/bfst21/data/bornholm.osm", ttiMode);
             new View(model, primaryStage);
+        } else {
+            new StartupScreen(primaryStage);
         }
     }
 
