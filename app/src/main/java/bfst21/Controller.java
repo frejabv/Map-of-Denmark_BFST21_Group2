@@ -83,7 +83,7 @@ public class Controller {
     private Point2D lastMouse;
     private boolean singleClick = true;
     private Model model;
-    private ArrayList<Text> suggestionList = new ArrayList<>();
+    private final ArrayList<Text> suggestionList = new ArrayList<>();
     private Node fromNode, toNode;
     private POI currentPOI;
 
@@ -158,16 +158,15 @@ public class Controller {
     private List<Text> setupRegexView() {
         List<Text> regexVisualisers = new ArrayList<>();
         List<String> regexString = Arrays.asList("[Street] [House] [Floor] [Side] [Postcode] [More]", "[Street] [House] [Floor] [Postcode] [More]", "[Roadname] [Number] [Postcode] ([More])", "[Roadname] [Number] [Floor] [Side] ([More])", "[Roadname] [Number] ([More])", "[Roadname] ([More])");
-        for (int i = 0; i < regexString.size(); i++) {
+        for (String s : regexString) {
             HBox hbox = new HBox();
             hbox.getStyleClass().add("regexLine");
             Text bullet = new Text("\u25CF");
             bullet.getStyleClass().add("regexMatch");
-            Text text = new Text(regexString.get(i));
+            Text text = new Text(s);
             hbox.getChildren().add(bullet);
             hbox.getChildren().add(text);
-            regexVisualisers
-                    .add(bullet);
+            regexVisualisers.add(bullet);
             regexContainer.getChildren().add(hbox);
         }
         return regexVisualisers;
@@ -475,11 +474,11 @@ public class Controller {
     }
 
     public void changeType(String type, boolean state) {
-        if (canvas.setPin && type != "pin" && type != "debug") {
+        if (canvas.setPin && !type.equals("pin") && !type.equals("debug")) {
             canvas.setPin = false;
             canvas.repaint();
         }
-        if (type != "route" && type != "debug") {
+        if (!type.equals("route") && !type.equals("debug")) {
             canvas.hideRoute();
             canvas.repaint();
         }
@@ -554,7 +553,7 @@ public class Controller {
             scaleValue = Math.round(canvas.getDistanceWidth()) / 10.0;
             metric = " KM";
         }
-        scaletext.textProperty().setValue(String.valueOf(scaleValue + metric));
+        scaletext.textProperty().setValue(scaleValue + metric);
     }
 
     public void onMousePressedPinHeart() {
@@ -628,8 +627,8 @@ public class Controller {
             Image stepIcon = new Image("bfst21/icons/" + imagePath + ".png");
             ImageView stepIconContainer = new ImageView(stepIcon);
             Label stepDescription = new Label(temp.toString());
-            stepContainer.setHgrow(stepIconContainer, SOMETIMES);
-            stepContainer.setHgrow(stepDescription, SOMETIMES);
+            HBox.setHgrow(stepIconContainer, SOMETIMES);
+            HBox.setHgrow(stepDescription, SOMETIMES);
             stepIconContainer.getStyleClass().add("stepIcon");
             stepIconContainer.setFitWidth(22.0);
             stepIconContainer.setFitHeight(22.0);

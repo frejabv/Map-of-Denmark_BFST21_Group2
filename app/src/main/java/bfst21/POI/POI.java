@@ -10,7 +10,7 @@ public class POI implements Comparable<POI> {
 
     private String name;
     private String type;
-    private String imageType;
+    private final String imageType;
     protected float x, y;
 
     private POI left;
@@ -18,14 +18,7 @@ public class POI implements Comparable<POI> {
     private Rectangle rect;
     private double distTo;
 
-    public POI(String name, String type, float x, float y) {
-        this.name = name;
-        this.type = type;
-        this.x = x;
-        this.y = y;
-    }
-
-    public POI(String name, String type, String imageType, float x, float y) {
+    public POI(String name, String type, String imageType, float x, float y){
         this.name = name;
         this.type = type;
         this.imageType = imageType;
