@@ -5,11 +5,9 @@ import javafx.scene.control.ButtonType;
 
 public class AlertMessage {
 
-    public AlertMessage(String message){
-        Alert alert = new Alert(Alert.AlertType.NONE, message , ButtonType.OK);
+    public AlertMessage(){
+        Alert alert = new Alert(Alert.AlertType.NONE,"A problem occured loading the file", ButtonType.OK);
         alert.setTitle("Error");
-        alert.showAndWait().ifPresent(response -> {
-            new Launcher();
-        });
+        alert.showAndWait();
     }
 }

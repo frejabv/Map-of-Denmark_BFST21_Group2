@@ -32,10 +32,10 @@ public class StartupController {
 
     public void defaultFile() {
         try {
-            var model = new Model("/bfst21/data/bornholm.osm", false);
+            var model = new Model("/bfst21/data/bornholm.osm.zip", false);
             new View(model, stage);
         } catch (Exception e) {
-            new AlertMessage(e.getMessage());
+            new AlertMessage();
         }
     }
 
@@ -49,7 +49,7 @@ public class StartupController {
             var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             View view = new View(model, stage);
         } catch (Exception e) {
-            new AlertMessage(e.getMessage());
+            new AlertMessage();
         }
     }
 

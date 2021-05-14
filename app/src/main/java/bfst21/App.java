@@ -19,8 +19,9 @@ public class App extends Application {
                 new StartupScreen(primaryStage);
             }
         }catch (Exception e){
-            new AlertMessage(e.getMessage());
+            new AlertMessage();
         }
+
     }
 
     public static void main(String[] args) {
