@@ -68,7 +68,7 @@ public class Model {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
-        POITree = new POI_KDTree(this);
+        POITree = new POI_KDTree();
 
         nodeIndex = new MemberIndex<>();
         coastlines = new ArrayList<>();
@@ -471,6 +471,10 @@ public class Model {
 
     public void nullifyVertexMap(){
         vertexMap = null;
+    }
+
+    public void setVertexMap(HashMap<Node, Vertex> vertexMap) {
+        this.vertexMap = vertexMap;
     }
 
     public void addSystemPOI(POI poi) {

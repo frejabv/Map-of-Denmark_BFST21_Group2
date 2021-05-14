@@ -32,7 +32,7 @@ public class OSMParser {
                 break;
             case ZIP:
                 loadZIP(in, model);
-                //saveOBJ(fileName, model);
+                saveOBJ(fileName, model);
                 break;
             case OBJ:
                 loadOBJ(in, model);
@@ -55,6 +55,7 @@ public class OSMParser {
             model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
             model.setPOITree((POI_KDTree) input.readObject());
             model.setAreaNames((List<Drawable>) input.readObject());
+            model.setVertexMap((HashMap<Node, Vertex>)  input.readObject());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,6 +86,7 @@ public class OSMParser {
             output.writeObject(model.getDrawableMap());
             output.writeObject(model.getPOITree());
             output.writeObject(model.getAreaNames());
+            output.writeObject(model.getVertexMap());
         } catch (Exception e) {
             e.printStackTrace();
         }
