@@ -11,11 +11,15 @@ public class App extends Application {
         boolean disableFileSelectorMode = getParameters().getRaw().size() > 0
                 && getParameters().getRaw().get(0).equals("disableFileSelector");
 
-        if (disableFileSelectorMode) {
-            var model = new Model("/bfst21/data/bornholm.osm", ttiMode);
-            new View(model, primaryStage);
-        } else {
-            new StartupScreen(primaryStage);
+        try {
+            if (disableFileSelectorMode) {
+                var model = new Model("/bfst21/data/bornholm.osm", ttiMode);
+                new View(model, primaryStage);
+            } else {
+                new StartupScreen(primaryStage);
+            }
+        }catch (Exception e){
+            new AlertMessage(e.getMessage());
         }
     }
 

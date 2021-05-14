@@ -1,5 +1,6 @@
 package bfst21.Startup;
 
+import bfst21.AlertMessage;
 import bfst21.Model;
 import bfst21.View;
 import bfst21.osm.FileExtension;
@@ -33,8 +34,8 @@ public class StartupController {
         try {
             var model = new Model("/bfst21/data/bornholm.osm", false);
             new View(model, stage);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            new AlertMessage(e.getMessage());
         }
     }
 
@@ -47,10 +48,8 @@ public class StartupController {
 
             var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             View view = new View(model, stage);
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            new AlertMessage(e.getMessage());
         }
     }
 

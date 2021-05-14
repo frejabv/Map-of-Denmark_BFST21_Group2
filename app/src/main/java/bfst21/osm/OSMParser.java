@@ -25,14 +25,14 @@ public class OSMParser {
 
 
     public static void readMapElements(InputStream in, FileExtension fileExtension, String fileName, Model model)
-            throws IOException, XMLStreamException {
+            throws IOException, XMLStreamException, ClassNotFoundException {
         switch (fileExtension) {
             case OSM:
                 loadOSM(in, model);
                 break;
             case ZIP:
                 loadZIP(in, model);
-                //saveOBJ(fileName, model);
+                saveOBJ(fileName, model);
                 break;
             case OBJ:
                 loadOBJ(in, model);
@@ -40,8 +40,8 @@ public class OSMParser {
         }
     }
 
-    public static void loadOBJ(InputStream in, Model model) {
-        try (var input = new ObjectInputStream(new BufferedInputStream(in))) {
+    public static void loadOBJ(InputStream in, Model model) throws IOException, ClassNotFoundException {
+        var input = new ObjectInputStream(new BufferedInputStream(in)); {
             model.setFillMap((Map<Tag, List<Drawable>>) input.readObject());
             model.setNodeIndex((MemberIndex<Node>) input.readObject());
             model.setWayIndex((MemberIndex<Way>) input.readObject());
@@ -55,8 +55,6 @@ public class OSMParser {
             model.setDrawableMap((Map<Tag, List<Drawable>>) input.readObject());
             model.setPOITree((POI_KDTree) input.readObject());
             model.setAreaNames((List<Drawable>) input.readObject());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -70,8 +68,8 @@ public class OSMParser {
             // existing obj file
         }
 
-        try (var output = new ObjectOutputStream(
-                new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())))) {
+         var output = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath()))); {
             output.writeObject(model.getFillMap());
             output.writeObject(model.getNodeIndex());
             output.writeObject(model.getWayIndex());
@@ -85,8 +83,6 @@ public class OSMParser {
             output.writeObject(model.getDrawableMap());
             output.writeObject(model.getPOITree());
             output.writeObject(model.getAreaNames());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
