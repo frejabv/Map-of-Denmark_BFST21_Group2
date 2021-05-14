@@ -308,13 +308,7 @@ public class AStar {
     private static class VertexComparator implements Comparator<Vertex> {
         //override compare method
         public int compare(Vertex i, Vertex j) {
-            if (i.f_scores > j.f_scores) {
-                return 1;
-            } else if (i.f_scores < j.f_scores) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return Float.compare(i.f_scores, j.f_scores);
         }
     }
 

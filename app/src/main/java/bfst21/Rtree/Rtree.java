@@ -4,7 +4,6 @@ import bfst21.osm.Drawable;
 import bfst21.osm.Way;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,7 +13,7 @@ import java.util.PriorityQueue;
 public class Rtree {
     public final static int maxChildren = 5;
     private RtreeNode root;
-    private boolean vertical = false;
+    private final boolean vertical = false;
 
     public Rtree(@org.jetbrains.annotations.NotNull List<Drawable> drawables) {
         if (!drawables.isEmpty()) {

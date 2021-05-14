@@ -26,8 +26,8 @@ public class Regex {
 
         //Creating pattern objects
         patterns = new ArrayList<>();
-        for (int i = 0; i < regexList.size(); i++) {
-            Pattern temp = Pattern.compile(regexList.get(i));
+        for (String s : regexList) {
+            Pattern temp = Pattern.compile(s);
             patterns.add(temp);
         }
     }
