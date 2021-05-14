@@ -3,7 +3,6 @@ package bfst21.osm;
 import bfst21.Model;
 import bfst21.POI.POI;
 import bfst21.POI.POI_KDTree;
-import bfst21.exceptions.UnsupportedFileTypeException;
 import bfst21.pathfinding.Vertex;
 import bfst21.search.RadixTree;
 
