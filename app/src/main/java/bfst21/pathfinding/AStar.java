@@ -76,32 +76,30 @@ public class AStar {
                 found = true;
             }
 
+            if (current.getAdjacencies() == null) {
+                continue;
+            }
+
             //Checks every child of current node
             for (Edge e : current.getAdjacencies()) {
-                if (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable()) {
+                if (type == TransportType.CAR && e.isDriveable()
+                        || type == TransportType.BICYCLE && e.isCyclable()
+                        || type == TransportType.WALK && e.isWalkable()) {
                     Node child = e.target;
+                    //if we have already looked at child node we skip
+                    if (child.explored) {
+                        continue;
+                    }
                     child.setHScores(distanceToNode(child, end) / type.maxSpeed);
                     float cost = e.getWeight(type, model.getWayIndex().getMember(e.getWayID()).getSpeed());
                     float temp_g_scores = current.g_scores + cost;
                     float temp_f_scores = temp_g_scores + child.h_scores;
 
-
-                    //Checks if child node has been evaluated and the newer f_score is higher, skip
-                    if ((child.explored) && (temp_f_scores >= child.f_scores)) {
-                        continue;
-                    }
-
-                    //else if child node is not in queue (add it) or newer f_score is lower (Update them)
-                    else if ((!pq.contains(child)) || (temp_f_scores < child.f_scores)) {
-                        child.parent = current;
-                        child.g_scores = temp_g_scores;
-                        child.f_scores = temp_f_scores;
-
-                        if (pq.contains(child)) {
-                            pq.remove(child);
-                        }
-                        pq.add(child);
-                    }
+                    //add child node to queue and update f_score
+                    child.g_scores = temp_g_scores;
+                    child.f_scores = temp_f_scores;
+                    child.parent = current;
+                    pq.add(child);
                 }
             }
         }

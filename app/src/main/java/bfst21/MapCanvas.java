@@ -1,10 +1,8 @@
 package bfst21;
 
-import bfst21.osm.*;
+import bfst21.POI.POI;
 import bfst21.Rtree.Rectangle;
-import bfst21.osm.Node;
-import bfst21.osm.RenderingStyle;
-import bfst21.osm.Tag;
+import bfst21.osm.*;
 import bfst21.pathfinding.Edge;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -22,26 +20,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapCanvas extends Canvas {
-    private Model model;
-    private Affine trans = new Affine();
+    public boolean kdLines;
+    public boolean debugAStar;
+    public long[] redrawAverage = new long[20];
     GraphicsContext gc;
     boolean setPin;
-    public boolean kdLines;
     boolean doubleDraw;
     boolean smallerViewPort, RTreeLines, roadRectangles;
     boolean nearestNodeLine;
-    public boolean debugAStar;
-    private boolean showRoute;
     boolean showNames = true;
     Point2D canvasPoint;
     Point2D pinPoint;
     Point2D mousePoint = new Point2D(0, 0);
     Rectangle viewport;
     ArrayList<Drawable> activeDrawList, activeFillList, activeAreaList;
+    ArrayList<POI> activePOIList;
+    ArrayList<Tag> requiresMinimumAreaTagList;
     double size;
     RenderingStyle renderingStyle;
     int redrawIndex = 0;
-    public long[] redrawAverage = new long[20];
+    private Model model;
+    private Affine trans = new Affine();
+    private boolean showRoute;
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     private float mapZoomLimit;
 
@@ -49,8 +49,9 @@ public class MapCanvas extends Canvas {
         this.model = model;
         renderingStyle = new RenderingStyle();
         setCurrentCanvasEdges();
+        initRequiresMinimumAreaTagList();
         moveToInitialPosition();
-        mapZoomLimit = getDistanceWidth()*5;
+        mapZoomLimit = getDistanceWidth() * 5;
         widthProperty().addListener((obs, oldVal, newVal) -> {
             pan(((Double) newVal - (Double) oldVal) / 2, 0);
         });
@@ -111,16 +112,18 @@ public class MapCanvas extends Canvas {
             gc.fill();
         }
 
+        double minimumArea = viewport.getArea() / 50000;
         for (Drawable fillable : activeFillList) {
-            Tag tag = fillable.getTag();
-            gc.setStroke(renderingStyle.getColorByTag(tag));
-            gc.setFill(renderingStyle.getColorByTag(tag));
+            if (!requiresMinimumAreaTagList.contains(fillable.getTag()) || fillable.getRect().getArea() > minimumArea) {
+                Tag tag = fillable.getTag();
+                gc.setStroke(renderingStyle.getColorByTag(tag));
+                gc.setFill(renderingStyle.getColorByTag(tag));
 
-            if (tag.zoomLimit > distanceWidth) {
-                fillable.draw(gc, renderingStyle);
-                gc.fill();
+                if (tag.zoomLimit > distanceWidth) {
+                    fillable.draw(gc, renderingStyle);
+                    gc.fill();
+                }
             }
-
         }
 
         // Draw dark
@@ -180,23 +183,28 @@ public class MapCanvas extends Canvas {
             paintPath(model.getAStarPath());
         }
 
+        activePOIList = new ArrayList<>();
         if (distanceWidth <= 20) {
-            model.getSystemPointsOfInterest().forEach(poi -> {
-                gc.setFill(Color.rgb(52, 152, 219));
-                double size = (30 / Math.sqrt(trans.determinant()));
-                gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
-                String image = poi.getImageType();
-                gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
+            activePOIList.addAll(model.getPOITree().query(viewport));
+            activePOIList.forEach(poi -> {
+                //TODO we will reduce this to poi.getType() == null in the future
+                if (!poi.getType().equals("place")) {
+                    gc.setFill(Color.rgb(52, 152, 219));
+                    double size = (30 / Math.sqrt(trans.determinant()));
+                    gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
+                    String image = poi.getImageType();
+                    gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
 
-                if (showNames) {
-                    gc.setFill(Color.BLACK);
-                    gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
-                    gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                    if (showNames) {
+                        gc.setFill(Color.BLACK);
+                        gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                        gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                    }
                 }
             });
         }
 
-        if (distanceWidth <= 40){
+        if (distanceWidth <= 150) {
             model.getPointsOfInterest().forEach(POI -> {
                 gc.setFill(Color.WHITE);
                 double size = (30 / Math.sqrt(trans.determinant()));
@@ -206,11 +214,14 @@ public class MapCanvas extends Canvas {
             });
         }
 
+        minimumArea = viewport.getArea() / 1000;
         if (showNames) {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
-            for (Drawable area: activeAreaList) {
-                ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
+            for (Drawable area : activeAreaList) {
+                if (((AreaName) area).getType() != AreaType.ISLAND || area.getRect().getArea() > minimumArea) {
+                    ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
+                }
             }
         }
 
@@ -259,14 +270,15 @@ public class MapCanvas extends Canvas {
         } else {
             redrawIndex = 0;
         }
+
     }
 
     private void updateViewPort() {
         Point2D origo;
         Point2D limit;
         if (smallerViewPort || RTreeLines || roadRectangles) {
-            origo = mouseToModelCoords(new Point2D(getWidth() * 1/4, getHeight()* 1/4));
-            limit = mouseToModelCoords(new Point2D(getWidth() * 3/4, getHeight() * 3/4));
+            origo = mouseToModelCoords(new Point2D(getWidth() * 1 / 4, getHeight() * 1 / 4));
+            limit = mouseToModelCoords(new Point2D(getWidth() * 3 / 4, getHeight() * 3 / 4));
         } else {
             origo = mouseToModelCoords(new Point2D(0, 0));
             limit = mouseToModelCoords(new Point2D(getWidth(), getHeight()));
@@ -301,6 +313,9 @@ public class MapCanvas extends Canvas {
         gc.setLineWidth(2 / Math.sqrt(trans.determinant()));
         gc.beginPath();
         for (Node n : nodes) {
+            if (n.getAdjacencies() == null) {
+                continue;
+            }
             for (Edge e : n.getAdjacencies()) {
                 Node child = e.target;
                 gc.moveTo(n.getX(), n.getY());
@@ -310,10 +325,10 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public void paintPath(List<Node> path){
-        gc.setStroke(Color.rgb(112,161,255));
+    public void paintPath(List<Node> path) {
+        gc.setStroke(Color.rgb(112, 161, 255));
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
-        if(getDistanceWidth() < 7.0){
+        if (getDistanceWidth() < 7.0) {
             //TODO: make it not magic
             gc.setLineWidth(0.000045);
         }
@@ -379,11 +394,10 @@ public class MapCanvas extends Canvas {
         }
     }
 
-    private void setStyle(DrawStyle style){
-        if(style == DrawStyle.DASH){
-            gc.setLineDashes(5/Math.sqrt(trans.determinant()));
-        }
-        else{
+    private void setStyle(DrawStyle style) {
+        if (style == DrawStyle.DASH) {
+            gc.setLineDashes(5 / Math.sqrt(trans.determinant()));
+        } else {
             gc.setLineDashes(0);
         }
 
@@ -413,4 +427,20 @@ public class MapCanvas extends Canvas {
         showRoute = false;
         repaint();
     }
+
+    private void initRequiresMinimumAreaTagList() {
+        requiresMinimumAreaTagList = new ArrayList<>();
+        requiresMinimumAreaTagList.add(Tag.MEADOW);
+        requiresMinimumAreaTagList.add(Tag.FOREST);
+        requiresMinimumAreaTagList.add(Tag.WOOD);
+        requiresMinimumAreaTagList.add(Tag.GRASS);
+        requiresMinimumAreaTagList.add(Tag.PARK);
+        requiresMinimumAreaTagList.add(Tag.SCRUB);
+        requiresMinimumAreaTagList.add(Tag.GRASSLAND);
+        requiresMinimumAreaTagList.add(Tag.LAKE);
+        requiresMinimumAreaTagList.add(Tag.WATER);
+        requiresMinimumAreaTagList.add(Tag.HEATH);
+        requiresMinimumAreaTagList.add(Tag.CEMETERY);
+    }
+
 }
