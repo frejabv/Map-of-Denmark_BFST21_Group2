@@ -165,7 +165,7 @@ public class RTreeTest {
         queryResult.clear();
         queryResult = testTree.query(smallerQueryWindow);
 
-        //sorting method taken from RtreeNode class. puts them in order og y-coordinate
+        //sorting method taken from RtreeNode class. Puts them in order from least to greatest of y-coordinate
         queryResult.sort((a, b) -> {
             float aVal =  a.getRect().getMinY();
             float bVal =  b.getRect().getMinY();

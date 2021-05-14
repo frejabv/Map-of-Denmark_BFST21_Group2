@@ -13,7 +13,7 @@ public class KDTreeTest {
 
     @Test
     public void testPOIInit(){
-        POI testPOI = new POI("tesPOI", "test", 1, 2);
+        POI testPOI = new POI("testPOI", "test", 1, 2);
         assertEquals(1,testPOI.getX());
         assertEquals(2, testPOI.getY());
         assertEquals("test", testPOI.getType());
