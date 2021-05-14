@@ -1,13 +1,11 @@
 package bfst21.pathfinding;
 
+import bfst21.Model;
 import bfst21.osm.Node;
 
 import java.util.ArrayList;
 
-public class Vertex {
-    private float x;
-    private float y;
-    private long id;
+public class Vertex extends Node{
     public float g_scores;
     public float h_scores;
     public float f_scores = 0;
@@ -16,21 +14,7 @@ public class Vertex {
     public boolean explored = false;
 
     public Vertex(float x, float y, long id) {
-        this.x = x;
-        this.y = y;
-        this.id = id;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
+        super(x,y*-Model.scalingConstant,id);
     }
 
     public void setHScores(float h_scores) {
