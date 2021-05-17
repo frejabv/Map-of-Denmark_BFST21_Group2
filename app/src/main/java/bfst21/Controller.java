@@ -183,6 +183,9 @@ public class Controller {
                 searchField.textProperty().setValue(suggestionList.get(0).getText());
                 Node node = model.getNodeIndex().getMember(model.getStreetTree().lookupNode(suggestionList.get(0).getText()).getId());
                 canvas.setPin(node.getX(), node.getY());
+                if (canvas.getDistanceWidth() < 0.2){
+                    canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                }
                 canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                 searchContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
@@ -283,6 +286,9 @@ public class Controller {
                     Node node = model.getNodeIndex().getMember(suggestion.getId());
                     if (containerType.equals("search")) {
                         canvas.setPin(node.getX(), node.getY());
+                        if (canvas.getDistanceWidth() < 0.2){
+                            canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                        }
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                     } else {
                         if (fieldType.equals("from")) {
@@ -590,6 +596,9 @@ public class Controller {
                 removePin.setVisible(false);
                 removePin.setManaged(false);
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart.png").toString()));
+                if (canvas.getDistanceWidth() < 0.2){
+                    canvas.goToPosition(poi.getX(), poi.getX() + 0.0002, poi.getY());
+                }
                 canvas.goToPosition(poi.getX(), poi.getX() + 0.0002, poi.getY());
                 canvas.repaint();
             });
