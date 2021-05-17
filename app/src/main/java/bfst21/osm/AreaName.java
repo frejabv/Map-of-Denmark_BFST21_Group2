@@ -9,7 +9,7 @@ import javafx.scene.text.FontWeight;
 import java.io.Serializable;
 
 public class AreaName implements Drawable, Serializable {
-    public String name;
+    private String name;
     private AreaType type;
     private float lat;
     private float lon;
