@@ -8,19 +8,14 @@ import bfst21.pathfinding.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class AStarTest {
     private Model model;
 
     @BeforeEach
-    public void setUp() {
-        try {
-            model = new Model("/bfst21/data/dk-AstarTest.osm", false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setUp() throws Exception {
+        model = new Model("/bfst21/data/dk-AstarTest.osm", false);
         model.setUpAStar();
     }
 
@@ -170,13 +165,10 @@ public class AStarTest {
     }
 
     @Test
-    public void testRoundaboutExitDescription() {
+    public void testRoundaboutExitDescription() throws Exception {
         Model modelRoundabout = null;
-        try {
-            modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm", false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm", false);
+
         modelRoundabout.setUpAStar();
         AStar astar = modelRoundabout.getAStar();
         Node testNode = modelRoundabout.getNodeIndex().getMember(12);
@@ -187,13 +179,10 @@ public class AStarTest {
     }
 
     @Test
-    public void testRoundaboutExitType() {
+    public void testRoundaboutExitType() throws Exception {
         Model modelRoundabout = null;
-        try {
-            modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm", false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        modelRoundabout = new Model("/bfst21/data/roundabout-simple.osm", false);
+
         modelRoundabout.setUpAStar();
         AStar astar = modelRoundabout.getAStar();
         Node testNode = modelRoundabout.getNodeIndex().getMember(12);
