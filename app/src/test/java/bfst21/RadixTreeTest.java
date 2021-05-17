@@ -2,6 +2,7 @@ package bfst21;
 
 import bfst21.search.RadixTree;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RadixTreeTest {

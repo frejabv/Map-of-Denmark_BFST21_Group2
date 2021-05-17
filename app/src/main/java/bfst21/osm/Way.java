@@ -1,25 +1,24 @@
 package bfst21.osm;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Way extends Member implements Drawable, Serializable {
     private List<Node> nodes;
-    HashMap<Long, String> roleMap;
+    private HashMap<Long, String> roleMap;
     private Rectangle rect;
-    String name = "";
-    int maxSpeed = 1;
-    boolean isOneway;
-    boolean isJunction;
-    boolean isCyclable;
-    boolean isWalkable;
+    private String name = "";
+    private int maxSpeed = 1;
+    private boolean isOneway;
+    private boolean isJunction;
+    private boolean isCyclable;
+    private boolean isWalkable;
 
     public Way(long id) {
         super(id);
@@ -61,8 +60,9 @@ public class Way extends Member implements Drawable, Serializable {
     }
 
     public void addRole(long id, String role) {
-        if (roleMap == null)
+        if (roleMap == null) {
             roleMap = new HashMap<>();
+        }
         roleMap.put(id, role);
     }
 

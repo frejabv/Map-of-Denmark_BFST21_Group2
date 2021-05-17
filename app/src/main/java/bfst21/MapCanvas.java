@@ -24,23 +24,23 @@ public class MapCanvas extends Canvas {
     public boolean kdLines;
     public boolean debugAStar;
     public long[] redrawAverage = new long[20];
-    GraphicsContext gc;
-    boolean setPin;
-    boolean doubleDraw = true;
-    boolean smallerViewPort, RTreeLines, roadRectangles;
-    boolean nearestNodeLine;
+    private GraphicsContext gc;
+    public boolean setPin;
+    public boolean doubleDraw = true;
+    public boolean smallerViewPort, RTreeLines, roadRectangles;
+    public boolean nearestNodeLine;
     private boolean showRoute;
-    boolean showNames = true;
-    Point2D canvasPoint;
-    Point2D pinPoint;
-    Point2D mousePoint = new Point2D(0, 0);
-    Rectangle viewport;
-    ArrayList<Drawable> activeDrawList, activeFillList, activeAreaList;
-    ArrayList<POI> activePOIList;
-    ArrayList<Tag> requiresMinimumAreaTagList;
-    double size;
-    RenderingStyle renderingStyle;
-    int redrawIndex = 0;
+    public boolean showNames = true;
+    public Point2D canvasPoint;
+    public Point2D pinPoint;
+    public Point2D mousePoint = new Point2D(0, 0);
+    private Rectangle viewport;
+    private ArrayList<Drawable> activeDrawList, activeFillList, activeAreaList;
+    private ArrayList<POI> activePOIList;
+    private ArrayList<Tag> requiresMinimumAreaTagList;
+    private double size;
+    public RenderingStyle renderingStyle;
+    private int redrawIndex = 0;
     private Model model;
     private final Affine trans = new Affine();
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
@@ -100,7 +100,7 @@ public class MapCanvas extends Canvas {
         activeAreaList = new ArrayList<>();
         activeAreaList.addAll(model.getAreaTree().query(viewport));
 
-        gc.setFill(renderingStyle.sea);
+        gc.setFill(renderingStyle.getSeaColor());
         gc.fillRect(0, 0, getWidth(), getHeight());
         gc.setTransform(trans);
         gc.fill();
@@ -315,7 +315,7 @@ public class MapCanvas extends Canvas {
                 continue;
             }
             for (Edge e : v.getAdjacencies()) {
-                Vertex child = e.target;
+                Vertex child = e.getTarget();
                 gc.moveTo(v.getX(), v.getY());
                 gc.lineTo(child.getX(), child.getY());
             }
@@ -323,16 +323,16 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public void paintPath(List<Vertex> path){
+    public void paintPath(List<Vertex> path) {
         double innerRoadWidth = 1;
         if (doubleDraw) {
             innerRoadWidth = 0.65;
-            Color c1 = Color.rgb(112,161,255);
+            Color c1 = Color.rgb(112, 161, 255);
             int darkRed = (int) (c1.getRed() * 255 * 0.75);
             int darkGreen = (int) (c1.getGreen() * 255 * 0.75);
             int darkBlue = (int) (c1.getBlue() * 255 * 0.75);
             gc.setStroke(Color.rgb(darkRed, darkGreen, darkBlue));
-            gc.setLineWidth(0.8 / Math.sqrt(trans.determinant())*10);
+            gc.setLineWidth(0.8 / Math.sqrt(trans.determinant()) * 10);
             if (getDistanceWidth() < .5) {
                 gc.setLineWidth(0.8 / 13333);
             }
@@ -344,8 +344,8 @@ public class MapCanvas extends Canvas {
             gc.stroke();
         }
         double finalInnerRoadWidth = innerRoadWidth;
-        gc.setStroke(Color.rgb(112,161,255));
-        gc.setLineWidth(0.8 / Math.sqrt(trans.determinant())* 10 * finalInnerRoadWidth);
+        gc.setStroke(Color.rgb(112, 161, 255));
+        gc.setLineWidth(0.8 / Math.sqrt(trans.determinant()) * 10 * finalInnerRoadWidth);
         if (getDistanceWidth() < .5) {
             gc.setLineWidth((0.8 / 13333) * finalInnerRoadWidth);
         }

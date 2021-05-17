@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public class Relation extends Member implements Drawable {
-    ArrayList<Way> ways = new ArrayList<>();
-    Rectangle rect;
+    private ArrayList<Way> ways = new ArrayList<>();
+    private Rectangle rect;
 
     public Relation(long id) {
         super(id);
@@ -111,7 +111,6 @@ public class Relation extends Member implements Drawable {
             if (w.getRect().getMinY() > maxY) {
                 maxY = w.getRect().getMinY();
             }
-
             //check max values
             if (w.getRect().getMaxX() < minX) {
                 minX = w.getRect().getMaxX();
@@ -128,6 +127,10 @@ public class Relation extends Member implements Drawable {
         }
 
         rect = new Rectangle(minX, minY, maxX, maxY);
+    }
+
+    public ArrayList<Way> getWays() {
+        return ways;
     }
 
     public Rectangle getRect() {

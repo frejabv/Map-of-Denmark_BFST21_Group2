@@ -10,7 +10,7 @@ import java.util.List;
  * none-leaf node.
  */
 public class RtreeLeaf extends RtreeNode {
-    List<Drawable> drawables;
+    private List<Drawable> drawables;
 
     public RtreeLeaf(List<Drawable> drawables) {
         super(drawables);

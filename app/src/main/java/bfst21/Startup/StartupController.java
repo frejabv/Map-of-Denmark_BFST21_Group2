@@ -1,6 +1,5 @@
 package bfst21.Startup;
 
-import bfst21.AlertMessage;
 import bfst21.Model;
 import bfst21.View;
 import bfst21.osm.FileExtension;
@@ -16,9 +15,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-
 public class StartupController {
-    Stage stage;
+    private Stage stage;
 
     @FXML
     private BorderPane loadingText;
@@ -44,9 +42,11 @@ public class StartupController {
     }
 
     public void openChosenFile(File selectedFile) {
-        // Sanity check of filetype here
         if (selectedFile != null) {
             startMapView(selectedFile.getAbsolutePath());
+        }
+        else{
+            new StartupErrorMessage(stage);
         }
     }
 
@@ -64,7 +64,7 @@ public class StartupController {
             var model = new Model("/bfst21/data/bornholm.osm", false);
             new View(model, stage, "Denmark");
         } catch (Exception e) {
-            new AlertMessage(stage);
+            new StartupErrorMessage(stage);
         }
     }
 
@@ -77,7 +77,7 @@ public class StartupController {
             var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             new View(model, stage, filePathParts[filePathParts.length - 1]);
         } catch (Exception e) {
-            new AlertMessage(stage);
+            new StartupErrorMessage(stage);
         }
     }
 

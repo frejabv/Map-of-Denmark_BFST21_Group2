@@ -1,21 +1,20 @@
 package bfst21.osm;
 
-import java.io.Serializable;
-
 import bfst21.Rtree.Rectangle;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class AreaName implements Drawable, Serializable {
-    String name;
-    AreaType type;
-    float lat;
-    float lon;
-    Relation relation;
-    Way way;
+import java.io.Serializable;
 
+public class AreaName implements Drawable, Serializable {
+    private String name;
+    private AreaType type;
+    private float lat;
+    private float lon;
+    private Relation relation;
+    private Way way;
 
     public AreaName(String name, AreaType type, Node node) {
         setNameAndType(name, type);
@@ -40,7 +39,7 @@ public class AreaName implements Drawable, Serializable {
 
     public void drawType(GraphicsContext gc, float distanceWidth, RenderingStyle renderingStyle) {
         if (distanceWidth < type.zoomMax && distanceWidth > type.zoomMin) {
-            draw(gc,renderingStyle);
+            draw(gc, renderingStyle);
         }
     }
 

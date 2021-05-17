@@ -1,20 +1,19 @@
 package bfst21.pathfinding;
 
-import bfst21.osm.Node;
 import bfst21.osm.Tag;
 import bfst21.osm.Way;
 
 import java.io.Serializable;
 
 public class Edge implements Serializable {
-    public final float weight;
-    public final Vertex target;
+    private final float weight;
+    private final Vertex target;
     private boolean isDriveable, isCyclable, isWalkable;
     private final long wayID;
 
-    public Edge(Vertex targetNode, float costVal, long wayID) {
-        target = targetNode;
-        weight = costVal;
+    public Edge(Vertex targetNode, float weight, long wayID) {
+        this.target = targetNode;
+        this.weight = weight;
         this.wayID = wayID;
     }
 
@@ -61,5 +60,13 @@ public class Edge implements Serializable {
 
     public long getWayID() {
         return wayID;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
+
+    public Vertex getTarget() {
+        return target;
     }
 }

@@ -34,12 +34,12 @@ public class POI_KDTree implements Serializable {
         return removedPOIList;
     }
 
-    public void setBounds(float minX, float maxY, float maxX, float minY){
+    public void setBounds(float minX, float maxY, float maxX, float minY) {
         //note: maxY and minY are swapped, such that the negative scaling constant has no effect on the tree
         bounds = new Rectangle(minX, maxY, maxX, minY);
     }
 
-    public Rectangle getBounds(){
+    public Rectangle getBounds() {
         return bounds;
     }
 
@@ -131,7 +131,7 @@ public class POI_KDTree implements Serializable {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
 
-        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || isRemoved(qNode))
+        if (!bounds.contains(new Point2D(qNode.getX(), qNode.getY())) || isRemoved(qNode))
             return false;
 
         return contains(root, qNode, true);
@@ -187,7 +187,7 @@ public class POI_KDTree implements Serializable {
             return null;
         }
 
-        if (!bounds.contains(p)){
+        if (!bounds.contains(p)) {
             return new ArrayList<>();
         }
 
@@ -207,7 +207,7 @@ public class POI_KDTree implements Serializable {
      */
     private ArrayList<POI> nearest(POI currentNode, ArrayList<POI> currentList, Point2D p, boolean orientation, int listSize) {
         ArrayList<POI> closestList = currentList;
-        POI worstClosest = closestList.get(closestList.size()-1);
+        POI worstClosest = closestList.get(closestList.size() - 1);
         double worstDistance = worstClosest.getDistTo();
 
         //does the currentNode exist?
@@ -342,7 +342,7 @@ public class POI_KDTree implements Serializable {
         }
     }
 
-    public int getSize(){
+    public int getSize() {
         return size;
     }
 }

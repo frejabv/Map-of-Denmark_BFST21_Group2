@@ -8,9 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Regex {
-    List<String> regexList;
-    List<Pattern> patterns;
-    List<Text> regexVisualisers;
+    private List<String> regexList;
+    private List<Pattern> patterns;
+    private List<Text> regexVisualisers;
 
     public Regex(List<Text> regexVisualisers) {
         this.regexVisualisers = regexVisualisers;

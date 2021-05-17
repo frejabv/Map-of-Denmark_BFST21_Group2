@@ -1,13 +1,12 @@
-package bfst21;
+package bfst21.Startup;
 
-import bfst21.Startup.StartupScreen;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-public class AlertMessage {
+public class StartupErrorMessage {
 
-    public AlertMessage(Stage stage) {
+    public StartupErrorMessage(Stage stage) {
         Alert alert = new Alert(Alert.AlertType.NONE, "A problem occured loading the file", ButtonType.OK);
         alert.setTitle("Error");
         alert.show();
