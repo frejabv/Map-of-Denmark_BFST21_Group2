@@ -49,12 +49,6 @@ public class AStarStepTest {
         testPath.setDirection(Direction.ROUNDABOUT_SECOND_EXIT);
         assertEquals("Take the 2nd exit in the roundabout and follow " + nt, testPath.toString());
 
-        testPath.setDirection(Direction.ROUNDABOUT_OTHER_EXIT);
-        try {
-            String test = testPath.toString();
-        } catch (NullPointerException e) {
-            //success
-        }
         testPath.setExits(3);
         assertEquals("Take the 3rd exit in the roundabout and follow " + nt , testPath.toString());
 
