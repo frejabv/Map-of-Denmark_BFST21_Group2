@@ -169,6 +169,7 @@
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Color Modes</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <FlowPane>
                 <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode"
                               selected="true">
@@ -185,6 +186,7 @@
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <HBox>
                 <ToggleButton id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
@@ -223,19 +225,15 @@
               <Region styleClass="hr"/>
               <CheckBox selected="true" fx:id="showNames" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
               <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Unit</Text>
-              </FlowPane>
-              <Region styleClass="hr"/>
-              <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
               </FlowPane>
               <Region styleClass="hr"/>
               <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
               <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Enable Double Draw</Text>
+                <Text styleClass="mainContainer-subheader">Road Shadows</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox onMouseClicked="#toggleDoubleDraw">Disable Double Draw Roads</CheckBox>
+              <CheckBox onMouseClicked="#toggleDoubleDraw" selected="true">Road Shadows</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
               </FlowPane>

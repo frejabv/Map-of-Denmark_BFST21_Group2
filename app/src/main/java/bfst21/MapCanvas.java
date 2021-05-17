@@ -359,14 +359,14 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public String setPin(Point2D point) {
+    public Point2D setPin(Point2D point) {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
         pinPoint = canvasPoint;
         canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
-        return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
+        return canvasPoint;
     }
 
     public String setPin(double x, double y) {

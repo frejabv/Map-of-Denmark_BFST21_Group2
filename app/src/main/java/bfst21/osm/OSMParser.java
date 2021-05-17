@@ -133,6 +133,8 @@ public class OSMParser {
         String postcode = "";
         String city = "";
 
+        boolean isFerry = false;
+
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
                 case XMLStreamReader.START_ELEMENT:
@@ -238,13 +240,13 @@ public class OSMParser {
 
                                 if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
                                     if (!v.equals("no")) {
-                                        way.setIsCyclable();
+                                        way.setIsCyclable(true);
                                     }
                                     break;
                                 }
 
                                 if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
-                                    way.setIsWalkable();
+                                    way.setIsWalkable(true);
                                     break;
                                 }
                             }
@@ -256,6 +258,7 @@ public class OSMParser {
 
                             if (k.equals("ferry")) {
                                 tag = Tag.FERRY;
+                                isFerry = true;
                                 break;
                             }
 
@@ -321,56 +324,61 @@ public class OSMParser {
                             if (!streetName.equals("") && !houseNumber.equals("") && !postcode.equals("")
                                     && !city.equals("")) {
 
-                                model.getStreetTree().insert(streetName,
-                                        " " + houseNumber + " " + postcode + " " + city, node.getId());
-                            }
-                            isNode = false;
-                            tag = null;
-                            systemPOIName = "";
-                            systemPoiTags = new ArrayList<>();
-                            name = "";
-                            break;
-                        case "way":
-                            if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
-                                newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
-                            }
-                            if (tag != null) {
-                                way.setTag(tag);
-                                addWayToList(way, tag, model);
-                            }
-                            way.checkSpeed();
-                            way.createRectangle();
-                            tag = null;
-                            systemPOIName = "";
-                            systemPoiTags = new ArrayList<>();
-                            name = "";
-                            break;
-                        case "relation":
-                            if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
-                                if (relation.getWays() != null && !relation.getWays().isEmpty()) {
-                                    newSystemPOI(model, systemPOIName, relation.getWays().get(0).first().getX(), relation.getWays().get(0).first().getY());
+                                    model.getStreetTree().insert(streetName,
+                                            " " + houseNumber + " " + postcode + " " + city, node.getId());
                                 }
-                            }
-                            if (tag != null) {
-                                relation.setTag(tag);
-                            }
-                            relation.createRectangle();
-                            relation = null;
-                            tag = null;
-                            systemPOIName = "";
-                            systemPoiTags = new ArrayList<>();
-                            name = "";
-                            break;
-                    }
-                    break;
+                                isNode = false;
+                                tag = null;
+                                systemPOIName = "";
+                                systemPoiTags = new ArrayList<>();
+                                name = "";
+                                break;
+                            case "way":
+                                if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
+                                    newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
+                                }
+                                if (tag != null) {
+                                    way.setTag(tag);
+                                    addWayToList(way, tag, model);
+                                }
+                                way.checkSpeed();
+                                way.createRectangle();
+                                if(isFerry) {
+                                    way.setIsCyclable(false);
+                                    way.setIsWalkable(false);
+                                }
+                                isFerry = false;
+                                tag = null;
+                                systemPOIName = "";
+                                systemPoiTags = new ArrayList<>();
+                                name = "";
+                                break;
+                            case "relation":
+                                if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
+                                    if (relation.getWays() != null && !relation.getWays().isEmpty()) {
+                                        newSystemPOI(model, systemPOIName, relation.getWays().get(0).first().getX(), relation.getWays().get(0).first().getY());
+                                    }
+                                }
+                                if (tag != null) {
+                                    relation.setTag(tag);
+                                }
+                                relation.createRectangle();
+                                relation = null;
+                                tag = null;
+                                systemPOIName = "";
+                                systemPoiTags = new ArrayList<>();
+                                name = "";
+                                break;
+                        }
+                        break;
+                }
             }
+            model.setIslands(mergeCoastlines(model.getCoastlines()));
+            if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
+                System.out.println("No coastlines found");
+            }
+            model.setCoastlines(null);
         }
-        model.setIslands(mergeCoastlines(model.getCoastlines()));
-        if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
-            System.out.println("No coastlines found");
-        }
-        model.setCoastlines(null);
-    }
 
     private static void newSystemPOI(Model model, String systemPOIName, float x, float y) {
         POI poi = createSystemPOI(systemPOIName, systemPoiTags, x, y);
@@ -394,7 +402,7 @@ public class OSMParser {
                     priority = 10;
                 } else if (systemPOITags.contains("theme_park")) {
                     imageType = "theme_park";
-                    type = tag;
+                    type = "Theme Park";
                     priority = 10;
                 } else if (systemPOITags.contains("aerodrome")) {
                     imageType = "aerodrome";

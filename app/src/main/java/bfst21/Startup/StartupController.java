@@ -45,6 +45,9 @@ public class StartupController {
         if (selectedFile != null) {
             startMapView(selectedFile.getAbsolutePath());
         }
+        else{
+            new StartupErrorMessage(stage);
+        }
     }
 
     public void defaultFile() {
