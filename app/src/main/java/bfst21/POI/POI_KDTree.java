@@ -34,12 +34,12 @@ public class POI_KDTree implements Serializable {
         return removedPOIList;
     }
 
-    public void setBounds(float minX, float maxY, float maxX, float minY){
+    public void setBounds(float minX, float maxY, float maxX, float minY) {
         //note: maxY and minY are swapped, such that the negative scaling constant has no effect on the tree
         bounds = new Rectangle(minX, maxY, maxX, minY);
     }
 
-    public Rectangle getBounds(){
+    public Rectangle getBounds() {
         return bounds;
     }
 
@@ -65,11 +65,12 @@ public class POI_KDTree implements Serializable {
 
     /**
      * This is a recursive call that inserts a node into the correct empty spot.
+     *
      * @param currentNode is the node position we want to try and insert qNode into.
      * @param parent      is the current parent of our element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
-     * @return           the currentNode with its' correct parent and left/right child/domain
+     * @return the currentNode with its' correct parent and left/right child/domain
      */
     private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
         //if space is available, fill space
@@ -122,7 +123,7 @@ public class POI_KDTree implements Serializable {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
         }
 
-        if (!bounds.contains(new Point2D(qNode.getX(),qNode.getY())) || isRemoved(qNode))
+        if (!bounds.contains(new Point2D(qNode.getX(), qNode.getY())) || isRemoved(qNode))
             return false;
 
         return contains(root, qNode, true);
@@ -164,18 +165,20 @@ public class POI_KDTree implements Serializable {
             return momentaryList.get(0);
         }
     }
+
     /**
      * begins the recursive call to nearest.
-     * @param p         the point we are querying about
-     * @param listSize  size of the created list of POI's
-     * @return          the nearest Node
+     *
+     * @param p        the point we are querying about
+     * @param listSize size of the created list of POI's
+     * @return the nearest Node
      */
     public ArrayList<POI> nearest(Point2D p, int listSize) {
         if (isEmpty()) {
             return null;
         }
 
-        if (!bounds.contains(p)){
+        if (!bounds.contains(p)) {
             return new ArrayList<>();
         }
 
@@ -187,14 +190,15 @@ public class POI_KDTree implements Serializable {
 
     /**
      * The recursive part of the nearest function.
-     * @param currentNode       the current root.
-     * @param currentList       our current list of closest nodes.
-     * @param p                 the point we are querying about.
-     * @return                  returns the closestList when there are no other candidates in this branch.
+     *
+     * @param currentNode the current root.
+     * @param currentList our current list of closest nodes.
+     * @param p           the point we are querying about.
+     * @return returns the closestList when there are no other candidates in this branch.
      */
     private ArrayList<POI> nearest(POI currentNode, ArrayList<POI> currentList, Point2D p, boolean orientation, int listSize) {
         ArrayList<POI> closestList = currentList;
-        POI worstClosest = closestList.get(closestList.size()-1);
+        POI worstClosest = closestList.get(closestList.size() - 1);
         double worstDistance = worstClosest.getDistTo();
 
         //does the currentNode exist?
@@ -246,7 +250,7 @@ public class POI_KDTree implements Serializable {
         return result;
     }
 
-    public ArrayList<POI> query(POI qNode, Rectangle viewport, ArrayList<POI> result){
+    public ArrayList<POI> query(POI qNode, Rectangle viewport, ArrayList<POI> result) {
         if (qNode == null) {
             return result;
         }
@@ -297,7 +301,7 @@ public class POI_KDTree implements Serializable {
         }
     }
 
-    public int getSize(){
+    public int getSize() {
         return size;
     }
 }

@@ -5,9 +5,9 @@ import bfst21.osm.Drawable;
 import java.util.List;
 
 public class RtreeLeaf extends RtreeNode {
-    List<Drawable> drawables;
+    private List<Drawable> drawables;
 
-    public RtreeLeaf(List<Drawable> drawables){
+    public RtreeLeaf(List<Drawable> drawables) {
         super(drawables);
 
         this.drawables = drawables;

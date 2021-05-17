@@ -108,7 +108,7 @@ public class Rtree {
     }
 
     public void drawRoadRectangles(Rectangle window, GraphicsContext gc) {
-        for (Drawable d: query(window)) {
+        for (Drawable d : query(window)) {
             d.getRect().draw(gc);
         }
     }

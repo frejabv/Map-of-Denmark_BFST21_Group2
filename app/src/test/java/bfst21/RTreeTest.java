@@ -7,13 +7,13 @@ import bfst21.osm.Drawable;
 import bfst21.osm.Node;
 import bfst21.osm.Way;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RTreeTest {
     private final Model model;
@@ -21,8 +21,9 @@ public class RTreeTest {
     public RTreeTest() throws Exception {
         model = new Model("data/TEST_RTREE_STRUCTURE.osm", false);
     }
+
     @Test
-    public void RTreeLeafTest(){
+    public void RTreeLeafTest() {
         ArrayList<Drawable> drawableList = new ArrayList<>();
 
         RtreeLeaf testLeaf = new RtreeLeaf(drawableList);
@@ -31,7 +32,7 @@ public class RTreeTest {
     }
 
     @Test
-    public void RtreeNodeBoundingBox(){
+    public void RtreeNodeBoundingBox() {
         Node c = new Node(0, 0, 1); //center node
 
         Node n1 = new Node(-1, -1, 8);
@@ -95,7 +96,7 @@ public class RTreeTest {
 
         Rtree allWays = new Rtree(testAllDescendantList);
 
-        Rectangle expectedRectAll = new Rectangle(-1, -1 / Model.scalingConstant, 1, 1/ Model.scalingConstant);
+        Rectangle expectedRectAll = new Rectangle(-1, -1 / Model.scalingConstant, 1, 1 / Model.scalingConstant);
         Rectangle testRect = allWays.getRoot().getRect();
         assertEquals(expectedRectAll.getMinX(), testRect.getMinX());
         assertEquals(expectedRectAll.getMinY(), testRect.getMinY());
@@ -114,7 +115,7 @@ public class RTreeTest {
 
         Rtree allWaysBackwards = new Rtree(testAllDescendantList);
 
-        Rectangle expectedRectAllBackwards = new Rectangle(-1, -1 / Model.scalingConstant, 1, 1/ Model.scalingConstant);
+        Rectangle expectedRectAllBackwards = new Rectangle(-1, -1 / Model.scalingConstant, 1, 1 / Model.scalingConstant);
         Rectangle testRectBackwards = allWaysBackwards.getRoot().getRect();
         assertEquals(expectedRectAllBackwards.getMinX(), testRectBackwards.getMinX());
         assertEquals(expectedRectAllBackwards.getMinY(), testRectBackwards.getMinY());
@@ -143,7 +144,7 @@ public class RTreeTest {
         Rtree testTree = new Rtree(testList);
         List<Drawable> resultList = testTree.getAllDrawables(testTree.getRoot());
 
-        for (Drawable d: testList) {
+        for (Drawable d : testList) {
             assertTrue(resultList.contains(d));
         }
     }
@@ -157,7 +158,7 @@ public class RTreeTest {
 
         List<Drawable> expectedResult = testTree.getAllDrawables(testTree.getRoot());
 
-        for (Drawable d: queryResult) {
+        for (Drawable d : queryResult) {
             assertTrue(expectedResult.contains(d));
         }
 
@@ -170,15 +171,15 @@ public class RTreeTest {
 
         //sorting method taken from RtreeNode class. Puts them in order from least to greatest of y-coordinate
         queryResult.sort((a, b) -> {
-            float aVal =  a.getRect().getMinY();
-            float bVal =  b.getRect().getMinY();
+            float aVal = a.getRect().getMinY();
+            float bVal = b.getRect().getMinY();
             return Float.compare(bVal, aVal);
         });
 
         assertEquals(9, queryResult.size());
 
         for (int i = 0; i < 9; i++) {
-            assertEquals(i+50, ((Way) queryResult.get(i)).getId());
+            assertEquals(i + 50, ((Way) queryResult.get(i)).getId());
         }
     }
 }

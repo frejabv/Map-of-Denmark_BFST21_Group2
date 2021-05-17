@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class RadixNode implements Serializable {
     private final ArrayList<RadixNode> children;
-    boolean isPlace;
-    boolean secondary;
-    String value;
-    String fullName;
+    private boolean isPlace;
+    private boolean secondary;
+    private String value;
+    private String fullName;
     long id;
 
     public RadixNode(String value) {

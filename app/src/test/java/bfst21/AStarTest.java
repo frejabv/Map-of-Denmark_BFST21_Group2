@@ -1,14 +1,13 @@
 package bfst21;
 
 import bfst21.osm.Node;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import bfst21.pathfinding.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AStarTest {
     private Model model;
@@ -32,8 +31,8 @@ public class AStarTest {
         //for Odense, has Korsør and Vejle as adjecencies
         Vertex testVertex = model.getAStar().getVertex(11);
         assertEquals(2, testVertex.getAdjacencies().size());
-        assertEquals(model.getAStar().getVertex(12), testVertex.getAdjacencies().get(0).target);
-        assertEquals(model.getAStar().getVertex(8), testVertex.getAdjacencies().get(1).target);
+        assertEquals(model.getAStar().getVertex(12), testVertex.getAdjacencies().get(0).getTarget());
+        assertEquals(model.getAStar().getVertex(8), testVertex.getAdjacencies().get(1).getTarget());
     }
 
     @Test
@@ -117,7 +116,7 @@ public class AStarTest {
         float step = (float) Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         float distance = step * 111.320f * Model.scalingConstant;
 
-        assertEquals(distance, testVertex.getAdjacencies().get(0).weight);
+        assertEquals(distance, testVertex.getAdjacencies().get(0).getWeight());
     }
 
     @Test
@@ -150,7 +149,7 @@ public class AStarTest {
         double totalDistance = Math.round(distance * 10.0) / 10.0;
         long wayID = 0;
         for (Edge e : testVertex.getAdjacencies()) {
-            if (e.target == destination) {
+            if (e.getTarget() == destination) {
                 wayID = e.getWayID();
             }
         }

@@ -1,6 +1,5 @@
 package bfst21.Startup;
 
-import bfst21.AlertMessage;
 import bfst21.Model;
 import bfst21.View;
 import bfst21.osm.FileExtension;
@@ -10,11 +9,10 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class StartupController {
-    Stage stage;
+    private Stage stage;
 
     public void init(Stage stage) {
         this.stage = stage;
@@ -24,6 +22,7 @@ public class StartupController {
 
     public void openFile() {
         File selectedFile = fileChooser.showOpenDialog(stage);
+        //TODO: remove?
         // Sanity check of filetype here
         if (selectedFile != null) {
             startMapView(selectedFile.getAbsolutePath());
@@ -35,10 +34,9 @@ public class StartupController {
             var model = new Model("/bfst21/data/bornholm.osm", false);
             new View(model, stage);
         } catch (Exception e) {
-            new AlertMessage();
+            new StartUpErrorMessage();
         }
     }
-
 
     public void startMapView(String filePath) {
         try {
@@ -49,7 +47,7 @@ public class StartupController {
             var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             View view = new View(model, stage);
         } catch (Exception e) {
-            new AlertMessage();
+            new StartUpErrorMessage();
         }
     }
 

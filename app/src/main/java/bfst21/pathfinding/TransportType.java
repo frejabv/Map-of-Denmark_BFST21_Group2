@@ -7,5 +7,7 @@ public enum TransportType {
 
     public int maxSpeed;
 
-    TransportType(int speed){ this.maxSpeed = speed; }
+    TransportType(int speed) {
+        this.maxSpeed = speed;
+    }
 }

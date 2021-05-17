@@ -32,7 +32,7 @@ public class Model {
     private List<Drawable> islands = new ArrayList<>();
     private ArrayList<Way> coastlines;
     HashMap<String, Image> imageSet;
-    HashMap<Node,Vertex> vertexMap = new HashMap<>();
+    HashMap<Node, Vertex> vertexMap = new HashMap<>();
     ArrayList<Vertex> vertexIndex;
 
     private final ArrayList<POI> pointsOfInterest;
@@ -179,11 +179,11 @@ public class Model {
         this.maxY = maxY;
     }
 
-    public POI_KDTree getPOITree(){
+    public POI_KDTree getPOITree() {
         return POITree;
     }
 
-    public void setPOITree(POI_KDTree POITree){
+    public void setPOITree(POI_KDTree POITree) {
         this.POITree = POITree;
     }
 
@@ -343,7 +343,6 @@ public class Model {
     }
 
 
-
     public Rtree getFillableRTree400() {
         return fillableRTree400;
     }
@@ -396,15 +395,15 @@ public class Model {
         return vertexMap;
     }
 
-    public void nullifyVertexMap(){
+    public void nullifyVertexMap() {
         vertexMap = null;
     }
 
-    public void setVertexIndex(ArrayList<Vertex> vertexIndex){
+    public void setVertexIndex(ArrayList<Vertex> vertexIndex) {
         this.vertexIndex = vertexIndex;
     }
 
-    public ArrayList<Vertex> getVertexIndex(){
+    public ArrayList<Vertex> getVertexIndex() {
         return vertexIndex;
     }
 
@@ -427,7 +426,7 @@ public class Model {
             boolean fillable = fillableTagList.contains(drawableList.get(0).getTag());
             switch (zoomLimit) {
                 case 700:
-                        drawables700.addAll(drawableList);
+                    drawables700.addAll(drawableList);
                     break;
                 case 400:
                     if (fillable) {
@@ -454,7 +453,7 @@ public class Model {
                     drawables3.addAll(drawableList);
                     break;
             }
-            if (driveable.contains(drawableList.get(0).getTag())){
+            if (driveable.contains(drawableList.get(0).getTag())) {
                 roadlist.addAll(drawableList);
             }
         } else {
@@ -491,7 +490,7 @@ public class Model {
                             break;
                     }
                 }
-                if (driveable.contains(d.getTag())){
+                if (driveable.contains(d.getTag())) {
                     roadlist.add(d);
                 }
             }

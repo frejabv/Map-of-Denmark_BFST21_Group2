@@ -9,13 +9,13 @@ import bfst21.osm.Way;
 import java.util.*;
 
 public class AStar {
-    Model model;
-    boolean isRoundabout;
-    double totalDistance = 0;
-    double totalTime = 0;
-    int exits = 0;
-    List<Vertex> path;
-    TransportType type;
+    private Model model;
+    private boolean isRoundabout;
+    private double totalDistance = 0;
+    private double totalTime = 0;
+    private int exits = 0;
+    private List<Vertex> path;
+    private TransportType type;
 
     private final ArrayList<Tag> driveable = new ArrayList<>(Arrays.asList(Tag.MOTORWAY_LINK, Tag.LIVING_STREET, Tag.MOTORWAY, Tag.PEDESTRIAN, Tag.PRIMARY, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.TRUNK, Tag.UNCLASSIFIED));
     private final ArrayList<Tag> cyclable = new ArrayList<>(Arrays.asList(Tag.CYCLEWAY, Tag.LIVING_STREET, Tag.PATH, Tag.PEDESTRIAN, Tag.RESIDENTIAL, Tag.ROAD, Tag.SECONDARY, Tag.SERVICE, Tag.TERTIARY, Tag.TRACK, Tag.UNCLASSIFIED));
@@ -23,7 +23,7 @@ public class AStar {
 
     public AStar(Model model) {
         this.model = model;
-        if(model.getVertexIndex() == null) {
+        if (model.getVertexIndex() == null) {
             createGraph();
         }
     }
@@ -32,7 +32,7 @@ public class AStar {
      * CreateGraph iterates through the drawableMap adding weighted directed Edges to vertices.
      * The Edges are given one or more pathtypes (driveable, walkable and cyclable) depending on the properties
      * of the Way the Vertex belongs to.
-     *
+     * <p>
      * The vertices are stored in an ArrayList sorted by the id of the vertices, so it can be
      * used for binary searches when initialising a new AStarSearch.
      */
@@ -70,21 +70,21 @@ public class AStar {
      * the queue and check if it is our end node, if not we add all the children that our current vertex's edges are
      * pointing to. We take into account that the edge matches the transport type of the path. Like this we continue
      * until we find the end or there are no more vertices to be explored, in which case no path was found.
-     *
+     * <p>
      * Here we set the scores of each child vertex.
      * The h-score is the heuristic, a measure of how far the node is from the goal (in our case distance in a straight
      * line from the current vertex to the end, divided by max speed for the type of edge).
      * The g-score is the weight of the path taken so far.
      * The f-score is the result of the g- and h-score and therefore the lowest f-score will be the best path, as it
      * will be short, fast and closer to the goal.
-     *
+     * <p>
      * After we have created the path we reset all values for the vertices that were explored, so that these values
      * don't faultily affect the next traversal through the graph.
      *
      * @param startNode The node on which the path is taken from
-     * @param endNode The node on which the path should end, the goal.
-     * @param type The transport type, affecting which edges can be taken and the scores.
-     * */
+     * @param endNode   The node on which the path should end, the goal.
+     * @param type      The transport type, affecting which edges can be taken and the scores.
+     */
     public void AStarSearch(Node startNode, Node endNode, TransportType type) {
         Vertex start = getVertex(startNode.getId());
         Vertex end = getVertex(endNode.getId());
@@ -96,7 +96,7 @@ public class AStar {
         PriorityQueue<Vertex> pq = new PriorityQueue<>(20, new VertexComparator());
 
         //cost from start
-        start.g_scores = 0;
+        start.setG_scores(0);
 
         pq.add(start);
 
@@ -106,7 +106,7 @@ public class AStar {
             //the vertex in having the lowest f_score value
             Vertex current = pq.poll(); //Gets the first element in the PQ
 
-            current.explored = true; //Adds current to the explored set to remember that it is explored
+            current.setExplored(true); //Adds current to the explored set to remember that it is explored
             listOfCheckedVertices.add(current);
 
             //Checks if current is goal
@@ -123,20 +123,20 @@ public class AStar {
                 if (type == TransportType.CAR && e.isDriveable()
                         || type == TransportType.BICYCLE && e.isCyclable()
                         || type == TransportType.WALK && e.isWalkable()) {
-                    Vertex child = e.target;
+                    Vertex child = e.getTarget();
                     //if we have already looked at the child vertex we skip
-                    if (child.explored) {
+                    if (child.isExplored()) {
                         continue;
                     }
-                    child.setHScores(distanceToVertex(child, end) / type.maxSpeed);
+                    child.setH_scores(distanceToVertex(child, end) / type.maxSpeed);
                     float cost = e.getWeight(type, model.getWayIndex().getMember(e.getWayID()).getSpeed());
-                    float temp_g_scores = current.g_scores + cost;
-                    float temp_f_scores = temp_g_scores + child.h_scores;
+                    float temp_g_scores = current.getG_scores() + cost;
+                    float temp_f_scores = temp_g_scores + child.getH_scores();
 
                     //add child vertex to queue and update f_score
-                    child.g_scores = temp_g_scores;
-                    child.f_scores = temp_f_scores;
-                    child.parent = current;
+                    child.setG_scores(temp_g_scores);
+                    child.setF_scores(temp_f_scores);
+                    child.setParent(current);
                     pq.add(child);
                 }
             }
@@ -147,11 +147,11 @@ public class AStar {
         List<Vertex> debugPath = new ArrayList<>();
         for (Vertex vertex : listOfCheckedVertices) {
             debugPath.add(vertex);
-            vertex.h_scores = 0;
-            vertex.f_scores = 0;
-            vertex.g_scores = 0;
-            vertex.parent = null;
-            vertex.explored = false;
+            vertex.setH_scores(0);
+            vertex.setF_scores(0);
+            vertex.setG_scores(0);
+            vertex.setParent(null);
+            vertex.setExplored(false);
         }
         model.setAStarDebugPath(debugPath);
     }
@@ -161,7 +161,7 @@ public class AStar {
      * the parent vertex to an ArrayList until we find a null reference. Since our starting node has no parent node,
      * finding a null reference means that we found our starting point. The ArrayList is reversed to store
      * the path from start to end instead of end to start.
-     *
+     * <p>
      * The ArrayList with the path is added to Model.
      *
      * @param destination the destination Vertex of the AStarSearch.
@@ -169,7 +169,7 @@ public class AStar {
 
     public void createPath(Vertex destination) {
         path = new ArrayList<>();
-        for (Vertex vertex = destination; vertex != null; vertex = vertex.parent) { //Starts on the target and work back to start
+        for (Vertex vertex = destination; vertex != null; vertex = vertex.getParent()) { //Starts on the target and work back to start
             path.add(vertex);
         }
         Collections.reverse(path);
@@ -180,19 +180,19 @@ public class AStar {
      * This method creates the description of the AStar path. This is done by looping through every vertex in the path
      * and detecting when a change on the path happens, then creating a new {@link Step} with the roadname, direction
      * and distance driven. A Step can also have exits added if we are going out of a roundabout.
-     *
+     * <p>
      * We have to handle the last piece of road differently as our method looks back and creates a step when we detect
      * the next change. Therefore we create two steps when we get to the end in
      * {@link #createArrivalStep(ArrayList, double, int, Direction, long)}
-     *
+     * <p>
      * We also handle the paths that would not be part of the for loop, that is a very short path or no path.
-     *
+     * <p>
      * The method runs through the whole path and therefore sums up the distance driven and the time this took.
      * In the end we return the list with all the steps created when going through the path.
      *
      * @return ArrayList of Step objects which include the direction of the change in path, the road name of the road
      * which the change goes onto and the distance of which you have to follow said road.
-     * */
+     */
     public ArrayList<Step> getPathDescription() {
         ArrayList<Step> routeDescription = new ArrayList<>();
         double currentDistance = 0;
@@ -260,7 +260,7 @@ public class AStar {
         if (2 == path.size()) {
             long firstId = 0;
             for (Edge e : path.get(0).getAdjacencies()) {
-                if (e.target == path.get(1)) {
+                if (e.getTarget() == path.get(1)) {
                     firstId = e.getWayID();
                 }
             }
@@ -279,7 +279,7 @@ public class AStar {
 
     private long getWayId(Vertex vertex, Vertex nextVertex, long wayId) {
         for (Edge e : vertex.getAdjacencies()) {
-            if (e.target == nextVertex && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
+            if (e.getTarget() == nextVertex && (type == TransportType.CAR && e.isDriveable() || type == TransportType.BICYCLE && e.isCyclable() || type == TransportType.WALK && e.isWalkable())) {
                 wayId = e.getWayID();
             }
         }
@@ -309,15 +309,15 @@ public class AStar {
      * GetDirection determines which direction we are going when going in to an intersection or a roundabout.
      * The method uses the three input vertices to determine the angle from the previousVertex to the nextVertex,
      * with the currentVertex as orego.
-     *
+     * <p>
      * If the angle is above 190 degrees we need to go left
      * If the angle is under 165 degrees we check if we intersect with a roundabout. If we intersect with a
      * roundabout we count exits otherwise we just need to turn right.
      * If the angle is between 165 and 190 we need to continue straight ahead.
      *
-     * @param currentVertex the intersection Vertex
+     * @param currentVertex  the intersection Vertex
      * @param previousVertex the first Vertex before the intersection
-     * @param nextVertex the first Vertex after the intersection
+     * @param nextVertex     the first Vertex after the intersection
      * @return enum Direction
      */
 
@@ -327,7 +327,7 @@ public class AStar {
                 Math.atan2(previousVertex.getY() - currentVertex.getY(), previousVertex.getX() - currentVertex.getX());
 
         double result = Math.toDegrees(theta); //the same as multiplying theta by 180/pi
-
+        //TODO: remove?
         //we handle if the result has the wrong sign, in this case plus instead of minus
         if (result > 0) result = 360 - result;
         result = Math.abs(result);
@@ -336,7 +336,7 @@ public class AStar {
             direction = Direction.LEFT;
         } else if (result < 165) {
             for (Edge e : currentVertex.getAdjacencies()) {
-                if (e.target == nextVertex) {
+                if (e.getTarget() == nextVertex) {
                     if (model.getWayIndex().getMember(e.getWayID()).isJunction()) {
                         isRoundabout = true;
                         exits = 0;
@@ -364,9 +364,10 @@ public class AStar {
     }
 
     private static class VertexComparator implements Comparator<Vertex> {
+        //TODO: Remove?
         //override compare method
         public int compare(Vertex i, Vertex j) {
-            return Float.compare(i.f_scores, j.f_scores);
+            return Float.compare(i.getF_scores(), j.getF_scores());
         }
     }
 

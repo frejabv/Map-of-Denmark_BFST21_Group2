@@ -1,5 +1,6 @@
 package bfst21;
 
+import bfst21.Startup.StartUpErrorMessage;
 import bfst21.Startup.StartupScreen;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -18,8 +19,8 @@ public class App extends Application {
             } else {
                 new StartupScreen(primaryStage);
             }
-        }catch (Exception e){
-            new AlertMessage();
+        } catch (Exception e) {
+            new StartUpErrorMessage();
         }
 
     }
