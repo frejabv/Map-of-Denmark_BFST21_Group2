@@ -1,7 +1,6 @@
 package bfst21;
 
 import bfst21.Startup.StartupErrorMessage;
-import bfst21.Startup.StartupScreen;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -17,12 +16,13 @@ public class App extends Application {
                 var model = new Model("/bfst21/data/bornholm.osm", ttiMode);
                 new View(model, primaryStage);
             } else {
-                new StartupScreen(primaryStage);
+                WindowController windowController = WindowController.getInstance();
+                windowController.setPrimaryStage(primaryStage);
+                windowController.activateFileSelector();
             }
         } catch (Exception e) {
             new StartupErrorMessage(primaryStage);
         }
-
     }
 
     public static void main(String[] args) {
