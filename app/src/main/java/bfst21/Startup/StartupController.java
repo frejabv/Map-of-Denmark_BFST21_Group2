@@ -32,7 +32,7 @@ public class StartupController {
     public void defaultFile() {
         try {
             var model = new Model("/bfst21/data/bornholm.osm", false);
-            new View(model, stage);
+            new View(model, stage, "Denmark");
         } catch (Exception e) {
             new StartUpErrorMessage();
         }
@@ -45,7 +45,7 @@ public class StartupController {
             String[] filePathParts = filePath.split("/");
 
             var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
-            View view = new View(model, stage);
+            new View(model, stage, filePathParts[filePathParts.length - 1]);
         } catch (Exception e) {
             new StartUpErrorMessage();
         }
