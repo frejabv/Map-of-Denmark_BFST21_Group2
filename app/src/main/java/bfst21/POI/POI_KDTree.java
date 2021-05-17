@@ -164,17 +164,7 @@ public class POI_KDTree implements Serializable {
      * The removedPOIList is utilized in all other methods, to ensure that the removed POI's are not included in anything.
      * This method therefore effectively creates a 'scar' where the removed POI was, and the POI is still used in moving
      * throughout the tree: if you view KDLines, a removed POI will still have it's line drawn.
-     *
-     * If there was a need for optimization with this method (of which there is plenty of room for), then the remove
-     * method would have to do the following:
-     * 1. locate the POI that we want to remove in the tree
-     * 2. find the descendant of that POI that come the closest to it's x og y value, depending on which axis it itself
-     * has split
-     * 3. place the POI found in part 2 at the location where the removed POI was: removing the POI we want to remove
-     * in the process
-     * 4. mutate all effected POI's in the area such that they now line up with the change:
-     * this means that the parent of the new POI must adapt it's rectangle to be bigger, and all descendant of the new
-     * POI must change their Rectangles to be smaller.
+     * THIS METHOD DOES THEREFORE NOT MUTATE THE KD-TREE
      * @param poi   the POI of which is to be removed from the tree.
      */
     public void remove(POI poi) {
