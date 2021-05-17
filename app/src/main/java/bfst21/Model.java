@@ -18,7 +18,6 @@ import java.util.*;
 public class Model {
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
-    float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
 
@@ -315,13 +314,6 @@ public class Model {
     public void setDefaultTransportType(TransportType type) {
         this.defaultTransportType = type;
         setCurrentTransportType(type);
-    }
-
-    public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
-        this.aStarMinX = minX;
-        this.aStarMinY = minY;
-        this.aStarMaxX = maxX;
-        this.aStarMaxY = maxY;
     }
 
     public void addPOI(POI poi) {
