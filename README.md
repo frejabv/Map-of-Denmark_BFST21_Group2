@@ -42,6 +42,8 @@ And try again
 ### Running tests
 Tests can be run by the following command `./gradlew test`
 
+Test data sets can be found at the google drive folder: https://drive.google.com/drive/folders/1R7fnfzYdkQTKBd0vnwLvxTNq2OviLFE2?usp=sharing 
+
 ### Running performance tests
 
 #### TTI
@@ -58,3 +60,6 @@ The program will run and exit immediately when the window is ready to handle use
 ```
 
 The number we're interested in is the total (the last one).
+
+### Running Denmark
+You need to allocate 6 GB RAM to run the file denmark.osm.zip, this is done by setting the `_JAVA_OPTIONS` env variable to "-Xmx6g". On unix system this is done by running `export _JAVA_OPTIONS="-Xmx6g"` in the terminal and running the program from the same terminal.
