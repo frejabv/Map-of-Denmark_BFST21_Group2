@@ -67,37 +67,31 @@ public class OSMParser {
             if (islands instanceof ArrayList) {
                 model.setIslands((ArrayList<Drawable>) islands);
             }
-            Object coastlines = input.readObject();
-            if (coastlines instanceof ArrayList) {
-                model.setCoastlines((ArrayList<Way>) coastlines);
-            }
             model.setMinX(input.readFloat());
             model.setMinY(input.readFloat());
             model.setMaxX(input.readFloat());
             model.setMaxY(input.readFloat());
+
             Object drawableMap = input.readObject();
             if (drawableMap instanceof Map) {
                 model.setDrawableMap((Map<Tag, List<Drawable>>) drawableMap);
             }
-
             Object poiTree = input.readObject();
             if (poiTree instanceof POI_KDTree) {
                 model.setPOITree((POI_KDTree) poiTree);
             }
-
-            Object areaNames = input.readObject();
-            if (areaNames instanceof ArrayList) {
-                model.setAreaNames((List<Drawable>) areaNames);
+            Object vertexMap = input.readObject();
+            if (vertexMap instanceof HashMap) {
+                model.setVertexMap((HashMap<Node, Vertex>) vertexMap);
             }
-
-            Object vertexIndex = input.readObject();
-            if (vertexIndex instanceof List) {
-                model.setVertexIndex((ArrayList<Vertex>) vertexIndex);
+            Object areaNames = input.readObject();
+            if (areaNames instanceof List) {
+                model.setAreaNames((List<Drawable>) areaNames);
             }
         }
     }
 
-        public static void saveOBJ (String fileName, Model model) throws IOException {
+        public static void saveOBJ(String fileName, Model model) throws IOException {
             // Point java to the correct folder on the host machine
             URL fileURL = OSMParser.class.getResource("/bfst21/data/");
             File file = new File(fileURL.getPath() + "/" + fileName + ".obj");
@@ -122,8 +116,9 @@ public class OSMParser {
                 output.writeFloat(model.getMaxY());
                 output.writeObject(model.getDrawableMap());
                 output.writeObject(model.getPOITree());
+                output.writeObject(model.getVertexMap());
                 output.writeObject(model.getAreaNames());
-                output.writeObject(model.getVertexIndex());
+                output.flush();
             }
         }
 
