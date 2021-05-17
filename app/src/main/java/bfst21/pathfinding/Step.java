@@ -28,6 +28,10 @@ public class Step {
         return roadName;
     }
 
+    public void setRoadName(String roadName){
+        this.roadName = roadName;
+    }
+
     public double getDistance() {
         return distance;
     }
