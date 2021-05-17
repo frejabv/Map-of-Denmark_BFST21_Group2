@@ -193,6 +193,7 @@ public class Controller {
                     canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                 }
                 canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                updateScaleBar();
                 searchContainer.getChildren().removeAll(suggestionList);
                 suggestionList.clear();
                 searchContainer.getChildren().removeAll(searchContainer.lookup("#suggestionsHr"));
@@ -296,6 +297,7 @@ public class Controller {
                             canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
                         }
                         canvas.goToPosition(node.getX(), node.getX() + 0.0002, node.getY());
+                        updateScaleBar();
                     } else {
                         if (fieldType.equals("from")) {
                             Point2D p = new Point2D(node.getX(), node.getY());
@@ -606,6 +608,7 @@ public class Controller {
                     canvas.goToPosition(poi.getX(), poi.getX() + 0.0002, poi.getY());
                 }
                 canvas.goToPosition(poi.getX(), poi.getX() + 0.0002, poi.getY());
+                updateScaleBar();
                 canvas.repaint();
             });
         });
