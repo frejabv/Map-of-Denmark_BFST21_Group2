@@ -230,6 +230,11 @@
               <Region styleClass="hr"/>
               <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
               <FlowPane styleClass="header-margin">
+                <Text styleClass="mainContainer-subheader">Change file</Text>
+              </FlowPane>
+              <Region styleClass="hr"/>
+              <Button onMouseClicked="#openFileSelector">Change file</Button>
+              <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Road Shadows</Text>
               </FlowPane>
               <Region styleClass="hr"/>
