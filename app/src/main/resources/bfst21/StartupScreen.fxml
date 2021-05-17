@@ -17,6 +17,7 @@
     <BorderPane styleClass="testborder">
         <center>
             <VBox>
+                <Text fx:id="loadingText">TEkst</Text>
                 <Text styleClass="introText">Choose the map that you want to open</Text>
                 <HBox styleClass="buttonSpacing" pickOnBounds="false">
                     <VBox>
