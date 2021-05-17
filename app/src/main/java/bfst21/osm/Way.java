@@ -115,16 +115,16 @@ public class Way extends Member implements Drawable, Serializable {
         return isJunction;
     }
 
-    public void setIsCyclable() {
-        isCyclable = true;
+    public void setIsCyclable(boolean isCyclable) {
+        this.isCyclable = isCyclable;
     }
 
     public boolean isCyclable() {
         return isCyclable;
     }
 
-    public void setIsWalkable() {
-        isWalkable = true;
+    public void setIsWalkable(boolean isWalkable) {
+        this.isWalkable = isWalkable;
     }
 
     public boolean isWalkable() {

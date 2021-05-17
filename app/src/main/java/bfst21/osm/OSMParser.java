@@ -134,6 +134,8 @@ public class OSMParser {
         String postcode = "";
         String city = "";
 
+        boolean isFerry = false;
+
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
                 case XMLStreamReader.START_ELEMENT:
@@ -239,13 +241,13 @@ public class OSMParser {
 
                                 if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
                                     if (!v.equals("no")) {
-                                        way.setIsCyclable();
+                                        way.setIsCyclable(true);
                                     }
                                     break;
                                 }
 
                                 if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
-                                    way.setIsWalkable();
+                                    way.setIsWalkable(true);
                                     break;
                                 }
                             }
@@ -257,6 +259,7 @@ public class OSMParser {
 
                             if (k.equals("ferry")) {
                                 tag = Tag.FERRY;
+                                isFerry = true;
                                 break;
                             }
 
@@ -341,6 +344,11 @@ public class OSMParser {
                                 }
                                 way.checkSpeed();
                                 way.createRectangle();
+                                if(isFerry) {
+                                    way.setIsCyclable(false);
+                                    way.setIsWalkable(false);
+                                }
+                                isFerry = false;
                                 tag = null;
                                 systemPOIName = "";
                                 systemPoiTags = new ArrayList<>();
