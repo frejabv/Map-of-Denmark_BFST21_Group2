@@ -122,7 +122,6 @@ public class Controller {
 
     public void init(Model model) {
         this.model = model;
-        System.out.println(System.getProperty("os.name"));
         String OS = System.getProperty("os.name").toLowerCase();
 
         //Check if OS is Linux

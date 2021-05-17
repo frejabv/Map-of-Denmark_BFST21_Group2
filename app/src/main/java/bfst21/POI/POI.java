@@ -1,12 +1,11 @@
 package bfst21.POI;
 
-import java.io.Serializable;
-
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 
 public class POI implements Comparable<POI>, Serializable {
     private String name;
@@ -19,7 +18,7 @@ public class POI implements Comparable<POI>, Serializable {
     private Rectangle rect;
     private double distTo;
 
-    public POI(String name, String type, String imageType, float x, float y){
+    public POI(String name, String type, String imageType, float x, float y) {
         this.name = name;
         this.type = type;
         this.imageType = imageType;
@@ -43,22 +42,29 @@ public class POI implements Comparable<POI>, Serializable {
         return y;
     }
 
-    public POI getLeft() { return left; }
-    public POI getRight() { return right; }
+    public POI getLeft() {
+        return left;
+    }
+
+    public POI getRight() {
+        return right;
+    }
 
     public Rectangle getRect() {
         return rect;
     }
+
     public void setRect(Rectangle rect) {
         this.rect = rect;
     }
 
     public void setLeft(POI poi) { left = poi; }
+
     public void setRight(POI poi){ right = poi; }
 
     public void drawKDTLine(boolean orientation, GraphicsContext gc) {
         gc.beginPath();
-        if (orientation){
+        if (orientation) {
             gc.setStroke(Color.RED);
             gc.moveTo(x, rect.getMinY());
             gc.lineTo(x, rect.getMaxY());
@@ -76,7 +82,7 @@ public class POI implements Comparable<POI>, Serializable {
     }
 
     public void setDistTo(Point2D p) {
-        distTo = (x-p.getX()) * (x-p.getX()) + (y-p.getY()) * (y-p.getY());
+        distTo = (x - p.getX()) * (x - p.getX()) + (y - p.getY()) * (y - p.getY());
     }
 
     public double getDistTo() {

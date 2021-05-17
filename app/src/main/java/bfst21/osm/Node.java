@@ -2,8 +2,8 @@ package bfst21.osm;
 
 import bfst21.Model;
 import javafx.geometry.Point2D;
-import java.io.Serializable;
 
+import java.io.Serializable;
 
 public class Node extends Member implements Serializable {
     private float x;

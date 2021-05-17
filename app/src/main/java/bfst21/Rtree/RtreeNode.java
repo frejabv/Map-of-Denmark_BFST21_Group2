@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RtreeNode implements Comparable<RtreeNode>{
+public class RtreeNode implements Comparable<RtreeNode> {
     private final Rectangle rect;
     protected List<RtreeNode> children;
     private double distTo;
@@ -73,14 +73,15 @@ public class RtreeNode implements Comparable<RtreeNode>{
         return rect;
     }
 
-    public List<RtreeNode> getChildren(){
+    public List<RtreeNode> getChildren() {
         return children;
     }
 
     /**
      * Sorts the provided drawable list using either their x or y coordinate dictated by the vertical boolean
      * THIS METHOD MUTATES THE PROVIDED LIST
-     * @param toSort - The list to sort. Other references to this list will be mutated
+     *
+     * @param toSort   - The list to sort. Other references to this list will be mutated
      * @param vertical - Dictates whether which axis the items should be sorted in
      */
     protected void sortDrawables(List<Drawable> toSort, boolean vertical) {
@@ -93,10 +94,10 @@ public class RtreeNode implements Comparable<RtreeNode>{
 
     protected Rectangle createBoundingBox(List<Drawable> descendants) {
         float minX = 1800, minY = 1800, maxX = -1800, maxY = -1800;
-        
+
         for (var descendant : descendants) {
             Rectangle descendantBoundingBox = descendant.getRect();
-            
+
             if (minX > descendantBoundingBox.getMinX()) minX = descendantBoundingBox.getMinX();
 
             if (minY > descendantBoundingBox.getMinY()) minY = descendantBoundingBox.getMinY();

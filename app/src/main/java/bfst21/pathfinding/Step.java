@@ -1,10 +1,10 @@
 package bfst21.pathfinding;
 
 public class Step {
-    Direction direction;
-    String roadName;
-    double distance;
-    int exits;
+    private Direction direction;
+    private String roadName;
+    private double distance;
+    private int exits;
 
     public Step(Direction direction, String roadName, double distance) {
         this.direction = direction;
@@ -28,7 +28,7 @@ public class Step {
         return roadName;
     }
 
-    public void setRoadName(String roadName) {
+    public void setRoadName(String roadName){
         this.roadName = roadName;
     }
 
