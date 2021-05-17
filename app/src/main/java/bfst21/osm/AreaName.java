@@ -88,10 +88,6 @@ public class AreaName implements Drawable, Serializable {
         return type;
     }
 
-    public boolean isPoint() {
-        return isNode;
-    }
-
     @Override
     public Tag getTag() {
         return null;
