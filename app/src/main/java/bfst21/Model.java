@@ -18,7 +18,6 @@ import java.util.*;
 public class Model {
     // Scale nodes latitude to account for the curvature of the earth
     public final static float scalingConstant = 0.56f;
-    float aStarMinX, aStarMaxX, aStarMinY, aStarMaxY;
     private Map<Tag, List<Drawable>> drawableMap;
     private Map<Tag, List<Drawable>> fillMap;
 
@@ -34,6 +33,7 @@ public class Model {
     private ArrayList<Way> coastlines;
     HashMap<String, Image> imageSet;
     HashMap<Node,Vertex> vertexMap = new HashMap<>();
+    ArrayList<Vertex> vertexIndex;
 
     private final ArrayList<POI> pointsOfInterest;
     private final ArrayList<POI> systemPointsOfInterest;
@@ -59,16 +59,16 @@ public class Model {
     private TransportType currentTransportType = defaultTransportType;
     private float minX, minY, maxX, maxY;
 
-    public Model(String filePath, boolean ttiMode) throws IOException {
+    public Model(String filePath, boolean ttiMode) throws IOException, XMLStreamException, ClassNotFoundException {
         // Java wouldn't let me expand this into variables. Im very sorry about the mess
         this(Model.class.getResourceAsStream(filePath), OSMParser.genFileExtension(filePath), filePath, ttiMode);
     }
 
-    public Model(InputStream in, FileExtension fileExtension, String fileName, boolean ttiMode) {
+    public Model(InputStream in, FileExtension fileExtension, String fileName, boolean ttiMode) throws ClassNotFoundException, IOException, XMLStreamException {
         drawableMap = new HashMap<>();
         fillMap = new HashMap<>();
 
-        POITree = new POI_KDTree(this);
+        POITree = new POI_KDTree();
 
         nodeIndex = new MemberIndex<>();
         coastlines = new ArrayList<>();
@@ -86,11 +86,8 @@ public class Model {
 
         String[] fileNameParts = fileName.split("/");
 
-        try {
-            OSMParser.readMapElements(in, fileExtension, fileNameParts[fileNameParts.length - 1], this);
-        } catch (IOException | XMLStreamException e) {
-            e.printStackTrace();
-        }
+        OSMParser.readMapElements(in, fileExtension, fileNameParts[fileNameParts.length - 1], this);
+
 
         drawableMap.forEach((tag, drawables) -> drawableTagList.add(tag));
         fillMap.forEach((tag, drawables) -> fillableTagList.add(tag));
@@ -319,13 +316,6 @@ public class Model {
         setCurrentTransportType(type);
     }
 
-    public void setAStarBounds(float minX, float minY, float maxX, float maxY) {
-        this.aStarMinX = minX;
-        this.aStarMinY = minY;
-        this.aStarMaxX = maxX;
-        this.aStarMaxY = maxY;
-    }
-
     public void addPOI(POI poi) {
         pointsOfInterest.add(poi);
         POITree.insert(poi);
@@ -408,6 +398,14 @@ public class Model {
 
     public void nullifyVertexMap(){
         vertexMap = null;
+    }
+
+    public void setVertexIndex(ArrayList<Vertex> vertexIndex){
+        this.vertexIndex = vertexIndex;
+    }
+
+    public ArrayList<Vertex> getVertexIndex(){
+        return vertexIndex;
     }
 
     public void addSystemPOI(POI poi) {

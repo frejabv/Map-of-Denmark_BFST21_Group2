@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class POI_KDTreeTest {
-    private final Model model;
+    private Model model;
 
     public POI_KDTreeTest() throws Exception {
         model = new Model("data/kdTreeTest.osm", false);
@@ -31,9 +31,9 @@ public class POI_KDTreeTest {
 
     @Test
     public void testBounds() {
-        POI_KDTree kdTree = new POI_KDTree(model);
+        POI_KDTree kdTree = new POI_KDTree();
         assertNull(kdTree.getBounds());
-        kdTree.setBounds();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
         assertNotNull(kdTree.getBounds());
         //Bounds are [(0,0) -> (10, 10)]
 
@@ -87,7 +87,7 @@ public class POI_KDTreeTest {
     public void testPOI_KDTreeRoot() {
         //assert that root is null, and then set to first node inserted, and not second node.
         POI_KDTree kdTree = model.getPOITree();
-        kdTree.setBounds();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
         assertTrue(kdTree.isEmpty());
         POI node = new POI("test node", "test", "none", 1, 2 / -Model.scalingConstant);
         kdTree.insert(node);
@@ -97,8 +97,8 @@ public class POI_KDTreeTest {
 
     @Test
     public void testContains() {
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         POI node = new POI("1", "test", "none", 1, 1 / -Model.scalingConstant);
         kdTree.insert(node);
@@ -125,8 +125,8 @@ public class POI_KDTreeTest {
     @Test
     public void testInsertPosition() {
         //assert that children are placed correctly
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         POI node = new POI("1", "test", "none", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node);
@@ -147,8 +147,8 @@ public class POI_KDTreeTest {
     @Test
     public void testPOI_KDTreeInsertLinkedList() {
         //assert that output is a linked list
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
         POI node = new POI("1", "test", "none", 10, 10 / -Model.scalingConstant);
         kdTree.insert(node);
         POI node1 = new POI("2", "test", "none", 9, 1 / -Model.scalingConstant);
@@ -167,8 +167,8 @@ public class POI_KDTreeTest {
 
     @Test
     public void testInsertNullPOI() {
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         boolean success = false;
         try {
@@ -183,8 +183,8 @@ public class POI_KDTreeTest {
 
     @Test
     public void testRectContains() {
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         POI node = new POI("1", "test", "none", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node); //root
@@ -220,8 +220,8 @@ public class POI_KDTreeTest {
 
     @Test
     public void testContainsNull() {
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         boolean nullContainsSuccess = false;
         try {
@@ -236,8 +236,8 @@ public class POI_KDTreeTest {
 
     @Test
     public void testNearest() {
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         Point2D testEmpty = new Point2D(1, 1);
         assertNull(kdTree.nearest(testEmpty));
@@ -294,8 +294,8 @@ public class POI_KDTreeTest {
 
     @Test
     public void testQuery() {
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         POI node = new POI("1", "test", "none", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node); // inside query
@@ -348,8 +348,8 @@ public class POI_KDTreeTest {
 
     @Test
     public void testRemoveMethods() {
-        POI_KDTree kdTree = new POI_KDTree(model);
-        kdTree.setBounds();
+        POI_KDTree kdTree = new POI_KDTree();
+        kdTree.setBounds(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
 
         POI node = new POI("1", "test", "none", 5, 5 / -Model.scalingConstant);
         kdTree.insert(node);

@@ -2,6 +2,10 @@
     -fx-padding: 20px;
     -fx-background-color: white;
 }
+.loadingText{
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+}
 .testvbox{
     -fx-padding: 20px;
     -fx-border-insets: 20px;

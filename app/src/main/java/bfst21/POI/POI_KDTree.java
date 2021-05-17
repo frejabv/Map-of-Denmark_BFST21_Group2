@@ -1,24 +1,22 @@
 package bfst21.POI;
 
-import bfst21.Model;
 import bfst21.Rtree.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class POI_KDTree {
-    Model model;
+public class POI_KDTree implements Serializable {
     private Rectangle bounds;
     private POI root;
     private int size;
 
     private ArrayList<POI> removedPOIList;
 
-    public POI_KDTree(Model model) {
-        this.model = model;
+    public POI_KDTree() {
         this.root = null;
         size = 0;
         removedPOIList = new ArrayList<>();
@@ -36,9 +34,9 @@ public class POI_KDTree {
         return removedPOIList;
     }
 
-    public void setBounds(){
+    public void setBounds(float minX, float maxY, float maxX, float minY){
         //note: maxY and minY are swapped, such that the negative scaling constant has no effect on the tree
-        bounds = new Rectangle(model.getMinX(), model.getMaxY(), model.getMaxX(), model.getMinY());
+        bounds = new Rectangle(minX, maxY, maxX, minY);
     }
 
     public Rectangle getBounds(){

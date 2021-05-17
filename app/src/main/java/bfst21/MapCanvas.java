@@ -26,7 +26,7 @@ public class MapCanvas extends Canvas {
     public long[] redrawAverage = new long[20];
     GraphicsContext gc;
     boolean setPin;
-    boolean doubleDraw;
+    boolean doubleDraw = true;
     boolean smallerViewPort, RTreeLines, roadRectangles;
     boolean nearestNodeLine;
     private boolean showRoute;
