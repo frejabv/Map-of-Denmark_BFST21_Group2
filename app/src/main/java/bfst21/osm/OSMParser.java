@@ -11,7 +11,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -88,31 +87,31 @@ public class OSMParser {
         }
     }
 
-        public static void saveOBJ(String fileName, Model model) throws IOException {
-            // Point java to the correct folder on the host machine
-            File file = new File(fileName + ".obj");
-            file.createNewFile();
+    public static void saveOBJ(String fileName, Model model) throws IOException {
+        // Point java to the correct folder on the host machine
+        File file = new File(fileName + ".obj");
+        file.createNewFile();
 
-            var output = new ObjectOutputStream(
-                    new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())));
-            {
-                output.writeObject(model.getFillMap());
-                output.writeObject(model.getNodeIndex());
-                output.writeObject(model.getWayIndex());
-                output.writeObject(model.getRelationIndex());
-                output.writeObject(model.getStreetTree());
-                output.writeObject(model.getIslands());
-                output.writeFloat(model.getMinX());
-                output.writeFloat(model.getMinY());
-                output.writeFloat(model.getMaxX());
-                output.writeFloat(model.getMaxY());
-                output.writeObject(model.getDrawableMap());
-                output.writeObject(model.getPOITree());
-                output.writeObject(model.getVertexMap());
-                output.writeObject(model.getAreaNames());
-                output.flush();
-            }
+        var output = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())));
+        {
+            output.writeObject(model.getFillMap());
+            output.writeObject(model.getNodeIndex());
+            output.writeObject(model.getWayIndex());
+            output.writeObject(model.getRelationIndex());
+            output.writeObject(model.getStreetTree());
+            output.writeObject(model.getIslands());
+            output.writeFloat(model.getMinX());
+            output.writeFloat(model.getMinY());
+            output.writeFloat(model.getMaxX());
+            output.writeFloat(model.getMaxY());
+            output.writeObject(model.getDrawableMap());
+            output.writeObject(model.getPOITree());
+            output.writeObject(model.getVertexMap());
+            output.writeObject(model.getAreaNames());
+            output.flush();
         }
+    }
 
     private static void loadOSM(InputStream inputStream, Model model)
             throws XMLStreamException, FactoryConfigurationError {
@@ -484,6 +483,7 @@ public class OSMParser {
         List<Drawable> merged = new ArrayList<>();
         pieces.forEach((node, way) -> {
             if (way.last() == node) {
+                way.createRectangle();
                 merged.add(way);
             }
         });
