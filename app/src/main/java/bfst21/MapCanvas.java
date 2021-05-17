@@ -110,8 +110,10 @@ public class MapCanvas extends Canvas {
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
         gc.setFill(renderingStyle.getIslandColor(distanceWidth));
         for (var island : model.getIslands()) {
-            island.draw(gc, renderingStyle);
-            gc.fill();
+            if (island.getRect().intersects(viewport)) {
+                island.draw(gc, renderingStyle);
+                gc.fill();
+            }
         }
 
         double minimumArea = viewport.getArea() / 50000;
@@ -360,14 +362,14 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public String setPin(Point2D point) {
+    public Point2D setPin(Point2D point) {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
         pinPoint = canvasPoint;
         canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
-        return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
+        return canvasPoint;
     }
 
     public String setPin(double x, double y) {

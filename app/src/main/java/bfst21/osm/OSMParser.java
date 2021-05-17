@@ -11,7 +11,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -88,31 +87,31 @@ public class OSMParser {
         }
     }
 
-        public static void saveOBJ(String fileName, Model model) throws IOException {
-            // Point java to the correct folder on the host machine
-            File file = new File(fileName + ".obj");
-            file.createNewFile();
+    public static void saveOBJ(String fileName, Model model) throws IOException {
+        // Point java to the correct folder on the host machine
+        File file = new File(fileName + ".obj");
+        file.createNewFile();
 
-            var output = new ObjectOutputStream(
-                    new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())));
-            {
-                output.writeObject(model.getFillMap());
-                output.writeObject(model.getNodeIndex());
-                output.writeObject(model.getWayIndex());
-                output.writeObject(model.getRelationIndex());
-                output.writeObject(model.getStreetTree());
-                output.writeObject(model.getIslands());
-                output.writeFloat(model.getMinX());
-                output.writeFloat(model.getMinY());
-                output.writeFloat(model.getMaxX());
-                output.writeFloat(model.getMaxY());
-                output.writeObject(model.getDrawableMap());
-                output.writeObject(model.getPOITree());
-                output.writeObject(model.getVertexMap());
-                output.writeObject(model.getAreaNames());
-                output.flush();
-            }
+        var output = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())));
+        {
+            output.writeObject(model.getFillMap());
+            output.writeObject(model.getNodeIndex());
+            output.writeObject(model.getWayIndex());
+            output.writeObject(model.getRelationIndex());
+            output.writeObject(model.getStreetTree());
+            output.writeObject(model.getIslands());
+            output.writeFloat(model.getMinX());
+            output.writeFloat(model.getMinY());
+            output.writeFloat(model.getMaxX());
+            output.writeFloat(model.getMaxY());
+            output.writeObject(model.getDrawableMap());
+            output.writeObject(model.getPOITree());
+            output.writeObject(model.getVertexMap());
+            output.writeObject(model.getAreaNames());
+            output.flush();
         }
+    }
 
     private static void loadOSM(InputStream inputStream, Model model)
             throws XMLStreamException, FactoryConfigurationError {
@@ -133,6 +132,8 @@ public class OSMParser {
         String houseNumber = "";
         String postcode = "";
         String city = "";
+
+        boolean isFerry = false;
 
         while (xmlReader.hasNext()) {
             switch (xmlReader.next()) {
@@ -239,13 +240,13 @@ public class OSMParser {
 
                                 if (k.startsWith("cycleway") || k.startsWith("bicycle")) {
                                     if (!v.equals("no")) {
-                                        way.setIsCyclable();
+                                        way.setIsCyclable(true);
                                     }
                                     break;
                                 }
 
                                 if ((k.equals("sidewalk") || k.startsWith("foot")) && !v.equals("no")) {
-                                    way.setIsWalkable();
+                                    way.setIsWalkable(true);
                                     break;
                                 }
                             }
@@ -257,6 +258,7 @@ public class OSMParser {
 
                             if (k.equals("ferry")) {
                                 tag = Tag.FERRY;
+                                isFerry = true;
                                 break;
                             }
 
@@ -341,6 +343,11 @@ public class OSMParser {
                                 }
                                 way.checkSpeed();
                                 way.createRectangle();
+                                if(isFerry) {
+                                    way.setIsCyclable(false);
+                                    way.setIsWalkable(false);
+                                }
+                                isFerry = false;
                                 tag = null;
                                 systemPOIName = "";
                                 systemPoiTags = new ArrayList<>();
@@ -395,7 +402,7 @@ public class OSMParser {
                     priority = 10;
                 } else if (systemPOITags.contains("theme_park")) {
                     imageType = "theme_park";
-                    type = tag;
+                    type = "Theme Park";
                     priority = 10;
                 } else if (systemPOITags.contains("aerodrome")) {
                     imageType = "aerodrome";
@@ -476,6 +483,7 @@ public class OSMParser {
         List<Drawable> merged = new ArrayList<>();
         pieces.forEach((node, way) -> {
             if (way.last() == node) {
+                way.createRectangle();
                 merged.add(way);
             }
         });
