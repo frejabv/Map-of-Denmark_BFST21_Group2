@@ -223,7 +223,8 @@
                 <Text styleClass="mainContainer-subheader">Map Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox selected="true" fx:id="showNames" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
+              <CheckBox styleClass="checkBox" selected="true" fx:id="showNames" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
+              <CheckBox styleClass="checkBox" selected="true" onMouseClicked="#toggleShowPoi">Show POIs on map</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
               </FlowPane>

@@ -611,6 +611,11 @@ public class Controller {
         canvas.repaint();
     }
 
+    public void toggleShowPoi() {
+        canvas.showPoi = !canvas.showPoi;
+        canvas.repaint();
+    }
+
     public void showRouteDescription() {
         routeDescription.setVisible(true);
         routeDescription.setManaged(true);
