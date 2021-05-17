@@ -9,7 +9,7 @@ import javafx.scene.text.FontWeight;
 import java.io.Serializable;
 
 public class AreaName implements Drawable, Serializable {
-    private String name;
+    public String name;
     private AreaType type;
     private float lat;
     private float lon;
@@ -19,8 +19,8 @@ public class AreaName implements Drawable, Serializable {
 
     public AreaName(String name, AreaType type, Node node) {
         setNameAndType(name, type);
-        this.lat = node.getX();
-        this.lon = node.getY();
+        this.lon = node.getX();
+        this.lat = node.getY();
         isNode = true;
     }
 
@@ -51,7 +51,7 @@ public class AreaName implements Drawable, Serializable {
             if (relation != null) {
                 lat = (relation.getRect().getMaxX() + relation.getRect().getMinX()) / 2;
                 lon = ((relation.getRect().getMaxY() + relation.getRect().getMinY()) / 2);
-            } else {
+            } else if (way != null) {
                 lat = (way.getRect().getMaxX() + way.getRect().getMinX()) / 2;
                 lon = ((way.getRect().getMaxY() + way.getRect().getMinY()) / 2);
             }
@@ -65,6 +65,11 @@ public class AreaName implements Drawable, Serializable {
             gc.strokeText(name, lat, lon);
             gc.fillText(name, lat, lon);
             gc.setFont(Font.font("Arial", FontWeight.BOLD, gc.getFont().getSize() / 2));
+        } else if (isNode) {
+            gc.setFont(Font.font("Arial", FontWeight.BOLD, gc.getFont().getSize()));
+            gc.setLineWidth(gc.getFont().getSize() / 6);
+            gc.strokeText(name, lon, lat);
+            gc.fillText(name, lon, lat);
         } else {
             gc.setFont(Font.font("Arial", FontWeight.BOLD, gc.getFont().getSize()));
             gc.setLineWidth(gc.getFont().getSize() / 6);
@@ -91,5 +96,9 @@ public class AreaName implements Drawable, Serializable {
     @Override
     public Tag getTag() {
         return null;
+    }
+
+    public boolean isNode() {
+        return isNode;
     }
 }

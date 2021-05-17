@@ -199,7 +199,7 @@ public class OSMParser {
                                 }
                             }
 
-                            if (k.equals("place")) {
+                            if (k.equals("place") && !name.equals("")) {
                                 if (v.equals("island") || v.equals("city") || v.equals("borough") || v.equals("suburb")
                                         || v.equals("quarter") || v.equals("neighbourhood") || v.equals("town")
                                         || v.equals("village") || v.equals("hamlet") || v.equals("islet")) {
