@@ -169,6 +169,7 @@
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Color Modes</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <FlowPane>
                 <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode"
                               selected="true">
@@ -185,8 +186,9 @@
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <HBox>
-                <ToggleButton id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
+                <ToggleButton fx:id="carSettings" id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <ToggleGroup fx:id="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -196,7 +198,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton id="bicycle-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
+                <ToggleButton fx:id="bicycleSettings" id="bicycle-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -206,7 +208,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton id="walk-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
+                <ToggleButton fx:id="walkSettings" id="walk-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -221,21 +223,18 @@
                 <Text styleClass="mainContainer-subheader">Map Settings</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox selected="true" fx:id="showNames" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
-              <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Unit</Text>
-              </FlowPane>
-              <Region styleClass="hr"/>
+              <CheckBox styleClass="checkBox" selected="true" fx:id="showNames" onMouseClicked="#toggleShowNames">Show names on map</CheckBox>
+              <CheckBox styleClass="checkBox" selected="true" onMouseClicked="#toggleShowPoi">Show POIs on map</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Enable Debug Mode</Text>
               </FlowPane>
               <Region styleClass="hr"/>
               <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
               <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Enable Double Draw</Text>
+                <Text styleClass="mainContainer-subheader">Road Shadows</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox onMouseClicked="#toggleDoubleDraw">Disable Double Draw Roads</CheckBox>
+              <CheckBox onMouseClicked="#toggleDoubleDraw" selected="true">Road Shadows</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
               </FlowPane>
@@ -256,7 +255,7 @@
               </Button>
               <VBox fx:id="removePinContainer">
                 <Text fx:id="pinText">Pin</Text>
-                <Button fx:id="removePin">Remove pin</Button>
+                <Button fx:id="removePin" onMouseClicked="#removePin">Remove pin</Button>
               </VBox>
           </HBox>
           <VBox fx:id="NearbyPOI" styleClass="nearbyPOI">
