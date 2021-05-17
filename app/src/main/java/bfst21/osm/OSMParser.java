@@ -93,8 +93,7 @@ public class OSMParser {
 
         public static void saveOBJ(String fileName, Model model) throws IOException {
             // Point java to the correct folder on the host machine
-            URL fileURL = OSMParser.class.getResource("/bfst21/data/");
-            File file = new File(fileURL.getPath() + "/" + fileName + ".obj");
+            File file = new File(fileName + ".obj");
 
             if (!file.createNewFile()) {
                 // Figure out whether or not we need to freak out if we are overwriting an
