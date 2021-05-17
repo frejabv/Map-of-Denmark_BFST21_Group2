@@ -169,6 +169,7 @@
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Color Modes</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <FlowPane>
                 <ToggleButton fx:id="defaultColorMode" text="Default" onMousePressed="#defaultColorMode"
                               selected="true">
@@ -185,6 +186,7 @@
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Default Transport Type</Text>
               </FlowPane>
+              <Region styleClass="hr"/>
               <HBox>
                 <ToggleButton id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
