@@ -187,21 +187,23 @@ public class MapCanvas extends Canvas {
         activePOIList = new ArrayList<>();
         if (distanceWidth <= 20) {
             activePOIList.addAll(model.getPOITree().query(viewport));
-            activePOIList.forEach(poi -> {
-                if (!poi.getType().equals("place")) {
-                    gc.setFill(Color.rgb(52, 152, 219));
-                    double size = (30 / Math.sqrt(trans.determinant()));
-                    gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
-                    String image = poi.getImageType();
-                    gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
+            if (activePOIList.size() <= 30 || distanceWidth <= 1.5) {
+                activePOIList.forEach(poi -> {
+                    if (!poi.getType().equals("place")) {
+                        gc.setFill(Color.rgb(52, 152, 219));
+                        double size = (30 / Math.sqrt(trans.determinant()));
+                        gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
+                        String image = poi.getImageType();
+                        gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
 
-                    if (showNames) {
-                        gc.setFill(Color.BLACK);
-                        gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
-                        gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                        if (showNames) {
+                            gc.setFill(Color.BLACK);
+                            gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                            gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         if (distanceWidth <= 150) {
