@@ -36,11 +36,12 @@ public class Rtree {
     }
 
     /**
-     * Nearest way starts works by moving down the Rtree, much like Prim's algorithm, where it looks further
+     * Nearest way works by moving down the Rtree, much like Prim's algorithm, where it looks further
      * down the closest branch/node. This is done via a priority queue, where each node that is close enough
-     * has all it's children added to the queue. This continues, with RtreeLeaves adding their children as well
-     * when we get far down enough. The Drawables are checked, and there no longer are elements that are closer
-     * to the point than the current closest, we know we have found the nearest Way.
+     * has all its children added to the queue. This continues, with RtreeLeaves adding their children as well
+     * when we get far enough down. a Drawable is checked, and there is no closer element to the point,
+     * then we know we have found the nearest Way.
+     *
      * @param p The Point of which we want to find the nearest way in the current RTree.
      * @return  The nearest way to p.
      */
@@ -85,15 +86,16 @@ public class Rtree {
 
 
     /**
-     * The query method by having a queue (called the explorationQueue) of Nodes that are iterated over, starting with
+     * The query method works by having a queue (called the explorationQueue) of Nodes that are iterated over, starting with
      * the root. All drawables that are inside the rectangle are added to the result arraylist.
-     * When a node is checked, all its' children are checked for whether or not they intersect the queryRect,
+     * When a node is checked, all its children are checked for whether or not they intersect the queryRect,
      * or are contained. If they are contained, we know that all children of the given node also are contained,
-     * so we add all drawables to the result list, that are below the node - this let's us not check any of it's children.
+     * so we add all drawables to the result list, that are below the node - this let's us not check any of its children.
      * If a node child only intersects, it is added to the explorationQueue.
-     * If a node is a leafNode, then we check whether its' drawaables intersect the queryRect, and add those that do
+     * If a node is a leafNode, then we check whether its drawaables intersect the queryRect, and add those that do
      * to the list we return.
-     * When the explorationQueue is empty, we have checked all all nodes and return the list of
+     * When the explorationQueue is empty, we have checked all nodes and return the result list.
+     *
      * @param queryRect The rectangle that we are are looking for drawables inside (our viewport)
      * @return          The list of drawables inside the queryRect, called result.
      */
@@ -129,13 +131,14 @@ public class Rtree {
 
     /**
      * The draw method works much like the query method, where we have an explorationQueue that is explored, starting
-     * with the root. If a node is in the exploration Queue, we draw its' rectangle and add all of its' children that
+     * with the root. If a node is in the exploration Queue, we draw its rectangle and add all of its children that
      * that intersect the window. This is done until the exploration Queue is empty.
      * Notice that this method does not draw the rectangles of all drawables within the window. This method only draws
      * the rectangles for RtreeNode objects, of which Drawables are not. The drawing of Drawable rectangles has it's own
-     * method: drawRoadRectangles(...)
+     * method: {@link bfst21.Rtree.Rtree#drawRoadRectangles(Rectangle, GraphicsContext)}:
      * Note: Unlike the query method, we don't have the contains check. This is simply due to this method not being as
      * important to optimize, and the code for it would be longer than that of the query method.
+     *
      * @param window    the rectangle of which we want to draw all RTree rectangles within.
      */
     public void drawRTree(Rectangle window, GraphicsContext gc) {

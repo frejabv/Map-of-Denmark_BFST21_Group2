@@ -16,10 +16,10 @@ public class RtreeNode implements Comparable<RtreeNode>{
      * The RtreeNode constructor is essentially the main piece of code for the entire R-tree. Essentially, it recursively
      * creates more RtreeNodes that become smaller and smaller - creating the desired Tree structure.
      * This method does this in a few steps:
-     * firstly, it creates the RtreeNodes bounding box, which is the rectangle in which all its' children reside within.
-     * secondly, it sorts its' array of drawables on either the x or y axis, swapping between them on each recursive call.
+     * firstly, it creates the RtreeNodes bounding box, which is the rectangle in which all its children reside within.
+     * secondly, it sorts its array of drawables on either the x or y axis, swapping between them on each recursive call.
      * thirdly, it determines the amount of drawables each child will be responsible for.
-     * and finally, it gives that many drawables to each of its' children, creating them in the process. The type of
+     * and finally, it gives that many drawables to each of its children, creating them in the process. The type of
      * child that is created (either a node of a leaf) is determined by how many descendants are left.
      * If the amount of descendants that a Node has is less than the sliceSize squared, then there is no need to create
      * any more RtreeNodes, instead it will create an RtreeLeaf. And if there are more, a new RtreeNode is created, which
