@@ -19,7 +19,7 @@ public class App extends Application {
                 new StartupScreen(primaryStage);
             }
         }catch (Exception e){
-            new AlertMessage();
+            new AlertMessage(primaryStage);
         }
 
     }

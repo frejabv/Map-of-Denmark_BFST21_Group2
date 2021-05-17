@@ -1,57 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Scene?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.Scene?>
+<?import javafx.scene.text.*?>
 <Scene xmlns="http://javafx.com/javafx"
        xmlns:fx="http://javafx.com/fxml"
        fx:controller="bfst21.Startup.StartupController"
        stylesheets="@startup.css"
 >
-    <BorderPane styleClass="testborder">
-        <center>
-            <VBox>
-                <Text fx:id="loadingText">TEkst</Text>
-                <Text styleClass="introText">Choose the map that you want to open</Text>
-                <HBox styleClass="buttonSpacing" pickOnBounds="false">
-                    <VBox>
-                        <Button onMousePressed="#openFile" styleClass="roundedButton">
-                            <graphic>
-                                <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@icons/open.png"/>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Text styleClass="iconText" onMousePressed="#openFile">Open</Text>
-                    </VBox>
-                    <VBox>
-                        <Button onMousePressed="#defaultFile" styleClass="roundedButton">
-                            <graphic>
-                                <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@icons/none.png"/>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Text styleClass="iconText" onMousePressed="#defaultFile">Default</Text>
-                    </VBox>
-                    <VBox>
-                        <Button onMousePressed="#exit" styleClass="roundedButton">
-                            <graphic>
-                                <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                    <Image url="@icons/exit.png"/>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Text styleClass="iconText" onMousePressed="#exit">Exit</Text>
-                    </VBox>
-                </HBox>
-            </VBox>
-        </center>
-    </BorderPane>
+    <VBox styleClass="testborder">
+        <BorderPane fx:id="loadingText">
+            <center>
+                <Text styleClass="loadingText">Loading...</Text>
+            </center>
+        </BorderPane>
+        <VBox fx:id="fileContainer">
+            <Text styleClass="introText">Choose the map that you want to open</Text>
+            <HBox styleClass="buttonSpacing" pickOnBounds="false">
+                <VBox>
+                    <Button onMousePressed="#openFile" styleClass="roundedButton">
+                        <graphic>
+                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@icons/open.png"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Text styleClass="iconText" onMousePressed="#openFile">Open</Text>
+                </VBox>
+                <VBox>
+                    <Button onMousePressed="#defaultFile" styleClass="roundedButton">
+                        <graphic>
+                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@icons/none.png"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Text styleClass="iconText" onMousePressed="#defaultFile">Default</Text>
+                </VBox>
+                <VBox>
+                    <Button onMousePressed="#exit" styleClass="roundedButton">
+                        <graphic>
+                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@icons/exit.png"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Text styleClass="iconText" onMousePressed="#exit">Exit</Text>
+                </VBox>
+            </HBox>
+        </VBox>
+    </VBox>
 </Scene>

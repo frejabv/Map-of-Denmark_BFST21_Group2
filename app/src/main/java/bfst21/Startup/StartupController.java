@@ -5,34 +5,46 @@ import bfst21.Model;
 import bfst21.View;
 import bfst21.osm.FileExtension;
 import bfst21.osm.OSMParser;
-import javafx.concurrent.Task;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 
 
 public class StartupController {
     Stage stage;
 
     @FXML
-    private Text loadingText;
+    private BorderPane loadingText;
+    @FXML
+    private VBox fileContainer;
 
     public void init(Stage stage) {
+        loadingText.setVisible(false);
+        loadingText.setManaged(false);
         this.stage = stage;
-        loadingText.setText("something");
     }
 
     FileChooser fileChooser = new FileChooser();
 
     public void openFile() {
         File selectedFile = fileChooser.showOpenDialog(stage);
+        setStyling();
+        PauseTransition pause = new PauseTransition();
+        pause.setOnFinished(event -> {
+            openChosenFile(selectedFile);
+        });
+        pause.play();
+    }
+
+    public void openChosenFile(File selectedFile) {
         // Sanity check of filetype here
         if (selectedFile != null) {
             startMapView(selectedFile.getAbsolutePath());
@@ -41,33 +53,21 @@ public class StartupController {
 
     public void defaultFile() {
         setStyling();
-        Task <Void> task = new Task<Void>() {
-            @Override public Void call() throws InterruptedException {
-                setStyling();
-                return null;
-            }
-        };
-        task.setOnSucceeded(e -> {
-            openfile();
+        PauseTransition pause = new PauseTransition();
+        pause.setOnFinished(event -> {
+            openDefaultFile();
         });
-
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        pause.play();
     }
 
-
-
-
-    public void openfile() {
+    public void openDefaultFile() {
         try {
             var model = new Model("/bfst21/data/bornholm.osm", false);
             new View(model, stage);
         } catch (Exception e) {
-            new AlertMessage();
+            new AlertMessage(stage);
         }
     }
-
 
     public void startMapView(String filePath) {
         try {
@@ -78,7 +78,7 @@ public class StartupController {
             var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             View view = new View(model, stage);
         } catch (Exception e) {
-            new AlertMessage();
+            new AlertMessage(stage);
         }
     }
 
@@ -87,12 +87,9 @@ public class StartupController {
     }
 
     public void setStyling() {
-        System.out.println("set styling was called");
-        loadingText.setText("something eldr");
-        //loadingText.setVisible(true);
-        //loadingText.setManaged(true);
-        //loadingText.setStyle("visibility: hidden");
-        //loadingText.setStyle("-fx-opacity: .5");
-        //openButton.setStyle("-fx-opacity: .5");
+        loadingText.setVisible(true);
+        loadingText.setManaged(true);
+        fileContainer.setVisible(false);
+        fileContainer.setManaged(false);
     }
 }
