@@ -396,6 +396,10 @@ public class Model {
         return vertexMap;
     }
 
+    public void setVertexMap(HashMap<Node, Vertex> vertexMap) {
+        this.vertexMap = vertexMap;
+    }
+
     public void nullifyVertexMap(){
         vertexMap = null;
     }
