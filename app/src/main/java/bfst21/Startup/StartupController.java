@@ -2,6 +2,7 @@ package bfst21.Startup;
 
 import bfst21.Model;
 import bfst21.View;
+import bfst21.WindowController;
 import bfst21.osm.FileExtension;
 import bfst21.osm.OSMParser;
 import javafx.animation.PauseTransition;
@@ -74,8 +75,7 @@ public class StartupController {
             InputStream in = new FileInputStream(filePath);
             String[] filePathParts = filePath.split("/");
 
-            var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
-            new View(model, stage, filePathParts[filePathParts.length - 1]);
+            WindowController.getInstance().activateMap(in, fileExtension, filePathParts[filePathParts.length - 1]);
         } catch (Exception e) {
             new StartupErrorMessage(stage);
         }
