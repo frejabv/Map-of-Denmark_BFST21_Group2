@@ -15,11 +15,13 @@ public class AreaName implements Drawable, Serializable {
     private float lon;
     private Relation relation;
     private Way way;
+    private boolean isNode;
 
     public AreaName(String name, AreaType type, Node node) {
         setNameAndType(name, type);
         this.lat = node.getX();
         this.lon = node.getY();
+        isNode = true;
     }
 
     public AreaName(String name, AreaType type, Way way) {
@@ -84,6 +86,10 @@ public class AreaName implements Drawable, Serializable {
 
     public AreaType getType() {
         return type;
+    }
+
+    public boolean isPoint() {
+        return isNode;
     }
 
     @Override

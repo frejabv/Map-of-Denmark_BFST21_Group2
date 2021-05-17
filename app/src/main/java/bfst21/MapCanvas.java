@@ -219,7 +219,7 @@ public class MapCanvas extends Canvas {
             gc.setLineDashes(0);
             gc.setFont(Font.font("Arial", 10 / Math.sqrt(trans.determinant())));
             for (Drawable area : activeAreaList) {
-                if (((AreaName) area).getType() != AreaType.ISLAND || area.getRect().getArea() > minimumArea) {
+                if (((AreaName) area).getType() != AreaType.ISLAND || area.getRect().getArea() > minimumArea || ((AreaName) area).isPoint()) {
                     ((AreaName) area).drawType(gc, distanceWidth, renderingStyle);
                 }
             }
