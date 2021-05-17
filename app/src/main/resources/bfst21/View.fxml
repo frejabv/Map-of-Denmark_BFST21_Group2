@@ -255,7 +255,7 @@
               </Button>
               <VBox fx:id="removePinContainer">
                 <Text fx:id="pinText">Pin</Text>
-                <Button fx:id="removePin">Remove pin</Button>
+                <Button fx:id="removePin" onMouseClicked="#removePin">Remove pin</Button>
               </VBox>
           </HBox>
           <VBox fx:id="NearbyPOI" styleClass="nearbyPOI">

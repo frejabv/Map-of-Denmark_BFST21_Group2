@@ -361,12 +361,8 @@ public class Controller {
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             }
             pinText.textProperty().setValue(xCoordinate + ", " + yCoordinate);
-            Button removePin = new Button("Remove pin");
-            removePin.setOnAction(event -> {
-                canvas.setPin = false;
-                canvas.repaint();
-                hideAll();
-            });
+            removePin.setVisible(true);
+            removePin.setManaged(true);
             removePinContainer.getChildren().add(removePin);
 
             updateNearbyPOI();
@@ -750,5 +746,11 @@ public class Controller {
     public void toggleDoubleDraw() {
         canvas.doubleDraw = !canvas.doubleDraw;
         canvas.repaint();
+    }
+
+    public void removePin() {
+        canvas.setPin = false;
+        canvas.repaint();
+        hideAll();
     }
 }
