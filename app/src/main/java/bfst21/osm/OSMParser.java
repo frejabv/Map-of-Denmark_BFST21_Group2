@@ -366,9 +366,6 @@ public class OSMParser {
             }
         }
         model.setIslands(mergeCoastlines(model.getCoastlines()));
-        for (Drawable island: model.getIslands()) {
-            island.getRect();
-        }
         if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
             System.out.println("No coastlines found");
         }
