@@ -228,10 +228,10 @@
               <Region styleClass="hr"/>
               <CheckBox fx:id="enableDebugWindow" onMouseClicked="#toggleDebugMode">Debug Window</CheckBox>
               <FlowPane styleClass="header-margin">
-                <Text styleClass="mainContainer-subheader">Enable Double Draw</Text>
+                <Text styleClass="mainContainer-subheader">Road Shadows</Text>
               </FlowPane>
               <Region styleClass="hr"/>
-              <CheckBox onMouseClicked="#toggleDoubleDraw">Disable Double Draw Roads</CheckBox>
+              <CheckBox onMouseClicked="#toggleDoubleDraw" selected="true">Road Shadows</CheckBox>
               <FlowPane styleClass="header-margin">
                 <Text styleClass="mainContainer-subheader">Points Of Interest</Text>
               </FlowPane>
