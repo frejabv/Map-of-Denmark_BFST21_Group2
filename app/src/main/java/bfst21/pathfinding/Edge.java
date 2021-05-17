@@ -4,7 +4,9 @@ import bfst21.osm.Node;
 import bfst21.osm.Tag;
 import bfst21.osm.Way;
 
-public class Edge {
+import java.io.Serializable;
+
+public class Edge implements Serializable {
     public final float weight;
     public final Vertex target;
     private boolean isDriveable, isCyclable, isWalkable;
