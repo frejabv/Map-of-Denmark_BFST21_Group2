@@ -21,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -741,5 +742,13 @@ public class Controller {
     public void toggleDoubleDraw() {
         canvas.doubleDraw = !canvas.doubleDraw;
         canvas.repaint();
+    }
+
+    public void openFileSelector() {
+        try {
+            WindowController.getInstance().activateFileSelector();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
