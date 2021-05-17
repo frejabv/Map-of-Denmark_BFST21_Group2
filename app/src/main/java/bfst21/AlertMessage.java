@@ -7,8 +7,8 @@ import javafx.stage.Stage;
 
 public class AlertMessage {
 
-    public AlertMessage(Stage stage){
-        Alert alert = new Alert(Alert.AlertType.NONE,"A problem occured loading the file", ButtonType.OK);
+    public AlertMessage(Stage stage) {
+        Alert alert = new Alert(Alert.AlertType.NONE, "A problem occured loading the file", ButtonType.OK);
         alert.setTitle("Error");
         alert.show();
         try {
