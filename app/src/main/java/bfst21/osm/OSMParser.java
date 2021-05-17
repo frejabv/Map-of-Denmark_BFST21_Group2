@@ -395,7 +395,7 @@ public class OSMParser {
                     priority = 10;
                 } else if (systemPOITags.contains("theme_park")) {
                     imageType = "theme_park";
-                    type = tag;
+                    type = "Theme Park";
                     priority = 10;
                 } else if (systemPOITags.contains("aerodrome")) {
                     imageType = "aerodrome";
