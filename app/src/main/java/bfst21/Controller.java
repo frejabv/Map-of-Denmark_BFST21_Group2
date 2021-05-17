@@ -354,13 +354,13 @@ public class Controller {
             removePinContainer.getChildren().removeAll(removePinContainer.lookup(".button"));
             Point2D coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
             DecimalFormat df = new DecimalFormat("#.#####");
-            String xCordinate = df.format(coordinates.getX());
-            String yCordinate = df.format(coordinates.getY() * -model.scalingConstant);
+            String xCoordinate = df.format(coordinates.getX());
+            String yCoordinate = df.format(coordinates.getY() * -model.scalingConstant);
             if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()) {
                 currentPOI = null;
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             }
-            pinText.textProperty().setValue(xCordinate + ", " + yCordinate);
+            pinText.textProperty().setValue(xCoordinate + ", " + yCoordinate);
             Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
