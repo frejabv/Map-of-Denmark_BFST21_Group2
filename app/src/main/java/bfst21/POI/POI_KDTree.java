@@ -119,6 +119,13 @@ public class POI_KDTree {
         return currentNode;
     }
 
+    /**
+     * This method is primarily used for testing, and recursively moved down the branches of the tree until it has either:
+     * a) found the node, and then returns true
+     * or b) found a null element, which means the node is not in the tree and the method returning false.
+     * @param qNode     the node (POI) we want to find
+     * @return          whether or not the node is within the tree
+     */
     public boolean contains(POI qNode) {
         if (qNode == null) {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
@@ -153,19 +160,30 @@ public class POI_KDTree {
         }
     }
 
+    /**
+     * The remove method add a POI to the list of removed POis.
+     * This is a very fast and simple way of removing things from the POI tree.
+     * The removedPOIList is utilized in all other methods, to ensure that the removed POI's are not included in anything.
+     * This method therefore effectively creates a 'scar' where the removed POI was, and the POI is still used in moving
+     * throughout the tree: if you view KDLines, a removed POI will still have it's line drawn.
+     *
+     * If there was a need for optimization with this method (of which there is plenty of room for), then the remove
+     * method would have to do the following:
+     * 1. locate the POI that we want to remove in the tree
+     * 2. find the descendant of that POI that come the closest to it's x og y value, depending on which axis it itself
+     * has split
+     * 3. place the POI found in part 2 at the location where the removed POI was: removing the POI we want to remove
+     * in the process
+     * 4. mutate all effected POI's in the area such that they now line up with the change:
+     * this means that the parent of the new POI must adapt it's rectangle to be bigger, and all descendant of the new
+     * POI must change their Rectangles to be smaller.
+     * @param poi   the POI of which is to be removed from the tree.
+     */
     public void remove(POI poi) {
         removedPOIList.add(poi);
     }
 
 
-    public POI nearest(Point2D p) {
-        ArrayList<POI> momentaryList = nearest(p, 1);
-        if (momentaryList == null || momentaryList.isEmpty()) {
-            return null;
-        } else {
-            return momentaryList.get(0);
-        }
-    }
     /**
      * begins the recursive call to nearest.
      * @param p         the point we are querying about
@@ -240,6 +258,26 @@ public class POI_KDTree {
         return closestList;
     }
 
+    /**
+     * This nearest method return the single nearest POI, instead of a list.
+     */
+    public POI nearest(Point2D p) {
+        ArrayList<POI> momentaryList = nearest(p, 1);
+        if (momentaryList == null || momentaryList.isEmpty()) {
+            return null;
+        } else {
+            return momentaryList.get(0);
+        }
+    }
+
+
+    /**
+     * this query methods begins the recursive query method.
+     * when the recursive query method has finished and returned the list of all POI's within the viewport, we remove
+     * all POI's that are removed from the tree, and return the list.
+     * @param viewport  the Rectangle of which we want to find all POI's within
+     * @return          The list of all POI's within the viewport.
+     */
     public ArrayList<POI> query(final Rectangle viewport) {
         ArrayList<POI> result = new ArrayList<>();
         result = query(root, viewport, result);
@@ -248,6 +286,12 @@ public class POI_KDTree {
         return result;
     }
 
+    /**
+     * @param qNode
+     * @param viewport
+     * @param result
+     * @return
+     */
     public ArrayList<POI> query(POI qNode, Rectangle viewport, ArrayList<POI> result){
         if (qNode == null) {
             return result;
@@ -265,6 +309,12 @@ public class POI_KDTree {
         return result;
     }
 
+    /**
+     * DrawLines draws a line from one end of a POI's rectangle to the other, slicing through the POI itself on the path.
+     * The line is also a straight line witha constant x or y value, depending on which axis the POI effectively slices.
+     * This method recursively iterates through all POIs in the tree (including those outside of the viewport) and
+     * draws all of their split lines.
+     */
     public void drawLines(GraphicsContext gc) {
         if (!isEmpty()) {
             //draw border
