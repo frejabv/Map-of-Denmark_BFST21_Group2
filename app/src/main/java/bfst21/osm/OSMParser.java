@@ -322,17 +322,17 @@ public class OSMParser {
                             if (!streetName.equals("") && !houseNumber.equals("") && !postcode.equals("")
                                     && !city.equals("")) {
 
-                                    model.getStreetTree().insert(streetname,
-                                            " " + housenumber + " " + postcode + " " + city, node.getId());
+                                    model.getStreetTree().insert(streetName,
+                                            " " + houseNumber + " " + postcode + " " + city, node.getId());
                                 }
                                 isNode = false;
                                 tag = null;
                                 systemPOIName = "";
-                                systemPOITags = new ArrayList<>();
+                                systemPoiTags = new ArrayList<>();
                                 name = "";
                                 break;
                             case "way":
-                                if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
+                                if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
                                     newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
                                 }
                                 if (tag != null) {
@@ -343,13 +343,13 @@ public class OSMParser {
                                 way.createRectangle();
                                 tag = null;
                                 systemPOIName = "";
-                                systemPOITags = new ArrayList<>();
+                                systemPoiTags = new ArrayList<>();
                                 name = "";
                                 break;
                             case "relation":
-                                if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
-                                    if (relation.ways != null && !relation.ways.isEmpty()) {
-                                        newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
+                                if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
+                                    if (relation.getWays() != null && !relation.getWays().isEmpty()) {
+                                        newSystemPOI(model, systemPOIName, relation.getWays().get(0).first().getX(), relation.getWays().get(0).first().getY());
                                     }
                                 }
                                 if (tag != null) {
@@ -359,7 +359,7 @@ public class OSMParser {
                                 relation = null;
                                 tag = null;
                                 systemPOIName = "";
-                                systemPOITags = new ArrayList<>();
+                                systemPoiTags = new ArrayList<>();
                                 name = "";
                                 break;
                         }

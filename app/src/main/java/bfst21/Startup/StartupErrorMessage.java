@@ -1,6 +1,5 @@
-package bfst21;
+package bfst21.Startup;
 
-import bfst21.Startup.StartupScreen;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;

@@ -61,7 +61,7 @@ public class StartupController {
             var model = new Model("/bfst21/data/bornholm.osm", false);
             new View(model, stage, "Denmark");
         } catch (Exception e) {
-            new StartUpErrorMessage(stage);
+            new StartupErrorMessage(stage);
         }
     }
 
@@ -74,7 +74,7 @@ public class StartupController {
             var model = new Model(in, fileExtension, filePathParts[filePathParts.length - 1], false);
             new View(model, stage, filePathParts[filePathParts.length - 1]);
         } catch (Exception e) {
-            new StartUpErrorMessage(stage);
+            new StartupErrorMessage(stage);
         }
     }
 
