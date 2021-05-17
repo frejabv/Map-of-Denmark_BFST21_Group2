@@ -59,6 +59,7 @@ public class POI implements Comparable<POI>, Serializable {
     }
 
     public void setLeft(POI poi) { left = poi; }
+
     public void setRight(POI poi){ right = poi; }
 
     public void drawKDTLine(boolean orientation, GraphicsContext gc) {
