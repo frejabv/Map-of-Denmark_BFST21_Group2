@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 
 import java.io.Serializable;
 
-
 public class POI implements Comparable<POI>, Serializable {
     private String name;
     private String type;

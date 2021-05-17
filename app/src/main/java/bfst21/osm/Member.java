@@ -25,8 +25,7 @@ public abstract class Member implements Serializable, Drawable {
     }
 
     @Override
-    public void draw(GraphicsContext gc, RenderingStyle renderingStyle) {
-    }
+    public void draw(GraphicsContext gc, RenderingStyle renderingStyle){}
 
     @Override
     public Rectangle getRect() {
