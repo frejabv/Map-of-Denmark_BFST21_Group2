@@ -21,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -351,12 +352,15 @@ public class Controller {
             hideAll();
             changeType("pin", true);
             removePinContainer.getChildren().removeAll(removePinContainer.lookup(".button"));
-            String coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
+            Point2D coordinates = canvas.setPin(new Point2D(e.getX(), e.getY()));
+            DecimalFormat df = new DecimalFormat("#.#####");
+            String xCoordinate = df.format(coordinates.getX()).replace(",",".");
+            String yCoordinate = df.format(coordinates.getY() * -model.scalingConstant).replace(",",".");
             if (currentPOI != null && currentPOI.getX() != canvas.getPinPoint().getX() || currentPOI != null && currentPOI.getY() != canvas.getPinPoint().getY()) {
                 currentPOI = null;
                 heartIcon.setImage(new Image(getClass().getResource("/bfst21/icons/heart-border.png").toString()));
             }
-            pinText.textProperty().setValue(coordinates);
+            pinText.textProperty().setValue(xCoordinate + ", " + yCoordinate);
             Button removePin = new Button("Remove pin");
             removePin.setOnAction(event -> {
                 canvas.setPin = false;
