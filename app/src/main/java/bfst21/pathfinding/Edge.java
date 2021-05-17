@@ -3,7 +3,9 @@ package bfst21.pathfinding;
 import bfst21.osm.Tag;
 import bfst21.osm.Way;
 
-public class Edge {
+import java.io.Serializable;
+
+public class Edge implements Serializable {
     private final float weight;
     private final Vertex target;
     private boolean isDriveable, isCyclable, isWalkable;
