@@ -65,11 +65,12 @@ public class POI_KDTree implements Serializable {
 
     /**
      * This is a recursive call that inserts a node into the correct empty spot.
+     *
      * @param currentNode is the node position we want to try and insert qNode into.
      * @param parent      is the current parent of our element.
      * @param qNode       The node we want to insert: out query Node.
      * @param orientation flips every recursion
-     * @return           the currentNode with its' correct parent and left/right child/domain
+     * @return           the currentNode with its correct parent and left/right child/domain
      */
     private POI insert(POI currentNode, POI parent, POI qNode, boolean orientation) {
         //if space is available, fill space
@@ -117,6 +118,14 @@ public class POI_KDTree implements Serializable {
         return currentNode;
     }
 
+    /**
+     * This method is primarily used for testing, and recursively moved down the branches of the tree until it has either:
+     * a) found the node, and then returns true
+     * or b) found a null element, which means the node is not in the tree and the method returning false.
+     *
+     * @param qNode     the node (POI) we want to find
+     * @return          whether or not the node is within the tree
+     */
     public boolean contains(POI qNode) {
         if (qNode == null) {
             throw new NullPointerException("null key at KdTree.contains(Point2D p)");
@@ -151,21 +160,24 @@ public class POI_KDTree implements Serializable {
         }
     }
 
+    /**
+     * The remove method adds a POI to the list of removed POIs.
+     * This is a very fast and simple way of removing things from the POI tree.
+     * The removedPOIList is utilized in all other methods, to ensure that the removed POI's are not included in anything.
+     * This method therefore effectively creates a 'scar' where the removed POI was, and the POI is still used in moving
+     * throughout the tree: if you view KDLines, a removed POI will still have it's line drawn.
+     * THIS METHOD DOES THEREFORE NOT MUTATE THE KD-TREE
+     *
+     * @param poi   the POI of which is to be removed from the tree.
+     */
     public void remove(POI poi) {
         removedPOIList.add(poi);
     }
 
 
-    public POI nearest(Point2D p) {
-        ArrayList<POI> momentaryList = nearest(p, 1);
-        if (momentaryList == null || momentaryList.isEmpty()) {
-            return null;
-        } else {
-            return momentaryList.get(0);
-        }
-    }
     /**
      * begins the recursive call to nearest.
+     *
      * @param p         the point we are querying about
      * @param listSize  size of the created list of POI's
      * @return          the nearest Node
@@ -187,6 +199,7 @@ public class POI_KDTree implements Serializable {
 
     /**
      * The recursive part of the nearest function.
+     *
      * @param currentNode       the current root.
      * @param currentList       our current list of closest nodes.
      * @param p                 the point we are querying about.
@@ -238,6 +251,27 @@ public class POI_KDTree implements Serializable {
         return closestList;
     }
 
+    /**
+     * This nearest method return the single nearest POI, instead of a list.
+     */
+    public POI nearest(Point2D p) {
+        ArrayList<POI> momentaryList = nearest(p, 1);
+        if (momentaryList == null || momentaryList.isEmpty()) {
+            return null;
+        } else {
+            return momentaryList.get(0);
+        }
+    }
+
+
+    /**
+     * this query methods begins the recursive query method.
+     * when the recursive query method has finished and returned the list of all POI's within the viewport, we remove
+     * all POI's that are removed from the tree, and return the list.
+     *
+     * @param viewport  the Rectangle of which we want to find all POI's within
+     * @return          The list of all POI's within the viewport.
+     */
     public ArrayList<POI> query(final Rectangle viewport) {
         ArrayList<POI> result = new ArrayList<>();
         result = query(root, viewport, result);
@@ -246,23 +280,34 @@ public class POI_KDTree implements Serializable {
         return result;
     }
 
-    public ArrayList<POI> query(POI qNode, Rectangle viewport, ArrayList<POI> result){
-        if (qNode == null) {
+    /**
+     * The recursive part of the query method. It checks whether or not the currentNode intersects the viewport, and
+     * if it does we it is checked for whether or not the viewport contains the POI. If it is contained it is added to
+     * the result list. Its children are then queried if it intersected, and returns the result at the very end list.
+     */
+    public ArrayList<POI> query(POI currentNode, Rectangle viewport, ArrayList<POI> result){
+        if (currentNode == null) {
             return result;
         }
 
-        if (qNode.getRect().intersects(viewport)) {
-            Point2D p = new Point2D(qNode.getX(), qNode.getY());
+        if (currentNode.getRect().intersects(viewport)) {
+            Point2D p = new Point2D(currentNode.getX(), currentNode.getY());
             if (viewport.contains(p)) {
-                result.add(qNode);
+                result.add(currentNode);
             }
-            result = query(qNode.getLeft(), viewport, result);
-            result = query(qNode.getRight(), viewport, result);
+            result = query(currentNode.getLeft(), viewport, result);
+            result = query(currentNode.getRight(), viewport, result);
         }
 
         return result;
     }
 
+    /**
+     * DrawLines draws a line from one end of a POI's rectangle to the other, slicing through the POI itself on the path.
+     * The line is also a straight line with a constant x or y value, depending on which axis the POI effectively slices.
+     * This method recursively iterates through all POIs in the tree (including those outside of the viewport) and
+     * draws all of their split lines.
+     */
     public void drawLines(GraphicsContext gc) {
         if (!isEmpty()) {
             //draw border
