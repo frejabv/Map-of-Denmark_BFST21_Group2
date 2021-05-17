@@ -97,8 +97,4 @@ public class AreaName implements Drawable, Serializable {
     public Tag getTag() {
         return null;
     }
-
-    public boolean isNode() {
-        return isNode;
-    }
 }
