@@ -196,7 +196,6 @@ public class Way extends Member implements Drawable, Serializable {
 
         float dot = pointXDiff * nDeltaX + pointYDiff * nDeltaY;
         float lengthSq = nDeltaX * nDeltaX + nDeltaY * nDeltaY;
-        //TODO: remove?
         /*
         param describes where the point is, relative to the line.
         if param < 0 || param > 1 it is closest to one of the end nodes.

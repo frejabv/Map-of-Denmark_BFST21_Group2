@@ -22,8 +22,6 @@ public class StartupController {
 
     public void openFile() {
         File selectedFile = fileChooser.showOpenDialog(stage);
-        //TODO: remove?
-        // Sanity check of filetype here
         if (selectedFile != null) {
             startMapView(selectedFile.getAbsolutePath());
         }

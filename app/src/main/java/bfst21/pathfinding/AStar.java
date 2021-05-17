@@ -327,7 +327,6 @@ public class AStar {
                 Math.atan2(previousVertex.getY() - currentVertex.getY(), previousVertex.getX() - currentVertex.getX());
 
         double result = Math.toDegrees(theta); //the same as multiplying theta by 180/pi
-        //TODO: remove?
         //we handle if the result has the wrong sign, in this case plus instead of minus
         if (result > 0) result = 360 - result;
         result = Math.abs(result);
@@ -364,8 +363,6 @@ public class AStar {
     }
 
     private static class VertexComparator implements Comparator<Vertex> {
-        //TODO: Remove?
-        //override compare method
         public int compare(Vertex i, Vertex j) {
             return Float.compare(i.getF_scores(), j.getF_scores());
         }

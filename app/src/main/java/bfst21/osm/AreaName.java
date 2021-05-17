@@ -16,7 +16,6 @@ public class AreaName implements Drawable, Serializable {
     private Relation relation;
     private Way way;
 
-
     public AreaName(String name, AreaType type, Node node) {
         setNameAndType(name, type);
         this.lat = node.getX();

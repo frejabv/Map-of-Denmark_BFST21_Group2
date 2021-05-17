@@ -98,11 +98,7 @@ public class OSMParser {
         // Point java to the correct folder on the host machine
         URL fileURL = OSMParser.class.getResource("/bfst21/data/");
         File file = new File(fileURL.getPath() + "/" + fileName + ".obj");
-
-        if (!file.createNewFile()) {
-            //TODO: Figure out whether or not we need to freak out if we are overwriting an
-            // existing obj file
-        }
+        file.createNewFile();
 
         var output = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())));
@@ -290,9 +286,6 @@ public class OSMParser {
                             }
 
                             if (isNode) {
-                                //TODO: do we need this?
-                                // example from samsoe.osm of an addr tag:
-                                // <tag k="addr:street" v="havnevej"/>
                                 if (k.equals("addr:street")) {
                                     streetName = v;
                                 }
@@ -380,10 +373,6 @@ public class OSMParser {
             }
         }
         model.setIslands(mergeCoastlines(model.getCoastlines()));
-        //TODO: remove?
-        if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
-            System.out.println("No coastlines found");
-        }
         model.setCoastlines(null);
     }
 

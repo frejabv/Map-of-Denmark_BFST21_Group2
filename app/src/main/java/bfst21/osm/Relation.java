@@ -95,7 +95,6 @@ public class Relation extends Member implements Drawable {
         float minX = 1800, maxX = -1800, minY = 1800, maxY = -1800;
 
         for (Way w : ways) {
-            //TODO: remove?
             //check min values
             if (w.getRect() == null) {
                 continue;
@@ -112,7 +111,6 @@ public class Relation extends Member implements Drawable {
             if (w.getRect().getMinY() > maxY) {
                 maxY = w.getRect().getMinY();
             }
-            //TODO: remove?
             //check max values
             if (w.getRect().getMaxX() < minX) {
                 minX = w.getRect().getMaxX();
