@@ -21,28 +21,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapCanvas extends Canvas {
+    private final Affine trans = new Affine();
     public boolean kdLines;
     public boolean debugAStar;
     public long[] redrawAverage = new long[20];
-    private GraphicsContext gc;
     public boolean setPin;
     public boolean doubleDraw = true;
     public boolean smallerViewPort, RTreeLines, roadRectangles;
     public boolean nearestNodeLine;
-    private boolean showRoute;
+    public boolean showPoi = true;
     public boolean showNames = true;
     public Point2D canvasPoint;
     public Point2D pinPoint;
     public Point2D mousePoint = new Point2D(0, 0);
+    public RenderingStyle renderingStyle;
+    private GraphicsContext gc;
+    private boolean showRoute;
     private Rectangle viewport;
     private ArrayList<Drawable> activeDrawList, activeFillList, activeAreaList;
     private ArrayList<POI> activePOIList;
     private ArrayList<Tag> requiresMinimumAreaTagList;
     private double size;
-    public RenderingStyle renderingStyle;
     private int redrawIndex = 0;
     private Model model;
-    private final Affine trans = new Affine();
     private float currentMaxX, currentMaxY, currentMinX, currentMinY;
     private float mapZoomLimit;
 
@@ -109,8 +110,10 @@ public class MapCanvas extends Canvas {
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
         gc.setFill(renderingStyle.getIslandColor(distanceWidth));
         for (var island : model.getIslands()) {
-            island.draw(gc, renderingStyle);
-            gc.fill();
+            if (island.getRect().intersects(viewport)) {
+                island.draw(gc, renderingStyle);
+                gc.fill();
+            }
         }
 
         double minimumArea = viewport.getArea() / 50000;
@@ -185,23 +188,27 @@ public class MapCanvas extends Canvas {
         }
 
         activePOIList = new ArrayList<>();
-        if (distanceWidth <= 20) {
-            activePOIList.addAll(model.getPOITree().query(viewport));
-            activePOIList.forEach(poi -> {
-                if (!poi.getType().equals("place")) {
-                    gc.setFill(Color.rgb(52, 152, 219));
-                    double size = (30 / Math.sqrt(trans.determinant()));
-                    gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
-                    String image = poi.getImageType();
-                    gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
+        if (showPoi) {
+            if (distanceWidth <= 20) {
+                activePOIList.addAll(model.getPOITree().query(viewport));
+                if (activePOIList.size() <= 30 || distanceWidth <= 1.5) {
+                    activePOIList.forEach(poi -> {
+                        if (!poi.getType().equals("place")) {
+                            gc.setFill(Color.rgb(52, 152, 219));
+                            double size = (30 / Math.sqrt(trans.determinant()));
+                            gc.fillOval(poi.getX() - (size / 2), poi.getY() - (size / 2), size, size);
+                            String image = poi.getImageType();
+                            gc.drawImage(model.imageSet.get(image), poi.getX() - (size / 4), poi.getY() - (size / 4), size / 2, size / 2);
 
-                    if (showNames) {
-                        gc.setFill(Color.BLACK);
-                        gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
-                        gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
-                    }
+                            if (showNames) {
+                                gc.setFill(Color.BLACK);
+                                gc.setFont(Font.font("Arial", FontWeight.BOLD, 10 / Math.sqrt(trans.determinant())));
+                                gc.fillText(poi.getName(), poi.getX() + size, poi.getY());
+                            }
+                        }
+                    });
                 }
-            });
+            }
         }
 
         if (distanceWidth <= 150) {
@@ -357,14 +364,14 @@ public class MapCanvas extends Canvas {
         gc.stroke();
     }
 
-    public String setPin(Point2D point) {
+    public Point2D setPin(Point2D point) {
         size = .3;
         canvasPoint = mouseToModelCoords(point);
         pinPoint = canvasPoint;
         canvasPoint = new Point2D(canvasPoint.getX() - (0.025 * size), canvasPoint.getY() - (0.076 * size));
         setPin = true;
         repaint();
-        return canvasPoint.getY() * -Model.scalingConstant + ", " + canvasPoint.getX();
+        return canvasPoint;
     }
 
     public String setPin(double x, double y) {
