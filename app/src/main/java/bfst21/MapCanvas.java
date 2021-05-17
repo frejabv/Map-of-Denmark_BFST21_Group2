@@ -109,8 +109,10 @@ public class MapCanvas extends Canvas {
         gc.setLineWidth(1 / Math.sqrt(trans.determinant()));
         gc.setFill(renderingStyle.getIslandColor(distanceWidth));
         for (var island : model.getIslands()) {
-            island.draw(gc, renderingStyle);
-            gc.fill();
+            if (island.getRect().intersects(viewport)) {
+                island.draw(gc, renderingStyle);
+                gc.fill();
+            }
         }
 
         double minimumArea = viewport.getArea() / 50000;
