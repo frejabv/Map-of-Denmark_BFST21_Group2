@@ -359,7 +359,7 @@ public class OSMParser {
                                 break;
                             case "relation":
                                 if (systemPOITags.size() > 0 && !systemPOIName.equals("")) {
-                                    if (relation.ways != null || !relation.ways.isEmpty()) {
+                                    if (relation.ways != null && !relation.ways.isEmpty()) {
                                         newSystemPOI(model, systemPOIName, relation.ways.get(0).first().getX(), relation.ways.get(0).first().getY());
                                     }
                                 }
