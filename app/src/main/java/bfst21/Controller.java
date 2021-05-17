@@ -120,6 +120,12 @@ public class Controller {
     private ToggleButton bicycleRoute;
     @FXML
     private ToggleButton walkRoute;
+    @FXML
+    private ToggleButton carSettings;
+    @FXML
+    private ToggleButton bicycleSettings;
+    @FXML
+    private ToggleButton walkSettings;
 
     public void init(Model model) {
         this.model = model;
@@ -673,23 +679,38 @@ public class Controller {
             canvas.repaint();
         }
     }
-
+    private ToggleButton oldTransportTypeRoute = carRoute;
     public void selectTransportTypeRoute() {
-        ToggleButton currentButton = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
-        if (currentButton != null) {
-            String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
-            setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
-            model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
-            showRouteDescription();
-            canvas.repaint(); //To show the route after it has been calculated
+        ToggleButton currentRouteToggle = (ToggleButton) selectTransportTypeRoute.getSelectedToggle();
+        String transportTypeCleaned = carRoute.getId().split("-")[0].toUpperCase();
+        if (currentRouteToggle != null) {
+            transportTypeCleaned = currentRouteToggle.getId().split("-")[0].toUpperCase();
+        }
+        else if (oldTransportTypeRoute != null) {
+            transportTypeCleaned = oldTransportTypeRoute.getId().split("-")[0].toUpperCase();
+        }
+        setCurrentTransportType(TransportType.valueOf(transportTypeCleaned));
+        model.getAStar().AStarSearch(fromNode, toNode, model.getCurrentTransportType());
+        showRouteDescription();
+        canvas.repaint(); //To show the route after it has been calculated
+        if (currentRouteToggle != null) {
+            oldTransportTypeRoute = currentRouteToggle;
         }
     }
-
+    private ToggleButton oldTransportTypeSettings = carSettings;
     public void selectTransportTypeSettings() {
-        ToggleButton currentButton = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
-        if (currentButton != null) {
-            String transportTypeCleaned = currentButton.getId().split("-")[0].toUpperCase();
-            model.setDefaultTransportType(TransportType.valueOf(transportTypeCleaned));
+        ToggleButton currentSettingsToggle = (ToggleButton) selectTransportTypeSettings.getSelectedToggle();
+        String transportTypeCleaned = carSettings.getId().split("-")[0].toUpperCase();
+        if (currentSettingsToggle != null) {
+            transportTypeCleaned = currentSettingsToggle.getId().split("-")[0].toUpperCase();
+        }
+        else if (oldTransportTypeSettings != null) {
+            transportTypeCleaned = oldTransportTypeSettings.getId().split("-")[0].toUpperCase();
+        }
+        setCurrentTransportTypeSettings(TransportType.valueOf(transportTypeCleaned));
+        model.setDefaultTransportType(TransportType.valueOf(transportTypeCleaned));
+        if (currentSettingsToggle != null) {
+            oldTransportTypeSettings = currentSettingsToggle;
         }
     }
 
@@ -749,6 +770,20 @@ public class Controller {
             bicycleRoute.setSelected(true);
         } else if (type.equals(TransportType.WALK)) {
             walkRoute.setSelected(true);
+        }
+    }
+
+    public void setCurrentTransportTypeSettings(TransportType type) {
+        model.setCurrentTransportType(type);
+        carSettings.setSelected(false);
+        bicycleSettings.setSelected(false);
+        walkSettings.setSelected(false);
+        if (type.equals(TransportType.CAR)) {
+            carSettings.setSelected(true);
+        } else if (type.equals(TransportType.BICYCLE)) {
+            bicycleSettings.setSelected(true);
+        } else if (type.equals(TransportType.WALK)) {
+            walkSettings.setSelected(true);
         }
     }
 

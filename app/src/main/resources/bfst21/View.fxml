@@ -188,7 +188,7 @@
               </FlowPane>
               <Region styleClass="hr"/>
               <HBox>
-                <ToggleButton id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
+                <ToggleButton fx:id="carSettings" id="car-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" selected="true" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <ToggleGroup fx:id="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -198,7 +198,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton id="bicycle-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
+                <ToggleButton fx:id="bicycleSettings" id="bicycle-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
@@ -208,7 +208,7 @@
                     </ImageView>
                   </graphic>
                 </ToggleButton>
-                <ToggleButton id="walk-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
+                <ToggleButton fx:id="walkSettings" id="walk-settings" styleClass="selectTransportTypeButton" maxWidth="Infinity" HBox.hgrow="ALWAYS" onMouseClicked="#selectTransportTypeSettings">
                   <toggleGroup>
                     <fx:reference source="selectTransportTypeSettings"/>
                   </toggleGroup>
