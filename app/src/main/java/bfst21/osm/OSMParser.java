@@ -11,7 +11,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -88,31 +87,31 @@ public class OSMParser {
         }
     }
 
-        public static void saveOBJ(String fileName, Model model) throws IOException {
-            // Point java to the correct folder on the host machine
-            File file = new File(fileName + ".obj");
-            file.createNewFile();
+    public static void saveOBJ(String fileName, Model model) throws IOException {
+        // Point java to the correct folder on the host machine
+        File file = new File(fileName + ".obj");
+        file.createNewFile();
 
-            var output = new ObjectOutputStream(
-                    new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())));
-            {
-                output.writeObject(model.getFillMap());
-                output.writeObject(model.getNodeIndex());
-                output.writeObject(model.getWayIndex());
-                output.writeObject(model.getRelationIndex());
-                output.writeObject(model.getStreetTree());
-                output.writeObject(model.getIslands());
-                output.writeFloat(model.getMinX());
-                output.writeFloat(model.getMinY());
-                output.writeFloat(model.getMaxX());
-                output.writeFloat(model.getMaxY());
-                output.writeObject(model.getDrawableMap());
-                output.writeObject(model.getPOITree());
-                output.writeObject(model.getVertexMap());
-                output.writeObject(model.getAreaNames());
-                output.flush();
-            }
+        var output = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(file.getAbsolutePath())));
+        {
+            output.writeObject(model.getFillMap());
+            output.writeObject(model.getNodeIndex());
+            output.writeObject(model.getWayIndex());
+            output.writeObject(model.getRelationIndex());
+            output.writeObject(model.getStreetTree());
+            output.writeObject(model.getIslands());
+            output.writeFloat(model.getMinX());
+            output.writeFloat(model.getMinY());
+            output.writeFloat(model.getMaxX());
+            output.writeFloat(model.getMaxY());
+            output.writeObject(model.getDrawableMap());
+            output.writeObject(model.getPOITree());
+            output.writeObject(model.getVertexMap());
+            output.writeObject(model.getAreaNames());
+            output.flush();
         }
+    }
 
     private static void loadOSM(InputStream inputStream, Model model)
             throws XMLStreamException, FactoryConfigurationError {
@@ -322,56 +321,59 @@ public class OSMParser {
                             if (!streetName.equals("") && !houseNumber.equals("") && !postcode.equals("")
                                     && !city.equals("")) {
 
-                                    model.getStreetTree().insert(streetName,
-                                            " " + houseNumber + " " + postcode + " " + city, node.getId());
+                                model.getStreetTree().insert(streetName,
+                                        " " + houseNumber + " " + postcode + " " + city, node.getId());
+                            }
+                            isNode = false;
+                            tag = null;
+                            systemPOIName = "";
+                            systemPoiTags = new ArrayList<>();
+                            name = "";
+                            break;
+                        case "way":
+                            if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
+                                newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
+                            }
+                            if (tag != null) {
+                                way.setTag(tag);
+                                addWayToList(way, tag, model);
+                            }
+                            way.checkSpeed();
+                            way.createRectangle();
+                            tag = null;
+                            systemPOIName = "";
+                            systemPoiTags = new ArrayList<>();
+                            name = "";
+                            break;
+                        case "relation":
+                            if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
+                                if (relation.getWays() != null && !relation.getWays().isEmpty()) {
+                                    newSystemPOI(model, systemPOIName, relation.getWays().get(0).first().getX(), relation.getWays().get(0).first().getY());
                                 }
-                                isNode = false;
-                                tag = null;
-                                systemPOIName = "";
-                                systemPoiTags = new ArrayList<>();
-                                name = "";
-                                break;
-                            case "way":
-                                if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
-                                    newSystemPOI(model, systemPOIName, way.first().getX(), way.first().getY());
-                                }
-                                if (tag != null) {
-                                    way.setTag(tag);
-                                    addWayToList(way, tag, model);
-                                }
-                                way.checkSpeed();
-                                way.createRectangle();
-                                tag = null;
-                                systemPOIName = "";
-                                systemPoiTags = new ArrayList<>();
-                                name = "";
-                                break;
-                            case "relation":
-                                if (systemPoiTags.size() > 0 && !systemPOIName.equals("")) {
-                                    if (relation.getWays() != null && !relation.getWays().isEmpty()) {
-                                        newSystemPOI(model, systemPOIName, relation.getWays().get(0).first().getX(), relation.getWays().get(0).first().getY());
-                                    }
-                                }
-                                if (tag != null) {
-                                    relation.setTag(tag);
-                                }
-                                relation.createRectangle();
-                                relation = null;
-                                tag = null;
-                                systemPOIName = "";
-                                systemPoiTags = new ArrayList<>();
-                                name = "";
-                                break;
-                        }
-                        break;
-                }
+                            }
+                            if (tag != null) {
+                                relation.setTag(tag);
+                            }
+                            relation.createRectangle();
+                            relation = null;
+                            tag = null;
+                            systemPOIName = "";
+                            systemPoiTags = new ArrayList<>();
+                            name = "";
+                            break;
+                    }
+                    break;
             }
-            model.setIslands(mergeCoastlines(model.getCoastlines()));
-            if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
-                System.out.println("No coastlines found");
-            }
-            model.setCoastlines(null);
         }
+        model.setIslands(mergeCoastlines(model.getCoastlines()));
+        for (Drawable island: model.getIslands()) {
+            island.getRect();
+        }
+        if (model.getCoastlines() == null || model.getCoastlines().isEmpty()) {
+            System.out.println("No coastlines found");
+        }
+        model.setCoastlines(null);
+    }
 
     private static void newSystemPOI(Model model, String systemPOIName, float x, float y) {
         POI poi = createSystemPOI(systemPOIName, systemPoiTags, x, y);
@@ -476,6 +478,7 @@ public class OSMParser {
         List<Drawable> merged = new ArrayList<>();
         pieces.forEach((node, way) -> {
             if (way.last() == node) {
+                way.createRectangle();
                 merged.add(way);
             }
         });
